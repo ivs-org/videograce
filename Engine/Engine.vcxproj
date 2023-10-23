@@ -1,0 +1,704 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{8F692425-79D7-4FB2-AB5F-9C70F442DF2A}</ProjectGuid>
+    <RootNamespace>Engine</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141_xp</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141_xp</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141_xp</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v141_xp</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <TargetExt>.lib</TargetExt>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
+    <IncludePath>.;..\Lib\libVPX;..\Lib\libOpus;..\Lib\libWebM;..\Lib\boost_1_82_0\include;..\Lib\ipp\include;..\Lib\OpenSSL\include;..\Lib\lame\include;..\Lib\wui\include;$(VC_IncludePath);$(WindowsSdk_71A_IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <TargetExt>.lib</TargetExt>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
+    <IncludePath>.;..\Lib\libVPX;..\Lib\libOpus;..\Lib\libWebM;..\Lib\boost_1_82_0\include;..\Lib\ipp\include;..\Lib\OpenSSL\include;..\Lib\lame\include;..\Lib\wui\include;$(VC_IncludePath);$(WindowsSdk_71A_IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LibraryPath>$(LibraryPath)</LibraryPath>
+    <IncludePath>.;..\Lib\libVPX;..\Lib\libOpus;..\Lib\libWebM;..\Lib\boost_1_82_0\include;..\Lib\OpenSSL\include;..\Lib\ipp\include;..\Lib\lame\include;..\Lib\wui\include;$(VC_IncludePath);$(WindowsSdk_71A_IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LibraryPath>$(LibraryPath)</LibraryPath>
+    <IncludePath>.;..\Lib\libVPX;..\Lib\libOpus;..\Lib\libWebM;..\Lib\boost_1_82_0\include;..\Lib\OpenSSL\include;..\Lib\ipp\include;..\Lib\lame\include;..\Lib\wui\include;$(VC_IncludePath);$(WindowsSdk_71A_IncludePath)</IncludePath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <PreprocessorDefinitions>_UNICODE;UNICODE;_WIN32_WINNT=0x0501;BOOST_CONFIG_SUPPRESS_OUTDATED_MESSAGE;BOOST_SYSTEM_DISABLE_THREADS;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;NOMINMAX;WEBRTC_WIN;SQLITE_THREADSAFE=2;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ProgramDataBaseFileName />
+      <DisableSpecificWarnings>4101;4307;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <Lib>
+      <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <PreprocessorDefinitions>_UNICODE;UNICODE;_WIN32_WINNT=0x0501;BOOST_CONFIG_SUPPRESS_OUTDATED_MESSAGE;BOOST_SYSTEM_DISABLE_THREADS;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;NOMINMAX;WEBRTC_WIN;SQLITE_THREADSAFE=2;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ProgramDataBaseFileName>
+      </ProgramDataBaseFileName>
+      <DisableSpecificWarnings>4101;4307;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <AdditionalOptions>/bigobj</AdditionalOptions>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <Lib>
+      <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <PreprocessorDefinitions>NDEBUG;_UNICODE;UNICODE;_WIN32_WINNT=0x0501;BOOST_CONFIG_SUPPRESS_OUTDATED_MESSAGE;BOOST_SYSTEM_DISABLE_THREADS;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;NOMINMAX;WEBRTC_WIN;SQLITE_THREADSAFE=2;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalOptions>
+      </AdditionalOptions>
+      <DebugInformationFormat>None</DebugInformationFormat>
+      <ProgramDataBaseFileName>
+      </ProgramDataBaseFileName>
+      <DisableSpecificWarnings>4101;4307;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>opus.lib;celt.lib;silk_common.lib;silk_float.lib;libwebm.lib;vpxmt.lib;crypt32.lib;msi.lib;libeay32MT.lib;ssleay32MT.lib;PocoFoundationmt.lib;PocoNetmt.lib;PocoNetSSLmt.lib;PocoCryptomt.lib</AdditionalDependencies>
+    </Link>
+    <Lib>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
+    <Lib>
+      <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <PreprocessorDefinitions>NDEBUG;_UNICODE;UNICODE;_WIN32_WINNT=0x0501;BOOST_CONFIG_SUPPRESS_OUTDATED_MESSAGE;BOOST_SYSTEM_DISABLE_THREADS;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;NOMINMAX;WEBRTC_WIN;SQLITE_THREADSAFE=2;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalOptions>
+      </AdditionalOptions>
+      <DebugInformationFormat>None</DebugInformationFormat>
+      <ProgramDataBaseFileName>
+      </ProgramDataBaseFileName>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <DisableSpecificWarnings>4101;4307;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>opus.lib;celt.lib;silk_common.lib;silk_float.lib;libwebm.lib;vpxmt.lib;crypt32.lib;msi.lib;libeay32MT.lib;ssleay32MT.lib;PocoFoundationmt.lib;PocoNetmt.lib;PocoNetSSLmt.lib;PocoCryptomt.lib</AdditionalDependencies>
+    </Link>
+    <Lib>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
+    <Lib>
+      <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="AEC\AEC.h" />
+    <ClInclude Include="AEC\IAEC.h" />
+    <ClInclude Include="API\CreateGroup.h" />
+    <ClInclude Include="API\CreateUser.h" />
+    <ClInclude Include="API\DeleteGroup.h" />
+    <ClInclude Include="API\DeleteUser.h" />
+    <ClInclude Include="API\EditGroup.h" />
+    <ClInclude Include="API\EditUser.h" />
+    <ClInclude Include="API\RedirectUser.h" />
+    <ClInclude Include="API\Result.h" />
+    <ClInclude Include="API\ServerInfo.h" />
+    <ClInclude Include="Audio\AudioDecoder.h" />
+    <ClInclude Include="Audio\AudioEncoder.h" />
+    <ClInclude Include="Audio\AudioMixer.h" />
+    <ClInclude Include="Audio\CodecType.h" />
+    <ClInclude Include="Audio\IAudioDecoder.h" />
+    <ClInclude Include="Audio\IAudioEncoder.h" />
+    <ClInclude Include="Audio\OpusDecoderImpl.h" />
+    <ClInclude Include="Audio\OpusEncoderImpl.h" />
+    <ClInclude Include="Audio\Resampler.h" />
+    <ClInclude Include="Audio\SilentDetector.h" />
+    <ClInclude Include="Audio\SoundBlock.h" />
+    <ClInclude Include="Common\Base64.h" />
+    <ClInclude Include="Common\BitHelpers.h" />
+    <ClInclude Include="Common\FSHelpers.h" />
+    <ClInclude Include="Common\Common.h" />
+    <ClInclude Include="Common\HTMLSymbolsScreener.h" />
+    <ClInclude Include="Common\HumanTime.h" />
+    <ClInclude Include="Common\JSONSymbolsScreener.h" />
+    <ClInclude Include="Common\MapContainer.h" />
+    <ClInclude Include="Common\CRC32.h" />
+    <ClInclude Include="Common\md5.h" />
+    <ClInclude Include="Common\MACAddresses.h" />
+    <ClInclude Include="Common\Process.h" />
+    <ClInclude Include="Common\Quoter.h" />
+    <ClInclude Include="Common\ShortSleep.h" />
+    <ClInclude Include="Common\TimeMeter.h" />
+    <ClInclude Include="Common\ToDigit.h" />
+    <ClInclude Include="Common\URLDecode.h" />
+    <ClInclude Include="Common\URLEncode.h" />
+    <ClInclude Include="Common\VectorContainer.h" />
+    <ClInclude Include="Common\WindowsVersion.h" />
+    <ClInclude Include="Controller\Controller.h" />
+    <ClInclude Include="Controller\IController.h" />
+    <ClInclude Include="Controller\IMemberList.h" />
+    <ClInclude Include="Crypto\Checker.h" />
+    <ClInclude Include="Crypto\Decryptor.h" />
+    <ClInclude Include="Crypto\Encryptor.h" />
+    <ClInclude Include="Crypto\IDecryptor.h" />
+    <ClInclude Include="Crypto\IEncryptor.h" />
+    <ClInclude Include="Crypto\StringEncryptor.h" />
+    <ClInclude Include="DB\Connection.h" />
+    <ClInclude Include="DB\Query.h" />
+    <ClInclude Include="DB\Result.h" />
+    <ClInclude Include="DB\sqlite\sqlite3.h" />
+    <ClInclude Include="DB\sqlite\sqlite3ext.h" />
+    <ClInclude Include="DB\Transaction.h" />
+    <ClInclude Include="JitterBuffer\JB.h" />
+    <ClInclude Include="License\Grants.h" />
+    <ClInclude Include="mt\rw_lock.h" />
+    <ClInclude Include="mt\semaphore.h" />
+    <ClInclude Include="mt\thread_priority.h" />
+    <ClInclude Include="mt\timer.h" />
+    <ClInclude Include="mt\wf_ring_buffer.h" />
+    <ClInclude Include="NetTester\SpeedTester.h" />
+    <ClInclude Include="NetTester\TCPTester.h" />
+    <ClInclude Include="NetTester\UDPTester.h" />
+    <ClInclude Include="nlohmann\json.hpp" />
+    <ClInclude Include="Proto\CmdCallRequest.h" />
+    <ClInclude Include="Proto\CmdCallResponse.h" />
+    <ClInclude Include="Proto\CmdChangeContactState.h" />
+    <ClInclude Include="Proto\CmdChangeMemberState.h" />
+    <ClInclude Include="Proto\CmdChangeServer.h" />
+    <ClInclude Include="Proto\CmdDeliveryMessages.h" />
+    <ClInclude Include="Proto\CmdGroupList.h" />
+    <ClInclude Include="Proto\CmdContactsUpdate.h" />
+    <ClInclude Include="Proto\CmdLoadMessages.h" />
+    <ClInclude Include="Proto\CmdMicrophoneActive.h" />
+    <ClInclude Include="Proto\CmdCredentialsRequest.h" />
+    <ClInclude Include="Proto\CmdCredentialsResponse.h" />
+    <ClInclude Include="Proto\CmdRequestMediaAddresses.h" />
+    <ClInclude Include="Proto\CmdMediaAddressesList.h" />
+    <ClInclude Include="Proto\CmdUpdateGrants.h" />
+    <ClInclude Include="Proto\CmdConferencesList.h" />
+    <ClInclude Include="Proto\CmdConnectRequest.h" />
+    <ClInclude Include="Proto\CmdConnectResponse.h" />
+    <ClInclude Include="Proto\CmdConnectToConferenceRequest.h" />
+    <ClInclude Include="Proto\CmdConnectToConferenceResponse.h" />
+    <ClInclude Include="Proto\CmdContactList.h" />
+    <ClInclude Include="Proto\CmdConferenceUpdateRequest.h" />
+    <ClInclude Include="Proto\CmdConferenceUpdateResponse.h" />
+    <ClInclude Include="Proto\CmdCreateTempConference.h" />
+    <ClInclude Include="Proto\CmdDeviceConnect.h" />
+    <ClInclude Include="Proto\CmdDeviceDisconnect.h" />
+    <ClInclude Include="Proto\CmdDeviceParams.h" />
+    <ClInclude Include="Proto\CmdDisconnect.h" />
+    <ClInclude Include="Proto\CmdDisconnectFromConference.h" />
+    <ClInclude Include="Proto\CmdRendererConnect.h" />
+    <ClInclude Include="Proto\CmdRendererDisconnect.h" />
+    <ClInclude Include="Proto\CmdSearchContact.h" />
+    <ClInclude Include="Proto\CmdMemberAction.h" />
+    <ClInclude Include="Proto\CmdPing.h" />
+    <ClInclude Include="Proto\CmdResolutionChange.h" />
+    <ClInclude Include="Proto\CmdSendConnectToConference.h" />
+    <ClInclude Include="Proto\CmdSetMaxBitrate.h" />
+    <ClInclude Include="Proto\CmdTurnSpeaker.h" />
+    <ClInclude Include="Proto\CmdUserUpdateRequest.h" />
+    <ClInclude Include="Proto\CmdUserUpdateResponse.h" />
+    <ClInclude Include="Proto\CmdWantSpeak.h" />
+    <ClInclude Include="Proto\CommandType.h" />
+    <ClInclude Include="Proto\CmdScheduleConnect.h" />
+    <ClInclude Include="Proto\Conference.h" />
+    <ClInclude Include="Proto\ConferenceGrants.h" />
+    <ClInclude Include="Proto\DeviceType.h" />
+    <ClInclude Include="Proto\Group.h" />
+    <ClInclude Include="Proto\GroupGrants.h" />
+    <ClInclude Include="Proto\Member.h" />
+    <ClInclude Include="Proto\MemberGrants.h" />
+    <ClInclude Include="Proto\Message.h" />
+    <ClInclude Include="Record\IRecorder.h" />
+    <ClInclude Include="Record\MP3Writer.h" />
+    <ClInclude Include="Record\Recorder.h" />
+    <ClInclude Include="Registrator\Registrator.h" />
+    <ClInclude Include="spdlog\async.h" />
+    <ClInclude Include="spdlog\async_logger-inl.h" />
+    <ClInclude Include="spdlog\async_logger.h" />
+    <ClInclude Include="spdlog\cfg\argv.h" />
+    <ClInclude Include="spdlog\cfg\env.h" />
+    <ClInclude Include="spdlog\cfg\helpers-inl.h" />
+    <ClInclude Include="spdlog\cfg\helpers.h" />
+    <ClInclude Include="spdlog\common-inl.h" />
+    <ClInclude Include="spdlog\common.h" />
+    <ClInclude Include="spdlog\details\backtracer-inl.h" />
+    <ClInclude Include="spdlog\details\backtracer.h" />
+    <ClInclude Include="spdlog\details\circular_q.h" />
+    <ClInclude Include="spdlog\details\console_globals.h" />
+    <ClInclude Include="spdlog\details\file_helper-inl.h" />
+    <ClInclude Include="spdlog\details\file_helper.h" />
+    <ClInclude Include="spdlog\details\fmt_helper.h" />
+    <ClInclude Include="spdlog\details\log_msg-inl.h" />
+    <ClInclude Include="spdlog\details\log_msg.h" />
+    <ClInclude Include="spdlog\details\log_msg_buffer-inl.h" />
+    <ClInclude Include="spdlog\details\log_msg_buffer.h" />
+    <ClInclude Include="spdlog\details\mpmc_blocking_q.h" />
+    <ClInclude Include="spdlog\details\null_mutex.h" />
+    <ClInclude Include="spdlog\details\os-inl.h" />
+    <ClInclude Include="spdlog\details\os.h" />
+    <ClInclude Include="spdlog\details\periodic_worker-inl.h" />
+    <ClInclude Include="spdlog\details\periodic_worker.h" />
+    <ClInclude Include="spdlog\details\registry-inl.h" />
+    <ClInclude Include="spdlog\details\registry.h" />
+    <ClInclude Include="spdlog\details\synchronous_factory.h" />
+    <ClInclude Include="spdlog\details\tcp_client-windows.h" />
+    <ClInclude Include="spdlog\details\tcp_client.h" />
+    <ClInclude Include="spdlog\details\thread_pool-inl.h" />
+    <ClInclude Include="spdlog\details\thread_pool.h" />
+    <ClInclude Include="spdlog\details\udp_client-windows.h" />
+    <ClInclude Include="spdlog\details\udp_client.h" />
+    <ClInclude Include="spdlog\details\windows_include.h" />
+    <ClInclude Include="spdlog\fmt\bin_to_hex.h" />
+    <ClInclude Include="spdlog\fmt\bundled\args.h" />
+    <ClInclude Include="spdlog\fmt\bundled\chrono.h" />
+    <ClInclude Include="spdlog\fmt\bundled\color.h" />
+    <ClInclude Include="spdlog\fmt\bundled\compile.h" />
+    <ClInclude Include="spdlog\fmt\bundled\core.h" />
+    <ClInclude Include="spdlog\fmt\bundled\format-inl.h" />
+    <ClInclude Include="spdlog\fmt\bundled\format.h" />
+    <ClInclude Include="spdlog\fmt\bundled\locale.h" />
+    <ClInclude Include="spdlog\fmt\bundled\os.h" />
+    <ClInclude Include="spdlog\fmt\bundled\ostream.h" />
+    <ClInclude Include="spdlog\fmt\bundled\printf.h" />
+    <ClInclude Include="spdlog\fmt\bundled\ranges.h" />
+    <ClInclude Include="spdlog\fmt\bundled\std.h" />
+    <ClInclude Include="spdlog\fmt\bundled\xchar.h" />
+    <ClInclude Include="spdlog\fmt\chrono.h" />
+    <ClInclude Include="spdlog\fmt\compile.h" />
+    <ClInclude Include="spdlog\fmt\fmt.h" />
+    <ClInclude Include="spdlog\fmt\ostr.h" />
+    <ClInclude Include="spdlog\fmt\ranges.h" />
+    <ClInclude Include="spdlog\fmt\std.h" />
+    <ClInclude Include="spdlog\fmt\xchar.h" />
+    <ClInclude Include="spdlog\formatter.h" />
+    <ClInclude Include="spdlog\fwd.h" />
+    <ClInclude Include="spdlog\logger-inl.h" />
+    <ClInclude Include="spdlog\logger.h" />
+    <ClInclude Include="spdlog\pattern_formatter-inl.h" />
+    <ClInclude Include="spdlog\pattern_formatter.h" />
+    <ClInclude Include="spdlog\sinks\android_sink.h" />
+    <ClInclude Include="spdlog\sinks\ansicolor_sink-inl.h" />
+    <ClInclude Include="spdlog\sinks\ansicolor_sink.h" />
+    <ClInclude Include="spdlog\sinks\base_sink-inl.h" />
+    <ClInclude Include="spdlog\sinks\base_sink.h" />
+    <ClInclude Include="spdlog\sinks\basic_file_sink-inl.h" />
+    <ClInclude Include="spdlog\sinks\basic_file_sink.h" />
+    <ClInclude Include="spdlog\sinks\callback_sink.h" />
+    <ClInclude Include="spdlog\sinks\daily_file_sink.h" />
+    <ClInclude Include="spdlog\sinks\dist_sink.h" />
+    <ClInclude Include="spdlog\sinks\dup_filter_sink.h" />
+    <ClInclude Include="spdlog\sinks\hourly_file_sink.h" />
+    <ClInclude Include="spdlog\sinks\kafka_sink.h" />
+    <ClInclude Include="spdlog\sinks\mongo_sink.h" />
+    <ClInclude Include="spdlog\sinks\msvc_sink.h" />
+    <ClInclude Include="spdlog\sinks\null_sink.h" />
+    <ClInclude Include="spdlog\sinks\ostream_sink.h" />
+    <ClInclude Include="spdlog\sinks\qt_sinks.h" />
+    <ClInclude Include="spdlog\sinks\ringbuffer_sink.h" />
+    <ClInclude Include="spdlog\sinks\rotating_file_sink-inl.h" />
+    <ClInclude Include="spdlog\sinks\rotating_file_sink.h" />
+    <ClInclude Include="spdlog\sinks\sink-inl.h" />
+    <ClInclude Include="spdlog\sinks\sink.h" />
+    <ClInclude Include="spdlog\sinks\stdout_color_sinks-inl.h" />
+    <ClInclude Include="spdlog\sinks\stdout_color_sinks.h" />
+    <ClInclude Include="spdlog\sinks\stdout_sinks-inl.h" />
+    <ClInclude Include="spdlog\sinks\stdout_sinks.h" />
+    <ClInclude Include="spdlog\sinks\syslog_sink.h" />
+    <ClInclude Include="spdlog\sinks\systemd_sink.h" />
+    <ClInclude Include="spdlog\sinks\tcp_sink.h" />
+    <ClInclude Include="spdlog\sinks\udp_sink.h" />
+    <ClInclude Include="spdlog\sinks\wincolor_sink-inl.h" />
+    <ClInclude Include="spdlog\sinks\wincolor_sink.h" />
+    <ClInclude Include="spdlog\sinks\win_eventlog_sink.h" />
+    <ClInclude Include="spdlog\spdlog-inl.h" />
+    <ClInclude Include="spdlog\spdlog.h" />
+    <ClInclude Include="spdlog\stopwatch.h" />
+    <ClInclude Include="spdlog\tweakme.h" />
+    <ClInclude Include="spdlog\version.h" />
+    <ClInclude Include="Storage\Storage.h" />
+    <ClInclude Include="Transport\Address.h" />
+    <ClInclude Include="Transport\RTPSocket.h" />
+    <ClInclude Include="Transport\HTTP\HttpClient.h" />
+    <ClInclude Include="Transport\HTTP\IHttpClient.h" />
+    <ClInclude Include="Transport\IPacket.h" />
+    <ClInclude Include="Transport\ISocket.h" />
+    <ClInclude Include="Transport\NetworkInit.h" />
+    <ClInclude Include="Transport\PacketType.h" />
+    <ClInclude Include="Transport\RTP\OwnedRTPPacket.h" />
+    <ClInclude Include="Transport\RTP\RTCPPacket.h" />
+    <ClInclude Include="Transport\RTP\RTPPacket.h" />
+    <ClInclude Include="Transport\RTP\RTPPayloadType.h" />
+    <ClInclude Include="Transport\SocketSplitter.h" />
+    <ClInclude Include="Transport\TCP\Client.h" />
+    <ClInclude Include="Transport\TCP\Message.h" />
+    <ClInclude Include="Transport\TCP\Server.h" />
+    <ClInclude Include="Transport\UDPSocket.h" />
+    <ClInclude Include="Transport\URI\URI.h" />
+    <ClInclude Include="Transport\WebSocket\IWebSocket.h" />
+    <ClInclude Include="Transport\WebSocket\WebSocket.h" />
+    <ClInclude Include="Version.h" />
+    <ClInclude Include="Video\CodecType.h" />
+    <ClInclude Include="Video\ColorSpace.h" />
+    <ClInclude Include="Video\IPacketLossCallback.h" />
+    <ClInclude Include="Video\IVideoDecoder.h" />
+    <ClInclude Include="Video\IVideoEncoder.h" />
+    <ClInclude Include="Video\Resolution.h" />
+    <ClInclude Include="Video\SplittedPacketSize.h" />
+    <ClInclude Include="Video\VideoDecoder.h" />
+    <ClInclude Include="Video\VideoEncoder.h" />
+    <ClInclude Include="Video\VideoFormat.h" />
+    <ClInclude Include="Video\VP8DecoderImpl.h" />
+    <ClInclude Include="Video\VP8EncoderImpl.h" />
+    <ClInclude Include="Video\VP8RTPSplitter.h" />
+    <ClInclude Include="Video\VP8RTPCollector.h" />
+    <ClInclude Include="webrtc\base\arch.h" />
+    <ClInclude Include="webrtc\base\array_view.h" />
+    <ClInclude Include="webrtc\base\atomicops.h" />
+    <ClInclude Include="webrtc\base\basictypes.h" />
+    <ClInclude Include="webrtc\base\checks.h" />
+    <ClInclude Include="webrtc\base\compile_assert_c.h" />
+    <ClInclude Include="webrtc\base\constructormagic.h" />
+    <ClInclude Include="webrtc\base\criticalsection.h" />
+    <ClInclude Include="webrtc\base\inline.h" />
+    <ClInclude Include="webrtc\base\platform_thread_types.h" />
+    <ClInclude Include="webrtc\base\safe_compare.h" />
+    <ClInclude Include="webrtc\base\safe_conversions.h" />
+    <ClInclude Include="webrtc\base\safe_conversions_impl.h" />
+    <ClInclude Include="webrtc\base\safe_minmax.h" />
+    <ClInclude Include="webrtc\base\sanitizer.h" />
+    <ClInclude Include="webrtc\base\stringutils.h" />
+    <ClInclude Include="webrtc\base\thread_annotations.h" />
+    <ClInclude Include="webrtc\base\type_traits.h" />
+    <ClInclude Include="webrtc\base\unused.h" />
+    <ClInclude Include="webrtc\common_audio\channel_buffer.h" />
+    <ClInclude Include="webrtc\common_audio\fft4g.h" />
+    <ClInclude Include="webrtc\common_audio\include\audio_util.h" />
+    <ClInclude Include="webrtc\common_audio\ring_buffer.h" />
+    <ClInclude Include="webrtc\common_audio\signal_processing\dot_product_with_scale.h" />
+    <ClInclude Include="webrtc\common_audio\signal_processing\include\real_fft.h" />
+    <ClInclude Include="webrtc\common_audio\signal_processing\include\signal_processing_library.h" />
+    <ClInclude Include="webrtc\common_audio\signal_processing\include\spl_inl.h" />
+    <ClInclude Include="webrtc\common_audio\signal_processing\include\spl_inl_armv7.h" />
+    <ClInclude Include="webrtc\common_audio\sparse_fir_filter.h" />
+    <ClInclude Include="webrtc\common_audio\wav_file.h" />
+    <ClInclude Include="webrtc\common_audio\wav_header.h" />
+    <ClInclude Include="webrtc\modules\audio_processing\aec\aec_common.h" />
+    <ClInclude Include="webrtc\modules\audio_processing\aec\aec_core.h" />
+    <ClInclude Include="webrtc\modules\audio_processing\aec\aec_core_optimized_methods.h" />
+    <ClInclude Include="webrtc\modules\audio_processing\aec\aec_resampler.h" />
+    <ClInclude Include="webrtc\modules\audio_processing\aec\echo_cancellation.h" />
+    <ClInclude Include="webrtc\modules\audio_processing\agc\legacy\analog_agc.h" />
+    <ClInclude Include="webrtc\modules\audio_processing\agc\legacy\digital_agc.h" />
+    <ClInclude Include="webrtc\modules\audio_processing\agc\legacy\gain_control.h" />
+    <ClInclude Include="webrtc\modules\audio_processing\logging\apm_data_dumper.h" />
+    <ClInclude Include="webrtc\modules\audio_processing\ns\defines.h" />
+    <ClInclude Include="webrtc\modules\audio_processing\ns\noise_suppression.h" />
+    <ClInclude Include="webrtc\modules\audio_processing\ns\noise_suppression_x.h" />
+    <ClInclude Include="webrtc\modules\audio_processing\ns\nsx_core.h" />
+    <ClInclude Include="webrtc\modules\audio_processing\ns\nsx_defines.h" />
+    <ClInclude Include="webrtc\modules\audio_processing\ns\ns_core.h" />
+    <ClInclude Include="webrtc\modules\audio_processing\ns\windows_private.h" />
+    <ClInclude Include="webrtc\modules\audio_processing\splitting_filter.h" />
+    <ClInclude Include="webrtc\modules\audio_processing\three_band_filter_bank.h" />
+    <ClInclude Include="webrtc\modules\audio_processing\utility\block_mean_calculator.h" />
+    <ClInclude Include="webrtc\modules\audio_processing\utility\delay_estimator.h" />
+    <ClInclude Include="webrtc\modules\audio_processing\utility\delay_estimator_internal.h" />
+    <ClInclude Include="webrtc\modules\audio_processing\utility\delay_estimator_wrapper.h" />
+    <ClInclude Include="webrtc\modules\audio_processing\utility\ooura_fft.h" />
+    <ClInclude Include="webrtc\modules\audio_processing\utility\ooura_fft_tables_common.h" />
+    <ClInclude Include="webrtc\modules\audio_processing\utility\ooura_fft_tables_neon_sse2.h" />
+    <ClInclude Include="webrtc\system_wrappers\include\cpu_features_wrapper.h" />
+    <ClInclude Include="webrtc\system_wrappers\include\metrics.h" />
+    <ClInclude Include="webrtc\system_wrappers\include\metrics_default.h" />
+    <ClInclude Include="webrtc\typedefs.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="AEC\AEC.cpp" />
+    <ClCompile Include="API\CreateGroup.cpp" />
+    <ClCompile Include="API\CreateUser.cpp" />
+    <ClCompile Include="API\DeleteGroup.cpp" />
+    <ClCompile Include="API\DeleteUser.cpp" />
+    <ClCompile Include="API\EditGroup.cpp" />
+    <ClCompile Include="API\EditUser.cpp" />
+    <ClCompile Include="API\RedirectUser.cpp" />
+    <ClCompile Include="API\Result.cpp" />
+    <ClCompile Include="API\ServerInfo.cpp" />
+    <ClCompile Include="Audio\AudioDecoder.cpp" />
+    <ClCompile Include="Audio\AudioEncoder.cpp" />
+    <ClCompile Include="Audio\AudioMixer.cpp" />
+    <ClCompile Include="Audio\OpusDecoderImpl.cpp" />
+    <ClCompile Include="Audio\OpusEncoderImpl.cpp" />
+    <ClCompile Include="Audio\Resampler.cpp" />
+    <ClCompile Include="Audio\SilentDetector.cpp" />
+    <ClCompile Include="Common\Base64.cpp" />
+    <ClCompile Include="Common\FSHelpers.cpp" />
+    <ClCompile Include="Common\CRC32.cpp" />
+    <ClCompile Include="Common\HTMLSymbolsScreener.cpp" />
+    <ClCompile Include="Common\HumanTime.cpp" />
+    <ClCompile Include="Common\JSONSymbolsScreener.cpp" />
+    <ClCompile Include="Common\md5.cpp" />
+    <ClCompile Include="Common\MACAddresses.cpp" />
+    <ClCompile Include="Common\Process.cpp" />
+    <ClCompile Include="Common\ShortSleep.cpp" />
+    <ClCompile Include="Common\ToDigit.cpp" />
+    <ClCompile Include="Common\URLDecode.cpp" />
+    <ClCompile Include="Common\URLEncode.cpp" />
+    <ClCompile Include="Controller\Controller.cpp" />
+    <ClCompile Include="Crypto\Checker.cpp" />
+    <ClCompile Include="Crypto\Decryptor.cpp" />
+    <ClCompile Include="Crypto\Encryptor.cpp" />
+    <ClCompile Include="DB\Connection.cpp" />
+    <ClCompile Include="DB\Query.cpp" />
+    <ClCompile Include="DB\sqlite\shell.c" />
+    <ClCompile Include="DB\sqlite\sqlite3.c" />
+    <ClCompile Include="DB\Transaction.cpp" />
+    <ClCompile Include="JitterBuffer\JB.cpp" />
+    <ClCompile Include="License\Grants.cpp" />
+    <ClCompile Include="NetTester\SpeedTester.cpp" />
+    <ClCompile Include="NetTester\TCPTester.cpp" />
+    <ClCompile Include="NetTester\UDPTester.cpp" />
+    <ClCompile Include="Proto\CmdCallRequest.cpp" />
+    <ClCompile Include="Proto\CmdCallResponse.cpp" />
+    <ClCompile Include="Proto\CmdChangeContactState.cpp" />
+    <ClCompile Include="Proto\CmdChangeMemberState.cpp" />
+    <ClCompile Include="Proto\CmdChangeServer.cpp" />
+    <ClCompile Include="Proto\CmdConferenceUpdateResponse.cpp" />
+    <ClCompile Include="Proto\CmdDeliveryMessages.cpp" />
+    <ClCompile Include="Proto\CmdGroupList.cpp" />
+    <ClCompile Include="Proto\CmdContactsUpdate.cpp" />
+    <ClCompile Include="Proto\CmdLoadMessages.cpp" />
+    <ClCompile Include="Proto\CmdMicrophoneActive.cpp" />
+    <ClCompile Include="Proto\CmdCredentialsRequest.cpp" />
+    <ClCompile Include="Proto\CmdCredentialsResponse.cpp" />
+    <ClCompile Include="Proto\CmdRequestMediaAddress.cpp" />
+    <ClCompile Include="Proto\CmdMediaAddressesList.cpp" />
+    <ClCompile Include="Proto\CmdUpdateGrants.cpp" />
+    <ClCompile Include="Proto\CmdConferencesList.cpp" />
+    <ClCompile Include="Proto\CmdConnectRequest.cpp" />
+    <ClCompile Include="Proto\CmdConnectResponse.cpp" />
+    <ClCompile Include="Proto\CmdConnectToConferenceRequest.cpp" />
+    <ClCompile Include="Proto\CmdConnectToConferenceResponse.cpp" />
+    <ClCompile Include="Proto\CmdContactList.cpp" />
+    <ClCompile Include="Proto\CmdConferenceUpdateRequest.cpp" />
+    <ClCompile Include="Proto\CmdCreateTempConference.cpp" />
+    <ClCompile Include="Proto\CmdDeviceConnect.cpp" />
+    <ClCompile Include="Proto\CmdDeviceDisconnect.cpp" />
+    <ClCompile Include="Proto\CmdDeviceParams.cpp" />
+    <ClCompile Include="Proto\CmdDisconnect.cpp" />
+    <ClCompile Include="Proto\CmdDisconnectFromConference.cpp" />
+    <ClCompile Include="Proto\CmdRendererConnect.cpp" />
+    <ClCompile Include="Proto\CmdRendererDisconnect.cpp" />
+    <ClCompile Include="Proto\CmdSearchContact.cpp" />
+    <ClCompile Include="Proto\CmdMemberAction.cpp" />
+    <ClCompile Include="Proto\CmdPing.cpp" />
+    <ClCompile Include="Proto\CmdResolutionChange.cpp" />
+    <ClCompile Include="Proto\CmdScheduleConnect.cpp" />
+    <ClCompile Include="Proto\CmdSendConnectToConference.cpp" />
+    <ClCompile Include="Proto\CmdSetMaxBitrate.cpp" />
+    <ClCompile Include="Proto\CmdTurnSpeaker.cpp" />
+    <ClCompile Include="Proto\CmdUserUpdateRequest.cpp" />
+    <ClCompile Include="Proto\CmdUserUpdateResponse.cpp" />
+    <ClCompile Include="Proto\CmdWantSpeak.cpp" />
+    <ClCompile Include="Proto\CommandType.cpp" />
+    <ClCompile Include="Proto\Conference.cpp" />
+    <ClCompile Include="Proto\Group.cpp" />
+    <ClCompile Include="Proto\Member.cpp" />
+    <ClCompile Include="Proto\Message.cpp" />
+    <ClCompile Include="Record\MP3Writer.cpp" />
+    <ClCompile Include="Record\Recorder.cpp" />
+    <ClCompile Include="Registrator\Registrator.cpp" />
+    <ClCompile Include="Storage\Storage.cpp" />
+    <ClCompile Include="Transport\Address.cpp" />
+    <ClCompile Include="Transport\RTPSocket.cpp" />
+    <ClCompile Include="Transport\HTTP\HTTPClient.cpp" />
+    <ClCompile Include="Transport\PacketType.cpp" />
+    <ClCompile Include="Transport\RTP\OwnedRTPPacket.cpp" />
+    <ClCompile Include="Transport\RTP\RTCPPacket.cpp" />
+    <ClCompile Include="Transport\RTP\RTPPacket.cpp" />
+    <ClCompile Include="Transport\TCP\Client.cpp" />
+    <ClCompile Include="Transport\TCP\Server.cpp" />
+    <ClCompile Include="Transport\UDPSocket.cpp" />
+    <ClCompile Include="Transport\URI\URI.cpp" />
+    <ClCompile Include="Transport\WebSocket\WebSocket.cpp" />
+    <ClCompile Include="Video\Resolution.cpp" />
+    <ClCompile Include="Video\VideoDecoder.cpp" />
+    <ClCompile Include="Video\VideoEncoder.cpp" />
+    <ClCompile Include="Video\VP8DecoderImpl.cpp" />
+    <ClCompile Include="Video\VP8EncoderImpl.cpp" />
+    <ClCompile Include="Video\VP8RTPSplitter.cpp" />
+    <ClCompile Include="Video\VP8RTPCollector.cpp" />
+    <ClCompile Include="webrtc\base\checks.cc" />
+    <ClCompile Include="webrtc\base\criticalsection.cc" />
+    <ClCompile Include="webrtc\base\platform_thread_types.cc" />
+    <ClCompile Include="webrtc\base\stringutils.cc" />
+    <ClCompile Include="webrtc\common_audio\audio_util.cc" />
+    <ClCompile Include="webrtc\common_audio\channel_buffer.cc" />
+    <ClCompile Include="webrtc\common_audio\fft4g.c" />
+    <ClCompile Include="webrtc\common_audio\ring_buffer.c" />
+    <ClCompile Include="webrtc\common_audio\signal_processing\auto_correlation.c" />
+    <ClCompile Include="webrtc\common_audio\signal_processing\auto_corr_to_refl_coef.c" />
+    <ClCompile Include="webrtc\common_audio\signal_processing\complex_bit_reverse.c" />
+    <ClCompile Include="webrtc\common_audio\signal_processing\complex_fft.c" />
+    <ClCompile Include="webrtc\common_audio\signal_processing\copy_set_operations.c" />
+    <ClCompile Include="webrtc\common_audio\signal_processing\cross_correlation.c" />
+    <ClCompile Include="webrtc\common_audio\signal_processing\division_operations.c" />
+    <ClCompile Include="webrtc\common_audio\signal_processing\dot_product_with_scale.cc" />
+    <ClCompile Include="webrtc\common_audio\signal_processing\downsample_fast.c" />
+    <ClCompile Include="webrtc\common_audio\signal_processing\energy.c" />
+    <ClCompile Include="webrtc\common_audio\signal_processing\filter_ar.c" />
+    <ClCompile Include="webrtc\common_audio\signal_processing\filter_ar_fast_q12.c" />
+    <ClCompile Include="webrtc\common_audio\signal_processing\filter_ma_fast_q12.c" />
+    <ClCompile Include="webrtc\common_audio\signal_processing\get_hanning_window.c" />
+    <ClCompile Include="webrtc\common_audio\signal_processing\get_scaling_square.c" />
+    <ClCompile Include="webrtc\common_audio\signal_processing\ilbc_specific_functions.c" />
+    <ClCompile Include="webrtc\common_audio\signal_processing\levinson_durbin.c" />
+    <ClCompile Include="webrtc\common_audio\signal_processing\lpc_to_refl_coef.c" />
+    <ClCompile Include="webrtc\common_audio\signal_processing\min_max_operations.c" />
+    <ClCompile Include="webrtc\common_audio\signal_processing\randomization_functions.c" />
+    <ClCompile Include="webrtc\common_audio\signal_processing\real_fft.c" />
+    <ClCompile Include="webrtc\common_audio\signal_processing\refl_coef_to_lpc.c" />
+    <ClCompile Include="webrtc\common_audio\signal_processing\resample.c" />
+    <ClCompile Include="webrtc\common_audio\signal_processing\resample_48khz.c" />
+    <ClCompile Include="webrtc\common_audio\signal_processing\resample_by_2.c" />
+    <ClCompile Include="webrtc\common_audio\signal_processing\resample_by_2_internal.c" />
+    <ClCompile Include="webrtc\common_audio\signal_processing\resample_fractional.c" />
+    <ClCompile Include="webrtc\common_audio\signal_processing\splitting_filter_.c" />
+    <ClCompile Include="webrtc\common_audio\signal_processing\spl_init.c" />
+    <ClCompile Include="webrtc\common_audio\signal_processing\spl_inl.c" />
+    <ClCompile Include="webrtc\common_audio\signal_processing\spl_sqrt.c" />
+    <ClCompile Include="webrtc\common_audio\signal_processing\spl_sqrt_floor.c" />
+    <ClCompile Include="webrtc\common_audio\signal_processing\sqrt_of_one_minus_x_squared.c" />
+    <ClCompile Include="webrtc\common_audio\signal_processing\vector_scaling_operations.c" />
+    <ClCompile Include="webrtc\common_audio\sparse_fir_filter.cc" />
+    <ClCompile Include="webrtc\common_audio\wav_file.cc" />
+    <ClCompile Include="webrtc\common_audio\wav_header.cc" />
+    <ClCompile Include="webrtc\modules\audio_processing\aec\aec_core.cc" />
+    <ClCompile Include="webrtc\modules\audio_processing\aec\aec_core_sse2.cc" />
+    <ClCompile Include="webrtc\modules\audio_processing\aec\aec_resampler.cc" />
+    <ClCompile Include="webrtc\modules\audio_processing\aec\echo_cancellation.cc" />
+    <ClCompile Include="webrtc\modules\audio_processing\agc\legacy\analog_agc.c" />
+    <ClCompile Include="webrtc\modules\audio_processing\agc\legacy\digital_agc.c" />
+    <ClCompile Include="webrtc\modules\audio_processing\logging\apm_data_dumper.cc" />
+    <ClCompile Include="webrtc\modules\audio_processing\ns\noise_suppression.c" />
+    <ClCompile Include="webrtc\modules\audio_processing\ns\noise_suppression_x.c" />
+    <ClCompile Include="webrtc\modules\audio_processing\ns\nsx_core.c" />
+    <ClCompile Include="webrtc\modules\audio_processing\ns\nsx_core_c.c" />
+    <ClCompile Include="webrtc\modules\audio_processing\ns\ns_core.c" />
+    <ClCompile Include="webrtc\modules\audio_processing\splitting_filter.cc" />
+    <ClCompile Include="webrtc\modules\audio_processing\three_band_filter_bank.cc" />
+    <ClCompile Include="webrtc\modules\audio_processing\utility\block_mean_calculator.cc" />
+    <ClCompile Include="webrtc\modules\audio_processing\utility\delay_estimator.cc" />
+    <ClCompile Include="webrtc\modules\audio_processing\utility\delay_estimator_wrapper.cc" />
+    <ClCompile Include="webrtc\modules\audio_processing\utility\ooura_fft.cc" />
+    <ClCompile Include="webrtc\modules\audio_processing\utility\ooura_fft_sse2.cc" />
+    <ClCompile Include="webrtc\system_wrappers\source\cpu_features.cc" />
+    <ClCompile Include="webrtc\system_wrappers\source\metrics_default.cc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="spdlog\fmt\bundled\fmt.license.rst" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

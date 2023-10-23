@@ -1,0 +1,36 @@
+/**
+ * CreateGroup.h - Contains API create group json header
+ *
+ * Author: Anton (ud) Golovkov, udattsk@gmail.com
+ * Copyright (C), Infinity Video Soft LLC, 2021
+ */
+
+#pragma once
+
+#include <string>
+#include <cstdint>
+
+namespace API
+{
+namespace CREATE_GROUP
+{
+	struct Command
+	{
+		int64_t parent_id;
+		std::string name;
+		std::string tag;
+		std::string password;
+		bool limited;
+		std::string guid;
+		int64_t owner_id;
+		
+		Command();
+		Command(int64_t parent_id, const std::string &name, const std::string &tag, const std::string &password, bool limited, const std::string &guid, int64_t owner_id);
+
+		~Command();
+
+		bool Parse(const std::string &message);
+		std::string Serialize();
+	};
+}
+}

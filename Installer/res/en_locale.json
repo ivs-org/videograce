@@ -1,0 +1,63 @@
+{
+  "sections": [
+    {
+      "type": "button",
+
+      "ok": "OK",
+      "yes": "Yes",
+      "no": "No",
+      "cancel": "Cancel",
+      "abort": "Abort",
+      "retry": "Retry",
+      "ignore": "Ignore",
+      "try_continue": "Try continue",
+      "complete": "Done"
+    },
+    {
+      "type": "window",
+
+      "pin": "Pin the window",
+      "unpin": "Unpin the window",
+      "dark_theme": "Apply a dark theme",
+      "light_theme": "Apply a light theme"
+    },
+    {
+      "type": "input",
+
+      "copy": "Copy",
+      "cut": "Cut",
+      "paste": "Paste",
+      "undo": "Undo",
+      "redo": "Redo"
+    },
+    {
+      "type": "installer",
+
+      "title": "VideoGrace Installer",
+      "big_title": "VideoGrace Client",
+      "path_button": "...",
+      "next": "Next",
+      "preamble_install": "The VideoGrace video conferencing client application\nwill be installed on your computer.\n\nClick Next to continue",
+      "preamble_uninstall": "The VideoGrace video conferencing client application\nwill be removed from your computer\n\nClick Next to continue",
+      "server_address": "Server address",
+      "installing": "The app is installed",
+      "uninstalling": "The app is deleted",
+      "path": "Location:",
+      "installation_progress": "Installing ",
+      "install_completed": "The application is installed and ready to use\n\nPress Done to continue",
+      "uninstallation_progress": "Deleting ",
+      "uninstall_completed": "VideoGrace Client has been removed from your computer\n\nPress Done to continue"
+    },
+    {
+      "type": "installer_error",
+
+      "title": "Error",
+      "server_not_found": "Server %s is not responding. Perhaps there is no network connection or it is turned off.\nIf the address does not match your server address, you can specify the correct address in the server settings\nand download the installer again by pressing No or press Yes and enter the server address manually.",
+      "parse_error": "Error decrypting the settings. Uninstall this installer and download a new one from the server.\nImportant! Do not rename the installer file!",
+      "incorrect_server_url": "Incorrect server address (protocol must be http or https)",
+      "empty_server_url": "Enter the URL of your server of the form http://server-address:8778",
+      "download_error": "Error downloading the executable file, check the server version",
+      "app_close_error": "Failed to complete VideoGrace Client already running"
+    }
+  ]
+}

@@ -1,0 +1,1774 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Source Files\Transport">
+      <UniqueIdentifier>{5c4145ff-69c3-47b3-84a4-02fb515b7020}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Common">
+      <UniqueIdentifier>{9e5205a3-6b76-481c-a072-2173d5f6ffa3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Common">
+      <UniqueIdentifier>{9ce027f7-8abe-4a0a-a388-94566c067a59}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Audio">
+      <UniqueIdentifier>{e7bbd1fc-d34e-4a17-8db3-2c63809037f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Video">
+      <UniqueIdentifier>{9485149e-ee70-457c-9cb4-fd20e7e99c90}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Video">
+      <UniqueIdentifier>{780ac963-e3c6-466a-9509-2a0a0469a007}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Record">
+      <UniqueIdentifier>{e407058f-517e-4808-b502-8e64ed304557}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Record">
+      <UniqueIdentifier>{203d6310-6a61-4a9d-862d-e53ca52b3870}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Transport\RTP">
+      <UniqueIdentifier>{b19cad0c-a1f9-4a16-aa41-39bcd7a3554b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Crypto">
+      <UniqueIdentifier>{dd236ac6-47c3-4613-beb2-c88ce3aff79d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Crypto">
+      <UniqueIdentifier>{2bad9c03-01c9-4baf-99a0-f08599b2b0c7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Transport\WebSocket">
+      <UniqueIdentifier>{e9cedd6f-f63d-4aeb-9d74-9ca523746483}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Transport\HTTP">
+      <UniqueIdentifier>{7ddf4260-3d62-490b-8520-1f8456563d5d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Proto">
+      <UniqueIdentifier>{66975e23-61ed-404b-a71b-faef554c29f5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Proto">
+      <UniqueIdentifier>{ed4966ae-b38c-4daf-9fea-11d85c98744f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\NetTester">
+      <UniqueIdentifier>{c3074e04-947c-4ac0-b07e-1c795b433b63}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\NetTester">
+      <UniqueIdentifier>{02a6659e-1f65-4ef3-ab03-ecb57a1ac4c6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\AEC">
+      <UniqueIdentifier>{ebb46b90-195d-4c13-9613-084a4a33eee4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\AEC">
+      <UniqueIdentifier>{717a6079-a852-4490-9be3-abb6327863f6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\spdlog">
+      <UniqueIdentifier>{529d50ea-b17e-48c5-a9d5-fa627857d2e9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\spdlog\details">
+      <UniqueIdentifier>{6f14330c-a829-4c60-9897-ab625e73096f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\spdlog\fmt">
+      <UniqueIdentifier>{535e1433-8538-429a-a624-7c58fc1b1756}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\spdlog\sinks">
+      <UniqueIdentifier>{9fe6be39-420c-420b-ac5e-874deb5b7ae7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\License">
+      <UniqueIdentifier>{c9fba9c1-7a08-4719-bcbf-b2288de71066}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\License">
+      <UniqueIdentifier>{f0df3c67-5855-4dea-8f37-82e89fc2e727}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\DB">
+      <UniqueIdentifier>{0aee28ce-76d2-455b-823f-4c9544f48bab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\DB\sqlite">
+      <UniqueIdentifier>{2550b1cf-78ff-48e3-a9d2-0dbc89738780}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\DB">
+      <UniqueIdentifier>{b74ed936-8311-46e5-b7c1-734676599053}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\DB\sqlite">
+      <UniqueIdentifier>{329f19d9-bea9-47bb-a559-7ea05ec0c30d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\JitterBuffer">
+      <UniqueIdentifier>{c35b4c00-624f-4404-8a3d-89b2f35ed6e9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\JitterBuffer">
+      <UniqueIdentifier>{22559d87-64c2-4c6e-af93-e7da99ed506c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\webrtc">
+      <UniqueIdentifier>{ab545d09-9b92-4485-84a0-90f1d1e01b2b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\webrtc\common_audio">
+      <UniqueIdentifier>{62d3fec2-6ee5-4758-b692-dd7ec06b83f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\webrtc\modules">
+      <UniqueIdentifier>{eee9e1be-c23a-4d76-8272-beca9f944959}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\webrtc\system_wrappers">
+      <UniqueIdentifier>{9e0ceef2-43fb-442a-b765-43fa9a73575b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\webrtc\common_audio\include">
+      <UniqueIdentifier>{ee9f64e6-9024-4ca8-bde4-d15f96ecc4cc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\webrtc\common_audio\signal_processing">
+      <UniqueIdentifier>{f37041bf-0ebc-4de7-b1dc-f24166bd3292}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\webrtc\modules\audio_processing">
+      <UniqueIdentifier>{49e0c4d0-21f0-4bff-a5b0-2f008870049c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\webrtc\modules\audio_processing\aec">
+      <UniqueIdentifier>{17bedfb9-248c-4083-99c3-9c1ba55995cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\webrtc\modules\audio_processing\logging">
+      <UniqueIdentifier>{c1eb4532-6f4d-492a-a3f8-27026ea41585}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\webrtc\modules\audio_processing\ns">
+      <UniqueIdentifier>{13f03e7e-f913-4fd9-85ce-58a55289fcf8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\webrtc\modules\audio_processing\utility">
+      <UniqueIdentifier>{34a612eb-8e18-4273-a34c-383fd4a00ed0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\webrtc\common_audio\signal_processing\include">
+      <UniqueIdentifier>{1c7f9960-6f84-4f4d-889a-5e57c292a516}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\webrtc">
+      <UniqueIdentifier>{8db90911-be05-469d-b10f-8305df713f61}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\webrtc\common_audio">
+      <UniqueIdentifier>{5041e5a1-6e54-4466-8783-5b8fd2f1b691}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\webrtc\common_audio\signal_processing">
+      <UniqueIdentifier>{4703ee66-f456-4163-bbf5-31643e5f310d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\webrtc\modules\audio_processing\agc">
+      <UniqueIdentifier>{ae93ea24-c29d-4b6a-b590-e60f517824d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Audio">
+      <UniqueIdentifier>{2db96ed0-5382-4fb7-bdb1-286f250f28c0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\webrtc\base">
+      <UniqueIdentifier>{997c964d-c267-4cba-8bde-2ed30a9ac572}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\webrtc\modules\audio_processing\agc\legacy">
+      <UniqueIdentifier>{146763e6-4198-4bf0-b832-bfde76859b81}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\webrtc\system_wrappers\include">
+      <UniqueIdentifier>{5cb873c0-80e3-45f6-967e-44411c2a48e8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\webrtc\base">
+      <UniqueIdentifier>{1387d46e-9c0a-4bf4-af4c-4f7693cb5ea0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\webrtc\system_wrappers">
+      <UniqueIdentifier>{61902045-7818-497c-a921-a14f57f17e36}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\webrtc\system_wrappers\source">
+      <UniqueIdentifier>{f5dd87b2-b810-4e7d-9ac9-36fc81190152}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\webrtc\modules">
+      <UniqueIdentifier>{3cb8dd16-69ce-4374-8f5f-8101a247a8b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\webrtc\modules\audio_processing">
+      <UniqueIdentifier>{7225078a-f5d0-45be-94e7-f7c53a5f5f7e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\webrtc\modules\audio_processing\aec">
+      <UniqueIdentifier>{430844b2-d508-42f9-9f87-86da2fc2ebe2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\webrtc\modules\audio_processing\agc">
+      <UniqueIdentifier>{60004a6b-a75f-45c4-b5fe-9fc02749ee5f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\webrtc\modules\audio_processing\agc\legacy">
+      <UniqueIdentifier>{c0e8153b-5eeb-494a-8a13-f134dcfa1797}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\webrtc\modules\audio_processing\logging">
+      <UniqueIdentifier>{f6c2685e-a5ef-4109-8626-fb0c1ae4bc84}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\webrtc\modules\audio_processing\ns">
+      <UniqueIdentifier>{e7c758cf-0421-4c07-828f-293a8755e6c6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\webrtc\modules\audio_processing\utility">
+      <UniqueIdentifier>{f5a99d86-301c-4f10-96a8-b4bfc847d2a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Storage">
+      <UniqueIdentifier>{44d0db0d-ba6a-40b9-aae1-6bff3583963c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Storage">
+      <UniqueIdentifier>{776f53f3-f3ab-47cf-b563-4ab0139b3808}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Transport">
+      <UniqueIdentifier>{a406e683-a2f7-4349-9251-de6f78db8df4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Transport\RTP">
+      <UniqueIdentifier>{9eb6c0a5-60d5-492f-a50f-75858d77b326}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Transport\WebSocket">
+      <UniqueIdentifier>{ebc824bc-6695-4d2a-83f0-bbb3f7e5c1ca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Transport\HTTP">
+      <UniqueIdentifier>{3dc055ce-1d00-4715-8b63-4f837c78bc18}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Transport\TCP">
+      <UniqueIdentifier>{f8f4a57e-1b49-4c4a-bbfd-1afab30dfc26}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Transport\URI">
+      <UniqueIdentifier>{83e75907-c383-4ba3-a720-f5d1f51eca7e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Transport\URI">
+      <UniqueIdentifier>{5f7f1742-8832-4793-8531-7839d1a9a3e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Controller">
+      <UniqueIdentifier>{3ad45e25-0400-400a-b662-9ce0d7f5a90d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Controller">
+      <UniqueIdentifier>{e3f657d5-b08d-497d-9e16-758669fca861}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Registrator">
+      <UniqueIdentifier>{49b0fa18-3e92-43c9-81a7-d230eefcbb4d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Registrator">
+      <UniqueIdentifier>{6cc50c19-edb6-44d2-9e37-3fc0afdb88c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\API">
+      <UniqueIdentifier>{9b601bb7-fac9-4341-8d10-d40a18001a74}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\API">
+      <UniqueIdentifier>{0074846f-02cc-4540-a816-ab86bca4512c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Transport\TCP">
+      <UniqueIdentifier>{d1093074-7dc8-4941-ad30-cee99d8d86c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\nlohmann">
+      <UniqueIdentifier>{f64b10da-36de-4218-ad33-bbccc94d8699}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\mt">
+      <UniqueIdentifier>{4b848659-95ec-4b9f-af44-e33d2b966487}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\spdlog\cfg">
+      <UniqueIdentifier>{2acee74c-a55b-43b4-8104-1cd5108e91e8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\spdlog\fmt\bundled">
+      <UniqueIdentifier>{135a2f20-7633-430a-b14a-a650053cafe4}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Transport\IPacket.h">
+      <Filter>Header Files\Transport</Filter>
+    </ClInclude>
+    <ClInclude Include="Transport\ISocket.h">
+      <Filter>Header Files\Transport</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\Common.h">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Transport\NetworkInit.h">
+      <Filter>Header Files\Transport</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\BitHelpers.h">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Video\Resolution.h">
+      <Filter>Header Files\Video</Filter>
+    </ClInclude>
+    <ClInclude Include="Audio\IAudioEncoder.h">
+      <Filter>Header Files\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="Audio\IAudioDecoder.h">
+      <Filter>Header Files\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="Video\IVideoDecoder.h">
+      <Filter>Header Files\Video</Filter>
+    </ClInclude>
+    <ClInclude Include="Video\VideoEncoder.h">
+      <Filter>Header Files\Video</Filter>
+    </ClInclude>
+    <ClInclude Include="Video\IVideoEncoder.h">
+      <Filter>Header Files\Video</Filter>
+    </ClInclude>
+    <ClInclude Include="Video\VP8EncoderImpl.h">
+      <Filter>Header Files\Video</Filter>
+    </ClInclude>
+    <ClInclude Include="Video\VideoDecoder.h">
+      <Filter>Header Files\Video</Filter>
+    </ClInclude>
+    <ClInclude Include="Video\VP8DecoderImpl.h">
+      <Filter>Header Files\Video</Filter>
+    </ClInclude>
+    <ClInclude Include="Record\IRecorder.h">
+      <Filter>Header Files\Record</Filter>
+    </ClInclude>
+    <ClInclude Include="Record\Recorder.h">
+      <Filter>Header Files\Record</Filter>
+    </ClInclude>
+    <ClInclude Include="Transport\SocketSplitter.h">
+      <Filter>Header Files\Transport</Filter>
+    </ClInclude>
+    <ClInclude Include="Audio\AudioDecoder.h">
+      <Filter>Header Files\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="Audio\AudioEncoder.h">
+      <Filter>Header Files\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="Audio\OpusDecoderImpl.h">
+      <Filter>Header Files\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="Audio\OpusEncoderImpl.h">
+      <Filter>Header Files\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\TimeMeter.h">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\CRC32.h">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Transport\RTP\RTCPPacket.h">
+      <Filter>Header Files\Transport\RTP</Filter>
+    </ClInclude>
+    <ClInclude Include="Transport\RTP\RTPPacket.h">
+      <Filter>Header Files\Transport\RTP</Filter>
+    </ClInclude>
+    <ClInclude Include="Transport\RTP\RTPPayloadType.h">
+      <Filter>Header Files\Transport\RTP</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\URLEncode.h">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Video\IPacketLossCallback.h">
+      <Filter>Header Files\Video</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\md5.h">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\MapContainer.h">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\VectorContainer.h">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Audio\AudioMixer.h">
+      <Filter>Header Files\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="Audio\SoundBlock.h">
+      <Filter>Header Files\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="Crypto\Encryptor.h">
+      <Filter>Header Files\Crypto</Filter>
+    </ClInclude>
+    <ClInclude Include="Crypto\IEncryptor.h">
+      <Filter>Header Files\Crypto</Filter>
+    </ClInclude>
+    <ClInclude Include="Crypto\Decryptor.h">
+      <Filter>Header Files\Crypto</Filter>
+    </ClInclude>
+    <ClInclude Include="Crypto\IDecryptor.h">
+      <Filter>Header Files\Crypto</Filter>
+    </ClInclude>
+    <ClInclude Include="Crypto\StringEncryptor.h">
+      <Filter>Header Files\Crypto</Filter>
+    </ClInclude>
+    <ClInclude Include="Video\ColorSpace.h">
+      <Filter>Header Files\Video</Filter>
+    </ClInclude>
+    <ClInclude Include="Transport\WebSocket\IWebSocket.h">
+      <Filter>Header Files\Transport\WebSocket</Filter>
+    </ClInclude>
+    <ClInclude Include="Transport\WebSocket\WebSocket.h">
+      <Filter>Header Files\Transport\WebSocket</Filter>
+    </ClInclude>
+    <ClInclude Include="Transport\HTTP\HttpClient.h">
+      <Filter>Header Files\Transport\HTTP</Filter>
+    </ClInclude>
+    <ClInclude Include="Transport\HTTP\IHttpClient.h">
+      <Filter>Header Files\Transport\HTTP</Filter>
+    </ClInclude>
+    <ClInclude Include="Proto\CommandType.h">
+      <Filter>Header Files\Proto</Filter>
+    </ClInclude>
+    <ClInclude Include="Proto\CmdDisconnect.h">
+      <Filter>Header Files\Proto</Filter>
+    </ClInclude>
+    <ClInclude Include="Proto\CmdDeviceDisconnect.h">
+      <Filter>Header Files\Proto</Filter>
+    </ClInclude>
+    <ClInclude Include="Proto\CmdDeviceConnect.h">
+      <Filter>Header Files\Proto</Filter>
+    </ClInclude>
+    <ClInclude Include="Proto\CmdResolutionChange.h">
+      <Filter>Header Files\Proto</Filter>
+    </ClInclude>
+    <ClInclude Include="Proto\CmdCallRequest.h">
+      <Filter>Header Files\Proto</Filter>
+    </ClInclude>
+    <ClInclude Include="Proto\CmdCallResponse.h">
+      <Filter>Header Files\Proto</Filter>
+    </ClInclude>
+    <ClInclude Include="Proto\CmdDisconnectFromConference.h">
+      <Filter>Header Files\Proto</Filter>
+    </ClInclude>
+    <ClInclude Include="Proto\CmdChangeContactState.h">
+      <Filter>Header Files\Proto</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\FSHelpers.h">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\URLDecode.h">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\HTMLSymbolsScreener.h">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Proto\CmdScheduleConnect.h">
+      <Filter>Header Files\Proto</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\Quoter.h">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\JSONSymbolsScreener.h">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\Base64.h">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Proto\CmdChangeMemberState.h">
+      <Filter>Header Files\Proto</Filter>
+    </ClInclude>
+    <ClInclude Include="Proto\CmdMemberAction.h">
+      <Filter>Header Files\Proto</Filter>
+    </ClInclude>
+    <ClInclude Include="AEC\AEC.h">
+      <Filter>Header Files\AEC</Filter>
+    </ClInclude>
+    <ClInclude Include="AEC\IAEC.h">
+      <Filter>Header Files\AEC</Filter>
+    </ClInclude>
+    <ClInclude Include="Proto\CmdPing.h">
+      <Filter>Header Files\Proto</Filter>
+    </ClInclude>
+    <ClInclude Include="Transport\PacketType.h">
+      <Filter>Header Files\Transport</Filter>
+    </ClInclude>
+    <ClInclude Include="Transport\RTPSocket.h">
+      <Filter>Header Files\Transport</Filter>
+    </ClInclude>
+    <ClInclude Include="Proto\CmdWantSpeak.h">
+      <Filter>Header Files\Proto</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\WindowsVersion.h">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Proto\CmdConnectRequest.h">
+      <Filter>Header Files\Proto</Filter>
+    </ClInclude>
+    <ClInclude Include="Proto\CmdConnectResponse.h">
+      <Filter>Header Files\Proto</Filter>
+    </ClInclude>
+    <ClInclude Include="Proto\CmdSetMaxBitrate.h">
+      <Filter>Header Files\Proto</Filter>
+    </ClInclude>
+    <ClInclude Include="Proto\CmdConferencesList.h">
+      <Filter>Header Files\Proto</Filter>
+    </ClInclude>
+    <ClInclude Include="Proto\CmdConnectToConferenceRequest.h">
+      <Filter>Header Files\Proto</Filter>
+    </ClInclude>
+    <ClInclude Include="Proto\CmdConnectToConferenceResponse.h">
+      <Filter>Header Files\Proto</Filter>
+    </ClInclude>
+    <ClInclude Include="Proto\CmdSearchContact.h">
+      <Filter>Header Files\Proto</Filter>
+    </ClInclude>
+    <ClInclude Include="Proto\CmdContactList.h">
+      <Filter>Header Files\Proto</Filter>
+    </ClInclude>
+    <ClInclude Include="Proto\CmdDeviceParams.h">
+      <Filter>Header Files\Proto</Filter>
+    </ClInclude>
+    <ClInclude Include="Proto\CmdRendererDisconnect.h">
+      <Filter>Header Files\Proto</Filter>
+    </ClInclude>
+    <ClInclude Include="Proto\CmdRendererConnect.h">
+      <Filter>Header Files\Proto</Filter>
+    </ClInclude>
+    <ClInclude Include="Proto\CmdCreateTempConference.h">
+      <Filter>Header Files\Proto</Filter>
+    </ClInclude>
+    <ClInclude Include="Proto\CmdSendConnectToConference.h">
+      <Filter>Header Files\Proto</Filter>
+    </ClInclude>
+    <ClInclude Include="Proto\CmdTurnSpeaker.h">
+      <Filter>Header Files\Proto</Filter>
+    </ClInclude>
+    <ClInclude Include="Proto\Member.h">
+      <Filter>Header Files\Proto</Filter>
+    </ClInclude>
+    <ClInclude Include="Proto\Conference.h">
+      <Filter>Header Files\Proto</Filter>
+    </ClInclude>
+    <ClInclude Include="Proto\DeviceType.h">
+      <Filter>Header Files\Proto</Filter>
+    </ClInclude>
+    <ClInclude Include="Version.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Proto\CmdUpdateGrants.h">
+      <Filter>Header Files\Proto</Filter>
+    </ClInclude>
+    <ClInclude Include="License\Grants.h">
+      <Filter>Header Files\License</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\sqlite\sqlite3.h">
+      <Filter>Header Files\DB\sqlite</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\sqlite\sqlite3ext.h">
+      <Filter>Header Files\DB\sqlite</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\Connection.h">
+      <Filter>Header Files\DB</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\Transaction.h">
+      <Filter>Header Files\DB</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\Result.h">
+      <Filter>Header Files\DB</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\Query.h">
+      <Filter>Header Files\DB</Filter>
+    </ClInclude>
+    <ClInclude Include="NetTester\SpeedTester.h">
+      <Filter>Header Files\NetTester</Filter>
+    </ClInclude>
+    <ClInclude Include="NetTester\UDPTester.h">
+      <Filter>Header Files\NetTester</Filter>
+    </ClInclude>
+    <ClInclude Include="Video\CodecType.h">
+      <Filter>Header Files\Video</Filter>
+    </ClInclude>
+    <ClInclude Include="Audio\CodecType.h">
+      <Filter>Header Files\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="Video\VP8RTPSplitter.h">
+      <Filter>Header Files\Video</Filter>
+    </ClInclude>
+    <ClInclude Include="Video\VP8RTPCollector.h">
+      <Filter>Header Files\Video</Filter>
+    </ClInclude>
+    <ClInclude Include="webrtc\typedefs.h">
+      <Filter>Header Files\webrtc</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\HumanTime.h">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Transport\UDPSocket.h">
+      <Filter>Header Files\Transport</Filter>
+    </ClInclude>
+    <ClInclude Include="Transport\TCP\Message.h">
+      <Filter>Header Files\Transport\TCP</Filter>
+    </ClInclude>
+    <ClInclude Include="Transport\TCP\Client.h">
+      <Filter>Header Files\Transport\TCP</Filter>
+    </ClInclude>
+    <ClInclude Include="Transport\TCP\Server.h">
+      <Filter>Header Files\Transport\TCP</Filter>
+    </ClInclude>
+    <ClInclude Include="Proto\CmdRequestMediaAddresses.h">
+      <Filter>Header Files\Proto</Filter>
+    </ClInclude>
+    <ClInclude Include="Proto\CmdMediaAddressesList.h">
+      <Filter>Header Files\Proto</Filter>
+    </ClInclude>
+    <ClInclude Include="NetTester\TCPTester.h">
+      <Filter>Header Files\NetTester</Filter>
+    </ClInclude>
+    <ClInclude Include="Proto\Message.h">
+      <Filter>Header Files\Proto</Filter>
+    </ClInclude>
+    <ClInclude Include="Proto\CmdDeliveryMessages.h">
+      <Filter>Header Files\Proto</Filter>
+    </ClInclude>
+    <ClInclude Include="Proto\CmdLoadMessages.h">
+      <Filter>Header Files\Proto</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\ShortSleep.h">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="webrtc\base\arch.h">
+      <Filter>Header Files\webrtc\base</Filter>
+    </ClInclude>
+    <ClInclude Include="webrtc\base\array_view.h">
+      <Filter>Header Files\webrtc\base</Filter>
+    </ClInclude>
+    <ClInclude Include="webrtc\base\atomicops.h">
+      <Filter>Header Files\webrtc\base</Filter>
+    </ClInclude>
+    <ClInclude Include="webrtc\base\basictypes.h">
+      <Filter>Header Files\webrtc\base</Filter>
+    </ClInclude>
+    <ClInclude Include="webrtc\base\checks.h">
+      <Filter>Header Files\webrtc\base</Filter>
+    </ClInclude>
+    <ClInclude Include="webrtc\base\compile_assert_c.h">
+      <Filter>Header Files\webrtc\base</Filter>
+    </ClInclude>
+    <ClInclude Include="webrtc\base\constructormagic.h">
+      <Filter>Header Files\webrtc\base</Filter>
+    </ClInclude>
+    <ClInclude Include="webrtc\base\criticalsection.h">
+      <Filter>Header Files\webrtc\base</Filter>
+    </ClInclude>
+    <ClInclude Include="webrtc\base\inline.h">
+      <Filter>Header Files\webrtc\base</Filter>
+    </ClInclude>
+    <ClInclude Include="webrtc\base\platform_thread_types.h">
+      <Filter>Header Files\webrtc\base</Filter>
+    </ClInclude>
+    <ClInclude Include="webrtc\base\safe_compare.h">
+      <Filter>Header Files\webrtc\base</Filter>
+    </ClInclude>
+    <ClInclude Include="webrtc\base\safe_conversions.h">
+      <Filter>Header Files\webrtc\base</Filter>
+    </ClInclude>
+    <ClInclude Include="webrtc\base\safe_conversions_impl.h">
+      <Filter>Header Files\webrtc\base</Filter>
+    </ClInclude>
+    <ClInclude Include="webrtc\base\safe_minmax.h">
+      <Filter>Header Files\webrtc\base</Filter>
+    </ClInclude>
+    <ClInclude Include="webrtc\base\sanitizer.h">
+      <Filter>Header Files\webrtc\base</Filter>
+    </ClInclude>
+    <ClInclude Include="webrtc\base\stringutils.h">
+      <Filter>Header Files\webrtc\base</Filter>
+    </ClInclude>
+    <ClInclude Include="webrtc\base\thread_annotations.h">
+      <Filter>Header Files\webrtc\base</Filter>
+    </ClInclude>
+    <ClInclude Include="webrtc\base\type_traits.h">
+      <Filter>Header Files\webrtc\base</Filter>
+    </ClInclude>
+    <ClInclude Include="webrtc\base\unused.h">
+      <Filter>Header Files\webrtc\base</Filter>
+    </ClInclude>
+    <ClInclude Include="webrtc\common_audio\signal_processing\dot_product_with_scale.h">
+      <Filter>Header Files\webrtc\common_audio\signal_processing</Filter>
+    </ClInclude>
+    <ClInclude Include="webrtc\common_audio\channel_buffer.h">
+      <Filter>Header Files\webrtc\common_audio</Filter>
+    </ClInclude>
+    <ClInclude Include="webrtc\common_audio\fft4g.h">
+      <Filter>Header Files\webrtc\common_audio</Filter>
+    </ClInclude>
+    <ClInclude Include="webrtc\common_audio\ring_buffer.h">
+      <Filter>Header Files\webrtc\common_audio</Filter>
+    </ClInclude>
+    <ClInclude Include="webrtc\common_audio\sparse_fir_filter.h">
+      <Filter>Header Files\webrtc\common_audio</Filter>
+    </ClInclude>
+    <ClInclude Include="webrtc\common_audio\wav_file.h">
+      <Filter>Header Files\webrtc\common_audio</Filter>
+    </ClInclude>
+    <ClInclude Include="webrtc\common_audio\wav_header.h">
+      <Filter>Header Files\webrtc\common_audio</Filter>
+    </ClInclude>
+    <ClInclude Include="webrtc\common_audio\include\audio_util.h">
+      <Filter>Header Files\webrtc\common_audio\include</Filter>
+    </ClInclude>
+    <ClInclude Include="webrtc\common_audio\signal_processing\include\real_fft.h">
+      <Filter>Header Files\webrtc\common_audio\signal_processing\include</Filter>
+    </ClInclude>
+    <ClInclude Include="webrtc\common_audio\signal_processing\include\signal_processing_library.h">
+      <Filter>Header Files\webrtc\common_audio\signal_processing\include</Filter>
+    </ClInclude>
+    <ClInclude Include="webrtc\common_audio\signal_processing\include\spl_inl.h">
+      <Filter>Header Files\webrtc\common_audio\signal_processing\include</Filter>
+    </ClInclude>
+    <ClInclude Include="webrtc\common_audio\signal_processing\include\spl_inl_armv7.h">
+      <Filter>Header Files\webrtc\common_audio\signal_processing\include</Filter>
+    </ClInclude>
+    <ClInclude Include="webrtc\modules\audio_processing\splitting_filter.h">
+      <Filter>Header Files\webrtc\modules\audio_processing</Filter>
+    </ClInclude>
+    <ClInclude Include="webrtc\modules\audio_processing\three_band_filter_bank.h">
+      <Filter>Header Files\webrtc\modules\audio_processing</Filter>
+    </ClInclude>
+    <ClInclude Include="webrtc\modules\audio_processing\aec\aec_common.h">
+      <Filter>Header Files\webrtc\modules\audio_processing\aec</Filter>
+    </ClInclude>
+    <ClInclude Include="webrtc\modules\audio_processing\aec\aec_core.h">
+      <Filter>Header Files\webrtc\modules\audio_processing\aec</Filter>
+    </ClInclude>
+    <ClInclude Include="webrtc\modules\audio_processing\aec\aec_core_optimized_methods.h">
+      <Filter>Header Files\webrtc\modules\audio_processing\aec</Filter>
+    </ClInclude>
+    <ClInclude Include="webrtc\modules\audio_processing\aec\aec_resampler.h">
+      <Filter>Header Files\webrtc\modules\audio_processing\aec</Filter>
+    </ClInclude>
+    <ClInclude Include="webrtc\modules\audio_processing\aec\echo_cancellation.h">
+      <Filter>Header Files\webrtc\modules\audio_processing\aec</Filter>
+    </ClInclude>
+    <ClInclude Include="webrtc\modules\audio_processing\agc\legacy\analog_agc.h">
+      <Filter>Header Files\webrtc\modules\audio_processing\agc\legacy</Filter>
+    </ClInclude>
+    <ClInclude Include="webrtc\modules\audio_processing\agc\legacy\digital_agc.h">
+      <Filter>Header Files\webrtc\modules\audio_processing\agc\legacy</Filter>
+    </ClInclude>
+    <ClInclude Include="webrtc\modules\audio_processing\agc\legacy\gain_control.h">
+      <Filter>Header Files\webrtc\modules\audio_processing\agc\legacy</Filter>
+    </ClInclude>
+    <ClInclude Include="webrtc\modules\audio_processing\logging\apm_data_dumper.h">
+      <Filter>Header Files\webrtc\modules\audio_processing\logging</Filter>
+    </ClInclude>
+    <ClInclude Include="webrtc\modules\audio_processing\ns\defines.h">
+      <Filter>Header Files\webrtc\modules\audio_processing\ns</Filter>
+    </ClInclude>
+    <ClInclude Include="webrtc\modules\audio_processing\ns\noise_suppression.h">
+      <Filter>Header Files\webrtc\modules\audio_processing\ns</Filter>
+    </ClInclude>
+    <ClInclude Include="webrtc\modules\audio_processing\ns\noise_suppression_x.h">
+      <Filter>Header Files\webrtc\modules\audio_processing\ns</Filter>
+    </ClInclude>
+    <ClInclude Include="webrtc\modules\audio_processing\ns\ns_core.h">
+      <Filter>Header Files\webrtc\modules\audio_processing\ns</Filter>
+    </ClInclude>
+    <ClInclude Include="webrtc\modules\audio_processing\ns\nsx_core.h">
+      <Filter>Header Files\webrtc\modules\audio_processing\ns</Filter>
+    </ClInclude>
+    <ClInclude Include="webrtc\modules\audio_processing\ns\nsx_defines.h">
+      <Filter>Header Files\webrtc\modules\audio_processing\ns</Filter>
+    </ClInclude>
+    <ClInclude Include="webrtc\modules\audio_processing\ns\windows_private.h">
+      <Filter>Header Files\webrtc\modules\audio_processing\ns</Filter>
+    </ClInclude>
+    <ClInclude Include="webrtc\modules\audio_processing\utility\block_mean_calculator.h">
+      <Filter>Header Files\webrtc\modules\audio_processing\utility</Filter>
+    </ClInclude>
+    <ClInclude Include="webrtc\modules\audio_processing\utility\delay_estimator.h">
+      <Filter>Header Files\webrtc\modules\audio_processing\utility</Filter>
+    </ClInclude>
+    <ClInclude Include="webrtc\modules\audio_processing\utility\delay_estimator_internal.h">
+      <Filter>Header Files\webrtc\modules\audio_processing\utility</Filter>
+    </ClInclude>
+    <ClInclude Include="webrtc\modules\audio_processing\utility\delay_estimator_wrapper.h">
+      <Filter>Header Files\webrtc\modules\audio_processing\utility</Filter>
+    </ClInclude>
+    <ClInclude Include="webrtc\modules\audio_processing\utility\ooura_fft.h">
+      <Filter>Header Files\webrtc\modules\audio_processing\utility</Filter>
+    </ClInclude>
+    <ClInclude Include="webrtc\modules\audio_processing\utility\ooura_fft_tables_common.h">
+      <Filter>Header Files\webrtc\modules\audio_processing\utility</Filter>
+    </ClInclude>
+    <ClInclude Include="webrtc\modules\audio_processing\utility\ooura_fft_tables_neon_sse2.h">
+      <Filter>Header Files\webrtc\modules\audio_processing\utility</Filter>
+    </ClInclude>
+    <ClInclude Include="webrtc\system_wrappers\include\cpu_features_wrapper.h">
+      <Filter>Header Files\webrtc\system_wrappers\include</Filter>
+    </ClInclude>
+    <ClInclude Include="webrtc\system_wrappers\include\metrics.h">
+      <Filter>Header Files\webrtc\system_wrappers\include</Filter>
+    </ClInclude>
+    <ClInclude Include="webrtc\system_wrappers\include\metrics_default.h">
+      <Filter>Header Files\webrtc\system_wrappers\include</Filter>
+    </ClInclude>
+    <ClInclude Include="Storage\Storage.h">
+      <Filter>Header Files\Storage</Filter>
+    </ClInclude>
+    <ClInclude Include="Video\SplittedPacketSize.h">
+      <Filter>Header Files\Video</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\Process.h">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\ToDigit.h">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\MACAddresses.h">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Transport\Address.h">
+      <Filter>Header Files\Transport</Filter>
+    </ClInclude>
+    <ClInclude Include="Transport\URI\URI.h">
+      <Filter>Header Files\Transport\URI</Filter>
+    </ClInclude>
+    <ClInclude Include="Controller\Controller.h">
+      <Filter>Header Files\Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="Controller\IController.h">
+      <Filter>Header Files\Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="Controller\IMemberList.h">
+      <Filter>Header Files\Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="Proto\ConferenceGrants.h">
+      <Filter>Header Files\Proto</Filter>
+    </ClInclude>
+    <ClInclude Include="Proto\CmdChangeServer.h">
+      <Filter>Header Files\Proto</Filter>
+    </ClInclude>
+    <ClInclude Include="Record\MP3Writer.h">
+      <Filter>Header Files\Record</Filter>
+    </ClInclude>
+    <ClInclude Include="Proto\CmdMicrophoneActive.h">
+      <Filter>Header Files\Proto</Filter>
+    </ClInclude>
+    <ClInclude Include="Audio\SilentDetector.h">
+      <Filter>Header Files\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="Proto\CmdUserUpdateRequest.h">
+      <Filter>Header Files\Proto</Filter>
+    </ClInclude>
+    <ClInclude Include="Proto\CmdUserUpdateResponse.h">
+      <Filter>Header Files\Proto</Filter>
+    </ClInclude>
+    <ClInclude Include="Proto\Group.h">
+      <Filter>Header Files\Proto</Filter>
+    </ClInclude>
+    <ClInclude Include="Proto\CmdGroupList.h">
+      <Filter>Header Files\Proto</Filter>
+    </ClInclude>
+    <ClInclude Include="Proto\GroupGrants.h">
+      <Filter>Header Files\Proto</Filter>
+    </ClInclude>
+    <ClInclude Include="Proto\CmdCredentialsRequest.h">
+      <Filter>Header Files\Proto</Filter>
+    </ClInclude>
+    <ClInclude Include="Proto\CmdCredentialsResponse.h">
+      <Filter>Header Files\Proto</Filter>
+    </ClInclude>
+    <ClInclude Include="Registrator\Registrator.h">
+      <Filter>Header Files\Registrator</Filter>
+    </ClInclude>
+    <ClInclude Include="API\CreateGroup.h">
+      <Filter>Header Files\API</Filter>
+    </ClInclude>
+    <ClInclude Include="API\CreateUser.h">
+      <Filter>Header Files\API</Filter>
+    </ClInclude>
+    <ClInclude Include="API\DeleteGroup.h">
+      <Filter>Header Files\API</Filter>
+    </ClInclude>
+    <ClInclude Include="API\DeleteUser.h">
+      <Filter>Header Files\API</Filter>
+    </ClInclude>
+    <ClInclude Include="API\EditGroup.h">
+      <Filter>Header Files\API</Filter>
+    </ClInclude>
+    <ClInclude Include="API\EditUser.h">
+      <Filter>Header Files\API</Filter>
+    </ClInclude>
+    <ClInclude Include="API\RedirectUser.h">
+      <Filter>Header Files\API</Filter>
+    </ClInclude>
+    <ClInclude Include="API\Result.h">
+      <Filter>Header Files\API</Filter>
+    </ClInclude>
+    <ClInclude Include="API\ServerInfo.h">
+      <Filter>Header Files\API</Filter>
+    </ClInclude>
+    <ClInclude Include="Proto\CmdConferenceUpdateRequest.h">
+      <Filter>Header Files\Proto</Filter>
+    </ClInclude>
+    <ClInclude Include="Proto\CmdConferenceUpdateResponse.h">
+      <Filter>Header Files\Proto</Filter>
+    </ClInclude>
+    <ClInclude Include="Proto\MemberGrants.h">
+      <Filter>Header Files\Proto</Filter>
+    </ClInclude>
+    <ClInclude Include="Crypto\Checker.h">
+      <Filter>Header Files\Crypto</Filter>
+    </ClInclude>
+    <ClInclude Include="Video\VideoFormat.h">
+      <Filter>Header Files\Video</Filter>
+    </ClInclude>
+    <ClInclude Include="Transport\RTP\OwnedRTPPacket.h">
+      <Filter>Header Files\Transport\RTP</Filter>
+    </ClInclude>
+    <ClInclude Include="nlohmann\json.hpp">
+      <Filter>Header Files\nlohmann</Filter>
+    </ClInclude>
+    <ClInclude Include="JitterBuffer\JB.h">
+      <Filter>Header Files\JitterBuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="mt\rw_lock.h">
+      <Filter>Header Files\mt</Filter>
+    </ClInclude>
+    <ClInclude Include="mt\semaphore.h">
+      <Filter>Header Files\mt</Filter>
+    </ClInclude>
+    <ClInclude Include="mt\thread_priority.h">
+      <Filter>Header Files\mt</Filter>
+    </ClInclude>
+    <ClInclude Include="mt\timer.h">
+      <Filter>Header Files\mt</Filter>
+    </ClInclude>
+    <ClInclude Include="mt\wf_ring_buffer.h">
+      <Filter>Header Files\mt</Filter>
+    </ClInclude>
+    <ClInclude Include="Proto\CmdContactsUpdate.h">
+      <Filter>Header Files\Proto</Filter>
+    </ClInclude>
+    <ClInclude Include="Audio\Resampler.h">
+      <Filter>Header Files\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\async.h">
+      <Filter>Header Files\spdlog</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\async_logger.h">
+      <Filter>Header Files\spdlog</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\async_logger-inl.h">
+      <Filter>Header Files\spdlog</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\common.h">
+      <Filter>Header Files\spdlog</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\common-inl.h">
+      <Filter>Header Files\spdlog</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\formatter.h">
+      <Filter>Header Files\spdlog</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\fwd.h">
+      <Filter>Header Files\spdlog</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\logger.h">
+      <Filter>Header Files\spdlog</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\logger-inl.h">
+      <Filter>Header Files\spdlog</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\pattern_formatter.h">
+      <Filter>Header Files\spdlog</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\pattern_formatter-inl.h">
+      <Filter>Header Files\spdlog</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\spdlog.h">
+      <Filter>Header Files\spdlog</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\spdlog-inl.h">
+      <Filter>Header Files\spdlog</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\stopwatch.h">
+      <Filter>Header Files\spdlog</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\tweakme.h">
+      <Filter>Header Files\spdlog</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\version.h">
+      <Filter>Header Files\spdlog</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\cfg\argv.h">
+      <Filter>Header Files\spdlog\cfg</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\cfg\env.h">
+      <Filter>Header Files\spdlog\cfg</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\cfg\helpers.h">
+      <Filter>Header Files\spdlog\cfg</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\cfg\helpers-inl.h">
+      <Filter>Header Files\spdlog\cfg</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\details\backtracer.h">
+      <Filter>Header Files\spdlog\details</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\details\backtracer-inl.h">
+      <Filter>Header Files\spdlog\details</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\details\circular_q.h">
+      <Filter>Header Files\spdlog\details</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\details\console_globals.h">
+      <Filter>Header Files\spdlog\details</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\details\file_helper.h">
+      <Filter>Header Files\spdlog\details</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\details\file_helper-inl.h">
+      <Filter>Header Files\spdlog\details</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\details\fmt_helper.h">
+      <Filter>Header Files\spdlog\details</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\details\log_msg.h">
+      <Filter>Header Files\spdlog\details</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\details\log_msg_buffer.h">
+      <Filter>Header Files\spdlog\details</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\details\log_msg_buffer-inl.h">
+      <Filter>Header Files\spdlog\details</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\details\log_msg-inl.h">
+      <Filter>Header Files\spdlog\details</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\details\mpmc_blocking_q.h">
+      <Filter>Header Files\spdlog\details</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\details\null_mutex.h">
+      <Filter>Header Files\spdlog\details</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\details\os.h">
+      <Filter>Header Files\spdlog\details</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\details\os-inl.h">
+      <Filter>Header Files\spdlog\details</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\details\periodic_worker.h">
+      <Filter>Header Files\spdlog\details</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\details\periodic_worker-inl.h">
+      <Filter>Header Files\spdlog\details</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\details\registry.h">
+      <Filter>Header Files\spdlog\details</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\details\registry-inl.h">
+      <Filter>Header Files\spdlog\details</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\details\synchronous_factory.h">
+      <Filter>Header Files\spdlog\details</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\details\tcp_client.h">
+      <Filter>Header Files\spdlog\details</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\details\tcp_client-windows.h">
+      <Filter>Header Files\spdlog\details</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\details\thread_pool.h">
+      <Filter>Header Files\spdlog\details</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\details\thread_pool-inl.h">
+      <Filter>Header Files\spdlog\details</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\details\udp_client.h">
+      <Filter>Header Files\spdlog\details</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\details\udp_client-windows.h">
+      <Filter>Header Files\spdlog\details</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\details\windows_include.h">
+      <Filter>Header Files\spdlog\details</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\fmt\bin_to_hex.h">
+      <Filter>Header Files\spdlog\fmt</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\fmt\chrono.h">
+      <Filter>Header Files\spdlog\fmt</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\fmt\compile.h">
+      <Filter>Header Files\spdlog\fmt</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\fmt\fmt.h">
+      <Filter>Header Files\spdlog\fmt</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\fmt\ostr.h">
+      <Filter>Header Files\spdlog\fmt</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\fmt\ranges.h">
+      <Filter>Header Files\spdlog\fmt</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\fmt\std.h">
+      <Filter>Header Files\spdlog\fmt</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\fmt\xchar.h">
+      <Filter>Header Files\spdlog\fmt</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\fmt\bundled\args.h">
+      <Filter>Header Files\spdlog\fmt\bundled</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\fmt\bundled\chrono.h">
+      <Filter>Header Files\spdlog\fmt\bundled</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\fmt\bundled\color.h">
+      <Filter>Header Files\spdlog\fmt\bundled</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\fmt\bundled\compile.h">
+      <Filter>Header Files\spdlog\fmt\bundled</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\fmt\bundled\core.h">
+      <Filter>Header Files\spdlog\fmt\bundled</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\fmt\bundled\format.h">
+      <Filter>Header Files\spdlog\fmt\bundled</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\fmt\bundled\format-inl.h">
+      <Filter>Header Files\spdlog\fmt\bundled</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\fmt\bundled\locale.h">
+      <Filter>Header Files\spdlog\fmt\bundled</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\fmt\bundled\os.h">
+      <Filter>Header Files\spdlog\fmt\bundled</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\fmt\bundled\ostream.h">
+      <Filter>Header Files\spdlog\fmt\bundled</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\fmt\bundled\printf.h">
+      <Filter>Header Files\spdlog\fmt\bundled</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\fmt\bundled\ranges.h">
+      <Filter>Header Files\spdlog\fmt\bundled</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\fmt\bundled\std.h">
+      <Filter>Header Files\spdlog\fmt\bundled</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\fmt\bundled\xchar.h">
+      <Filter>Header Files\spdlog\fmt\bundled</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\sinks\android_sink.h">
+      <Filter>Header Files\spdlog\sinks</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\sinks\ansicolor_sink.h">
+      <Filter>Header Files\spdlog\sinks</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\sinks\ansicolor_sink-inl.h">
+      <Filter>Header Files\spdlog\sinks</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\sinks\base_sink.h">
+      <Filter>Header Files\spdlog\sinks</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\sinks\base_sink-inl.h">
+      <Filter>Header Files\spdlog\sinks</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\sinks\basic_file_sink.h">
+      <Filter>Header Files\spdlog\sinks</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\sinks\basic_file_sink-inl.h">
+      <Filter>Header Files\spdlog\sinks</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\sinks\callback_sink.h">
+      <Filter>Header Files\spdlog\sinks</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\sinks\daily_file_sink.h">
+      <Filter>Header Files\spdlog\sinks</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\sinks\dist_sink.h">
+      <Filter>Header Files\spdlog\sinks</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\sinks\dup_filter_sink.h">
+      <Filter>Header Files\spdlog\sinks</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\sinks\hourly_file_sink.h">
+      <Filter>Header Files\spdlog\sinks</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\sinks\kafka_sink.h">
+      <Filter>Header Files\spdlog\sinks</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\sinks\mongo_sink.h">
+      <Filter>Header Files\spdlog\sinks</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\sinks\msvc_sink.h">
+      <Filter>Header Files\spdlog\sinks</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\sinks\null_sink.h">
+      <Filter>Header Files\spdlog\sinks</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\sinks\ostream_sink.h">
+      <Filter>Header Files\spdlog\sinks</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\sinks\qt_sinks.h">
+      <Filter>Header Files\spdlog\sinks</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\sinks\ringbuffer_sink.h">
+      <Filter>Header Files\spdlog\sinks</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\sinks\rotating_file_sink.h">
+      <Filter>Header Files\spdlog\sinks</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\sinks\rotating_file_sink-inl.h">
+      <Filter>Header Files\spdlog\sinks</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\sinks\sink.h">
+      <Filter>Header Files\spdlog\sinks</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\sinks\sink-inl.h">
+      <Filter>Header Files\spdlog\sinks</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\sinks\stdout_color_sinks.h">
+      <Filter>Header Files\spdlog\sinks</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\sinks\stdout_color_sinks-inl.h">
+      <Filter>Header Files\spdlog\sinks</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\sinks\stdout_sinks.h">
+      <Filter>Header Files\spdlog\sinks</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\sinks\stdout_sinks-inl.h">
+      <Filter>Header Files\spdlog\sinks</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\sinks\syslog_sink.h">
+      <Filter>Header Files\spdlog\sinks</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\sinks\systemd_sink.h">
+      <Filter>Header Files\spdlog\sinks</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\sinks\tcp_sink.h">
+      <Filter>Header Files\spdlog\sinks</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\sinks\udp_sink.h">
+      <Filter>Header Files\spdlog\sinks</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\sinks\win_eventlog_sink.h">
+      <Filter>Header Files\spdlog\sinks</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\sinks\wincolor_sink.h">
+      <Filter>Header Files\spdlog\sinks</Filter>
+    </ClInclude>
+    <ClInclude Include="spdlog\sinks\wincolor_sink-inl.h">
+      <Filter>Header Files\spdlog\sinks</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Video\Resolution.cpp">
+      <Filter>Source Files\Video</Filter>
+    </ClCompile>
+    <ClCompile Include="Video\VideoEncoder.cpp">
+      <Filter>Source Files\Video</Filter>
+    </ClCompile>
+    <ClCompile Include="Video\VP8EncoderImpl.cpp">
+      <Filter>Source Files\Video</Filter>
+    </ClCompile>
+    <ClCompile Include="Video\VideoDecoder.cpp">
+      <Filter>Source Files\Video</Filter>
+    </ClCompile>
+    <ClCompile Include="Video\VP8DecoderImpl.cpp">
+      <Filter>Source Files\Video</Filter>
+    </ClCompile>
+    <ClCompile Include="Record\Recorder.cpp">
+      <Filter>Source Files\Record</Filter>
+    </ClCompile>
+    <ClCompile Include="Audio\AudioDecoder.cpp">
+      <Filter>Source Files\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="Audio\AudioEncoder.cpp">
+      <Filter>Source Files\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="Audio\OpusDecoderImpl.cpp">
+      <Filter>Source Files\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="Audio\OpusEncoderImpl.cpp">
+      <Filter>Source Files\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\CRC32.cpp">
+      <Filter>Source Files\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Transport\RTP\RTCPPacket.cpp">
+      <Filter>Source Files\Transport\RTP</Filter>
+    </ClCompile>
+    <ClCompile Include="Transport\RTP\RTPPacket.cpp">
+      <Filter>Source Files\Transport\RTP</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\URLEncode.cpp">
+      <Filter>Source Files\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\md5.cpp">
+      <Filter>Source Files\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Audio\AudioMixer.cpp">
+      <Filter>Source Files\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="Crypto\Encryptor.cpp">
+      <Filter>Source Files\Crypto</Filter>
+    </ClCompile>
+    <ClCompile Include="Crypto\Decryptor.cpp">
+      <Filter>Source Files\Crypto</Filter>
+    </ClCompile>
+    <ClCompile Include="Transport\WebSocket\WebSocket.cpp">
+      <Filter>Source Files\Transport\WebSocket</Filter>
+    </ClCompile>
+    <ClCompile Include="Transport\HTTP\HTTPClient.cpp">
+      <Filter>Source Files\Transport\HTTP</Filter>
+    </ClCompile>
+    <ClCompile Include="Proto\CommandType.cpp">
+      <Filter>Source Files\Proto</Filter>
+    </ClCompile>
+    <ClCompile Include="Proto\CmdDisconnect.cpp">
+      <Filter>Source Files\Proto</Filter>
+    </ClCompile>
+    <ClCompile Include="Proto\CmdDeviceDisconnect.cpp">
+      <Filter>Source Files\Proto</Filter>
+    </ClCompile>
+    <ClCompile Include="Proto\CmdDeviceConnect.cpp">
+      <Filter>Source Files\Proto</Filter>
+    </ClCompile>
+    <ClCompile Include="Proto\CmdResolutionChange.cpp">
+      <Filter>Source Files\Proto</Filter>
+    </ClCompile>
+    <ClCompile Include="Proto\CmdCallRequest.cpp">
+      <Filter>Source Files\Proto</Filter>
+    </ClCompile>
+    <ClCompile Include="Proto\CmdCallResponse.cpp">
+      <Filter>Source Files\Proto</Filter>
+    </ClCompile>
+    <ClCompile Include="Proto\CmdDisconnectFromConference.cpp">
+      <Filter>Source Files\Proto</Filter>
+    </ClCompile>
+    <ClCompile Include="Proto\CmdChangeContactState.cpp">
+      <Filter>Source Files\Proto</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\FSHelpers.cpp">
+      <Filter>Source Files\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\URLDecode.cpp">
+      <Filter>Source Files\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\HTMLSymbolsScreener.cpp">
+      <Filter>Source Files\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Proto\CmdScheduleConnect.cpp">
+      <Filter>Source Files\Proto</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\JSONSymbolsScreener.cpp">
+      <Filter>Source Files\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\Base64.cpp">
+      <Filter>Source Files\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Proto\CmdChangeMemberState.cpp">
+      <Filter>Source Files\Proto</Filter>
+    </ClCompile>
+    <ClCompile Include="Proto\CmdMemberAction.cpp">
+      <Filter>Source Files\Proto</Filter>
+    </ClCompile>
+    <ClCompile Include="AEC\AEC.cpp">
+      <Filter>Source Files\AEC</Filter>
+    </ClCompile>
+    <ClCompile Include="Proto\CmdPing.cpp">
+      <Filter>Source Files\Proto</Filter>
+    </ClCompile>
+    <ClCompile Include="Transport\PacketType.cpp">
+      <Filter>Source Files\Transport</Filter>
+    </ClCompile>
+    <ClCompile Include="Transport\RTPSocket.cpp">
+      <Filter>Source Files\Transport</Filter>
+    </ClCompile>
+    <ClCompile Include="Proto\CmdWantSpeak.cpp">
+      <Filter>Source Files\Proto</Filter>
+    </ClCompile>
+    <ClCompile Include="Proto\CmdConnectRequest.cpp">
+      <Filter>Source Files\Proto</Filter>
+    </ClCompile>
+    <ClCompile Include="Proto\CmdConnectResponse.cpp">
+      <Filter>Source Files\Proto</Filter>
+    </ClCompile>
+    <ClCompile Include="Proto\CmdSetMaxBitrate.cpp">
+      <Filter>Source Files\Proto</Filter>
+    </ClCompile>
+    <ClCompile Include="Proto\CmdConferencesList.cpp">
+      <Filter>Source Files\Proto</Filter>
+    </ClCompile>
+    <ClCompile Include="Proto\CmdConnectToConferenceRequest.cpp">
+      <Filter>Source Files\Proto</Filter>
+    </ClCompile>
+    <ClCompile Include="Proto\CmdConnectToConferenceResponse.cpp">
+      <Filter>Source Files\Proto</Filter>
+    </ClCompile>
+    <ClCompile Include="Proto\CmdSearchContact.cpp">
+      <Filter>Source Files\Proto</Filter>
+    </ClCompile>
+    <ClCompile Include="Proto\CmdContactList.cpp">
+      <Filter>Source Files\Proto</Filter>
+    </ClCompile>
+    <ClCompile Include="Proto\CmdDeviceParams.cpp">
+      <Filter>Source Files\Proto</Filter>
+    </ClCompile>
+    <ClCompile Include="Proto\CmdRendererDisconnect.cpp">
+      <Filter>Source Files\Proto</Filter>
+    </ClCompile>
+    <ClCompile Include="Proto\CmdRendererConnect.cpp">
+      <Filter>Source Files\Proto</Filter>
+    </ClCompile>
+    <ClCompile Include="Proto\CmdCreateTempConference.cpp">
+      <Filter>Source Files\Proto</Filter>
+    </ClCompile>
+    <ClCompile Include="Proto\CmdSendConnectToConference.cpp">
+      <Filter>Source Files\Proto</Filter>
+    </ClCompile>
+    <ClCompile Include="Proto\CmdTurnSpeaker.cpp">
+      <Filter>Source Files\Proto</Filter>
+    </ClCompile>
+    <ClCompile Include="Proto\Member.cpp">
+      <Filter>Source Files\Proto</Filter>
+    </ClCompile>
+    <ClCompile Include="Proto\Conference.cpp">
+      <Filter>Source Files\Proto</Filter>
+    </ClCompile>
+    <ClCompile Include="Proto\CmdUpdateGrants.cpp">
+      <Filter>Source Files\Proto</Filter>
+    </ClCompile>
+    <ClCompile Include="License\Grants.cpp">
+      <Filter>Source Files\License</Filter>
+    </ClCompile>
+    <ClCompile Include="DB\sqlite\shell.c">
+      <Filter>Source Files\DB\sqlite</Filter>
+    </ClCompile>
+    <ClCompile Include="DB\sqlite\sqlite3.c">
+      <Filter>Source Files\DB\sqlite</Filter>
+    </ClCompile>
+    <ClCompile Include="DB\Connection.cpp">
+      <Filter>Source Files\DB</Filter>
+    </ClCompile>
+    <ClCompile Include="DB\Transaction.cpp">
+      <Filter>Source Files\DB</Filter>
+    </ClCompile>
+    <ClCompile Include="DB\Query.cpp">
+      <Filter>Source Files\DB</Filter>
+    </ClCompile>
+    <ClCompile Include="NetTester\SpeedTester.cpp">
+      <Filter>Source Files\NetTester</Filter>
+    </ClCompile>
+    <ClCompile Include="NetTester\UDPTester.cpp">
+      <Filter>Source Files\NetTester</Filter>
+    </ClCompile>
+    <ClCompile Include="Video\VP8RTPSplitter.cpp">
+      <Filter>Source Files\Video</Filter>
+    </ClCompile>
+    <ClCompile Include="Video\VP8RTPCollector.cpp">
+      <Filter>Source Files\Video</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\HumanTime.cpp">
+      <Filter>Source Files\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Proto\CmdRequestMediaAddress.cpp">
+      <Filter>Source Files\Proto</Filter>
+    </ClCompile>
+    <ClCompile Include="Proto\CmdMediaAddressesList.cpp">
+      <Filter>Source Files\Proto</Filter>
+    </ClCompile>
+    <ClCompile Include="NetTester\TCPTester.cpp">
+      <Filter>Source Files\NetTester</Filter>
+    </ClCompile>
+    <ClCompile Include="Proto\Message.cpp">
+      <Filter>Source Files\Proto</Filter>
+    </ClCompile>
+    <ClCompile Include="Proto\CmdDeliveryMessages.cpp">
+      <Filter>Source Files\Proto</Filter>
+    </ClCompile>
+    <ClCompile Include="Proto\CmdLoadMessages.cpp">
+      <Filter>Source Files\Proto</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\ShortSleep.cpp">
+      <Filter>Source Files\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="webrtc\base\checks.cc">
+      <Filter>Source Files\webrtc\base</Filter>
+    </ClCompile>
+    <ClCompile Include="webrtc\base\criticalsection.cc">
+      <Filter>Source Files\webrtc\base</Filter>
+    </ClCompile>
+    <ClCompile Include="webrtc\base\platform_thread_types.cc">
+      <Filter>Source Files\webrtc\base</Filter>
+    </ClCompile>
+    <ClCompile Include="webrtc\base\stringutils.cc">
+      <Filter>Source Files\webrtc\base</Filter>
+    </ClCompile>
+    <ClCompile Include="webrtc\common_audio\fft4g.c">
+      <Filter>Source Files\webrtc\common_audio</Filter>
+    </ClCompile>
+    <ClCompile Include="webrtc\common_audio\ring_buffer.c">
+      <Filter>Source Files\webrtc\common_audio</Filter>
+    </ClCompile>
+    <ClCompile Include="webrtc\common_audio\audio_util.cc">
+      <Filter>Source Files\webrtc\common_audio</Filter>
+    </ClCompile>
+    <ClCompile Include="webrtc\common_audio\channel_buffer.cc">
+      <Filter>Source Files\webrtc\common_audio</Filter>
+    </ClCompile>
+    <ClCompile Include="webrtc\common_audio\sparse_fir_filter.cc">
+      <Filter>Source Files\webrtc\common_audio</Filter>
+    </ClCompile>
+    <ClCompile Include="webrtc\common_audio\wav_file.cc">
+      <Filter>Source Files\webrtc\common_audio</Filter>
+    </ClCompile>
+    <ClCompile Include="webrtc\common_audio\wav_header.cc">
+      <Filter>Source Files\webrtc\common_audio</Filter>
+    </ClCompile>
+    <ClCompile Include="webrtc\common_audio\signal_processing\auto_corr_to_refl_coef.c">
+      <Filter>Source Files\webrtc\common_audio\signal_processing</Filter>
+    </ClCompile>
+    <ClCompile Include="webrtc\common_audio\signal_processing\auto_correlation.c">
+      <Filter>Source Files\webrtc\common_audio\signal_processing</Filter>
+    </ClCompile>
+    <ClCompile Include="webrtc\common_audio\signal_processing\complex_bit_reverse.c">
+      <Filter>Source Files\webrtc\common_audio\signal_processing</Filter>
+    </ClCompile>
+    <ClCompile Include="webrtc\common_audio\signal_processing\complex_fft.c">
+      <Filter>Source Files\webrtc\common_audio\signal_processing</Filter>
+    </ClCompile>
+    <ClCompile Include="webrtc\common_audio\signal_processing\copy_set_operations.c">
+      <Filter>Source Files\webrtc\common_audio\signal_processing</Filter>
+    </ClCompile>
+    <ClCompile Include="webrtc\common_audio\signal_processing\cross_correlation.c">
+      <Filter>Source Files\webrtc\common_audio\signal_processing</Filter>
+    </ClCompile>
+    <ClCompile Include="webrtc\common_audio\signal_processing\division_operations.c">
+      <Filter>Source Files\webrtc\common_audio\signal_processing</Filter>
+    </ClCompile>
+    <ClCompile Include="webrtc\common_audio\signal_processing\downsample_fast.c">
+      <Filter>Source Files\webrtc\common_audio\signal_processing</Filter>
+    </ClCompile>
+    <ClCompile Include="webrtc\common_audio\signal_processing\energy.c">
+      <Filter>Source Files\webrtc\common_audio\signal_processing</Filter>
+    </ClCompile>
+    <ClCompile Include="webrtc\common_audio\signal_processing\filter_ar.c">
+      <Filter>Source Files\webrtc\common_audio\signal_processing</Filter>
+    </ClCompile>
+    <ClCompile Include="webrtc\common_audio\signal_processing\filter_ar_fast_q12.c">
+      <Filter>Source Files\webrtc\common_audio\signal_processing</Filter>
+    </ClCompile>
+    <ClCompile Include="webrtc\common_audio\signal_processing\filter_ma_fast_q12.c">
+      <Filter>Source Files\webrtc\common_audio\signal_processing</Filter>
+    </ClCompile>
+    <ClCompile Include="webrtc\common_audio\signal_processing\get_hanning_window.c">
+      <Filter>Source Files\webrtc\common_audio\signal_processing</Filter>
+    </ClCompile>
+    <ClCompile Include="webrtc\common_audio\signal_processing\get_scaling_square.c">
+      <Filter>Source Files\webrtc\common_audio\signal_processing</Filter>
+    </ClCompile>
+    <ClCompile Include="webrtc\common_audio\signal_processing\ilbc_specific_functions.c">
+      <Filter>Source Files\webrtc\common_audio\signal_processing</Filter>
+    </ClCompile>
+    <ClCompile Include="webrtc\common_audio\signal_processing\levinson_durbin.c">
+      <Filter>Source Files\webrtc\common_audio\signal_processing</Filter>
+    </ClCompile>
+    <ClCompile Include="webrtc\common_audio\signal_processing\lpc_to_refl_coef.c">
+      <Filter>Source Files\webrtc\common_audio\signal_processing</Filter>
+    </ClCompile>
+    <ClCompile Include="webrtc\common_audio\signal_processing\min_max_operations.c">
+      <Filter>Source Files\webrtc\common_audio\signal_processing</Filter>
+    </ClCompile>
+    <ClCompile Include="webrtc\common_audio\signal_processing\randomization_functions.c">
+      <Filter>Source Files\webrtc\common_audio\signal_processing</Filter>
+    </ClCompile>
+    <ClCompile Include="webrtc\common_audio\signal_processing\real_fft.c">
+      <Filter>Source Files\webrtc\common_audio\signal_processing</Filter>
+    </ClCompile>
+    <ClCompile Include="webrtc\common_audio\signal_processing\refl_coef_to_lpc.c">
+      <Filter>Source Files\webrtc\common_audio\signal_processing</Filter>
+    </ClCompile>
+    <ClCompile Include="webrtc\common_audio\signal_processing\resample.c">
+      <Filter>Source Files\webrtc\common_audio\signal_processing</Filter>
+    </ClCompile>
+    <ClCompile Include="webrtc\common_audio\signal_processing\resample_48khz.c">
+      <Filter>Source Files\webrtc\common_audio\signal_processing</Filter>
+    </ClCompile>
+    <ClCompile Include="webrtc\common_audio\signal_processing\resample_by_2.c">
+      <Filter>Source Files\webrtc\common_audio\signal_processing</Filter>
+    </ClCompile>
+    <ClCompile Include="webrtc\common_audio\signal_processing\resample_by_2_internal.c">
+      <Filter>Source Files\webrtc\common_audio\signal_processing</Filter>
+    </ClCompile>
+    <ClCompile Include="webrtc\common_audio\signal_processing\resample_fractional.c">
+      <Filter>Source Files\webrtc\common_audio\signal_processing</Filter>
+    </ClCompile>
+    <ClCompile Include="webrtc\common_audio\signal_processing\spl_init.c">
+      <Filter>Source Files\webrtc\common_audio\signal_processing</Filter>
+    </ClCompile>
+    <ClCompile Include="webrtc\common_audio\signal_processing\spl_inl.c">
+      <Filter>Source Files\webrtc\common_audio\signal_processing</Filter>
+    </ClCompile>
+    <ClCompile Include="webrtc\common_audio\signal_processing\spl_sqrt.c">
+      <Filter>Source Files\webrtc\common_audio\signal_processing</Filter>
+    </ClCompile>
+    <ClCompile Include="webrtc\common_audio\signal_processing\spl_sqrt_floor.c">
+      <Filter>Source Files\webrtc\common_audio\signal_processing</Filter>
+    </ClCompile>
+    <ClCompile Include="webrtc\common_audio\signal_processing\splitting_filter_.c">
+      <Filter>Source Files\webrtc\common_audio\signal_processing</Filter>
+    </ClCompile>
+    <ClCompile Include="webrtc\common_audio\signal_processing\sqrt_of_one_minus_x_squared.c">
+      <Filter>Source Files\webrtc\common_audio\signal_processing</Filter>
+    </ClCompile>
+    <ClCompile Include="webrtc\common_audio\signal_processing\vector_scaling_operations.c">
+      <Filter>Source Files\webrtc\common_audio\signal_processing</Filter>
+    </ClCompile>
+    <ClCompile Include="webrtc\common_audio\signal_processing\dot_product_with_scale.cc">
+      <Filter>Source Files\webrtc\common_audio\signal_processing</Filter>
+    </ClCompile>
+    <ClCompile Include="webrtc\system_wrappers\source\cpu_features.cc">
+      <Filter>Source Files\webrtc\system_wrappers\source</Filter>
+    </ClCompile>
+    <ClCompile Include="webrtc\system_wrappers\source\metrics_default.cc">
+      <Filter>Source Files\webrtc\system_wrappers\source</Filter>
+    </ClCompile>
+    <ClCompile Include="webrtc\modules\audio_processing\splitting_filter.cc">
+      <Filter>Source Files\webrtc\modules\audio_processing</Filter>
+    </ClCompile>
+    <ClCompile Include="webrtc\modules\audio_processing\three_band_filter_bank.cc">
+      <Filter>Source Files\webrtc\modules\audio_processing</Filter>
+    </ClCompile>
+    <ClCompile Include="webrtc\modules\audio_processing\aec\aec_core.cc">
+      <Filter>Source Files\webrtc\modules\audio_processing\aec</Filter>
+    </ClCompile>
+    <ClCompile Include="webrtc\modules\audio_processing\aec\aec_core_sse2.cc">
+      <Filter>Source Files\webrtc\modules\audio_processing\aec</Filter>
+    </ClCompile>
+    <ClCompile Include="webrtc\modules\audio_processing\aec\aec_resampler.cc">
+      <Filter>Source Files\webrtc\modules\audio_processing\aec</Filter>
+    </ClCompile>
+    <ClCompile Include="webrtc\modules\audio_processing\aec\echo_cancellation.cc">
+      <Filter>Source Files\webrtc\modules\audio_processing\aec</Filter>
+    </ClCompile>
+    <ClCompile Include="webrtc\modules\audio_processing\agc\legacy\analog_agc.c">
+      <Filter>Source Files\webrtc\modules\audio_processing\agc\legacy</Filter>
+    </ClCompile>
+    <ClCompile Include="webrtc\modules\audio_processing\agc\legacy\digital_agc.c">
+      <Filter>Source Files\webrtc\modules\audio_processing\agc\legacy</Filter>
+    </ClCompile>
+    <ClCompile Include="webrtc\modules\audio_processing\logging\apm_data_dumper.cc">
+      <Filter>Source Files\webrtc\modules\audio_processing\logging</Filter>
+    </ClCompile>
+    <ClCompile Include="webrtc\modules\audio_processing\ns\noise_suppression.c">
+      <Filter>Source Files\webrtc\modules\audio_processing\ns</Filter>
+    </ClCompile>
+    <ClCompile Include="webrtc\modules\audio_processing\ns\noise_suppression_x.c">
+      <Filter>Source Files\webrtc\modules\audio_processing\ns</Filter>
+    </ClCompile>
+    <ClCompile Include="webrtc\modules\audio_processing\ns\ns_core.c">
+      <Filter>Source Files\webrtc\modules\audio_processing\ns</Filter>
+    </ClCompile>
+    <ClCompile Include="webrtc\modules\audio_processing\ns\nsx_core.c">
+      <Filter>Source Files\webrtc\modules\audio_processing\ns</Filter>
+    </ClCompile>
+    <ClCompile Include="webrtc\modules\audio_processing\ns\nsx_core_c.c">
+      <Filter>Source Files\webrtc\modules\audio_processing\ns</Filter>
+    </ClCompile>
+    <ClCompile Include="webrtc\modules\audio_processing\utility\block_mean_calculator.cc">
+      <Filter>Source Files\webrtc\modules\audio_processing\utility</Filter>
+    </ClCompile>
+    <ClCompile Include="webrtc\modules\audio_processing\utility\delay_estimator.cc">
+      <Filter>Source Files\webrtc\modules\audio_processing\utility</Filter>
+    </ClCompile>
+    <ClCompile Include="webrtc\modules\audio_processing\utility\delay_estimator_wrapper.cc">
+      <Filter>Source Files\webrtc\modules\audio_processing\utility</Filter>
+    </ClCompile>
+    <ClCompile Include="webrtc\modules\audio_processing\utility\ooura_fft.cc">
+      <Filter>Source Files\webrtc\modules\audio_processing\utility</Filter>
+    </ClCompile>
+    <ClCompile Include="webrtc\modules\audio_processing\utility\ooura_fft_sse2.cc">
+      <Filter>Source Files\webrtc\modules\audio_processing\utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Storage\Storage.cpp">
+      <Filter>Source Files\Storage</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\Process.cpp">
+      <Filter>Source Files\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\ToDigit.cpp">
+      <Filter>Source Files\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\MACAddresses.cpp">
+      <Filter>Source Files\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Transport\Address.cpp">
+      <Filter>Source Files\Transport</Filter>
+    </ClCompile>
+    <ClCompile Include="Transport\URI\URI.cpp">
+      <Filter>Source Files\Transport\URI</Filter>
+    </ClCompile>
+    <ClCompile Include="Controller\Controller.cpp">
+      <Filter>Source Files\Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="Proto\CmdChangeServer.cpp">
+      <Filter>Source Files\Proto</Filter>
+    </ClCompile>
+    <ClCompile Include="Record\MP3Writer.cpp">
+      <Filter>Source Files\Record</Filter>
+    </ClCompile>
+    <ClCompile Include="Proto\CmdMicrophoneActive.cpp">
+      <Filter>Source Files\Proto</Filter>
+    </ClCompile>
+    <ClCompile Include="Audio\SilentDetector.cpp">
+      <Filter>Source Files\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="Proto\CmdUserUpdateRequest.cpp">
+      <Filter>Source Files\Proto</Filter>
+    </ClCompile>
+    <ClCompile Include="Proto\CmdUserUpdateResponse.cpp">
+      <Filter>Source Files\Proto</Filter>
+    </ClCompile>
+    <ClCompile Include="Proto\Group.cpp">
+      <Filter>Source Files\Proto</Filter>
+    </ClCompile>
+    <ClCompile Include="Proto\CmdGroupList.cpp">
+      <Filter>Source Files\Proto</Filter>
+    </ClCompile>
+    <ClCompile Include="Proto\CmdCredentialsRequest.cpp">
+      <Filter>Source Files\Proto</Filter>
+    </ClCompile>
+    <ClCompile Include="Proto\CmdCredentialsResponse.cpp">
+      <Filter>Source Files\Proto</Filter>
+    </ClCompile>
+    <ClCompile Include="Registrator\Registrator.cpp">
+      <Filter>Source Files\Registrator</Filter>
+    </ClCompile>
+    <ClCompile Include="API\CreateGroup.cpp">
+      <Filter>Source Files\API</Filter>
+    </ClCompile>
+    <ClCompile Include="API\CreateUser.cpp">
+      <Filter>Source Files\API</Filter>
+    </ClCompile>
+    <ClCompile Include="API\DeleteGroup.cpp">
+      <Filter>Source Files\API</Filter>
+    </ClCompile>
+    <ClCompile Include="API\DeleteUser.cpp">
+      <Filter>Source Files\API</Filter>
+    </ClCompile>
+    <ClCompile Include="API\EditGroup.cpp">
+      <Filter>Source Files\API</Filter>
+    </ClCompile>
+    <ClCompile Include="API\EditUser.cpp">
+      <Filter>Source Files\API</Filter>
+    </ClCompile>
+    <ClCompile Include="API\RedirectUser.cpp">
+      <Filter>Source Files\API</Filter>
+    </ClCompile>
+    <ClCompile Include="API\Result.cpp">
+      <Filter>Source Files\API</Filter>
+    </ClCompile>
+    <ClCompile Include="API\ServerInfo.cpp">
+      <Filter>Source Files\API</Filter>
+    </ClCompile>
+    <ClCompile Include="Proto\CmdConferenceUpdateRequest.cpp">
+      <Filter>Source Files\Proto</Filter>
+    </ClCompile>
+    <ClCompile Include="Transport\TCP\Client.cpp">
+      <Filter>Source Files\Transport\TCP</Filter>
+    </ClCompile>
+    <ClCompile Include="Crypto\Checker.cpp">
+      <Filter>Source Files\Crypto</Filter>
+    </ClCompile>
+    <ClCompile Include="Transport\RTP\OwnedRTPPacket.cpp">
+      <Filter>Source Files\Transport\RTP</Filter>
+    </ClCompile>
+    <ClCompile Include="JitterBuffer\JB.cpp">
+      <Filter>Source Files\JitterBuffer</Filter>
+    </ClCompile>
+    <ClCompile Include="Proto\CmdContactsUpdate.cpp">
+      <Filter>Source Files\Proto</Filter>
+    </ClCompile>
+    <ClCompile Include="Proto\CmdConferenceUpdateResponse.cpp">
+      <Filter>Source Files\Proto</Filter>
+    </ClCompile>
+    <ClCompile Include="Audio\Resampler.cpp">
+      <Filter>Source Files\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="Transport\TCP\Server.cpp">
+      <Filter>Source Files\Transport\TCP</Filter>
+    </ClCompile>
+    <ClCompile Include="Transport\UDPSocket.cpp">
+      <Filter>Source Files\Transport</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="spdlog\fmt\bundled\fmt.license.rst">
+      <Filter>Header Files\spdlog\fmt\bundled</Filter>
+    </None>
+  </ItemGroup>
+</Project>
