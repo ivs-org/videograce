@@ -1,0 +1,466 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Header Files\Camera">
+      <UniqueIdentifier>{a9aa2515-3dba-437a-9e4e-f0d2fd65ee28}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Camera">
+      <UniqueIdentifier>{2fa9a98f-5d44-4fb2-afff-aefcb12427f4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\CaptureSession">
+      <UniqueIdentifier>{d6a04a87-743c-441c-8c52-db3b61273678}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\CaptureSession">
+      <UniqueIdentifier>{bbd1f557-78df-4106-861d-14fd7d09a867}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\VideoRenderer">
+      <UniqueIdentifier>{5eb0c8a5-457e-44cf-8a7a-f80fe90ecb73}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\VideoRenderer">
+      <UniqueIdentifier>{63a600bd-e38e-4c5b-b038-7cc3ee3e4d4b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Microphone">
+      <UniqueIdentifier>{2e8e9b30-ea18-43c2-b5bb-61bfdf3af36e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Microphone">
+      <UniqueIdentifier>{d7ed315a-8e98-43e7-9089-fe7e62366799}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\AudioRenderer">
+      <UniqueIdentifier>{1b0d2c8a-dc0f-4717-ae17-09521da1fe8e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\AudioRenderer">
+      <UniqueIdentifier>{da97b542-bdd4-427f-8bf0-d8bd4d57861d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\RendererSession">
+      <UniqueIdentifier>{d14d7f11-0e51-4fde-a5db-c24db6ff885f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\RendererSession">
+      <UniqueIdentifier>{da4f9157-4973-4fba-a988-556225cc7ba1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\UI">
+      <UniqueIdentifier>{41b0d1de-1560-4026-9743-e41e12119cf4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\UI">
+      <UniqueIdentifier>{55489e06-9903-4220-8048-9f4ad2951e11}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Device">
+      <UniqueIdentifier>{51010888-3aec-410c-9efe-a4486edfde1d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Device">
+      <UniqueIdentifier>{60fce842-8007-49f5-b583-ca56f1b1c7e9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Device\DS">
+      <UniqueIdentifier>{5686af64-b9d9-4886-8ea3-56e5e76c9919}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Device\DS">
+      <UniqueIdentifier>{f76ddf93-eba1-48a5-b43c-84e11786b9e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Microphone\win">
+      <UniqueIdentifier>{a085bb0d-cd1f-4bc0-9d10-3847a0da5e76}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Microphone\win">
+      <UniqueIdentifier>{8e5f92ea-4869-44c2-b43f-c6dfbe451641}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Camera\win">
+      <UniqueIdentifier>{4236c700-2135-4b74-9a7b-b2ffbb7b20af}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Camera\win">
+      <UniqueIdentifier>{c8297b74-2dd2-4f09-a75b-a86ecf9230ce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\AudioRenderer\win">
+      <UniqueIdentifier>{1c5da101-f117-46a9-807d-48ec09267fea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\AudioRenderer\win">
+      <UniqueIdentifier>{c36c3f3b-73ea-4b74-afab-3924715c30f9}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Camera\Camera.h">
+      <Filter>Header Files\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera\ICamera.h">
+      <Filter>Header Files\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="VideoRenderer\IVideoRenderer.h">
+      <Filter>Header Files\VideoRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="VideoRenderer\VideoRenderer.h">
+      <Filter>Header Files\VideoRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Microphone\IMicrophone.h">
+      <Filter>Header Files\Microphone</Filter>
+    </ClInclude>
+    <ClInclude Include="Microphone\Microphone.h">
+      <Filter>Header Files\Microphone</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioRenderer\IAudioRenderer.h">
+      <Filter>Header Files\AudioRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="RendererSession\IRendererVideoSession.h">
+      <Filter>Header Files\RendererSession</Filter>
+    </ClInclude>
+    <ClInclude Include="RendererSession\RendererVideoSession.h">
+      <Filter>Header Files\RendererSession</Filter>
+    </ClInclude>
+    <ClInclude Include="RendererSession\IRendererAudioSession.h">
+      <Filter>Header Files\RendererSession</Filter>
+    </ClInclude>
+    <ClInclude Include="RendererSession\RendererAudioSession.h">
+      <Filter>Header Files\RendererSession</Filter>
+    </ClInclude>
+    <ClInclude Include="CaptureSession\CaptureAudioSession.h">
+      <Filter>Header Files\CaptureSession</Filter>
+    </ClInclude>
+    <ClInclude Include="CaptureSession\CaptureVideoSession.h">
+      <Filter>Header Files\CaptureSession</Filter>
+    </ClInclude>
+    <ClInclude Include="CaptureSession\ICaptureAudioSession.h">
+      <Filter>Header Files\CaptureSession</Filter>
+    </ClInclude>
+    <ClInclude Include="CaptureSession\ICaptureVideoSession.h">
+      <Filter>Header Files\CaptureSession</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RendererSession\IActionReceiver.h">
+      <Filter>Header Files\RendererSession</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\MainFrame.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\IControlActions.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\ContactList.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\MemberList.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\CredentialsDialog.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\MainToolBar.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\ListPanel.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\DeviceNotifies.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\Ringer.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\DialingDialog.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\QuestionDialog.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\CallParams.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\CPUMeter.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\RenderersBox.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Device\DS\DSCommon.h">
+      <Filter>Header Files\Device\DS</Filter>
+    </ClInclude>
+    <ClInclude Include="Device\DS\DummyGraph.h">
+      <Filter>Header Files\Device\DS</Filter>
+    </ClInclude>
+    <ClInclude Include="Device\DS\IAddFrame.h">
+      <Filter>Header Files\Device\DS</Filter>
+    </ClInclude>
+    <ClInclude Include="Device\DS\ISampleGrabber.h">
+      <Filter>Header Files\Device\DS</Filter>
+    </ClInclude>
+    <ClInclude Include="Device\DS\LiveSource.h">
+      <Filter>Header Files\Device\DS</Filter>
+    </ClInclude>
+    <ClInclude Include="Device\DS\SampleGrabber.h">
+      <Filter>Header Files\Device\DS</Filter>
+    </ClInclude>
+    <ClInclude Include="Device\Device.h">
+      <Filter>Header Files\Device</Filter>
+    </ClInclude>
+    <ClInclude Include="Microphone\win\MicrophoneDSG.h">
+      <Filter>Header Files\Microphone\win</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera\win\CameraDSG.h">
+      <Filter>Header Files\Camera\win</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera\ScreenCapturer.h">
+      <Filter>Header Files\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera\win\ScreenCapturerImpl.h">
+      <Filter>Header Files\Camera\win</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera\win\CameraImpl.h">
+      <Filter>Header Files\Camera\win</Filter>
+    </ClInclude>
+    <ClInclude Include="Microphone\win\MicrophoneImpl.h">
+      <Filter>Header Files\Microphone\win</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioRenderer\win\AudioRendererWASAPI.h">
+      <Filter>Header Files\AudioRenderer\win</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioRenderer\win\AudioRendererWave.h">
+      <Filter>Header Files\AudioRenderer\win</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioRenderer\AudioRenderer.h">
+      <Filter>Header Files\AudioRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioRenderer\win\AudioRendererImpl.h">
+      <Filter>Header Files\AudioRenderer\win</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\BusyBox.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\VolumeBox.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\ContentPanel.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\ConferenceDialog.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\ActivateHandler.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\RegistrationDialog.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\EnterPasswordDialog.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\ContactDialog.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\SettingsDialog.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\SoundIndicator.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\TimerBar.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\AboutDialog.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\MiniWindow.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\DemonstrationWindow.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Microphone\win\MicrophoneDMO.h">
+      <Filter>Header Files\Microphone\win</Filter>
+    </ClInclude>
+    <ClInclude Include="Microphone\win\MicrophoneDShow.h">
+      <Filter>Header Files\Microphone\win</Filter>
+    </ClInclude>
+    <ClInclude Include="Microphone\win\AecKsBinder.h">
+      <Filter>Header Files\Microphone\win</Filter>
+    </ClInclude>
+    <ClInclude Include="Microphone\win\MediaBuf.h">
+      <Filter>Header Files\Microphone\win</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Camera\Camera.cpp">
+      <Filter>Source Files\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="VideoRenderer\VideoRenderer.cpp">
+      <Filter>Source Files\VideoRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Microphone\Microphone.cpp">
+      <Filter>Source Files\Microphone</Filter>
+    </ClCompile>
+    <ClCompile Include="RendererSession\RendererVideoSession.cpp">
+      <Filter>Source Files\RendererSession</Filter>
+    </ClCompile>
+    <ClCompile Include="RendererSession\RendererAudioSession.cpp">
+      <Filter>Source Files\RendererSession</Filter>
+    </ClCompile>
+    <ClCompile Include="Client.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CaptureSession\CaptureAudioSession.cpp">
+      <Filter>Source Files\CaptureSession</Filter>
+    </ClCompile>
+    <ClCompile Include="CaptureSession\CaptureVideoSession.cpp">
+      <Filter>Source Files\CaptureSession</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\MainFrame.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\CredentialsDialog.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\MainToolBar.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\ListPanel.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\ContactList.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\Ringer.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\DialingDialog.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\QuestionDialog.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\CPUMeter.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\RenderersBox.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Device\DS\DSCommon.cpp">
+      <Filter>Source Files\Device\DS</Filter>
+    </ClCompile>
+    <ClCompile Include="Device\DS\DummyGraph.cpp">
+      <Filter>Source Files\Device\DS</Filter>
+    </ClCompile>
+    <ClCompile Include="Device\DS\LiveSource.cpp">
+      <Filter>Source Files\Device\DS</Filter>
+    </ClCompile>
+    <ClCompile Include="Device\DS\SampleGrabber.cpp">
+      <Filter>Source Files\Device\DS</Filter>
+    </ClCompile>
+    <ClCompile Include="Device\Device.cpp">
+      <Filter>Source Files\Device</Filter>
+    </ClCompile>
+    <ClCompile Include="Microphone\win\MicrophoneDSG.cpp">
+      <Filter>Source Files\Microphone\win</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera\win\CameraDSG.cpp">
+      <Filter>Source Files\Camera\win</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera\ScreenCapturer.cpp">
+      <Filter>Source Files\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera\win\CameraImpl.cpp">
+      <Filter>Source Files\Camera\win</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera\win\ScreenCapturerImpl.cpp">
+      <Filter>Source Files\Camera\win</Filter>
+    </ClCompile>
+    <ClCompile Include="Microphone\win\MicrophoneImpl.cpp">
+      <Filter>Source Files\Microphone\win</Filter>
+    </ClCompile>
+    <ClCompile Include="AudioRenderer\win\AudioRendererWASAPI.cpp">
+      <Filter>Source Files\AudioRenderer\win</Filter>
+    </ClCompile>
+    <ClCompile Include="AudioRenderer\win\AudioRendererWave.cpp">
+      <Filter>Source Files\AudioRenderer\win</Filter>
+    </ClCompile>
+    <ClCompile Include="AudioRenderer\AudioRenderer.cpp">
+      <Filter>Source Files\AudioRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="AudioRenderer\win\AudioRendererImpl.cpp">
+      <Filter>Source Files\AudioRenderer\win</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\BusyBox.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\MemberList.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\VolumeBox.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\ContentPanel.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\ConferenceDialog.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\ActivateHandler.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\RegistrationDialog.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\EnterPasswordDialog.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\ContactDialog.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\SettingsDialog.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\SoundIndicator.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\TimerBar.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\AboutDialog.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\MiniWindow.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\DemonstrationWindow.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Microphone\win\MicrophoneDMO.cpp">
+      <Filter>Source Files\Microphone\win</Filter>
+    </ClCompile>
+    <ClCompile Include="Microphone\win\MicrophoneDShow.cpp">
+      <Filter>Source Files\Microphone\win</Filter>
+    </ClCompile>
+    <ClCompile Include="Microphone\win\AecKsBinder.cpp">
+      <Filter>Source Files\Microphone\win</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="UI.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\en_locale.json">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\ru_locale.json">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\dark.json">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\light.json">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\kk_locale.json">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
+</Project>

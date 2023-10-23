@@ -1,0 +1,66 @@
+/**
+ * IRendererAudioSession.h - Contains interface of renderer audio session
+ *
+ * Author: Anton (ud) Golovkov, udattsk@gmail.com
+ * Copyright (C), Infinity Video Soft LLC, 2014
+ */
+
+#pragma once
+
+#include <string>
+#include <Audio/IAudioDecoder.h>
+
+namespace Transport
+{
+	class ISocket;
+}
+
+namespace Recorder
+{
+	class Recorder;
+}
+
+namespace RendererSession
+{
+	class IRendererAudioSession
+	{
+	public:
+		virtual void SetName(const std::string &name) = 0;
+		virtual const std::string &GetName() = 0;
+
+		virtual void SetMetadata(const std::string &metadata) = 0;
+		virtual const std::string &GetMetadata() = 0;
+
+		virtual void SetMy(bool yes) = 0;
+		virtual bool GetMy() = 0;
+		virtual Transport::ISocket* GetDirectReceiver() = 0;
+
+		virtual void SetVolume(int vol) = 0;
+				
+		virtual void SetMute(bool yes) = 0;
+		virtual bool GetMute() = 0;
+		
+		virtual void SetDecoderType(Audio::CodecType dt) = 0;
+
+		virtual void SetRTPParams(const char* recvFromAddr, uint16_t recvFromRTPPort) = 0;
+
+		virtual void SetClientId(int64_t clientId) = 0;
+		virtual int64_t GetClientId() const = 0;
+
+		virtual uint32_t GetDeviceId() const = 0;
+		virtual uint32_t GetSSRC() const = 0;
+		virtual uint32_t GetAuthorSSRC() const = 0;
+		virtual std::string GetSecureKey() const = 0;
+
+		virtual void SetRecorder(Recorder::Recorder* recorder) = 0;
+		
+		virtual void Start(uint32_t receiverSSRC, uint32_t authorSSRC, uint32_t deviceId, const std::string &secureKey) = 0;
+		virtual bool Started() const = 0;
+		virtual void Stop() = 0;
+
+		virtual void Pause() = 0;
+		virtual void Resume() = 0;
+	protected:
+		~IRendererAudioSession() {}
+	};
+}

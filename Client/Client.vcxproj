@@ -1,0 +1,349 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{34E088D3-2853-4F3B-A8DF-97E6A9BED4BD}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>Client</RootNamespace>
+    <ProjectName>Client</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141_xp</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141_xp</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141_xp</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141_xp</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <LibraryPath>..\Debug;..\Lib\boost_1_82_0\lib\win;..\Lib\libVPX\x86\debug;..\Lib\libOpus\x86\debug;..\Lib\libWebM\lib\win\Win32\Debug;..\Lib\OpenSSL\lib\win32;..\Lib\ipp\lib\ia32_win;..\Lib\Filters\BaseClasses\Debug;..\Lib\lame\lib\i386\Debug;$(LibraryPath)</LibraryPath>
+    <IncludePath>.;..\Engine;..\Lib\wui\include;..\Lib\boost_1_82_0\include;..\Lib\libWebM;..\Lib\ipp\include;..\Lib\Filters\BaseClasses;..\Lib\lame\include;$(VC_IncludePath);$(WindowsSdk_71A_IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+    <LibraryPath>..\x64\Debug;..\Lib\wui\x64\Debug;..\Lib\libVPX\x64\debug;..\Lib\libOpus\x64\debug;..\Lib\libWebM\lib\win\x64\Debug;..\Lib\boost_1_82_0\lib\win;..\Lib\OpenSSL\lib\x64;..\Lib\ipp\lib\intel64_win;..\Lib\Filters\BaseClasses\x64\Debug;..\Lib\lame\lib\x64\Debug;$(LibraryPath)</LibraryPath>
+    <IncludePath>.;..\Engine;..\Lib\wui\include;..\Lib\libWebM;..\Lib\boost_1_82_0\include;..\Lib\ipp\include;..\Lib\Filters\BaseClasses;..\Lib\lame\include;$(VC_IncludePath);$(WindowsSdk_71A_IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <LibraryPath>..\Release;..\Lib\wui\Release;..\Lib\boost_1_82_0\lib\win;..\Lib\libVPX\x86\release;..\Lib\libOpus\x86\release;..\Lib\libWebM\lib\win\Win32\Release;..\Lib\OpenSSL\lib\win32;..\Lib\ipp\lib\ia32_win;..\Lib\Filters\BaseClasses\Release;..\Lib\lame\lib\i386\Release;$(LibraryPath)</LibraryPath>
+    <IncludePath>.;..\Engine;..\Lib\wui\include;..\Lib\boost_1_82_0\include;..\Lib\libWebM;..\Lib\ipp\include;..\Lib\Filters\BaseClasses;..\Lib\lame\include;$(VC_IncludePath);$(WindowsSdk_71A_IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+    <LibraryPath>..\x64\Release;..\Lib\wui\x64\Release;..\Lib\boost_1_82_0\lib\win;..\Lib\libVPX\x64\release;..\Lib\libOpus\x64\release;..\Lib\libWebM\lib\win\x64\Release;..\Lib\OpenSSL\lib\x64;..\Lib\ipp\lib\intel64_win;..\Lib\Filters\BaseClasses\x64\Release;..\Lib\lame\lib\x64\Release;$(LibraryPath)</LibraryPath>
+    <IncludePath>.;..\Engine;..\Lib\wui\include;..\Lib\libWebM;..\Lib\boost_1_82_0\include;..\Lib\ipp\include;..\Lib\Filters\BaseClasses;..\Lib\lame\include;$(VC_IncludePath);$(WindowsSdk_71A_IncludePath)</IncludePath>
+    <EmbedManifest>true</EmbedManifest>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_WINSOCKAPI_;BOOST_CONFIG_SUPPRESS_OUTDATED_MESSAGE;BOOST_SYSTEM_DISABLE_THREADS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>false</SDLCheck>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
+      <DisableSpecificWarnings>4101;4307;4091;4005</DisableSpecificWarnings>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>atls.lib;engine.lib;strmiids.lib;quartz.lib;Htmlhelp.lib;uuid.lib;amstrmid.lib;wmcodecdspuuid.lib;dsound.lib;Winmm.lib;Avrt.lib;ippcoremt.lib;ippvmmt.lib;ippsmt.lib;ippimt.lib;ippccmt.lib;ippdcmt.lib;ws2_32.lib;Crypt32.lib;libcrypto.lib;libssl.lib;strmbasd.lib;opus.lib;libwebm.lib;vpxmtd.lib;Iphlpapi.lib;libmp3lame-static.lib;libmpghip-static.lib;Gdiplus.lib;msdmo.lib;dmoguids.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>libcmt.lib</IgnoreSpecificDefaultLibraries>
+    </Link>
+    <Manifest>
+      <AdditionalManifestFiles>
+      </AdditionalManifestFiles>
+    </Manifest>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_WINSOCKAPI_;BOOST_CONFIG_SUPPRESS_OUTDATED_MESSAGE;BOOST_SYSTEM_DISABLE_THREADS;SPDLOG_WCHAR_FILENAMES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>false</SDLCheck>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
+      <DisableSpecificWarnings>4101;4307;4091;4005</DisableSpecificWarnings>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>atls.lib;wui.lib;engine.lib;strmiids.lib;quartz.lib;Htmlhelp.lib;uuid.lib;amstrmid.lib;wmcodecdspuuid.lib;dsound.lib;Winmm.lib;Avrt.lib;ippcoremt.lib;ippvmmt.lib;ippsmt.lib;ippimt.lib;ippccmt.lib;ippdcmt.lib;ws2_32.lib;Crypt32.lib;libcrypto.lib;libssl.lib;strmbasd.lib;opus.lib;libwebm.lib;vpxmtd.lib;Iphlpapi.lib;libmp3lame-static.lib;libmpghip-static.lib;Gdiplus.lib;Dwmapi.lib;msdmo.lib;dmoguids.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>libcmt.lib</IgnoreSpecificDefaultLibraries>
+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
+    </Link>
+    <Manifest>
+      <AdditionalManifestFiles>
+      </AdditionalManifestFiles>
+    </Manifest>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;SPDLOG_WCHAR_FILENAMES;_WINDOWS;_WINSOCKAPI_;BOOST_CONFIG_SUPPRESS_OUTDATED_MESSAGE;BOOST_SYSTEM_DISABLE_THREADS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
+      <DisableSpecificWarnings>4101;4307;4091;4005</DisableSpecificWarnings>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>atls.lib;engine.lib;wui.lib;strmiids.lib;quartz.lib;Htmlhelp.lib;uuid.lib;amstrmid.lib;wmcodecdspuuid.lib;dsound.lib;Winmm.lib;Avrt.lib;ippcoremt.lib;ippvmmt.lib;ippsmt.lib;ippimt.lib;ippccmt.lib;ippdcmt.lib;ws2_32.lib;Crypt32.lib;libcrypto.lib;libssl.lib;strmbase.lib;opus.lib;libwebm.lib;vpxmt.lib;Iphlpapi.lib;delayimp.lib;libmp3lame-static.lib;libmpghip-static.lib;Gdiplus.lib;msdmo.lib;dmoguids.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>
+      </IgnoreSpecificDefaultLibraries>
+      <StackReserveSize>
+      </StackReserveSize>
+      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
+      <DelayLoadDLLs>avrt.dll</DelayLoadDLLs>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;_WINSOCKAPI_;BOOST_CONFIG_SUPPRESS_OUTDATED_MESSAGE;BOOST_SYSTEM_DISABLE_THREADS;SPDLOG_WCHAR_FILENAMES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
+      <DisableSpecificWarnings>4101;4307;4091;4005</DisableSpecificWarnings>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>atls.lib;wui.lib;engine.lib;strmiids.lib;quartz.lib;Htmlhelp.lib;uuid.lib;amstrmid.lib;wmcodecdspuuid.lib;dsound.lib;Winmm.lib;Avrt.lib;ippcoremt.lib;ippvmmt.lib;ippsmt.lib;ippimt.lib;ippccmt.lib;ippdcmt.lib;ws2_32.lib;Crypt32.lib;libcrypto.lib;libssl.lib;strmbase.lib;opus.lib;libwebm.lib;vpxmt.lib;Iphlpapi.lib;libmp3lame-static.lib;libmpghip-static.lib;Gdiplus.lib;msdmo.lib;dmoguids.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>
+      </IgnoreSpecificDefaultLibraries>
+      <StackReserveSize>
+      </StackReserveSize>
+    </Link>
+    <Manifest>
+      <EnableDpiAwareness>false</EnableDpiAwareness>
+    </Manifest>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="AudioRenderer\AudioRenderer.h" />
+    <ClInclude Include="AudioRenderer\IAudioRenderer.h" />
+    <ClInclude Include="AudioRenderer\win\AudioRendererImpl.h" />
+    <ClInclude Include="AudioRenderer\win\AudioRendererWASAPI.h" />
+    <ClInclude Include="AudioRenderer\win\AudioRendererWave.h" />
+    <ClInclude Include="Camera\Camera.h" />
+    <ClInclude Include="Camera\ICamera.h" />
+    <ClInclude Include="Camera\ScreenCapturer.h" />
+    <ClInclude Include="Camera\win\CameraImpl.h" />
+    <ClInclude Include="Camera\win\CameraDSG.h" />
+    <ClInclude Include="Camera\win\ScreenCapturerImpl.h" />
+    <ClInclude Include="CaptureSession\CaptureAudioSession.h" />
+    <ClInclude Include="CaptureSession\CaptureVideoSession.h" />
+    <ClInclude Include="CaptureSession\ICaptureAudioSession.h" />
+    <ClInclude Include="CaptureSession\ICaptureVideoSession.h" />
+    <ClInclude Include="Device\Device.h" />
+    <ClInclude Include="Device\DS\DSCommon.h" />
+    <ClInclude Include="Device\DS\DummyGraph.h" />
+    <ClInclude Include="Device\DS\IAddFrame.h" />
+    <ClInclude Include="Device\DS\ISampleGrabber.h" />
+    <ClInclude Include="Device\DS\LiveSource.h" />
+    <ClInclude Include="Device\DS\SampleGrabber.h" />
+    <ClInclude Include="Microphone\IMicrophone.h" />
+    <ClInclude Include="Microphone\Microphone.h" />
+    <ClInclude Include="Microphone\win\AecKsBinder.h" />
+    <ClInclude Include="Microphone\win\MediaBuf.h" />
+    <ClInclude Include="Microphone\win\MicrophoneDMO.h" />
+    <ClInclude Include="Microphone\win\MicrophoneDShow.h" />
+    <ClInclude Include="Microphone\win\MicrophoneImpl.h" />
+    <ClInclude Include="Microphone\win\MicrophoneDSG.h" />
+    <ClInclude Include="RendererSession\IActionReceiver.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="RendererSession\IRendererAudioSession.h" />
+    <ClInclude Include="RendererSession\IRendererVideoSession.h" />
+    <ClInclude Include="RendererSession\RendererAudioSession.h" />
+    <ClInclude Include="RendererSession\RendererVideoSession.h" />
+    <ClInclude Include="UI\AboutDialog.h" />
+    <ClInclude Include="UI\ActivateHandler.h" />
+    <ClInclude Include="UI\BusyBox.h" />
+    <ClInclude Include="UI\CallParams.h" />
+    <ClInclude Include="UI\ConferenceDialog.h" />
+    <ClInclude Include="UI\ContactDialog.h" />
+    <ClInclude Include="UI\ContactList.h" />
+    <ClInclude Include="UI\ContentPanel.h" />
+    <ClInclude Include="UI\CPUMeter.h" />
+    <ClInclude Include="UI\CredentialsDialog.h" />
+    <ClInclude Include="UI\DemonstrationWindow.h" />
+    <ClInclude Include="UI\DialingDialog.h" />
+    <ClInclude Include="UI\EnterPasswordDialog.h" />
+    <ClInclude Include="UI\IControlActions.h" />
+    <ClInclude Include="UI\DeviceNotifies.h" />
+    <ClInclude Include="UI\ListPanel.h" />
+    <ClInclude Include="UI\MainFrame.h" />
+    <ClInclude Include="UI\MainToolBar.h" />
+    <ClInclude Include="UI\MemberList.h" />
+    <ClInclude Include="UI\MiniWindow.h" />
+    <ClInclude Include="UI\QuestionDialog.h" />
+    <ClInclude Include="UI\RenderersBox.h" />
+    <ClInclude Include="UI\Ringer.h" />
+    <ClInclude Include="UI\RegistrationDialog.h" />
+    <ClInclude Include="UI\SettingsDialog.h" />
+    <ClInclude Include="UI\SoundIndicator.h" />
+    <ClInclude Include="UI\TimerBar.h" />
+    <ClInclude Include="UI\VolumeBox.h" />
+    <ClInclude Include="VideoRenderer\IVideoRenderer.h" />
+    <ClInclude Include="VideoRenderer\VideoRenderer.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="AudioRenderer\AudioRenderer.cpp" />
+    <ClCompile Include="AudioRenderer\win\AudioRendererImpl.cpp" />
+    <ClCompile Include="AudioRenderer\win\AudioRendererWASAPI.cpp" />
+    <ClCompile Include="AudioRenderer\win\AudioRendererWave.cpp" />
+    <ClCompile Include="Camera\Camera.cpp" />
+    <ClCompile Include="Camera\ScreenCapturer.cpp" />
+    <ClCompile Include="Camera\win\CameraImpl.cpp" />
+    <ClCompile Include="Camera\win\CameraDSG.cpp" />
+    <ClCompile Include="Camera\win\ScreenCapturerImpl.cpp" />
+    <ClCompile Include="CaptureSession\CaptureAudioSession.cpp" />
+    <ClCompile Include="CaptureSession\CaptureVideoSession.cpp" />
+    <ClCompile Include="Device\Device.cpp" />
+    <ClCompile Include="Device\DS\DSCommon.cpp" />
+    <ClCompile Include="Device\DS\DummyGraph.cpp" />
+    <ClCompile Include="Device\DS\LiveSource.cpp" />
+    <ClCompile Include="Device\DS\SampleGrabber.cpp" />
+    <ClCompile Include="Microphone\Microphone.cpp" />
+    <ClCompile Include="Microphone\win\AecKsBinder.cpp" />
+    <ClCompile Include="Microphone\win\MicrophoneDMO.cpp" />
+    <ClCompile Include="Microphone\win\MicrophoneDShow.cpp" />
+    <ClCompile Include="Microphone\win\MicrophoneImpl.cpp" />
+    <ClCompile Include="Microphone\win\MicrophoneDSG.cpp" />
+    <ClCompile Include="UI\AboutDialog.cpp" />
+    <ClCompile Include="UI\ActivateHandler.cpp" />
+    <ClCompile Include="UI\BusyBox.cpp" />
+    <ClCompile Include="UI\ConferenceDialog.cpp" />
+    <ClCompile Include="UI\ContactDialog.cpp" />
+    <ClCompile Include="UI\ContactList.cpp" />
+    <ClCompile Include="UI\ContentPanel.cpp" />
+    <ClCompile Include="UI\CPUMeter.cpp" />
+    <ClCompile Include="UI\CredentialsDialog.cpp" />
+    <ClCompile Include="UI\DemonstrationWindow.cpp" />
+    <ClCompile Include="UI\DialingDialog.cpp" />
+    <ClCompile Include="UI\EnterPasswordDialog.cpp" />
+    <ClCompile Include="UI\ListPanel.cpp" />
+    <ClCompile Include="UI\MainFrame.cpp" />
+    <ClCompile Include="UI\MainToolBar.cpp" />
+    <ClCompile Include="UI\MemberList.cpp" />
+    <ClCompile Include="UI\MiniWindow.cpp" />
+    <ClCompile Include="UI\QuestionDialog.cpp" />
+    <ClCompile Include="UI\RenderersBox.cpp" />
+    <ClCompile Include="UI\Ringer.cpp" />
+    <ClCompile Include="UI\RegistrationDialog.cpp" />
+    <ClCompile Include="UI\SettingsDialog.cpp" />
+    <ClCompile Include="UI\SoundIndicator.cpp" />
+    <ClCompile Include="UI\TimerBar.cpp" />
+    <ClCompile Include="UI\VolumeBox.cpp" />
+    <ClCompile Include="Client.cpp" />
+    <ClCompile Include="RendererSession\RendererAudioSession.cpp" />
+    <ClCompile Include="RendererSession\RendererVideoSession.cpp" />
+    <ClCompile Include="VideoRenderer\VideoRenderer.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="UI.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\dark.json" />
+    <None Include="res\en_locale.json" />
+    <None Include="res\kk_locale.json" />
+    <None Include="res\light.json" />
+    <None Include="res\ru_locale.json" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties RESOURCE_FILE="UI.rc" />
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>

@@ -1,0 +1,381 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#include <Version.h>
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "winres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Jsons
+//
+
+TXT_DARK_THEME JSONS               "res\\dark.json"
+TXT_LIGHT_THEME JSONS              "res\\light.json"
+
+TXT_LOCALE_EN JSONS                "res\\en_locale.json"
+TXT_LOCALE_RU JSONS                "res\\ru_locale.json"
+TXT_LOCALE_KK JSONS                "res\\kk_locale.json"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// WAVE
+//
+
+SND_CALLIN         WAVE                    "res\\sounds\\CallIn.wav"
+
+SND_CALLOUT        WAVE                    "res\\sounds\\CallOut.wav"
+
+SND_SCHEDULECONNECT WAVE                   "res\\sounds\\ScheduleConnect.wav"
+
+SND_DIAL           WAVE                    "res\\sounds\\Dial.wav"
+
+SND_HANGUP         WAVE                    "res\\sounds\\Hangup.wav"
+
+SND_NEW_MESSAGE    WAVE                    "res\\sounds\\NewMessage.wav"
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+ICO_ACTIVE           ICON                    "res\\Active.ico"
+
+ICO_INACTIVE         ICON                    "res\\Inactive.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// IMAGES
+//
+
+IMG_LOGO                IMAGES_DARK                  "res\\dark\\logo.png"
+IMG_LOGO                IMAGES_LIGHT                 "res\\light\\logo.png"
+
+IMG_CONNECTION_CLOUD    IMAGES_DARK                  "res\\dark\\Connection\\cloud.png"
+IMG_CONNECTION_CLOUD    IMAGES_LIGHT                 "res\\light\\Connection\\cloud.png"
+
+IMG_CONNECTION_LOCAL    IMAGES_DARK                  "res\\dark\\Connection\\local.png"
+IMG_CONNECTION_LOCAL    IMAGES_LIGHT                 "res\\light\\Connection\\local.png"
+
+IMG_NO_VIDEO            IMAGES_DARK                  "res\\dark\\no_video.png"
+IMG_NO_VIDEO            IMAGES_LIGHT                 "res\\light\\no_video.png"
+
+IMG_CHECK_ON            IMAGES_DARK                  "res\\dark\\check_on.png"
+IMG_CHECK_ON            IMAGES_LIGHT                 "res\\light\\check_on.png"
+
+IMG_CHECK_OFF           IMAGES_DARK                  "res\\dark\\check_off.png"
+IMG_CHECK_OFF           IMAGES_LIGHT                 "res\\light\\check_off.png"
+
+IMG_CALLIN              IMAGES_DARK                  "res\\dark\\call_in.png"
+IMG_CALLIN              IMAGES_LIGHT                 "res\\light\\call_in.png"
+
+IMG_CALLOUT             IMAGES_DARK                  "res\\dark\\call_out.png"
+IMG_CALLOUT             IMAGES_LIGHT                 "res\\light\\call_out.png"
+
+IMG_MSG_CREATED         IMAGES_DARK                  "res\\dark\\ContentPanel\\msg_created.png"
+IMG_MSG_CREATED         IMAGES_LIGHT                 "res\\light\\ContentPanel\\msg_created.png"
+
+IMG_MSG_SENDED          IMAGES_DARK                  "res\\dark\\ContentPanel\\msg_sended.png"
+IMG_MSG_SENDED          IMAGES_LIGHT                 "res\\light\\ContentPanel\\msg_sended.png"
+
+IMG_MSG_DELIVERED       IMAGES_DARK                  "res\\dark\\ContentPanel\\msg_delivered.png"
+IMG_MSG_DELIVERED       IMAGES_LIGHT                 "res\\light\\ContentPanel\\msg_delivered.png"
+
+IMG_MSG_READED          IMAGES_DARK                  "res\\dark\\ContentPanel\\msg_readed.png"
+IMG_MSG_READED          IMAGES_LIGHT                 "res\\light\\ContentPanel\\msg_readed.png"
+
+IMG_REPLY               IMAGES_DARK                  "res\\dark\\ContentPanel\\reply.png"
+IMG_REPLY               IMAGES_LIGHT                 "res\\light\\ContentPanel\\reply.png"
+
+IMG_TB_SEND             IMAGES_DARK                  "res\\dark\\ContentPanel\\send.png"
+IMG_TB_SEND             IMAGES_LIGHT                 "res\\light\\ContentPanel\\send.png"
+
+IMG_TB_CALL             IMAGES_DARK                  "res\\dark\\MainToolBar\\call.png"
+IMG_TB_CALL             IMAGES_LIGHT                 "res\\light\\MainToolBar\\call.png"
+
+IMG_TB_CONFERENCE       IMAGES_DARK                  "res\\dark\\MainToolBar\\conference.png"
+IMG_TB_CONFERENCE       IMAGES_LIGHT                 "res\\light\\MainToolBar\\conference.png"
+
+IMG_TB_HANGUP           IMAGES_DARK                  "res\\dark\\MainToolBar\\hangup.png"
+IMG_TB_HANGUP           IMAGES_LIGHT                 "res\\light\\MainToolBar\\hangup.png"
+
+IMG_TB_SEPARATOR        IMAGES_DARK                  "res\\dark\\MainToolBar\\separator.png"
+IMG_TB_SEPARATOR        IMAGES_LIGHT                 "res\\light\\MainToolBar\\separator.png"
+
+IMG_TB_EXPAND           IMAGES_DARK                  "res\\dark\\MainToolBar\\expand.png"
+IMG_TB_EXPAND           IMAGES_LIGHT                 "res\\light\\MainToolBar\\expand.png"
+
+IMG_TB_CAMERA           IMAGES_DARK                  "res\\dark\\MainToolBar\\camera.png"
+IMG_TB_CAMERA           IMAGES_LIGHT                 "res\\light\\MainToolBar\\camera.png"
+
+IMG_TB_CAMERA_DISABLED  IMAGES_DARK                  "res\\dark\\MainToolBar\\camera_disabled.png"
+IMG_TB_CAMERA_DISABLED  IMAGES_LIGHT                 "res\\light\\MainToolBar\\camera_disabled.png"
+
+IMG_TB_MICROPHONE       IMAGES_DARK                  "res\\dark\\MainToolBar\\microphone.png"
+IMG_TB_MICROPHONE       IMAGES_LIGHT                 "res\\light\\MainToolBar\\microphone.png"
+
+IMG_TB_MICROPHONE_DISABLED IMAGES_DARK               "res\\dark\\MainToolBar\\microphone_disabled.png"
+IMG_TB_MICROPHONE_DISABLED IMAGES_LIGHT              "res\\light\\MainToolBar\\microphone_disabled.png"
+
+IMG_TB_LOUDSPEAKER       IMAGES_DARK                 "res\\dark\\MainToolBar\\loudspeaker.png"
+IMG_TB_LOUDSPEAKER       IMAGES_LIGHT                "res\\light\\MainToolBar\\loudspeaker.png"
+
+IMG_TB_LOUDSPEAKER_DISABLED IMAGES_DARK              "res\\dark\\MainToolBar\\loudspeaker_disabled.png"
+IMG_TB_LOUDSPEAKER_DISABLED IMAGES_LIGHT             "res\\light\\MainToolBar\\loudspeaker_disabled.png"
+
+IMG_TB_SCREENCAPTURE    IMAGES_DARK                  "res\\dark\\MainToolBar\\screencapture.png"
+IMG_TB_SCREENCAPTURE    IMAGES_LIGHT                 "res\\light\\MainToolBar\\screencapture.png"
+
+IMG_TB_SCREENCAPTURE_DISABLED IMAGES_DARK            "res\\dark\\MainToolBar\\screencapture_disabled.png"
+IMG_TB_SCREENCAPTURE_DISABLED IMAGES_LIGHT           "res\\light\\MainToolBar\\screencapture_disabled.png"
+
+IMG_TB_BIGGRID          IMAGES_DARK                  "res\\dark\\MainToolBar\\biggrid.png"
+IMG_TB_BIGGRID          IMAGES_LIGHT                 "res\\light\\MainToolBar\\biggrid.png"
+
+IMG_TB_EVENGRID         IMAGES_DARK                  "res\\dark\\MainToolBar\\evengrid.png"
+IMG_TB_EVENGRID         IMAGES_LIGHT                 "res\\light\\MainToolBar\\evengrid.png"
+
+IMG_TB_HAND             IMAGES_DARK                  "res\\dark\\MainToolBar\\hand.png"
+IMG_TB_HAND             IMAGES_LIGHT                 "res\\light\\MainToolBar\\hand.png"
+
+IMG_TB_LISTPANEL        IMAGES_DARK                  "res\\dark\\MainToolBar\\listpanel.png"
+IMG_TB_LISTPANEL        IMAGES_LIGHT                 "res\\light\\MainToolBar\\listpanel.png"
+
+IMG_TB_LISTPANEL_DISABLED IMAGES_DARK                "res\\dark\\MainToolBar\\listpanel_disabled.png"
+IMG_TB_LISTPANEL_DISABLED IMAGES_LIGHT               "res\\light\\MainToolBar\\listpanel_disabled.png"
+
+IMG_TB_CONTENTPANEL     IMAGES_DARK                  "res\\dark\\MainToolBar\\contentpanel.png"
+IMG_TB_CONTENTPANEL     IMAGES_LIGHT                 "res\\light\\MainToolBar\\contentpanel.png"
+
+IMG_TB_CONTENTPANEL_DISABLED IMAGES_DARK             "res\\dark\\MainToolBar\\contentpanel_disabled.png"
+IMG_TB_CONTENTPANEL_DISABLED IMAGES_LIGHT            "res\\light\\MainToolBar\\contentpanel_disabled.png"
+
+IMG_TB_FULLSCREEN       IMAGES_DARK                  "res\\dark\\MainToolBar\\fullscreen.png"
+IMG_TB_FULLSCREEN       IMAGES_LIGHT                 "res\\light\\MainToolBar\\fullscreen.png"
+
+IMG_TB_MENU             IMAGES_DARK                  "res\\dark\\MainToolBar\\menu.png"
+IMG_TB_MENU             IMAGES_LIGHT                 "res\\light\\MainToolBar\\menu.png"
+
+IMG_CL_SYM_CONF         IMAGES_DARK                  "res\\dark\\ContactList\\sym_conf.png"
+IMG_CL_SYM_CONF         IMAGES_LIGHT                 "res\\light\\ContactList\\sym_conf.png"
+
+IMG_CL_SYM_CONF_MY      IMAGES_DARK                  "res\\dark\\ContactList\\sym_conf_my.png"
+IMG_CL_SYM_CONF_MY      IMAGES_LIGHT                 "res\\light\\ContactList\\sym_conf_my.png"
+
+IMG_CL_ASYM_CONF        IMAGES_DARK                  "res\\dark\\ContactList\\asym_conf.png"
+IMG_CL_ASYM_CONF        IMAGES_LIGHT                 "res\\light\\ContactList\\asym_conf.png"
+
+IMG_CL_ASYM_CONF_MY     IMAGES_DARK                  "res\\dark\\ContactList\\asym_conf_my.png"
+IMG_CL_ASYM_CONF_MY     IMAGES_LIGHT                 "res\\light\\ContactList\\asym_conf_my.png"
+
+IMG_CL_ASYM_SS_CONF     IMAGES_DARK                  "res\\dark\\ContactList\\asym_ss_conf.png"
+IMG_CL_ASYM_SS_CONF     IMAGES_LIGHT                 "res\\light\\ContactList\\asym_ss_conf.png"
+
+IMG_CL_ASYM_SS_CONF_MY  IMAGES_DARK                  "res\\dark\\ContactList\\asym_ss_conf_my.png"
+IMG_CL_ASYM_SS_CONF_MY  IMAGES_LIGHT                 "res\\light\\ContactList\\asym_ss_conf_my.png"
+
+IMG_CL_GROUP_EXPANDED   IMAGES_DARK                  "res\\dark\\ContactList\\group_expanded.png"
+IMG_CL_GROUP_EXPANDED   IMAGES_LIGHT                 "res\\light\\ContactList\\group_expanded.png"
+
+IMG_CL_GROUP_ROLLED     IMAGES_DARK                  "res\\dark\\ContactList\\group_rolled.png"
+IMG_CL_GROUP_ROLLED     IMAGES_LIGHT                 "res\\light\\ContactList\\group_rolled.png"
+
+IMG_CL_CONFERENCES_EXPANDED IMAGES_DARK              "res\\dark\\ContactList\\conferences_expanded.png"
+IMG_CL_CONFERENCES_EXPANDED IMAGES_LIGHT             "res\\light\\ContactList\\conferences_expanded.png"
+
+IMG_CL_CONFERENCES_ROLLED IMAGES_DARK                "res\\dark\\ContactList\\conferences_rolled.png"
+IMG_CL_CONFERENCES_ROLLED IMAGES_LIGHT               "res\\light\\ContactList\\conferences_rolled.png"
+
+IMG_CL_ACCOUNT_DELETED  IMAGES_DARK                  "res\\dark\\ContactList\\account_deleted.png"
+IMG_CL_ACCOUNT_DELETED  IMAGES_LIGHT                 "res\\light\\ContactList\\account_deleted.png"
+
+IMG_CL_ACCOUNT_ONLINE   IMAGES_DARK                  "res\\dark\\ContactList\\account_online.png"
+IMG_CL_ACCOUNT_ONLINE   IMAGES_LIGHT                 "res\\light\\ContactList\\account_online.png"
+
+IMG_CL_ACCOUNT_OFFLINE  IMAGES_DARK                  "res\\dark\\ContactList\\account_offline.png"
+IMG_CL_ACCOUNT_OFFLINE  IMAGES_LIGHT                 "res\\light\\ContactList\\account_offline.png"
+
+IMG_TB_CL_ADD           IMAGES_DARK                  "res\\dark\\ContactList\\add.png"
+IMG_TB_CL_ADD           IMAGES_LIGHT                 "res\\light\\ContactList\\add.png"
+
+IMG_TB_CL_DEL           IMAGES_DARK                  "res\\dark\\ContactList\\del.png"
+IMG_TB_CL_DEL           IMAGES_LIGHT                 "res\\light\\ContactList\\del.png"
+
+IMG_TB_CL_EDIT          IMAGES_DARK                  "res\\dark\\ContactList\\edit.png"
+IMG_TB_CL_EDIT          IMAGES_LIGHT                 "res\\light\\ContactList\\edit.png"
+
+IMG_TB_CL_SEARCH        IMAGES_DARK                  "res\\dark\\ContactList\\search.png"
+IMG_TB_CL_SEARCH        IMAGES_LIGHT                 "res\\light\\ContactList\\search.png"
+
+IMG_TB_CL_SEPARATOR     IMAGES_DARK                  "res\\dark\\ContactList\\separator.png"
+IMG_TB_CL_SEPARATOR     IMAGES_LIGHT                 "res\\light\\ContactList\\separator.png"
+
+IMG_TB_ML_ADD           IMAGES_DARK                  "res\\dark\\MemberList\\ml_add.png"
+IMG_TB_ML_ADD           IMAGES_LIGHT                 "res\\light\\MemberList\\ml_add.png"
+
+IMG_TB_ML_DEL           IMAGES_DARK                  "res\\dark\\MemberList\\ml_del.png"
+IMG_TB_ML_DEL           IMAGES_LIGHT                 "res\\light\\MemberList\\ml_del.png"
+
+IMG_TB_ML_UP            IMAGES_DARK                  "res\\dark\\MemberList\\ml_up.png"
+IMG_TB_ML_UP            IMAGES_LIGHT                 "res\\light\\MemberList\\ml_up.png"
+
+IMG_TB_ML_MUTE_ALL      IMAGES_DARK                  "res\\dark\\MemberList\\ml_mute_all.png"
+IMG_TB_ML_MUTE_ALL      IMAGES_LIGHT                 "res\\light\\MemberList\\ml_mute_all.png"
+
+IMG_TB_ML_SPEAK         IMAGES_DARK                  "res\\dark\\MemberList\\ml_speak.png"
+IMG_TB_ML_SPEAK         IMAGES_LIGHT                 "res\\light\\MemberList\\ml_speak.png"
+
+IMG_TB_ML_DEVICES       IMAGES_DARK                  "res\\dark\\MemberList\\ml_devices.png"
+IMG_TB_ML_DEVICES       IMAGES_LIGHT                 "res\\light\\MemberList\\ml_devices.png"
+
+IMG_TB_ML_CAMERA        IMAGES_DARK                  "res\\dark\\MemberList\\ml_camera.png"
+IMG_TB_ML_CAMERA        IMAGES_LIGHT                 "res\\light\\MemberList\\ml_camera.png"
+
+IMG_TB_ML_MICROPHONE    IMAGES_DARK                  "res\\dark\\MemberList\\ml_microphone.png"
+IMG_TB_ML_MICROPHONE    IMAGES_LIGHT                 "res\\light\\MemberList\\ml_microphone.png"
+
+IMG_TB_ML_SCREENCAPTURE IMAGES_DARK                  "res\\dark\\MemberList\\ml_screencapture.png"
+IMG_TB_ML_SCREENCAPTURE IMAGES_LIGHT                 "res\\light\\MemberList\\ml_screencapture.png"
+
+IMG_TB_ML_SEPARATOR     IMAGES_DARK                  "res\\dark\\MemberList\\ml_separator.png"
+IMG_TB_ML_SEPARATOR     IMAGES_LIGHT                 "res\\light\\MemberList\\ml_separator.png"
+
+IMG_ML_OWNER            IMAGES_DARK                  "res\\dark\\MemberList\\owner_member.png"
+IMG_ML_OWNER            IMAGES_LIGHT                 "res\\light\\MemberList\\owner_member.png"
+
+IMG_ML_MODERATOR        IMAGES_DARK                  "res\\dark\\MemberList\\moderator_member.png"
+IMG_ML_MODERATOR        IMAGES_LIGHT                 "res\\light\\MemberList\\moderator_member.png"
+
+IMG_ML_ORDINARY         IMAGES_DARK                  "res\\dark\\MemberList\\ordinary_member.png"
+IMG_ML_ORDINARY         IMAGES_LIGHT                 "res\\light\\MemberList\\ordinary_member.png"
+
+IMG_ML_READONLY         IMAGES_DARK                  "res\\dark\\MemberList\\readonly_member.png"
+IMG_ML_READONLY         IMAGES_LIGHT                 "res\\light\\MemberList\\readonly_member.png"
+
+IMG_ML_DEAF             IMAGES_DARK                  "res\\dark\\MemberList\\deaf_member.png"
+IMG_ML_DEAF             IMAGES_LIGHT                 "res\\light\\MemberList\\deaf_member.png"
+
+IMG_ML_CAMERA_MICROPHONE_ENABLED   IMAGES_DARK       "res\\dark\\MemberList\\ml_camera_microphone_enabled.png"
+IMG_ML_CAMERA_MICROPHONE_ENABLED   IMAGES_LIGHT      "res\\light\\MemberList\\ml_camera_microphone_enabled.png"
+
+IMG_ML_CAMERA_ENABLED   IMAGES_DARK                  "res\\dark\\MemberList\\ml_camera_enabled.png"
+IMG_ML_CAMERA_ENABLED   IMAGES_LIGHT                 "res\\light\\MemberList\\ml_camera_enabled.png"
+
+IMG_ML_MICROPHONE_ENABLED IMAGES_DARK                "res\\dark\\MemberList\\ml_microphone_enabled.png"
+IMG_ML_MICROPHONE_ENABLED IMAGES_LIGHT               "res\\light\\MemberList\\ml_microphone_enabled.png"
+
+IMG_ML_SPEAK_ENABLED    IMAGES_DARK                  "res\\dark\\MemberList\\ml_speak_enabled.png"
+IMG_ML_SPEAK_ENABLED    IMAGES_LIGHT                 "res\\light\\MemberList\\ml_speak_enabled.png"
+
+IMG_MC_ADD_TO_MEMBERS   IMAGES_DARK                  "res\\dark\\ModifyConference\\add_to_members.png"
+IMG_MC_ADD_TO_MEMBERS   IMAGES_LIGHT                 "res\\light\\ModifyConference\\add_to_members.png"
+
+IMG_MC_UP_MEMBER        IMAGES_DARK                  "res\\dark\\ModifyConference\\up_member.png"
+IMG_MC_UP_MEMBER        IMAGES_LIGHT                 "res\\light\\ModifyConference\\up_member.png"
+
+IMG_MC_DOWN_MEMBER      IMAGES_DARK                  "res\\dark\\ModifyConference\\down_member.png"
+IMG_MC_DOWN_MEMBER      IMAGES_LIGHT                 "res\\light\\ModifyConference\\down_member.png"
+
+IMG_MC_DEL_MEMBER       IMAGES_DARK                  "res\\dark\\ModifyConference\\del_member.png"
+IMG_MC_DEL_MEMBER       IMAGES_LIGHT                 "res\\light\\ModifyConference\\del_member.png"
+
+IMG_MC_CLEAR_MEMBERS    IMAGES_DARK                  "res\\dark\\ModifyConference\\clear_members.png"
+IMG_MC_CLEAR_MEMBERS    IMAGES_LIGHT                 "res\\light\\ModifyConference\\clear_members.png"
+
+IMG_MW_CAMERA_ON        IMAGES_DARK                  "res\\dark\\MiniWindow\\camera_on.png"
+IMG_MW_CAMERA_ON        IMAGES_LIGHT                 "res\\light\\MiniWindow\\camera_on.png"
+
+IMG_MW_CAMERA_OFF        IMAGES_DARK                  "res\\dark\\MiniWindow\\camera_off.png"
+IMG_MW_CAMERA_OFF        IMAGES_LIGHT                 "res\\light\\MiniWindow\\camera_off.png"
+
+IMG_MW_MICROPHONE_ON    IMAGES_DARK                  "res\\dark\\MiniWindow\\microphone_on.png"
+IMG_MW_MICROPHONE_ON    IMAGES_LIGHT                 "res\\light\\MiniWindow\\microphone_on.png"
+
+IMG_MW_MICROPHONE_OFF   IMAGES_DARK                  "res\\dark\\MiniWindow\\microphone_off.png"
+IMG_MW_MICROPHONE_OFF   IMAGES_LIGHT                 "res\\light\\MiniWindow\\microphone_off.png"
+
+IMG_SETTING_CAMERA      IMAGES_DARK                  "res\\dark\\Settings\\camera.png"
+IMG_SETTING_CAMERA      IMAGES_LIGHT                 "res\\light\\Settings\\camera.png"
+
+IMG_SETTING_MICROPHONE  IMAGES_DARK                  "res\\dark\\Settings\\microphone.png"
+IMG_SETTING_MICROPHONE  IMAGES_LIGHT                 "res\\light\\Settings\\microphone.png"
+
+IMG_SETTING_LOUDSPEAKER IMAGES_DARK                  "res\\dark\\Settings\\loudspeaker.png"
+IMG_SETTING_LOUDSPEAKER IMAGES_LIGHT                 "res\\light\\Settings\\loudspeaker.png"
+
+IMG_SETTING_ACCOUNT     IMAGES_DARK                  "res\\dark\\Settings\\account.png"
+IMG_SETTING_ACCOUNT     IMAGES_LIGHT                 "res\\light\\Settings\\account.png"
+
+IMG_SETTING_CONNECTION  IMAGES_DARK                  "res\\dark\\Settings\\connection.png"
+IMG_SETTING_CONNECTION  IMAGES_LIGHT                 "res\\light\\Settings\\connection.png"
+
+IMG_SETTING_PREFERENCES IMAGES_DARK                  "res\\dark\\Settings\\preferences.png"
+IMG_SETTING_PREFERENCES IMAGES_LIGHT                 "res\\light\\Settings\\preferences.png"
+
+IMG_SETTING_RECORD      IMAGES_DARK                  "res\\dark\\Settings\\record.png"
+IMG_SETTING_RECORD      IMAGES_LIGHT                 "res\\light\\Settings\\record.png"
+
+IMG_SETTING_NO_SIGNAL   IMAGES_DARK                  "res\\dark\\Settings\\no_signal.png"
+IMG_SETTING_NO_SIGNAL   IMAGES_LIGHT                 "res\\light\\Settings\\no_signal.png"
+
+IMG_LOADING_01          IMAGES_DARK                  "res\\dark\\Loading\\01.png"
+IMG_LOADING_01          IMAGES_LIGHT                 "res\\light\\Loading\\01.png"
+
+IMG_LOADING_02          IMAGES_DARK                  "res\\dark\\Loading\\02.png"
+IMG_LOADING_02          IMAGES_LIGHT                 "res\\light\\Loading\\02.png"
+
+IMG_LOADING_03          IMAGES_DARK                  "res\\dark\\Loading\\03.png"
+IMG_LOADING_03          IMAGES_LIGHT                 "res\\light\\Loading\\03.png"
+
+IMG_LOADING_04          IMAGES_DARK                  "res\\dark\\Loading\\04.png"
+IMG_LOADING_04          IMAGES_LIGHT                 "res\\light\\Loading\\04.png"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION MAJOR_VERSION, MINOR_VERSION, RELEASE, CLIENT_VERSION
+ PRODUCTVERSION MAJOR_VERSION, MINOR_VERSION, RELEASE, CLIENT_VERSION
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x40000L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "000004b0"
+        BEGIN
+            VALUE "CompanyName", COMPANY_NAME
+            VALUE "FileDescription", SYSTEM_NAME " Client"
+            VALUE "FileVersion", SYSTEM_VERSION
+            VALUE "InternalName", SYSTEM_NAME "Client.exe"
+            VALUE "LegalCopyright", PRODUCT_COPYRIGHT
+            VALUE "OriginalFilename", SYSTEM_NAME "Client.exe"
+            VALUE "ProductName", SYSTEM_NAME " - Video Conferencing System"
+            VALUE "ProductVersion", SYSTEM_VERSION
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x0, 1200
+    END
+END

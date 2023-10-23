@@ -1,0 +1,41 @@
+VideoGrace videoconferencing system client application
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Installation is performed in the user's home directory 
+/home/user/.vgclient/ sudo is not required
+
+Installation
+~~~~~~~~~~~~
+
+1. Execute: ./install.sh
+2. Run ~/.vgclient/VideoGraceClient from the terminal 
+or using the icon on your desktop. The first time you run the icon 
+allow the program to run.
+
+
+If the program does not start, you need to get the two libraries:
+
+On debian-embedded systems:
+
+sudo apt install libxcb-cursor0
+sudo apt install libxcb-ewmh2
+
+On rpm-like systems:
+
+sudo yum install xcb-util-cursor 
+sudo yum install xcb-util-wm
+
+The update is done automatically from the server
+
+Uninstall
+~~~~~~~~~
+
+1. Run sudo ./uninstall.sh and/or rm -rf ~/.vgclient/
+
+Contacts
+~~~~~~~~
+
+Website: https://videograce.com/en/
+Email: contact@videograce.com
+Telegram: @udattsk
+GitHub: https://github.com/ud84
