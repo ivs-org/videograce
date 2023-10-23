@@ -1,0 +1,5 @@
+./configure --target=x86-win32-vs15 --disable-examples --disable-tools --disable-docs --disable-vp9 --disable-shared --disable-webm_io --disable-libyuv --enable-postproc --enable-realtime-only --enable-runtime-cpu-detect --enable-static-msvcrt --disable-spatial-resampling --enable-error-concealment
+
+& x86_64-win64-vs15
+
+on windows xp disable USE_WINDOWS_CONDITION_VARIABLE !

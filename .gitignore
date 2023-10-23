@@ -1,10 +1,11 @@
-﻿################################################################################
-# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
-################################################################################
-
-/.vs/VideoGrace/v15
+﻿/.vs/VideoGrace/v15
 /Client/x64/Debug
 /Engine/x64/Debug
 /x64/Debug
 *.idb
 *.pdb
+*.a
+*.lib
+/Client/Release
+/Engine/Release
+/Release
