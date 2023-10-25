@@ -1,7 +1,10 @@
 ﻿/.vs/VideoGrace/v15
 /Client/x64/Debug
+/Client/x64/Release
 /Engine/x64/Debug
+/Engine/x64/Release
 /x64/Debug
+/x64/Release
 *.idb
 *.pdb
 *.a
@@ -23,3 +26,6 @@ Client/CMakeFiles/
 Engine/CMakeFiles/
 
 Tests/ShClnt/ShClnt
+
+/Tests/ShClnt/x64/Release
+/Installer/x64/Release
