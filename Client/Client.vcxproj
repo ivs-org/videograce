@@ -340,6 +340,9 @@
     <None Include="res\light.json" />
     <None Include="res\ru_locale.json" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\active.ico" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
