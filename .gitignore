@@ -32,3 +32,4 @@ Tests/ShClnt/ShClnt
 /.vs/VideoGrace
 /Installer/Release
 /x64
+/Tests/ShClnt/x64/Debug
