@@ -51,10 +51,12 @@ MainDialog::MainDialog()
 {
     UpdateCustomThemes();
 
-    wui::rect image_pos = { (WND_WIDTH - meetImage->width()) / 2,
+    const int32_t imageSize = 200;
+
+    wui::rect image_pos = { (WND_WIDTH - imageSize) / 2,
         WND_HEIGHT / 6,
-        (WND_WIDTH - meetImage->width()) / 2 + meetImage->width(),
-        WND_HEIGHT / 6 + meetImage->height() };
+        (WND_WIDTH - imageSize) / 2 + imageSize,
+        WND_HEIGHT / 6 + imageSize };
 
     window->add_control(progressPanel, { 0, 30, WND_WIDTH, 80 });
     window->add_control(progressText, { 10, 55, WND_WIDTH - 10, 70 });
@@ -628,7 +630,7 @@ void MainDialog::Uninstall()
 
     std::wofstream cmdfile;
     cmdfile.open(std::wstring(appDataPath) + L"\\remove.cmd", std::ios_base::out | std::ios_base::trunc | std::ios_base::binary);
-    cmdfile.imbue(std::locale(cmdfile.getloc(), new std::codecvt_utf8<wchar_t, 0x10ffff, std::little_endian>));
+    //cmdfile.imbue(std::locale(cmdfile.getloc(), new std::codecvt_utf8<wchar_t, 0x10ffff, std::little_endian>));
     cmdfile << L"@chcp 65001\r\n:loop\r\n" \
         L"if exist \"" << installPath << L"\\uninstall.exe\" (\r\n"\
         L"rmdir /S /Q \"" << installPath << L"\" \r\n"\
