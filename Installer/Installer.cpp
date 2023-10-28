@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Installer.cpp - Contains main()
  *
  * Author: Anton (ud) Golovkov, udattsk@gmail.com

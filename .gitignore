@@ -1,4 +1,4 @@
-﻿/.vs/VideoGrace/v15
+﻿.vs/
 /Client/x64/Debug
 /Client/x64/Release
 /Engine/x64/Debug
@@ -29,7 +29,6 @@ Tests/ShClnt/ShClnt
 
 /Tests/ShClnt/x64/Release
 /Installer/x64/Release
-/.vs/VideoGrace
 /Installer/Release
 /x64
 /Tests/ShClnt/x64/Debug
