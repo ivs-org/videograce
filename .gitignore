@@ -32,3 +32,6 @@ Tests/ShClnt/ShClnt
 /Installer/Release
 /x64
 /Tests/ShClnt/x64/Debug
+/Client/Debug
+/Engine/Debug
+/Installer/Debug
