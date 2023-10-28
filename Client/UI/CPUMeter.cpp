@@ -7,6 +7,8 @@
 
 #include <UI/CPUMeter.h>
 
+#include <cmath>
+
 namespace Client
 {
 
