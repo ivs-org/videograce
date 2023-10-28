@@ -73,18 +73,18 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>.;..\Engine;..\Lib\WTL\include;..\Lib\libWebM;..\Lib\boost_1_81_0\include;..\Lib\ipp\include;..\Lib\Filters\BaseClasses;..\Lib\lame\include;$(VC_IncludePath);$(WindowsSdk_71A_IncludePath)</IncludePath>
-    <LibraryPath>..\x64\Debug;..\Lib\libVPX\x64\debug;..\Lib\libOpus\x64\debug;..\Lib\libWebM\lib\win\x64\Debug;..\Lib\boost_1_81_0\lib\win;..\Lib\OpenSSL\lib\x64;..\Lib\ipp\lib\intel64_win;..\Lib\Filters\BaseClasses\x64\Debug;..\Lib\lame\lib\x64\Debug;$(LibraryPath)</LibraryPath>
+    <IncludePath>.;..\Engine;..\Lib\WTL\include;..\Lib\libWebM;..\Lib\boost_1_83_0\include;..\Lib\ipp\include;..\Lib\Filters\BaseClasses;..\Lib\lame\include;$(VC_IncludePath);$(WindowsSdk_71A_IncludePath)</IncludePath>
+    <LibraryPath>..\x64\Debug;..\Lib\libVPX\x64\debug;..\Lib\libOpus\x64\debug;..\Lib\libWebM\lib\win\x64\Debug;..\Lib\boost_1_83_0\lib\win;..\Lib\OpenSSL\lib\x64;..\Lib\ipp\lib\intel64_win;..\Lib\Filters\BaseClasses\x64\Debug;..\Lib\lame\lib\x64\Debug;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>.;..\Lib\wui\include;..\Engine;..\Lib\WTL\include;..\Lib\boost_1_82_0\include;$(VC_IncludePath);$(WindowsSdk_71A_IncludePath)</IncludePath>
-    <LibraryPath>..\Debug;..\Lib\boost_1_82_0\lib\win;..\Lib\OpenSSL\lib\win32;..\Lib\wui\Debug;$(LibraryPath)</LibraryPath>
+    <IncludePath>.;..\Lib\wui\include;..\Engine;..\Lib\WTL\include;..\Lib\boost_1_83_0\include;$(VC_IncludePath);$(WindowsSdk_71A_IncludePath)</IncludePath>
+    <LibraryPath>..\Debug;..\Lib\boost_1_83_0\lib\win;..\Lib\OpenSSL\lib\win32;..\Lib\wui\Debug;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>.;..\Engine;..\Lib\wui\include;..\Lib\boost_1_82_0\include;$(VC_IncludePath);$(WindowsSdk_71A_IncludePath)</IncludePath>
-    <LibraryPath>..\Release;..\Lib\wui\Release;..\Lib\boost_1_82_0\lib\win;..\Lib\OpenSSL\lib\win32;..\Lib\ipp\lib\ia32_win;$(LibraryPath)</LibraryPath>
+    <IncludePath>.;..\Engine;..\Lib\wui\include;..\Lib\boost_1_83_0\include;$(VC_IncludePath);$(WindowsSdk_71A_IncludePath)</IncludePath>
+    <LibraryPath>..\Release;..\Lib\wui\Release;..\Lib\boost_1_83_0\lib\win;..\Lib\OpenSSL\lib\win32;..\Lib\ipp\lib\ia32_win;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>

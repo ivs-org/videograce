@@ -70,20 +70,20 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <TargetExt>.lib</TargetExt>
     <LibraryPath>$(LibraryPath)</LibraryPath>
-    <IncludePath>.;..\Lib\libVPX;..\Lib\libOpus;..\Lib\libWebM;..\Lib\boost_1_82_0\include;..\Lib\ipp\include;..\Lib\OpenSSL\include;..\Lib\lame\include;..\Lib\wui\include;$(VC_IncludePath);$(WindowsSdk_71A_IncludePath)</IncludePath>
+    <IncludePath>.;..\Lib\libVPX;..\Lib\libOpus;..\Lib\libWebM;..\Lib\boost_1_83_0\include;..\Lib\ipp\include;..\Lib\OpenSSL\include;..\Lib\lame\include;..\Lib\wui\include;$(VC_IncludePath);$(WindowsSdk_71A_IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <TargetExt>.lib</TargetExt>
     <LibraryPath>$(LibraryPath)</LibraryPath>
-    <IncludePath>.;..\Lib\libVPX;..\Lib\libOpus;..\Lib\libWebM;..\Lib\boost_1_82_0\include;..\Lib\ipp\include;..\Lib\OpenSSL\include;..\Lib\lame\include;..\Lib\wui\include;$(VC_IncludePath);$(WindowsSdk_71A_IncludePath)</IncludePath>
+    <IncludePath>.;..\Lib\libVPX;..\Lib\libOpus;..\Lib\libWebM;..\Lib\boost_1_83_0\include;..\Lib\ipp\include;..\Lib\OpenSSL\include;..\Lib\lame\include;..\Lib\wui\include;$(VC_IncludePath);$(WindowsSdk_71A_IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LibraryPath>$(LibraryPath)</LibraryPath>
-    <IncludePath>.;..\Lib\libVPX;..\Lib\libOpus;..\Lib\libWebM;..\Lib\boost_1_82_0\include;..\Lib\OpenSSL\include;..\Lib\ipp\include;..\Lib\lame\include;..\Lib\wui\include;$(VC_IncludePath);$(WindowsSdk_71A_IncludePath)</IncludePath>
+    <IncludePath>.;..\Lib\libVPX;..\Lib\libOpus;..\Lib\libWebM;..\Lib\boost_1_83_0\include;..\Lib\OpenSSL\include;..\Lib\ipp\include;..\Lib\lame\include;..\Lib\wui\include;$(VC_IncludePath);$(WindowsSdk_71A_IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LibraryPath>$(LibraryPath)</LibraryPath>
-    <IncludePath>.;..\Lib\libVPX;..\Lib\libOpus;..\Lib\libWebM;..\Lib\boost_1_82_0\include;..\Lib\OpenSSL\include;..\Lib\ipp\include;..\Lib\lame\include;..\Lib\wui\include;$(VC_IncludePath);$(WindowsSdk_71A_IncludePath)</IncludePath>
+    <IncludePath>.;..\Lib\libVPX;..\Lib\libOpus;..\Lib\libWebM;..\Lib\boost_1_83_0\include;..\Lib\OpenSSL\include;..\Lib\ipp\include;..\Lib\lame\include;..\Lib\wui\include;$(VC_IncludePath);$(WindowsSdk_71A_IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
