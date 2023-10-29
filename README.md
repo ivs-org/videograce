@@ -16,7 +16,7 @@ Extract it to:
 Open the VideoGrace.sln, then make Engine and other projects
 
 ### Linux
-Download the file: [Linux Library Binaries](https://drive.google.com/uc?export=download&id=1eLi6GR8t1mj4cK0zV4fg_ISht3rt6CMZ)
+Download the file: [Linux Library Binaries](https://drive.google.com/uc?export=download&id=1qJfsWcIxRoCuDaTS89oQpl8gd34u3cUr)
 
 Extract it to: 
 
