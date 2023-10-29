@@ -3,7 +3,7 @@
     {
       "type": "window",
       "background": "#131519",
-      "border": "#404040",
+      "border": "#383838",
       "border_width": 1,
       "text": "#f5f5f0",
       "active_button": "#3b3d41",
@@ -29,9 +29,9 @@
       "type": "button",
       "calm": "#06a5df",
       "active": "#1aafe9",
-      "border": "#00a0d2",
+      "border": "#383838",
       "border_width": 1,
-      "focused_border": "#dcd2dc",
+      "focused_border": "#0084bc",
       "text": "#f0f1f1",
       "disabled": "#a5a5a0",
       "anchor": "#0066cc",
@@ -46,9 +46,9 @@
       "type": "green_button",
       "calm": "#12692f",
       "active": "#10943c",
-      "border": "#004f1a",
+      "border": "#383838",
       "border_width": 1,
-      "focused_border": "#dcd2dc",
+      "focused_border": "#0084bc",
       "text": "#f0f1f1",
       "disabled": "#a5a5a0",
       "round": 0,
@@ -62,9 +62,9 @@
       "type": "red_button",
       "calm": "#c61818",
       "active": "#e31010",
-      "border": "#c90000",
+      "border": "#383838",
       "border_width": 1,
-      "focused_border": "#dcd2dc",
+      "focused_border": "#0084bc",
       "text": "#f0f1f1",
       "disabled": "#a5a5a0",
       "round": 0,
@@ -106,9 +106,9 @@
       "type": "check_button_calm",
       "calm": "#131519",
       "active": "#232529",
-      "border": "#dcd2dc",
+      "border": "#383838",
       "border_width": 1,
-      "focused_border": "#ece2ec",
+      "focused_border": "#0084bc",
       "text": "#f0f1f1",
       "disabled": "#a5a5a0",
       "anchor": "#0066cc",
@@ -123,9 +123,9 @@
       "type": "check_button_active",
       "calm": "#3e3e42",
       "active": "#4e4e52",
-      "border": "#dcd2dc",
+      "border": "#383838",
       "border_width": 1,
-      "focused_border": "#ece2ec",
+      "focused_border": "#0084bc",
       "text": "#f0f1f1",
       "disabled": "#a5a5a0",
       "anchor": "#0066cc",
@@ -142,9 +142,9 @@
       "text": "#f0ebf0",
       "selection": "#264f78",
       "cursor": "#d2d2d2",
-      "border": "#404040",
+      "border": "#383838",
       "border_width": 1,
-      "focused_border": "#8c8c8c",
+      "focused_border": "#0084bc",
       "round": 0,
       "font": {
         "name": "Segoe UI",
@@ -154,9 +154,9 @@
     {
       "type": "select",
       "background": "#27292d",
-      "border": "#404040",
+      "border": "#383838",
       "border_width": 1,
-      "focused_border": "#8c8c8c",
+      "focused_border": "#0084bc",
       "button_calm": "#06a5df",
       "button_active": "#1aafe9",
       "text": "#f0ebf0",
@@ -174,8 +174,8 @@
     {
       "type": "list",
       "background": "#27292d",
-      "border": "#404040",
-      "focused_border": "#8c8c8c",
+      "border": "#383838",
+      "focused_border": "#0084bc",
       "border_width": 1,
       "title": "#292929",
       "title_text": "#f0ebf0",
@@ -210,7 +210,7 @@
     {
       "type": "tooltip",
       "background": "#b4aabe",
-      "border": "#f1f2f7",
+      "border": "#383838",
       "border_width": 1,
       "text": "#061912",
       "round": 0,
@@ -227,7 +227,7 @@
     },
     {
       "type": "progress",
-      "border": "#404040",
+      "border": "#383838",
       "border_width": 1,
       "background": "#27292d",
       "meter": "#8dd28a"
@@ -261,15 +261,15 @@
     },
     {
       "type": "content_box",
-	  "background": "#27292d",
-      "border": "#404040",
-      "focused_border": "#8c8c8c",
+      "background": "#27292d",
+      "border": "#383838",
+      "focused_border": "#0084bc",
       "border_width": 1,
       "scrollbar": "#3e3e42",
       "scrollbar_slider": "#686868",
       "scrollbar_slider_active": "#9e9e9e",
       "round": 0,
-	  "text": "#f0ebf0",
+      "text": "#f0ebf0",
       "time": "#cfcacf",
       "service_text": "#bdb9bd",
       "my_message": "#2b5278",
@@ -289,12 +289,13 @@
       "font": {
         "name": "Segoe UI",
         "size": 18,
-		"decorations": "bold"
+        "decorations": "bold"
       }
     },
-	{
+    {
       "type": "content_title_panel",
-      "background": "#17212b"
+      "background": "#17212b",
+      "round": 0
     },
     {
       "type": "content_title_text",
@@ -302,7 +303,7 @@
       "font": {
         "name": "Segoe UI",
         "size": 18,
-		"decorations": "bold"
+        "decorations": "bold"
       }
     }
   ],
