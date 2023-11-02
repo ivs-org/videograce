@@ -23,7 +23,7 @@ VolumeBox::VolumeBox(std::function<void(int32_t value, VolumeBoxMode mode, bool 
     panel(new wui::panel(std::bind(&VolumeBox::DrawPanel, this, std::placeholders::_1))),
     slider(new wui::slider(0, 100, 100, std::bind(&VolumeBox::SliderChange, this, std::placeholders::_1), wui::slider_orientation::vertical)),
     image(new wui::image(IMG_TB_LOUDSPEAKER)),
-    text(new wui::text("100", wui::text_alignment::center))
+    text(new wui::text("100", wui::hori_alignment::center))
 {
     panel->set_topmost(true);
     slider->set_topmost(true);
