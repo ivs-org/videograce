@@ -82,7 +82,7 @@ void SpeedTester::TakeOutputSpeed()
 	double avgSpeed = 0;
 
 	Common::TimeMeter timeMeter;
-	for (auto i = 0; i != COUNT; ++i)
+	for (auto i = 1; i != COUNT + 1; ++i)
 	{
 		timeMeter.Reset();
 
@@ -115,7 +115,7 @@ void SpeedTester::TakeInputSpeed()
 	double avgSpeed = 0;
 
 	Common::TimeMeter timeMeter;
-	for (auto i = 0; i != COUNT; ++i)
+	for (auto i = 1; i != COUNT + 1; ++i)
 	{
 		timeMeter.Reset();
 
