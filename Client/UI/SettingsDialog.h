@@ -58,7 +58,8 @@ public:
         Audio::Resampler &resampler,
         Audio::AudioMixer &audioMixer,
         Ringer &ringer,
-        std::function<void(bool)> netSpeedDetereminer,
+        std::function<void(bool)> netSpeedDeterminer,
+        std::function<void()> connectivityDeterminer,
         std::function<void()> readyCallback);
     ~SettingsDialog();
 
@@ -78,7 +79,8 @@ private:
     static const int32_t XBITMAP = 48;
 
     std::function<void()> readyCallback;
-    std::function<void(bool)> netSpeedDetereminer;
+    std::function<void(bool)> netSpeedDeterminer;
+    std::function<void()> connectivityDeterminer;
 
     Controller::IController &controller;
 
@@ -148,7 +150,7 @@ private:
     std::shared_ptr<wui::input> connectionInSpeedInput;
     std::shared_ptr<wui::text> connectionOutSpeedText;
     std::shared_ptr<wui::input> connectionOutSpeedInput;
-    std::shared_ptr<wui::button> connectionDetermineSpeedNowButton;
+    std::shared_ptr<wui::button> connectionDetermineSpeedNowButton, connectionCheckConnectivityNowButton;
     std::string connectionServer, connectionLogin, connectionPassword, connectionInSpeed, connectionOutSpeed;
 
     std::shared_ptr<wui::button> prefTimerCheck;
@@ -204,6 +206,7 @@ private:
     bool UpdateConnection();
     void UpdateSpeedInputs();
     void DetermineSpeedNow();
+    void CheckConnectivityNow();
     void ShowIncorrectURLError();
 
     void ShowPreferences();

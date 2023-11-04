@@ -51,10 +51,12 @@ SettingsDialog::SettingsDialog(std::weak_ptr<wui::window> transientWindow_,
     Audio::Resampler &resampler_,
     Audio::AudioMixer &audioMixer_,
     Ringer &ringer_,
-    std::function<void(bool)> netSpeedDetereminer_,
+    std::function<void(bool)> netSpeedDeterminer_,
+    std::function<void()> connectivityDeterminer_,
     std::function<void()> readyCallback_)
     : readyCallback(readyCallback_),
-    netSpeedDetereminer(netSpeedDetereminer_),
+    netSpeedDeterminer(netSpeedDeterminer_),
+    connectivityDeterminer(connectivityDeterminer_),
     controller(controller_),
     transientWindow(transientWindow_),
     window(new wui::window()),
@@ -131,6 +133,7 @@ SettingsDialog::SettingsDialog(std::weak_ptr<wui::window> transientWindow_,
     connectionOutSpeedText(new wui::text(wui::locale("settings", "output_network_speed"))),
     connectionOutSpeedInput(new wui::input()),
     connectionDetermineSpeedNowButton(new wui::button(wui::locale("settings", "determine_network_speed"), std::bind(&SettingsDialog::DetermineSpeedNow, this))),
+    connectionCheckConnectivityNowButton(new wui::button(wui::locale("settings", "check_connectivity"), std::bind(&SettingsDialog::CheckConnectivityNow, this))),
     connectionServer(UNCHANGED), connectionLogin(UNCHANGED), connectionPassword(UNCHANGED), connectionInSpeed(UNCHANGED), connectionOutSpeed(UNCHANGED),
 
     prefTimerCheck(new wui::button(wui::locale("settings", "show_timer"), []() {}, wui::button_view::switcher)),
@@ -1028,6 +1031,7 @@ void SettingsDialog::ShowConnection()
     connectionInSpeedInput->update_theme();
     connectionOutSpeedInput->update_theme();
     connectionDetermineSpeedNowButton->update_theme();
+    connectionCheckConnectivityNowButton->update_theme();
 
     if (connectionServer == UNCHANGED) connectionServer = (wui::config::get_int("Connection", "Secure", 0) != 0 ? "https://" : "http://") + wui::config::get_string("Connection", "Address", "");
     if (connectionLogin == UNCHANGED) connectionLogin = wui::config::get_string("Credentials", "Login", "");
@@ -1056,6 +1060,7 @@ void SettingsDialog::ShowConnection()
     window->add_control(connectionOutSpeedText, { 210, 260, 330, 285 });
     window->add_control(connectionOutSpeedInput, { 340, 260, WND_WIDTH - 80, 285 });
     window->add_control(connectionDetermineSpeedNowButton, { 340, 295, WND_WIDTH - 80, 320 });
+    window->add_control(connectionCheckConnectivityNowButton, { 340, 330, WND_WIDTH - 80, 355 });
 
     window->set_focused(connectionServerInput);
 }
@@ -1075,6 +1080,7 @@ void SettingsDialog::HideConnection()
     window->remove_control(connectionOutSpeedText);
     window->remove_control(connectionOutSpeedInput);
     window->remove_control(connectionDetermineSpeedNowButton);
+    window->remove_control(connectionCheckConnectivityNowButton);
 }
 
 bool SettingsDialog::UpdateConnection()
@@ -1147,12 +1153,17 @@ void SettingsDialog::UpdateSpeedInputs()
 
 void SettingsDialog::DetermineSpeedNow()
 {
-    netSpeedDetereminer(true);
+    netSpeedDeterminer(true);
 
     connectionInSpeed = std::to_string(wui::config::get_int("User", "MaxInputBitrate", 0));
     connectionOutSpeed = std::to_string(wui::config::get_int("User", "MaxOutputBitrate", 0));
     connectionInSpeedInput->set_text(connectionInSpeed);
     connectionOutSpeedInput->set_text(connectionOutSpeed);
+}
+
+void SettingsDialog::CheckConnectivityNow()
+{
+    connectivityDeterminer();
 }
 
 /// Preferences settings

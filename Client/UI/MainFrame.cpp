@@ -212,7 +212,15 @@ MainFrame::MainFrame()
     dialingDialog(window, std::bind(&MainFrame::CancelCall, this)),
     questionDialog(window, std::bind(&MainFrame::QuestionCall, this, std::placeholders::_1)),
     conferenceDialog(window, controller, storage),
-    settingsDialog(window, controller, audioRenderer, resampler, audioMixer, ringer, std::bind(&MainFrame::DetermineNetSpeed, this, std::placeholders::_1), std::bind(&MainFrame::SettingsReadyCallback, this)),
+    settingsDialog(window,
+        controller,
+        audioRenderer,
+        resampler,
+        audioMixer,
+        ringer,
+        std::bind(&MainFrame::DetermineNetSpeed, this, std::placeholders::_1),
+        std::bind(&MainFrame::CheckConnectivity, this),
+        std::bind(&MainFrame::SettingsReadyCallback, this)),
 
     useTCPMedia(false),
     actionQuested(false),
@@ -1084,8 +1092,7 @@ void MainFrame::ProcessControllerEvent()
                 HideBusy();
 
                 DetermineNetSpeed();
-                udpTester.ClearAddresses();
-                controller.RequestMediaAddresses();
+                CheckConnectivity();
 
                 storage.SetMyClientId(controller.GetMyClientId());
 
@@ -2329,6 +2336,12 @@ void MainFrame::SetBusyProgess(std::string_view sub_title, int32_t value)
 void MainFrame::HideBusy()
 {
     window->emit_event(static_cast<int32_t>(MyEvent::HideBusy), 0);
+}
+
+void MainFrame::CheckConnectivity()
+{
+    udpTester.ClearAddresses();
+    controller.RequestMediaAddresses();
 }
 
 void MainFrame::DetermineNetSpeed(bool force)

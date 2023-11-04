@@ -243,6 +243,7 @@ private:
     void SetBusyProgess(std::string_view sub_title, int32_t value);
     void HideBusy();
 
+    void CheckConnectivity();
     void DetermineNetSpeed(bool force = false);
 
     void SetStanbyMode();
