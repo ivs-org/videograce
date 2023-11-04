@@ -33,7 +33,7 @@ public:
     void End();
 
 private:
-    static const int32_t WND_WIDTH = 240, WND_HEIGHT = 290;
+    static const int32_t WND_WIDTH = 240, WND_HEIGHT = 390;
 
     std::shared_ptr<wui::window>   window;
     std::shared_ptr<wui::image>    image;

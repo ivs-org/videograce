@@ -215,7 +215,7 @@ private:
     DummyGraph dummyGraph;
 #endif
 
-    bool useTCPMedia;
+    bool showConnectivityResult, useTCPMedia;
 
     bool actionQuested;
 
@@ -243,7 +243,7 @@ private:
     void SetBusyProgess(std::string_view sub_title, int32_t value);
     void HideBusy();
 
-    void CheckConnectivity();
+    void CheckConnectivity(bool showResult = false);
     void DetermineNetSpeed(bool force = false);
 
     void SetStanbyMode();

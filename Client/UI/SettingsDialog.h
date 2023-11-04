@@ -59,7 +59,7 @@ public:
         Audio::AudioMixer &audioMixer,
         Ringer &ringer,
         std::function<void(bool)> netSpeedDeterminer,
-        std::function<void()> connectivityDeterminer,
+        std::function<void(bool)> connectivityDeterminer,
         std::function<void()> readyCallback);
     ~SettingsDialog();
 
@@ -80,7 +80,7 @@ private:
 
     std::function<void()> readyCallback;
     std::function<void(bool)> netSpeedDeterminer;
-    std::function<void()> connectivityDeterminer;
+    std::function<void(bool)> connectivityDeterminer;
 
     Controller::IController &controller;
 

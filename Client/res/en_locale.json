@@ -79,6 +79,8 @@
       "udp_sockets_unavailable": "There is no access to the following UDP sockets of the server:",
       "tcp_socket_unavailable": "There is no access to the TCP media socket of the server:",
       "sockets_access_required": "Video communication is not possible. It is required to provide access to the specified sockets",
+      "checking_connectivity": "Checking the availability\nUDP and TCP AV ports",
+      "connectivity_ok": "Access to all AV ports has been verified,\neverything is working properly",
       "connecting": "Connecting",
       "connected": "Connection established",
       "in_speed_testing": "Determining the incoming speed",

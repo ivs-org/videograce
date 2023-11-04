@@ -73,17 +73,19 @@
       "password": "Құпия сөз",
       "password_confirm": "Растау"
     },
-    {
-      "type": "net_test",
-      "udp_sockets_unavailable": "Келесі UDP сервер розеткаларына кіру мүмкін емес:",
-      "tcp_socket_unavailable": "Сервердің TCP медиа ұясына кіру мүмкіндігі жоқ:",
-      "sockets_access_required": "Бейнебайланыс жұмысы мүмкін емес. Көрсетілген розеткаларға қол жеткізуді қамтамасыз ету қажет",
-      "connecting": "Қосылу",
-      "connected": "Байланыс орнатылды",
-      "in_speed_testing": "Кіріс жылдамдығын анықтау",
-      "out_speed_testing": "Шығыс жылдамдығын анықтау",
-      "kbps": "kbps"
-    },
+  {
+    "type": "net_test",
+    "udp_sockets_unavailable": "Келесі UDP сервер розеткаларына кіру мүмкін емес:",
+    "tcp_socket_unavailable": "Сервердің TCP медиа ұясына кіру мүмкіндігі жоқ:",
+    "sockets_access_required": "Бейнебайланыс жұмысы мүмкін емес. Көрсетілген розеткаларға қол жеткізуді қамтамасыз ету қажет",
+    "checking_connectivity": "Қол жетімділікті тексеру\nUDP және TCP av порттары",
+    "connectivity_ok": "Барлық av порттарына кіру тексерілді,\nбәрі жақсы жұмыс істейді",
+    "connecting": "Қосылу",
+    "connected": "Байланыс орнатылды",
+    "in_speed_testing": "Кіріс жылдамдығын анықтау",
+    "out_speed_testing": "Шығыс жылдамдығын анықтау",
+    "kbps": "kbps"
+  },
     {
       "type": "dialing_dialog",
       "dial": "Біз шақырамыз:"

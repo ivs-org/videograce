@@ -219,9 +219,10 @@ MainFrame::MainFrame()
         audioMixer,
         ringer,
         std::bind(&MainFrame::DetermineNetSpeed, this, std::placeholders::_1),
-        std::bind(&MainFrame::CheckConnectivity, this),
+        std::bind(&MainFrame::CheckConnectivity, this, std::placeholders::_1),
         std::bind(&MainFrame::SettingsReadyCallback, this)),
 
+    showConnectivityResult(false),
     useTCPMedia(false),
     actionQuested(false),
     online(false),
@@ -989,6 +990,14 @@ void MainFrame::ReceiveEvents(const wui::event &ev)
                             HideBusy();
                         break;
                         case MyEvent::ConnectivityTestCompleted:
+                            HideBusy();
+                            if (showConnectivityResult && ev.internal_event_.y != 0 && ev.internal_event_.y != 1)
+                            {
+                                messageBox->show(wui::locale("net_test", "connectivity_ok"),
+                                    wui::locale("message", "title_notification"),
+                                    wui::message_icon::information,
+                                    wui::message_button::ok);
+                            }
                             switch (ev.internal_event_.y)
                             {
                                 case 0:
@@ -2338,10 +2347,15 @@ void MainFrame::HideBusy()
     window->emit_event(static_cast<int32_t>(MyEvent::HideBusy), 0);
 }
 
-void MainFrame::CheckConnectivity()
+void MainFrame::CheckConnectivity(bool showResult)
 {
+    showConnectivityResult = showResult;
     udpTester.ClearAddresses();
     controller.RequestMediaAddresses();
+    if (showResult)
+    {
+        ShowBusy(wui::locale("net_test", "checking_connectivity"));
+    }
 }
 
 void MainFrame::DetermineNetSpeed(bool force)

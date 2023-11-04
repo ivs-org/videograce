@@ -52,7 +52,7 @@ SettingsDialog::SettingsDialog(std::weak_ptr<wui::window> transientWindow_,
     Audio::AudioMixer &audioMixer_,
     Ringer &ringer_,
     std::function<void(bool)> netSpeedDeterminer_,
-    std::function<void()> connectivityDeterminer_,
+    std::function<void(bool)> connectivityDeterminer_,
     std::function<void()> readyCallback_)
     : readyCallback(readyCallback_),
     netSpeedDeterminer(netSpeedDeterminer_),
@@ -1163,7 +1163,7 @@ void SettingsDialog::DetermineSpeedNow()
 
 void SettingsDialog::CheckConnectivityNow()
 {
-    connectivityDeterminer();
+    connectivityDeterminer(true);
 }
 
 /// Preferences settings
