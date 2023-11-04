@@ -307,7 +307,7 @@
 
     {
       "type": "busy_title_text",
-      "color": "#191914",
+      "color": "#0084bc",
       "font": {
         "name": "Segoe UI",
         "size": 20,

@@ -299,7 +299,7 @@
     },
     {
       "type": "content_title_text",
-      "color": "#f5f5f0",
+      "color": "#0084bc",
       "font": {
         "name": "Segoe UI",
         "size": 18,
@@ -308,7 +308,7 @@
     },
     {
       "type": "busy_title_text",
-      "color": "#f5f5f0",
+      "color": "#0084bc",
       "font": {
         "name": "Segoe UI",
         "size": 20,
