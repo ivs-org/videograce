@@ -82,7 +82,8 @@
       "connecting": "Подключение",
       "connected": "Подключение установлено",
       "in_speed_testing": "Определение входящей скорости",
-      "out_speed_testing": "Определение иcходящей скорости"
+      "out_speed_testing": "Определение иcходящей скорости",
+      "kbps": "кб/сек"
     },
     {
       "type": "dialing_dialog",

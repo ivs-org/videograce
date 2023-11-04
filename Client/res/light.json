@@ -288,10 +288,10 @@
       "font": {
         "name": "Segoe UI",
         "size": 18,
-		    "decorations": "bold"
+        "decorations": "bold"
       }
     },
-	{
+    {
       "type": "content_title_panel",
       "background": "#ffffff"
     },
@@ -301,7 +301,25 @@
       "font": {
         "name": "Segoe UI",
         "size": 18,
-		    "decorations": "bold"
+        "decorations": "bold"
+      }
+    },
+
+    {
+      "type": "busy_title_text",
+      "color": "#191914",
+      "font": {
+        "name": "Segoe UI",
+        "size": 20,
+        "decorations": "bold"
+      }
+    },
+    {
+      "type": "busy_sub_title_text",
+      "color": "#191914",
+      "font": {
+        "name": "Segoe UI",
+        "size": 16
       }
     }
   ],

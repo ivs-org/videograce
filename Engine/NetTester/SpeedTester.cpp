@@ -87,9 +87,15 @@ void SpeedTester::TakeOutputSpeed()
 		timeMeter.Reset();
 
 		httpClient.Request("/nettest/output", "POST", dummy);
-		progressCallback(locale->get("net_test", "out_speed_testing"), i * (100 / COUNT));
-
+		
 		avgSpeed += static_cast<double>((SIZE * 8) / (static_cast<double>(timeMeter.Measure()) / 1000));
+
+		auto currentSpeed = static_cast<uint32_t>(avgSpeed / i);
+
+		progressCallback(locale->get("net_test", "out_speed_testing") + "\n" + 
+			std::to_string(currentSpeed) + " " + 
+			locale->get("net_test", "kbps"),
+			i * (100 / COUNT));
 	}
 	
     outputSpeed = static_cast<uint32_t>(avgSpeed / COUNT);
@@ -120,9 +126,15 @@ void SpeedTester::TakeInputSpeed()
 		timeMeter.Reset();
 
 		dummy = httpClient.Request("/nettest/input", "GET");
-		progressCallback(locale->get("net_test", "in_speed_testing"), i * (100 / COUNT));
 
 		avgSpeed += static_cast<double>((dummy.size() * 8) / (static_cast<double>(timeMeter.Measure()) / 1000));
+
+		auto currentSpeed = static_cast<uint32_t>(avgSpeed / i);
+
+		progressCallback(locale->get("net_test", "in_speed_testing") + "\n" +
+			std::to_string(currentSpeed) + " " +
+			locale->get("net_test", "kbps"),
+			i * (100 / COUNT));
 	}
 
 	inputSpeed = static_cast<uint32_t>(avgSpeed / COUNT);

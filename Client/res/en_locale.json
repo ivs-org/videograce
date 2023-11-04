@@ -82,7 +82,8 @@
       "connecting": "Connecting",
       "connected": "Connection established",
       "in_speed_testing": "Determining the incoming speed",
-      "out_speed_testing": "Determining the outgoing speed"
+      "out_speed_testing": "Determining the outgoing speed",
+      "kbps": "kbps"
     },
     {
       "type": "dialing_dialog",

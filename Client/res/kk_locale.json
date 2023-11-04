@@ -81,7 +81,8 @@
       "connecting": "Қосылу",
       "connected": "Байланыс орнатылды",
       "in_speed_testing": "Кіріс жылдамдығын анықтау",
-      "out_speed_testing": "Шығыс жылдамдығын анықтау"
+      "out_speed_testing": "Шығыс жылдамдығын анықтау",
+      "kbps": "kbps"
     },
     {
       "type": "dialing_dialog",

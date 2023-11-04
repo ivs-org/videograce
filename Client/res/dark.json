@@ -294,7 +294,7 @@
     },
     {
       "type": "content_title_panel",
-      "background": "#17212b",
+      "background": "#181722",
       "round": 0
     },
     {
@@ -304,6 +304,23 @@
         "name": "Segoe UI",
         "size": 18,
         "decorations": "bold"
+      }
+    },
+    {
+      "type": "busy_title_text",
+      "color": "#f5f5f0",
+      "font": {
+        "name": "Segoe UI",
+        "size": 20,
+        "decorations": "bold"
+      }
+    },
+    {
+      "type": "busy_sub_title_text",
+      "color": "#f5f5f0",
+      "font": {
+        "name": "Segoe UI",
+        "size": 16
       }
     }
   ],
