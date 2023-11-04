@@ -993,10 +993,20 @@ void MainFrame::ReceiveEvents(const wui::event &ev)
                             HideBusy();
                             if (showConnectivityResult && ev.internal_event_.y != 0 && ev.internal_event_.y != 1)
                             {
-                                messageBox->show(wui::locale("net_test", "connectivity_ok"),
-                                    wui::locale("message", "title_notification"),
-                                    wui::message_icon::information,
-                                    wui::message_button::ok);
+                                if (udpTester.TestPassed())
+                                {
+                                    messageBox->show(wui::locale("net_test", "connectivity_ok"),
+                                        wui::locale("message", "title_notification"),
+                                        wui::message_icon::information,
+                                        wui::message_button::ok);
+                                }
+                                else
+                                {
+                                    messageBox->show(wui::locale("net_test", "connectivity_tcp_only"),
+                                        wui::locale("message", "title_notification"),
+                                        wui::message_icon::alert,
+                                        wui::message_button::ok);
+                                }
                             }
                             switch (ev.internal_event_.y)
                             {

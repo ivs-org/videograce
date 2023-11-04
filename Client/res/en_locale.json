@@ -81,6 +81,7 @@
       "sockets_access_required": "Video communication is not possible. It is required to provide access to the specified sockets",
       "checking_connectivity": "Checking the availability\nUDP and TCP AV ports",
       "connectivity_ok": "Access to all AV ports has been verified,\neverything is working properly",
+      "connectivity_tcp_only": "No access to UDP ports,\nthe AV traffic will be transmitted via TCP",
       "connecting": "Connecting",
       "connected": "Connection established",
       "in_speed_testing": "Determining the incoming speed",
