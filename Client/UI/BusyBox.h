@@ -10,10 +10,12 @@
 #include <wui/window/window.hpp>
 #include <wui/control/text.hpp>
 #include <wui/control/image.hpp>
+#include <wui/control/progress.hpp>
 
 #include <mt/timer.h>
 
 #include <string>
+#include <string_view>
 #include <memory>
 #include <functional>
 
@@ -26,15 +28,17 @@ public:
     BusyBox(std::weak_ptr<wui::window> transientWindow);
     ~BusyBox();
 
-    void Run(const std::string &text);
+    void Run(std::string_view title);
+    void SetProgress(std::string_view subTitle, int32_t value);
     void End();
 
 private:
     static const int32_t WND_WIDTH = 240, WND_HEIGHT = 290;
 
-    std::shared_ptr<wui::window> window;
-    std::shared_ptr<wui::image> image;
-    std::shared_ptr<wui::text> text;
+    std::shared_ptr<wui::window>   window;
+    std::shared_ptr<wui::image>    image;
+    std::shared_ptr<wui::text>     title, subTitle;
+    std::shared_ptr<wui::progress> progress;
 
     mt::timer timer_;
 

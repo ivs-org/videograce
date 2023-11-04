@@ -48,14 +48,20 @@ namespace Client
 
 enum class MyEvent : uint32_t
 {
-    Controller = 10000,
-    ShowBusy = 4000,
-    HideBusy = 4001,
-    CredentialsReady = 4100,
-    SpeedTestCompleted = 4200,
+    Controller                = 10000,
+
+    ShowBusy                  = 4000,
+    SetBusyProgress           = 4001,
+    HideBusy                  = 4002,
+
+    CredentialsReady          = 4100,
+
+    SpeedTestCompleted        = 4200,
     ConnectivityTestCompleted = 4201,
-    RingerEnd = 4202,
-    Normalize = 4050
+
+    RingerEnd                 = 4202,
+
+    Normalize                 = 4050
 };
 
 #ifdef _WIN32
@@ -163,7 +169,9 @@ MainFrame::MainFrame()
 
     timeMeter(),
     
-    speedTester(std::bind(&MainFrame::SpeedTestCompleted, this, std::placeholders::_1, std::placeholders::_2)),
+    speedTester(wui::get_locale(),
+        std::bind(&MainFrame::SpeedTestCompleted, this, std::placeholders::_1, std::placeholders::_2),
+        std::bind(&MainFrame::SetBusyProgess, this, std::placeholders::_1, std::placeholders::_2)),
     udpTester(wui::get_locale()),
     tcpTester(wui::get_locale(), std::bind(&MainFrame::TCPTestCompleted, this)),
 
@@ -191,7 +199,7 @@ MainFrame::MainFrame()
     timerBar(window, timeMeter, std::bind(&MainFrame::DisconnectFromConference, this)),
 
     busyBox(window),
-    busyTitle(),
+    busyTitle(), busySubTitle(),
 
     aboutDialog(window),
 
@@ -948,6 +956,9 @@ void MainFrame::ReceiveEvents(const wui::event &ev)
                         break;
                         case MyEvent::ShowBusy:
                             busyBox.Run(busyTitle);
+                        break;
+                        case MyEvent::SetBusyProgress:
+                            busyBox.SetProgress(busySubTitle, ev.internal_event_.y);
                         break;
                         case MyEvent::HideBusy:
                             busyBox.End();
@@ -2303,10 +2314,16 @@ void MainFrame::InitAudio()
     audioRenderer.SetMute(wui::config::get_int("AudioRenderer", "Enabled", 1) == 0);
 }
 
-void MainFrame::ShowBusy(const std::string &title)
+void MainFrame::ShowBusy(std::string_view title)
 {
     busyTitle = title;
     window->emit_event(static_cast<int32_t>(MyEvent::ShowBusy), 0);
+}
+
+void MainFrame::SetBusyProgess(std::string_view sub_title, int32_t value)
+{
+    busySubTitle = sub_title;
+    window->emit_event(static_cast<int32_t>(MyEvent::SetBusyProgress), value);
 }
 
 void MainFrame::HideBusy()

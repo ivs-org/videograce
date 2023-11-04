@@ -19,7 +19,9 @@ static const int32_t BUSY_UPDATE = 369876;
 BusyBox::BusyBox(std::weak_ptr<wui::window> transientWindow_)
     : window(new wui::window()),
     image(new wui::image(IMG_LOADING_01)),
-    text(new wui::text("", wui::hori_alignment::center)),
+    title(new wui::text("", wui::hori_alignment::center)),
+    subTitle(new wui::text("", wui::hori_alignment::center)),
+    progress(new wui::progress(0, 100, 0)),
     timer_([this]() { window->emit_event(BUSY_UPDATE, 0); }),
     currentImage(0)
 {
@@ -30,21 +32,37 @@ BusyBox::~BusyBox()
 {
 }
 
-void BusyBox::Run(const std::string &text_)
+void BusyBox::Run(std::string_view title_)
 {
-    text->set_text(text_);
+    title->set_text(title_);
+    subTitle->set_text("");
 
     auto IMG_SIZE = 128;
     auto imgLeft = (WND_WIDTH - IMG_SIZE) / 2;
 
     window->add_control(image, { imgLeft, 20, imgLeft + IMG_SIZE, 20 + IMG_SIZE });
-    window->add_control(text, { 10, WND_HEIGHT - 50, WND_WIDTH, WND_HEIGHT - 10 });
+    window->add_control(title, { 10, WND_HEIGHT - 60, WND_WIDTH, WND_HEIGHT - 40 });
+    window->add_control(subTitle, { 10, WND_HEIGHT - 40, WND_WIDTH, WND_HEIGHT - 20 });
+    window->add_control(progress, { 0, WND_HEIGHT - 20, WND_WIDTH, WND_HEIGHT });
+
+    progress->set_value(0);
+    progress->hide();
 
     window->subscribe(std::bind(&BusyBox::UpdateImage, this, std::placeholders::_1), wui::event_type::internal);
 
     window->init("", { -1, -1, WND_WIDTH, WND_HEIGHT }, wui::window_style::border_all, [this]() { timer_.stop(); });
 
-    timer_.start(500);
+    timer_.start(333);
+}
+
+void BusyBox::SetProgress(std::string_view subTitle_, int32_t value)
+{
+    subTitle->set_text(subTitle_);
+    progress->set_value(value);
+    if (value > 0)
+    {
+        progress->show();
+    }
 }
 
 void BusyBox::End()

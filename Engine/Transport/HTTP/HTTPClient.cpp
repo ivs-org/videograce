@@ -108,7 +108,7 @@ public:
 
 		boost::beast::flat_buffer buffer;
 		http::response_parser<http::string_body> res;
-		res.body_limit(1024 * 1024 * 100); // 100 Mb
+		res.body_limit(1024 * 1024 * 20); // 20 Mb
 				
 		http::read(socket, buffer, res, ec);
 		if (ec)

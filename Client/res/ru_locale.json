@@ -78,7 +78,11 @@
       "type": "net_test",
       "udp_sockets_unavailable": "Нет доступа к следующим UDP сокетам сервера:",
       "tcp_socket_unavailable": "Нет доступа к TCP медиа сокету сервера:",
-      "sockets_access_required": "Работа видеосвязи невозможна. Требуется обеспечить доступ к указанным сокетам"
+      "sockets_access_required": "Работа видеосвязи невозможна. Требуется обеспечить доступ к указанным сокетам",
+      "connecting": "Подключение",
+      "connected": "Подключение установлено",
+      "in_speed_testing": "Определение входящей скорости",
+      "out_speed_testing": "Определение иcходящей скорости"
     },
     {
       "type": "dialing_dialog",

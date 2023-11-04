@@ -11,7 +11,10 @@
 #include <cstdint>
 #include <string>
 #include <thread>
+#include <string_view>
 #include <functional>
+
+#include <wui/locale/i_locale.hpp>
 
 namespace NetTester
 {
@@ -19,10 +22,12 @@ namespace NetTester
 class SpeedTester
 {
 public:
-	SpeedTester(std::function<void(uint32_t, uint32_t)> readyCallback);
+	SpeedTester(std::shared_ptr<wui::i_locale> locale,
+		std::function<void(uint32_t, uint32_t)> readyCallback,
+		std::function<void(std::string_view, int32_t) > progressCallback);
 	~SpeedTester();
 
-	void SetParams(const std::string serverAddress, bool useHTTPS);
+	void SetParams(std::string_view serverAddress, bool useHTTPS);
 
 	void DoTheTest();
 
@@ -30,7 +35,9 @@ public:
 	uint32_t GetOutputSpeed() const;
 
 private:
+	std::shared_ptr<wui::i_locale> locale;
     std::function<void(uint32_t, uint32_t)> readyCallback;
+	std::function<void(std::string_view, int32_t)> progressCallback;
 
 	std::thread thread;
 

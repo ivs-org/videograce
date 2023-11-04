@@ -200,7 +200,7 @@ private:
     TimerBar timerBar;
 
     BusyBox busyBox;
-    std::string busyTitle;
+    std::string busyTitle, busySubTitle;
 
     AboutDialog aboutDialog;
 
@@ -239,7 +239,8 @@ private:
 
     void InitAudio();
 
-    void ShowBusy(const std::string &title);
+    void ShowBusy(std::string_view title);
+    void SetBusyProgess(std::string_view sub_title, int32_t value);
     void HideBusy();
 
     void DetermineNetSpeed(bool force = false);

@@ -83,8 +83,8 @@ void AboutDialog::Run(uint32_t grants_)
     window->add_control(version, { 10, 315, WND_WIDTH - 10, 330 });
     window->add_control(license, { 10, 360, WND_WIDTH - 10, 375 });
 
-    window->add_control(wuiInfo, { 10, 400, WND_WIDTH - 10, 430 });
-    window->add_control(wuiURLAnchor, { 150, 430, 320, 445 });
+    window->add_control(wuiInfo, { 10, 400, WND_WIDTH - 10, 440 });
+    window->add_control(wuiURLAnchor, { 150, 440, 320, 455 });
 
     window->add_control(vendorURLAnchor, { 145, WND_HEIGHT - 95, 280, WND_HEIGHT - 70 });
     window->add_control(copyright, { 10, WND_HEIGHT - 70, WND_WIDTH - 10, WND_HEIGHT - 55 });

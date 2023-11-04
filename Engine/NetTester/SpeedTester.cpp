@@ -14,8 +14,12 @@
 namespace NetTester
 {
 
-SpeedTester::SpeedTester(std::function<void(uint32_t, uint32_t)> readyCallback_)
-	: readyCallback(readyCallback_),
+SpeedTester::SpeedTester(std::shared_ptr<wui::i_locale> locale_,
+	std::function<void(uint32_t, uint32_t)> readyCallback_,
+	std::function<void(std::string_view, int32_t)> progressCallback_)
+	: locale(locale_),
+	readyCallback(readyCallback_),
+	progressCallback(progressCallback_),
 	thread(),
 	serverAddress(), useHTTPS(false),
 	inputSpeed(0), outputSpeed(0)
@@ -27,7 +31,7 @@ SpeedTester::~SpeedTester()
 	if (thread.joinable()) thread.join();
 }
 
-void SpeedTester::SetParams(const std::string serverAddress_, bool useHTTPS_)
+void SpeedTester::SetParams(std::string_view serverAddress_, bool useHTTPS_)
 {
 	serverAddress = serverAddress_;
 	useHTTPS = useHTTPS_;
@@ -62,22 +66,33 @@ void SpeedTester::TakeOutputSpeed()
 {
 	auto baseURL = (useHTTPS ? std::string("https://") : std::string("http://")) + serverAddress;
 
+	progressCallback(locale->get("net_test", "connecting"), 0);
+
 	Transport::HTTPClient httpClient;
 	httpClient.Connect(baseURL);
 
-	enum { SIZE = 1024 * 100 };
+	progressCallback(locale->get("net_test", "connected"), 0);
+
+	const auto SIZE = 1024 * 100;
+	const auto COUNT = 5;
+
 	std::string dummy;
 	dummy.resize(SIZE);
 
+	double avgSpeed = 0;
+
 	Common::TimeMeter timeMeter;
-	timeMeter.Reset();
+	for (auto i = 0; i != COUNT; ++i)
+	{
+		timeMeter.Reset();
 
-	httpClient.Request("/nettest/output", "POST", dummy);
+		httpClient.Request("/nettest/output", "POST", dummy);
+		progressCallback(locale->get("net_test", "out_speed_testing"), i * (100 / COUNT));
 
-	const double recvTime = (double)timeMeter.Measure() / 1000;
-	double speed = static_cast<double>(SIZE) * 8 / recvTime;
+		avgSpeed += static_cast<double>((SIZE * 8) / (static_cast<double>(timeMeter.Measure()) / 1000));
+	}
 	
-    outputSpeed = static_cast<uint32_t>(speed);
+    outputSpeed = static_cast<uint32_t>(avgSpeed / COUNT);
 
 	httpClient.Disconnect();
 }
@@ -86,18 +101,31 @@ void SpeedTester::TakeInputSpeed()
 {
 	auto baseURL = (useHTTPS ? std::string("https://") : std::string("http://")) + serverAddress;
 
+	progressCallback(locale->get("net_test", "connecting"), 0);
+
 	Transport::HTTPClient httpClient;
 	httpClient.Connect(baseURL);
 
+	progressCallback(locale->get("net_test", "connected"), 0);
+
+	const auto COUNT = 5;
+
+	std::string dummy;
+	
+	double avgSpeed = 0;
+
 	Common::TimeMeter timeMeter;
-	timeMeter.Reset();
+	for (auto i = 0; i != COUNT; ++i)
+	{
+		timeMeter.Reset();
 
-	auto dummy = httpClient.Request("/nettest/input", "GET");
+		dummy = httpClient.Request("/nettest/input", "GET");
+		progressCallback(locale->get("net_test", "in_speed_testing"), i * (100 / COUNT));
 
-	const double recvTime = (double)timeMeter.Measure() / 1000;
-	const double size = static_cast<double>(dummy.size());
-	double speed = size * 8 / recvTime;
-	inputSpeed = static_cast<uint32_t>(speed);
+		avgSpeed += static_cast<double>((dummy.size() * 8) / (static_cast<double>(timeMeter.Measure()) / 1000));
+	}
+
+	inputSpeed = static_cast<uint32_t>(avgSpeed / COUNT);
 
 	httpClient.Disconnect();
 }

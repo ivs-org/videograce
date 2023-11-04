@@ -78,7 +78,11 @@
       "type": "net_test",
       "udp_sockets_unavailable": "There is no access to the following UDP sockets of the server:",
       "tcp_socket_unavailable": "There is no access to the TCP media socket of the server:",
-      "sockets_access_required": "Video communication is not possible. It is required to provide access to the specified sockets"
+      "sockets_access_required": "Video communication is not possible. It is required to provide access to the specified sockets",
+      "connecting": "Connecting",
+      "connected": "Connection established",
+      "in_speed_testing": "Determining the incoming speed",
+      "out_speed_testing": "Determining the outgoing speed"
     },
     {
       "type": "dialing_dialog",
