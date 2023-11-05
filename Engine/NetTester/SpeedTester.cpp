@@ -96,6 +96,8 @@ void SpeedTester::TakeOutputSpeed()
 			std::to_string(currentSpeed) + " " + 
 			locale->get("net_test", "kbps"),
 			i * (100 / COUNT));
+
+		std::this_thread::sleep_for(std::chrono::milliseconds(20));
 	}
 	
     outputSpeed = static_cast<uint32_t>(avgSpeed / COUNT);
@@ -135,6 +137,8 @@ void SpeedTester::TakeInputSpeed()
 			std::to_string(currentSpeed) + " " +
 			locale->get("net_test", "kbps"),
 			i * (100 / COUNT));
+
+		std::this_thread::sleep_for(std::chrono::milliseconds(20));
 	}
 
 	inputSpeed = static_cast<uint32_t>(avgSpeed / COUNT);
