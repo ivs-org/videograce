@@ -22,6 +22,7 @@
 #include <Version.h>
 #include <Common/Base64.h>
 #include <Common/BitHelpers.h>
+#include <Common/FSHelpers.h>
 #include <Common/Process.h>
 
 #include <License/Grants.h>
@@ -990,9 +991,9 @@ void MainFrame::ReceiveEvents(const wui::event &ev)
                             HideBusy();
                         break;
                         case MyEvent::ConnectivityTestCompleted:
-                            HideBusy();
                             if (showConnectivityResult && ev.internal_event_.y != 0 && ev.internal_event_.y != 1)
                             {
+                                HideBusy();
                                 if (udpTester.TestPassed())
                                 {
                                     messageBox->show(wui::locale("net_test", "connectivity_ok"),
@@ -2919,7 +2920,7 @@ void MainFrame::RegisterVGProtocol()
     cir.set_string("", "", "URL:" SYSTEM_NAME " Conferencing");
     cir.set_string("", "URL Protocol", "");
 
-    cir.set_string("DefaultIcon", "", SYSTEM_NAME "Client.exe,1");
+    cir.set_string("DefaultIcon", "", Common::FileNameOf(path) + ",1");
 
 	wui::config::config_impl_reg cir1(BROWSER_PROTO "\\shell\\open", HKEY_CLASSES_ROOT);
     cir1.set_string("command", "", "\"" + path + "\" %1");
