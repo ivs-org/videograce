@@ -84,18 +84,6 @@
     <Filter Include="Source Files\License">
       <UniqueIdentifier>{f0df3c67-5855-4dea-8f37-82e89fc2e727}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\DB">
-      <UniqueIdentifier>{0aee28ce-76d2-455b-823f-4c9544f48bab}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\DB\sqlite">
-      <UniqueIdentifier>{2550b1cf-78ff-48e3-a9d2-0dbc89738780}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\DB">
-      <UniqueIdentifier>{b74ed936-8311-46e5-b7c1-734676599053}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\DB\sqlite">
-      <UniqueIdentifier>{329f19d9-bea9-47bb-a559-7ea05ec0c30d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\JitterBuffer">
       <UniqueIdentifier>{c35b4c00-624f-4404-8a3d-89b2f35ed6e9}</UniqueIdentifier>
     </Filter>
@@ -520,24 +508,6 @@
     </ClInclude>
     <ClInclude Include="License\Grants.h">
       <Filter>Header Files\License</Filter>
-    </ClInclude>
-    <ClInclude Include="DB\sqlite\sqlite3.h">
-      <Filter>Header Files\DB\sqlite</Filter>
-    </ClInclude>
-    <ClInclude Include="DB\sqlite\sqlite3ext.h">
-      <Filter>Header Files\DB\sqlite</Filter>
-    </ClInclude>
-    <ClInclude Include="DB\Connection.h">
-      <Filter>Header Files\DB</Filter>
-    </ClInclude>
-    <ClInclude Include="DB\Transaction.h">
-      <Filter>Header Files\DB</Filter>
-    </ClInclude>
-    <ClInclude Include="DB\Result.h">
-      <Filter>Header Files\DB</Filter>
-    </ClInclude>
-    <ClInclude Include="DB\Query.h">
-      <Filter>Header Files\DB</Filter>
     </ClInclude>
     <ClInclude Include="NetTester\SpeedTester.h">
       <Filter>Header Files\NetTester</Filter>
@@ -1404,21 +1374,6 @@
     </ClCompile>
     <ClCompile Include="License\Grants.cpp">
       <Filter>Source Files\License</Filter>
-    </ClCompile>
-    <ClCompile Include="DB\sqlite\shell.c">
-      <Filter>Source Files\DB\sqlite</Filter>
-    </ClCompile>
-    <ClCompile Include="DB\sqlite\sqlite3.c">
-      <Filter>Source Files\DB\sqlite</Filter>
-    </ClCompile>
-    <ClCompile Include="DB\Connection.cpp">
-      <Filter>Source Files\DB</Filter>
-    </ClCompile>
-    <ClCompile Include="DB\Transaction.cpp">
-      <Filter>Source Files\DB</Filter>
-    </ClCompile>
-    <ClCompile Include="DB\Query.cpp">
-      <Filter>Source Files\DB</Filter>
     </ClCompile>
     <ClCompile Include="NetTester\SpeedTester.cpp">
       <Filter>Source Files\NetTester</Filter>

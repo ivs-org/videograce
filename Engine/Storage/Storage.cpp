@@ -14,9 +14,9 @@
 
 #include <Storage/Storage.h>
 
-#include <DB/Connection.h>
-#include <DB/Transaction.h>
-#include <DB/Query.h>
+#include <db/connection.h>
+#include <db/transaction.h>
+#include <db/query.h>
 
 namespace Storage
 {
@@ -57,52 +57,52 @@ void Storage::SetMyClientId(int64_t id)
 {
 	myClientId = id;
 
-    DB::Connection conn(dbPath);
+    db::connection conn(db::dbms::SQLite, dbPath);
 
-    DB::Transaction writeTr(conn);
-    writeTr.Start();
+    db::transaction writeTr(conn);
+    writeTr.start();
 
-    DB::Query upd_sort_query(conn);
-    upd_sort_query.Prepare("update settings set value = ? where key='my_client_id'");
-    upd_sort_query.Set(0, id);
-    upd_sort_query.Step();
+    db::query upd_sort_query(conn);
+    upd_sort_query.prepare("update settings set value = ? where key='my_client_id'");
+    upd_sort_query.set(0, id);
+    upd_sort_query.step();
 
-    writeTr.Commit();
+    writeTr.commit();
 }
 
 /// Messages
 
 void Storage::AddMessage(const Proto::Message &message)
 {
-	DB::Connection conn(dbPath);
+	db::connection conn(db::dbms::SQLite, dbPath);
 
-	DB::Transaction writeTr(conn);
-	writeTr.Start();
+	db::transaction writeTr(conn);
+	writeTr.start();
 
-	DB::Query message_query(conn);
-	message_query.Prepare("insert into messages (guid, dt, type, author_id, sender_id, subscriber_id, conference_tag, text_value, call_duration, call_result, data_preview, data_url, status) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-	message_query.Set(0, message.guid);
-	message_query.Set(1, static_cast<int64_t>(message.dt));
-	message_query.Set(2, static_cast<int32_t>(message.type));
-	message_query.Set(3, message.author_id);
-	message_query.Set(4, message.sender_id);
-	message_query.Set(5, message.subscriber_id);
-	message_query.Set(6, message.conference_tag);
-	message_query.Set(7, message.text);
-	message_query.Set(8, message.call_duration);
-	message_query.Set(9, static_cast<int32_t>(message.call_result));
-	message_query.Set(10, message.preview);
-	message_query.Set(11, message.url);
-	message_query.Set(12, static_cast<int32_t>(message.status));
-	message_query.Step();
-	message_query.Reset();
+	db::query message_query(conn);
+	message_query.prepare("insert into messages (guid, dt, type, author_id, sender_id, subscriber_id, conference_tag, text_value, call_duration, call_result, data_preview, data_url, status) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+	message_query.set(0, message.guid);
+	message_query.set(1, static_cast<int64_t>(message.dt));
+	message_query.set(2, static_cast<int32_t>(message.type));
+	message_query.set(3, message.author_id);
+	message_query.set(4, message.sender_id);
+	message_query.set(5, message.subscriber_id);
+	message_query.set(6, message.conference_tag);
+	message_query.set(7, message.text);
+	message_query.set(8, message.call_duration);
+	message_query.set(9, static_cast<int32_t>(message.call_result));
+	message_query.set(10, message.preview);
+	message_query.set(11, message.url);
+	message_query.set(12, static_cast<int32_t>(message.status));
+	message_query.step();
+	message_query.reset();
 	
 	if (messageSubscriber == message.subscriber_id || (!messagesConference.empty() && messagesConference == message.conference_tag))
 	
 	std::lock_guard<std::recursive_mutex> lock(messagesMutex);
 	messages.insert(messages.begin(), message);
 	
-	writeTr.Commit();
+	writeTr.commit();
 
     for (auto receiver : messagesReceivers)
     {
@@ -184,24 +184,24 @@ inline void AddOnlyDataSQLValue(const std::string &fieldName, const std::string 
 
 void Storage::UpdateMessages(const Messages &inputMessages)
 {
-	DB::Connection conn(dbPath);
+	db::connection conn(db::dbms::SQLite, dbPath);
 
-	DB::Transaction writeTr(conn);
-	writeTr.Start();
+	db::transaction writeTr(conn);
+	writeTr.start();
 	
-	DB::Query exists_query(conn);
-	exists_query.Prepare("select id from messages where guid = ?");
+	db::query exists_query(conn);
+	exists_query.prepare("select id from messages where guid = ?");
 
-	DB::Query message_query(conn);
+	db::query message_query(conn);
 	
     bool updatedMessages = false;
 
 	std::lock_guard<std::recursive_mutex> lock(messagesMutex);
 	for (auto &message : inputMessages)
 	{
-		exists_query.Set(0, message.guid);
-		bool exists = exists_query.Step();
-		exists_query.Reset();
+		exists_query.set(0, message.guid);
+		bool exists = exists_query.step();
+		exists_query.reset();
 
 		std::string sqlFields, sqlValues;
 
@@ -222,9 +222,9 @@ void Storage::UpdateMessages(const Messages &inputMessages)
 		if (!sqlFields.empty()) sqlFields.pop_back(); // drop last ","
 		if (!sqlValues.empty()) sqlValues.pop_back(); // drop last ","
 
-		message_query.Prepare(!exists ? "insert into messages (" + sqlFields + ") values (" + sqlValues + ")" : "update messages set " + sqlValues + " where guid='" + message.guid + "'");
-		message_query.Step();
-		message_query.Reset();
+		message_query.prepare(!exists ? "insert into messages (" + sqlFields + ") values (" + sqlValues + ")" : "update messages set " + sqlValues + " where guid='" + message.guid + "'");
+		message_query.step();
+		message_query.reset();
 
 		if (messageSubscriber == message.subscriber_id ||
 			(!messagesConference.empty() && messagesConference == message.conference_tag) ||
@@ -266,7 +266,7 @@ void Storage::UpdateMessages(const Messages &inputMessages)
 		messagesEnd = (messages.end() - 1)->dt;
 	}
 	
-	writeTr.Commit();
+	writeTr.commit();
 
 	UpdateUnreadedContacts();
 	UpdateUnreadedConferences();
@@ -331,16 +331,16 @@ void Storage::UpdateUnreadedContacts()
 		c.unreaded_count = 0;
 	}
 
-	DB::Connection conn(dbPath);
-	DB::Query count_query(conn);
-	count_query.Prepare("select subscriber_id, count(id) from messages where status < " + std::to_string(static_cast<int32_t>(Proto::MessageStatus::Readed)) + " and ((type = " + std::to_string(static_cast<int32_t>(Proto::MessageType::TextMessage)) + " and author_id <> ?) or type = " + std::to_string(static_cast<int32_t>(Proto::MessageType::ServiceMessage)) + ") and conference_tag is null group by subscriber_id");
-	count_query.Set(0, GetMyClientId());
-	while (count_query.Step())
+	db::connection conn(db::dbms::SQLite, dbPath);
+	db::query count_query(conn);
+	count_query.prepare("select subscriber_id, count(id) from messages where status < " + std::to_string(static_cast<int32_t>(Proto::MessageStatus::Readed)) + " and ((type = " + std::to_string(static_cast<int32_t>(Proto::MessageType::TextMessage)) + " and author_id <> ?) or type = " + std::to_string(static_cast<int32_t>(Proto::MessageType::ServiceMessage)) + ") and conference_tag is null group by subscriber_id");
+	count_query.set(0, GetMyClientId());
+	while (count_query.step())
 	{
-		auto it = std::find(contacts.begin(), contacts.end(), count_query.GetInt64(0));
+		auto it = std::find(contacts.begin(), contacts.end(), count_query.get_int64(0));
 		if (it != contacts.end())
 		{
-			it->unreaded_count = count_query.GetInt32(1);
+			it->unreaded_count = count_query.get_int32(1);
 		}
 	}
 
@@ -360,53 +360,53 @@ void Storage::UpdateUnreadedConferences()
 		c.unreaded_count = 0;
 	}
 
-	DB::Connection conn(dbPath);
-	DB::Query count_query(conn);
-	count_query.Prepare("select conference_tag, count(id) from messages where status < " + std::to_string(static_cast<int32_t>(Proto::MessageStatus::Readed)) + " and subscriber_id is null and (author_id is null or author_id <> ?) group by conference_tag");
-	count_query.Set(0, GetMyClientId());
-	while (count_query.Step())
+	db::connection conn(db::dbms::SQLite, dbPath);
+	db::query count_query(conn);
+	count_query.prepare("select conference_tag, count(id) from messages where status < " + std::to_string(static_cast<int32_t>(Proto::MessageStatus::Readed)) + " and subscriber_id is null and (author_id is null or author_id <> ?) group by conference_tag");
+	count_query.set(0, GetMyClientId());
+	while (count_query.step())
 	{
-		auto it = std::find(conferences.begin(), conferences.end(), count_query.GetString(0));
+		auto it = std::find(conferences.begin(), conferences.end(), count_query.get_string(0));
 		if (it != conferences.end())
 		{
-			it->unreaded_count = count_query.GetInt32(1);
+			it->unreaded_count = count_query.get_int32(1);
 		}
 	}
 
     SortConferences();
 }
 
-int32_t Storage::CalcUnreadedContact(DB::Connection &conn, int64_t clientId)
+int32_t Storage::CalcUnreadedContact(db::connection &conn, int64_t clientId)
 {
-    DB::Query count_query(conn);
-    count_query.Prepare("select subscriber_id, count(id) from messages where status < " + std::to_string(static_cast<int32_t>(Proto::MessageStatus::Readed)) + " and author_id <> ? and conference_tag is null group by subscriber_id");
-    count_query.Set(0, clientId);
-    while (count_query.Step())
+    db::query count_query(conn);
+    count_query.prepare("select subscriber_id, count(id) from messages where status < " + std::to_string(static_cast<int32_t>(Proto::MessageStatus::Readed)) + " and author_id <> ? and conference_tag is null group by subscriber_id");
+    count_query.set(0, clientId);
+    while (count_query.step())
     {
-        if (count_query.GetInt64(0) == clientId)
+        if (count_query.get_int64(0) == clientId)
         {
-            return count_query.GetInt32(1);
+            return count_query.get_int32(1);
         }
     }
 
     return 0;
 }
 
-int32_t Storage::CalcUnreadedConference(DB::Connection &conn, const std::string &tag)
+int32_t Storage::CalcUnreadedConference(db::connection &conn, const std::string &tag)
 {
     if (GetMyClientId() == 0)
     {
         return 0;
     }
 
-    DB::Query count_query(conn);
-    count_query.Prepare("select conference_tag, count(id) from messages where status < " + std::to_string(static_cast<int32_t>(Proto::MessageStatus::Readed)) + " and subscriber_id is null and (author_id is null or author_id <> ?) group by conference_tag");
-    count_query.Set(0, GetMyClientId());
-    while (count_query.Step())
+    db::query count_query(conn);
+    count_query.prepare("select conference_tag, count(id) from messages where status < " + std::to_string(static_cast<int32_t>(Proto::MessageStatus::Readed)) + " and subscriber_id is null and (author_id is null or author_id <> ?) group by conference_tag");
+    count_query.set(0, GetMyClientId());
+    while (count_query.step())
     {
-        if (count_query.GetString(0) == tag)
+        if (count_query.get_string(0) == tag)
         {
-            return count_query.GetInt32(1);
+            return count_query.get_int32(1);
         }
     }
 
@@ -437,7 +437,7 @@ size_t Storage::LoadMessages(int64_t start)
 {
     std::lock_guard<std::recursive_mutex> lock(messagesMutex);
 
-	DB::Connection conn(dbPath);
+	db::connection conn(db::dbms::SQLite, dbPath);
 
 	std::string predicat;
 
@@ -467,60 +467,60 @@ size_t Storage::LoadMessages(int64_t start)
 		predicat += " limit 0," + std::to_string(messagesLimit);
 	}
 
-	DB::Query user_name_query(conn);
-	user_name_query.Prepare("select name from users where id = ?");
+	db::query user_name_query(conn);
+	user_name_query.prepare("select name from users where id = ?");
 
-	DB::Query conferences_query(conn);
-	conferences_query.Prepare("select name from conferences where tag = ?");
+	db::query conferences_query(conn);
+	conferences_query.prepare("select name from conferences where tag = ?");
 
 	size_t count = 0;
 
-	DB::Query messages_query(conn);
-	messages_query.Prepare("select guid, dt, type, author_id, sender_id, subscriber_id, conference_tag, text_value, call_duration, call_result, data_preview, data_url, status from messages" + predicat);
-	while (messages_query.Step())
+	db::query messages_query(conn);
+	messages_query.prepare("select guid, dt, type, author_id, sender_id, subscriber_id, conference_tag, text_value, call_duration, call_result, data_preview, data_url, status from messages" + predicat);
+	while (messages_query.step())
 	{
 		std::string authorName, senderName, subscriberName;
-		user_name_query.Set(0, messages_query.GetInt64(3));
-		if (user_name_query.Step())
+		user_name_query.set(0, messages_query.get_int64(3));
+		if (user_name_query.step())
 		{
-			authorName = user_name_query.GetString(0);
+			authorName = user_name_query.get_string(0);
 		}
-		user_name_query.Reset();
-		user_name_query.Set(0, messages_query.GetInt64(4));
-		if (user_name_query.Step())
+		user_name_query.reset();
+		user_name_query.set(0, messages_query.get_int64(4));
+		if (user_name_query.step())
 		{
-			senderName = user_name_query.GetString(0);
+			senderName = user_name_query.get_string(0);
 		}
-		user_name_query.Reset();
-		user_name_query.Set(0, messages_query.GetInt64(5));
-		if (user_name_query.Step())
+		user_name_query.reset();
+		user_name_query.set(0, messages_query.get_int64(5));
+		if (user_name_query.step())
 		{
-			subscriberName = user_name_query.GetString(0);
+			subscriberName = user_name_query.get_string(0);
 		}
-		user_name_query.Reset();
+		user_name_query.reset();
 
 		std::string conferenceName;
-		conferences_query.Set(0, messages_query.GetString(6));
-		if (conferences_query.Step())
+		conferences_query.set(0, messages_query.get_string(6));
+		if (conferences_query.step())
 		{
-			conferenceName = conferences_query.GetString(0);
+			conferenceName = conferences_query.get_string(0);
 		}
-		conferences_query.Reset();
+		conferences_query.reset();
 
-		messages.emplace_back(Proto::Message(messages_query.GetString(0),
-			messages_query.GetInt32(1),
-			static_cast<Proto::MessageType>(messages_query.GetInt32(2)),
-			messages_query.GetInt64(3),	authorName,
-			messages_query.GetInt64(4),	senderName,
-			messages_query.GetInt64(5),	subscriberName,
-			messages_query.GetString(6), conferenceName,
-			static_cast<Proto::MessageStatus>(messages_query.GetInt32(12)),
-			messages_query.GetString(7),
-			messages_query.GetInt32(8), static_cast<Proto::CallResult>(messages_query.GetInt32(9)),
-			messages_query.GetString(10), messages_query.GetString(11),
+		messages.emplace_back(Proto::Message(messages_query.get_string(0),
+			messages_query.get_int32(1),
+			static_cast<Proto::MessageType>(messages_query.get_int32(2)),
+			messages_query.get_int64(3),	authorName,
+			messages_query.get_int64(4),	senderName,
+			messages_query.get_int64(5),	subscriberName,
+			messages_query.get_string(6), conferenceName,
+			static_cast<Proto::MessageStatus>(messages_query.get_int32(12)),
+			messages_query.get_string(7),
+			messages_query.get_int32(8), static_cast<Proto::CallResult>(messages_query.get_int32(9)),
+			messages_query.get_string(10), messages_query.get_string(11),
 			"" ));
 
-		messagesEnd = messages_query.GetInt32(1);
+		messagesEnd = messages_query.get_int32(1);
 
 		++count;
 	}
@@ -532,58 +532,58 @@ Messages Storage::GetUndeliveredMessages()
 {
 	Messages outMessages;
 
-	DB::Connection conn(dbPath);
+	db::connection conn(db::dbms::SQLite, dbPath);
 
-	DB::Query user_name_query(conn);
-	user_name_query.Prepare("select name from users where id = ?");
+	db::query user_name_query(conn);
+	user_name_query.prepare("select name from users where id = ?");
 
-	DB::Query conferences_query(conn);
-	conferences_query.Prepare("select name from conferences where tag = ?");
+	db::query conferences_query(conn);
+	conferences_query.prepare("select name from conferences where tag = ?");
 
-	DB::Query messages_query(conn);
-	messages_query.Prepare("select guid, dt, type, author_id, sender_id, subscriber_id, conference_tag, text_value, call_duration, call_result, data_preview, data_url, status from messages where sender_id = ? and type = 1 and status < 2");
-	messages_query.Set(0, GetMyClientId());
-	while (messages_query.Step())
+	db::query messages_query(conn);
+	messages_query.prepare("select guid, dt, type, author_id, sender_id, subscriber_id, conference_tag, text_value, call_duration, call_result, data_preview, data_url, status from messages where sender_id = ? and type = 1 and status < 2");
+	messages_query.set(0, GetMyClientId());
+	while (messages_query.step())
 	{
 		std::string authorName, senderName, subscriberName;
-		user_name_query.Set(0, messages_query.GetInt32(3));
-		if (user_name_query.Step())
+		user_name_query.set(0, messages_query.get_int32(3));
+		if (user_name_query.step())
 		{
-			authorName = user_name_query.GetString(0);
+			authorName = user_name_query.get_string(0);
 		}
-		user_name_query.Reset();
-		user_name_query.Set(0, messages_query.GetInt32(4));
-		if (user_name_query.Step())
+		user_name_query.reset();
+		user_name_query.set(0, messages_query.get_int32(4));
+		if (user_name_query.step())
 		{
-			senderName = user_name_query.GetString(0);
+			senderName = user_name_query.get_string(0);
 		}
-		user_name_query.Reset();
-		user_name_query.Set(0, messages_query.GetInt32(5));
-		if (user_name_query.Step())
+		user_name_query.reset();
+		user_name_query.set(0, messages_query.get_int32(5));
+		if (user_name_query.step())
 		{
-			subscriberName = user_name_query.GetString(0);
+			subscriberName = user_name_query.get_string(0);
 		}
-		user_name_query.Reset();
+		user_name_query.reset();
 
 		std::string conferenceName;
-		conferences_query.Set(0, messages_query.GetString(6));
-		if (conferences_query.Step())
+		conferences_query.set(0, messages_query.get_string(6));
+		if (conferences_query.step())
 		{
-			conferenceName = conferences_query.GetString(0);
+			conferenceName = conferences_query.get_string(0);
 		}
-		conferences_query.Reset();
+		conferences_query.reset();
 
-		outMessages.emplace_back(Proto::Message(messages_query.GetString(0),
-			messages_query.GetInt32(1),
-			static_cast<Proto::MessageType>(messages_query.GetInt32(2)),
-			messages_query.GetInt32(3), authorName,
-			messages_query.GetInt32(4), senderName,
-			messages_query.GetInt32(5), subscriberName,
-			messages_query.GetString(6), conferenceName,
-			static_cast<Proto::MessageStatus>(messages_query.GetInt32(12)),
-			messages_query.GetString(7),
-			messages_query.GetInt32(8), static_cast<Proto::CallResult>(messages_query.GetInt32(9)),
-			messages_query.GetString(10), messages_query.GetString(11),
+		outMessages.emplace_back(Proto::Message(messages_query.get_string(0),
+			messages_query.get_int32(1),
+			static_cast<Proto::MessageType>(messages_query.get_int32(2)),
+			messages_query.get_int32(3), authorName,
+			messages_query.get_int32(4), senderName,
+			messages_query.get_int32(5), subscriberName,
+			messages_query.get_string(6), conferenceName,
+			static_cast<Proto::MessageStatus>(messages_query.get_int32(12)),
+			messages_query.get_string(7),
+			messages_query.get_int32(8), static_cast<Proto::CallResult>(messages_query.get_int32(9)),
+			messages_query.get_string(10), messages_query.get_string(11),
 			""));
 	}
 
@@ -594,13 +594,13 @@ uint64_t Storage::GetLastMessageDT()
 {
 	uint64_t out = 0;
 
-	DB::Connection conn(dbPath);
+	db::connection conn(db::dbms::SQLite, dbPath);
 
-	DB::Query query(conn);
-	query.Prepare("select max(dt) from messages where type = 1 and status > 1");
-	if (query.Step())
+	db::query query(conn);
+	query.prepare("select max(dt) from messages where type = 1 and status > 1");
+	if (query.step())
 	{
-		out = query.GetInt64(0);
+		out = query.get_int64(0);
 	}
     return out;
 }
@@ -644,37 +644,37 @@ void Storage::UpdateContacts(Proto::CONTACT_LIST::SortType sortType, bool showNu
     contactSortType = sortType;
     showNumbers = showNumbers_ ? 1 : 0;
 
-	DB::Connection conn(dbPath);
+	db::connection conn(db::dbms::SQLite, dbPath);
 
-	DB::Query exists_query(conn);
-	exists_query.Prepare("select id from users where id = ?");
+	db::query exists_query(conn);
+	exists_query.prepare("select id from users where id = ?");
 
-	DB::Transaction writeTr(conn);
-	writeTr.Start();
+	db::transaction writeTr(conn);
+	writeTr.start();
 	
-    DB::Query upd_sort_query(conn);
-    upd_sort_query.Prepare("update settings set value = ? where key = ?");
+    db::query upd_sort_query(conn);
+    upd_sort_query.prepare("update settings set value = ? where key = ?");
     
-    upd_sort_query.Set(0, sortType == Proto::CONTACT_LIST::SortType::Name ? "0" : "1");
-    upd_sort_query.Set(1, "users_sort_type");
-    upd_sort_query.Step();
-    upd_sort_query.Reset();
+    upd_sort_query.set(0, sortType == Proto::CONTACT_LIST::SortType::Name ? "0" : "1");
+    upd_sort_query.set(1, "users_sort_type");
+    upd_sort_query.step();
+    upd_sort_query.reset();
 
-    upd_sort_query.Set(0, showNumbers_ ? "1" : "0");
-    upd_sort_query.Set(1, "show_number_on_contact_list");
-    upd_sort_query.Step();
-    upd_sort_query.Reset();
+    upd_sort_query.set(0, showNumbers_ ? "1" : "0");
+    upd_sort_query.set(1, "show_number_on_contact_list");
+    upd_sort_query.step();
+    upd_sort_query.reset();
 
 	std::lock_guard<std::recursive_mutex> lock(contactsMutex);
 	for (auto &contact : contacts_)
 	{
 		bool exists = false;
-		exists_query.Set(0, contact.id);
-		if (exists_query.Step())
+		exists_query.set(0, contact.id);
+		if (exists_query.step())
 		{
 			exists = true;
 		}
-		exists_query.Reset();
+		exists_query.reset();
 
 		std::string sqlFields, sqlValues;
 
@@ -691,10 +691,10 @@ void Storage::UpdateContacts(Proto::CONTACT_LIST::SortType sortType, bool showNu
 		if (!sqlFields.empty()) sqlFields.pop_back(); // drop last ","
 		if (!sqlValues.empty()) sqlValues.pop_back(); // drop last ","
 
-		DB::Query contact_query(conn);
-		contact_query.Prepare(!exists ? "insert into users (" + sqlFields + ") values (" + sqlValues + ")" : "update users set " + sqlValues + " where id='" + std::to_string(contact.id) + "'");
-		contact_query.Step();
-		contact_query.Reset();
+		db::query contact_query(conn);
+		contact_query.prepare(!exists ? "insert into users (" + sqlFields + ") values (" + sqlValues + ")" : "update users set " + sqlValues + " where id='" + std::to_string(contact.id) + "'");
+		contact_query.step();
+		contact_query.reset();
 
 		std::string groupIds = "in ( ";
 		for (auto &g : contact.groups)
@@ -704,28 +704,28 @@ void Storage::UpdateContacts(Proto::CONTACT_LIST::SortType sortType, bool showNu
 		groupIds.pop_back();
 		groupIds += ")";
 
-		DB::Query contact_groups_clear_query(conn);
-		contact_groups_clear_query.Prepare("delete from client_groups where client_id = ? and group_id not " + groupIds);
-		contact_groups_clear_query.Set(0, contact.id);
-		contact_groups_clear_query.Step();
+		db::query contact_groups_clear_query(conn);
+		contact_groups_clear_query.prepare("delete from client_groups where client_id = ? and group_id not " + groupIds);
+		contact_groups_clear_query.set(0, contact.id);
+		contact_groups_clear_query.step();
 
-		DB::Query exists_group_query(conn);
-		exists_group_query.Prepare("select id from client_groups where client_id = ? and group_id = ?");
+		db::query exists_group_query(conn);
+		exists_group_query.prepare("select id from client_groups where client_id = ? and group_id = ?");
 
-		DB::Query contact_groups_query(conn);
-		contact_groups_query.Prepare("insert into client_groups (client_id, group_id) values (?, ?)");
+		db::query contact_groups_query(conn);
+		contact_groups_query.prepare("insert into client_groups (client_id, group_id) values (?, ?)");
 		for (auto &g : contact.groups)
 		{
-			exists_group_query.Set(0, contact.id);
-			exists_group_query.Set(1, g.id);
-			if (!exists_group_query.Step())
+			exists_group_query.set(0, contact.id);
+			exists_group_query.set(1, g.id);
+			if (!exists_group_query.step())
 			{
-				contact_groups_query.Set(0, contact.id);
-				contact_groups_query.Set(1, g.id);
-				contact_groups_query.Step();
-				contact_groups_query.Reset();
+				contact_groups_query.set(0, contact.id);
+				contact_groups_query.set(1, g.id);
+				contact_groups_query.step();
+				contact_groups_query.reset();
 			}
-			exists_group_query.Reset();				
+			exists_group_query.reset();				
 		}
 
         auto it = std::find(contacts.begin(), contacts.end(), contact.id);
@@ -753,7 +753,7 @@ void Storage::UpdateContacts(Proto::CONTACT_LIST::SortType sortType, bool showNu
 		}
 	}
 
-	writeTr.Commit();
+	writeTr.commit();
 
     UpdateUnreadedContacts();
     SortContacts();
@@ -766,22 +766,22 @@ void Storage::UpdateContacts(Proto::CONTACT_LIST::SortType sortType, bool showNu
 
 void Storage::DeleteContact(int64_t clientId)
 {
-    DB::Connection conn(dbPath);
+    db::connection conn(db::dbms::SQLite, dbPath);
 
-    DB::Transaction writeTr(conn);
-    writeTr.Start();
+    db::transaction writeTr(conn);
+    writeTr.start();
 
-    DB::Query contact_query(conn);
-    contact_query.Prepare("update users set deleted = 1 where id = ?");
-    contact_query.Set(0, clientId);
-    contact_query.Step();
+    db::query contact_query(conn);
+    contact_query.prepare("update users set deleted = 1 where id = ?");
+    contact_query.set(0, clientId);
+    contact_query.step();
 
-    DB::Query groups_query(conn);
-    groups_query.Prepare("delete from client_groups where client_id = ?");
-    groups_query.Set(0, clientId);
-    groups_query.Step();
+    db::query groups_query(conn);
+    groups_query.prepare("delete from client_groups where client_id = ?");
+    groups_query.set(0, clientId);
+    groups_query.step();
 
-    writeTr.Commit();
+    writeTr.commit();
 
     {
         std::lock_guard<std::recursive_mutex> lock(contactsMutex);
@@ -800,34 +800,34 @@ void Storage::DeleteContact(int64_t clientId)
 
 void Storage::ClearContacts()
 {
-	DB::Connection conn(dbPath);
+	db::connection conn(db::dbms::SQLite, dbPath);
 
-	DB::Transaction writeTr(conn);
-	writeTr.Start();
+	db::transaction writeTr(conn);
+	writeTr.start();
 
-	DB::Query del_query(conn);
-	del_query.Prepare("delete from users");
-	del_query.Step();
+	db::query del_query(conn);
+	del_query.prepare("delete from users");
+	del_query.step();
 
-	writeTr.Commit();
+	writeTr.commit();
 
 	contacts.clear();
 }
 
 void Storage::ChangeContactState(int64_t clientId, Proto::MemberState state)
 {
-	DB::Connection conn(dbPath);
+	db::connection conn(db::dbms::SQLite, dbPath);
 
-	DB::Transaction writeTr(conn);
-	writeTr.Start();
+	db::transaction writeTr(conn);
+	writeTr.start();
 
-	DB::Query contact_query(conn);
-	contact_query.Prepare("update users set state = ? where id = ?");
-	contact_query.Set(0, static_cast<int32_t>(state));
-	contact_query.Set(1, static_cast<int32_t>(clientId));
-	contact_query.Step();
+	db::query contact_query(conn);
+	contact_query.prepare("update users set state = ? where id = ?");
+	contact_query.set(0, static_cast<int32_t>(state));
+	contact_query.set(1, static_cast<int32_t>(clientId));
+	contact_query.step();
 
-	writeTr.Commit();
+	writeTr.commit();
 
 	Proto::Member changedContact;
 	std::lock_guard<std::recursive_mutex> lock(contactsMutex);
@@ -854,13 +854,13 @@ Proto::CONTACT_LIST::SortType Storage::GetContactSortType()
         return contactSortType;
     }
 
-	DB::Connection conn(dbPath);
+	db::connection conn(db::dbms::SQLite, dbPath);
 
-	DB::Query get_sort_query(conn);
-	get_sort_query.Prepare("select value from settings where key='users_sort_type'");
-	if (get_sort_query.Step())
+	db::query get_sort_query(conn);
+	get_sort_query.prepare("select value from settings where key='users_sort_type'");
+	if (get_sort_query.step())
 	{
-        contactSortType = get_sort_query.GetString(0) != "0" ? Proto::CONTACT_LIST::SortType::Number : Proto::CONTACT_LIST::SortType::Name;
+        contactSortType = get_sort_query.get_string(0) != "0" ? Proto::CONTACT_LIST::SortType::Number : Proto::CONTACT_LIST::SortType::Name;
 	}
 
 	return contactSortType;
@@ -873,13 +873,13 @@ int64_t Storage::GetMyClientId()
         return myClientId;
     }
     
-    DB::Connection conn(dbPath);
+    db::connection conn(db::dbms::SQLite, dbPath);
 
-    DB::Query get_my_client_id_query(conn);
-    get_my_client_id_query.Prepare("select value from settings where key='my_client_id'");
-    if (get_my_client_id_query.Step())
+    db::query get_my_client_id_query(conn);
+    get_my_client_id_query.prepare("select value from settings where key='my_client_id'");
+    if (get_my_client_id_query.step())
     {
-        return get_my_client_id_query.GetInt64(0);
+        return get_my_client_id_query.get_int64(0);
     }
     return 0;
 }
@@ -920,34 +920,34 @@ void Storage::LoadContacts()
 
 	contacts.clear();
 
-	DB::Connection conn(dbPath);
+	db::connection conn(db::dbms::SQLite, dbPath);
 
     std::vector<int64_t> availGroups;
-    DB::Query avail_groups_query(conn);
-    avail_groups_query.Prepare("select id from groups");
-    while (avail_groups_query.Step())
+    db::query avail_groups_query(conn);
+    avail_groups_query.prepare("select id from groups");
+    while (avail_groups_query.step())
     {
-        availGroups.emplace_back(avail_groups_query.GetInt64(0));
+        availGroups.emplace_back(avail_groups_query.get_int64(0));
     }
-    avail_groups_query.Close();
+    avail_groups_query.close();
 
-	DB::Query contact_groups_query(conn);
-	contact_groups_query.Prepare("select group_id from client_groups where client_id = ?");
+	db::query contact_groups_query(conn);
+	contact_groups_query.prepare("select group_id from client_groups where client_id = ?");
 
-	DB::Query contacts_query(conn);
-	contacts_query.Prepare("select id, state, login, name, number from users where deleted is null order by " + std::string(GetContactSortType() == Proto::CONTACT_LIST::SortType::Name ? "name" : "cast(number as integer)"));
-	while (contacts_query.Step())
+	db::query contacts_query(conn);
+	contacts_query.prepare("select id, state, login, name, number from users where deleted is null order by " + std::string(GetContactSortType() == Proto::CONTACT_LIST::SortType::Name ? "name" : "cast(number as integer)"));
+	while (contacts_query.step())
 	{
         bool contactAvail = false;
 
-        auto contactId = contacts_query.GetInt64(0);
+        auto contactId = contacts_query.get_int64(0);
 
 		std::vector<Proto::Group> groups_;
 
-		contact_groups_query.Set(0, contactId);
-		while (contact_groups_query.Step())
+		contact_groups_query.set(0, contactId);
+		while (contact_groups_query.step())
 		{
-            auto groupId = contact_groups_query.GetInt64(0);
+            auto groupId = contact_groups_query.get_int64(0);
 			groups_.emplace_back(Proto::Group(groupId));
 
             if (!contactAvail)
@@ -955,19 +955,19 @@ void Storage::LoadContacts()
                 contactAvail = std::find(availGroups.begin(), availGroups.end(), groupId) != availGroups.end();
             }
 		}
-		contact_groups_query.Reset();
+		contact_groups_query.reset();
 
         if (contactAvail)
         {
             auto member = Proto::Member(
                 contactId,
-                static_cast<Proto::MemberState>(contacts_query.GetInt32(1)),
-                contacts_query.GetString(2),
-                contacts_query.GetString(3),
-                contacts_query.GetString(4),
+                static_cast<Proto::MemberState>(contacts_query.get_int32(1)),
+                contacts_query.get_string(2),
+                contacts_query.get_string(3),
+                contacts_query.get_string(4),
                 groups_);
 
-            member.unreaded_count = CalcUnreadedContact(conn, contacts_query.GetInt64(0));
+            member.unreaded_count = CalcUnreadedContact(conn, contacts_query.get_int64(0));
 
             contacts.emplace_back(member);
         }
@@ -993,13 +993,13 @@ bool Storage::GetShowNumbers()
         return showNumbers != 0;
     }
 
-    DB::Connection conn(dbPath);
+    db::connection conn(db::dbms::SQLite, dbPath);
 
-    DB::Query get_query(conn);
-    get_query.Prepare("select value from settings where key='show_number_on_contact_list'");
-    if (get_query.Step())
+    db::query get_query(conn);
+    get_query.prepare("select value from settings where key='show_number_on_contact_list'");
+    if (get_query.step())
     {
-        showNumbers = get_query.GetString(0) != "0" ? 0 : 1;
+        showNumbers = get_query.get_string(0) != "0" ? 0 : 1;
     }
 
     return showNumbers != 0;
@@ -1029,36 +1029,36 @@ void Storage::UnsubscribeContactsReceiver(const std::string &subscriberId)
 
 /// Groups
 
-void GetChildGroups(DB::Connection &conn, int64_t parentID, int32_t level, std::vector<Proto::Group> &out)
+void GetChildGroups(db::connection &conn, int64_t parentID, int32_t level, std::vector<Proto::Group> &out)
 {
-	DB::Query rolled_query(conn);
-	rolled_query.Prepare("select id from group_rolled where id = ?");
+	db::query rolled_query(conn);
+	rolled_query.prepare("select id from group_rolled where id = ?");
 
-	DB::Query groups_query(conn);
-	groups_query.Prepare("select id, parent_id, tag, name, owner_id, password, grants from groups where deleted is null and parent_id = ? order by name");
-	groups_query.Set(0, parentID);
+	db::query groups_query(conn);
+	groups_query.prepare("select id, parent_id, tag, name, owner_id, password, grants from groups where deleted is null and parent_id = ? order by name");
+	groups_query.set(0, parentID);
 
 	++level;
 
-	while (groups_query.Step())
+	while (groups_query.step())
 	{
 		Proto::Group group(
-			groups_query.GetInt64(0),
-			groups_query.GetInt64(1),
-			groups_query.GetString(2),
-			groups_query.GetString(3),
-			groups_query.GetInt64(4),
-			groups_query.GetString(5),
-			groups_query.GetInt32(6),
+			groups_query.get_int64(0),
+			groups_query.get_int64(1),
+			groups_query.get_string(2),
+			groups_query.get_string(3),
+			groups_query.get_int64(4),
+			groups_query.get_string(5),
+			groups_query.get_int32(6),
 			level
 		);
 
-		rolled_query.Set(0, group.id);
-		if (rolled_query.Step())
+		rolled_query.set(0, group.id);
+		if (rolled_query.step())
 		{
 			group.rolled = true;
 		}
-		rolled_query.Reset();
+		rolled_query.reset();
 
 		out.emplace_back(group);
 
@@ -1066,7 +1066,7 @@ void GetChildGroups(DB::Connection &conn, int64_t parentID, int32_t level, std::
 	}
 }
 
-std::string GetChildGroupsSQL(DB::Connection &conn, int64_t group_id)
+std::string GetChildGroupsSQL(db::connection &conn, int64_t group_id)
 {
 	std::string groupsSQL = " in(" + std::to_string(group_id) + ",";
 
@@ -1085,20 +1085,20 @@ std::string GetChildGroupsSQL(DB::Connection &conn, int64_t group_id)
 
 void Storage::UpdateGroups(const Groups &groups_)
 {
-	DB::Connection conn(dbPath);
+	db::connection conn(db::dbms::SQLite, dbPath);
 
-	DB::Query exists_query(conn);
-	exists_query.Prepare("select id from groups where id = ?");
+	db::query exists_query(conn);
+	exists_query.prepare("select id from groups where id = ?");
 
-	DB::Transaction writeTr(conn);
-	writeTr.Start();
+	db::transaction writeTr(conn);
+	writeTr.start();
 
 	std::lock_guard<std::recursive_mutex> lock(groupsMutex);
 	for (auto &group : groups_)
 	{
-		exists_query.Set(0, group.id);
-		bool exists = exists_query.Step();
-		exists_query.Reset();
+		exists_query.set(0, group.id);
+		bool exists = exists_query.step();
+		exists_query.reset();
 
 		std::string sqlFields, sqlValues;
 
@@ -1117,13 +1117,13 @@ void Storage::UpdateGroups(const Groups &groups_)
 		if (!sqlFields.empty()) sqlFields.pop_back(); // drop last ","
 		if (!sqlValues.empty()) sqlValues.pop_back(); // drop last ","
 
-		DB::Query group_query(conn);
-		group_query.Prepare(!exists ? "insert into groups (" + sqlFields + ") values (" + sqlValues + ")" : "update groups set " + sqlValues + " where id='" + std::to_string(group.id) + "'");
-		group_query.Step();
-		group_query.Reset();
+		db::query group_query(conn);
+		group_query.prepare(!exists ? "insert into groups (" + sqlFields + ") values (" + sqlValues + ")" : "update groups set " + sqlValues + " where id='" + std::to_string(group.id) + "'");
+		group_query.step();
+		group_query.reset();
 	}
 
-    writeTr.Commit();
+    writeTr.commit();
     LoadGroups();
 	
     for (auto receiver : groupsReceivers)
@@ -1134,16 +1134,16 @@ void Storage::UpdateGroups(const Groups &groups_)
 
 void Storage::ClearGroups()
 {
-	DB::Connection conn(dbPath);
+	db::connection conn(db::dbms::SQLite, dbPath);
 
-	DB::Transaction writeTr(conn);
-	writeTr.Start();
+	db::transaction writeTr(conn);
+	writeTr.start();
 
-	DB::Query del_query(conn);
-	del_query.Prepare("delete from groups");
-	del_query.Step();
+	db::query del_query(conn);
+	del_query.prepare("delete from groups");
+	del_query.step();
 
-	writeTr.Commit();
+	writeTr.commit();
 
 	groups.clear();
 }
@@ -1154,7 +1154,7 @@ void Storage::LoadGroups()
 
 	groups.clear();
 
-	DB::Connection conn(dbPath);
+	db::connection conn(db::dbms::SQLite, dbPath);
 
 	GetChildGroups(conn, 0, -1, groups);
 }
@@ -1200,16 +1200,16 @@ void Storage::ChangeGroupRolled(int64_t groupId)
 		{
 			group.rolled = !group.rolled;
 
-			DB::Connection conn(dbPath);
-			DB::Transaction writeTr(conn);
-			writeTr.Start();
+			db::connection conn(db::dbms::SQLite, dbPath);
+			db::transaction writeTr(conn);
+			writeTr.start();
 
-			DB::Query rolled_query(conn);
-			rolled_query.Prepare(group.rolled ? "insert into group_rolled (id) values (?)" : "delete from group_rolled where id = ?");
-			rolled_query.Set(0, group.id);
-			rolled_query.Step();
+			db::query rolled_query(conn);
+			rolled_query.prepare(group.rolled ? "insert into group_rolled (id) values (?)" : "delete from group_rolled where id = ?");
+			rolled_query.set(0, group.id);
+			rolled_query.step();
 			
-			writeTr.Commit();
+			writeTr.commit();
 
 			break;
 		}
@@ -1241,28 +1241,28 @@ void Storage::UnsubscribeGroupsReceiver(const std::string &subscriberId)
 /// Conferences
 void Storage::UpdateConferences(const Conferences &conferences_)
 {
-	DB::Connection conn(dbPath);
+	db::connection conn(db::dbms::SQLite, dbPath);
 
-	DB::Query exists_query(conn);
-	exists_query.Prepare("select id from conferences where id = ?");
+	db::query exists_query(conn);
+	exists_query.prepare("select id from conferences where id = ?");
 
-	DB::Query clear_members_query(conn);
-	clear_members_query.Prepare("delete from conference_members where conference_id = ?");
+	db::query clear_members_query(conn);
+	clear_members_query.prepare("delete from conference_members where conference_id = ?");
 
-	DB::Query insert_members_query(conn);
-	insert_members_query.Prepare("insert into conference_members (conference_id, user_id, grants) values (?, ?, ?)");
+	db::query insert_members_query(conn);
+	insert_members_query.prepare("insert into conference_members (conference_id, user_id, grants) values (?, ?, ?)");
 
-	DB::Transaction writeTr(conn);
-	writeTr.Start();
+	db::transaction writeTr(conn);
+	writeTr.start();
 
     std::vector<std::string> newConferences;
 
 	std::lock_guard<std::recursive_mutex> lock(conferencesMutex);
 	for (auto &conference : conferences_)
 	{
-		exists_query.Set(0, conference.id);
-		bool exists = exists_query.Step();
-		exists_query.Reset();
+		exists_query.set(0, conference.id);
+		bool exists = exists_query.step();
+		exists_query.reset();
 
         std::string sqlFields, sqlValues;
 
@@ -1308,26 +1308,26 @@ void Storage::UpdateConferences(const Conferences &conferences_)
 		if (!sqlFields.empty()) sqlFields.pop_back(); // drop last ","
 		if (!sqlValues.empty()) sqlValues.pop_back(); // drop last ","
 
-		DB::Query conference_query(conn);
-		conference_query.Prepare(!exists ? "insert into conferences (" + sqlFields + ") values (" + sqlValues + ")" : "update conferences set " + sqlValues + " where id='" + std::to_string(conference.id) + "'");
-		conference_query.Step();
-		conference_query.Reset();
+		db::query conference_query(conn);
+		conference_query.prepare(!exists ? "insert into conferences (" + sqlFields + ") values (" + sqlValues + ")" : "update conferences set " + sqlValues + " where id='" + std::to_string(conference.id) + "'");
+		conference_query.step();
+		conference_query.reset();
 
-		clear_members_query.Set(0, static_cast<int32_t>(conference.id));
-		clear_members_query.Step();
-		clear_members_query.Reset();
+		clear_members_query.set(0, static_cast<int32_t>(conference.id));
+		clear_members_query.step();
+		clear_members_query.reset();
 
 		for (auto &m : conference.members)
 		{
-			insert_members_query.Set(0, static_cast<int32_t>(conference.id));
-			insert_members_query.Set(1, m.id);
-			insert_members_query.Set(2, static_cast<int32_t>(m.grants));
-			insert_members_query.Step();
-			insert_members_query.Reset();
+			insert_members_query.set(0, static_cast<int32_t>(conference.id));
+			insert_members_query.set(1, m.id);
+			insert_members_query.set(2, static_cast<int32_t>(m.grants));
+			insert_members_query.step();
+			insert_members_query.reset();
 		}
 	}
 
-	writeTr.Commit();
+	writeTr.commit();
 
     for (auto receiver : conferencesReceivers)
     {
@@ -1363,79 +1363,79 @@ void Storage::LoadConferences()
 
 	conferences.clear();
 
-	DB::Connection conn(dbPath);
+	db::connection conn(db::dbms::SQLite, dbPath);
 
-	DB::Query members_query(conn);
-	members_query.Prepare("select user_id, grants from conference_members where conference_id = ?");
+	db::query members_query(conn);
+	members_query.prepare("select user_id, grants from conference_members where conference_id = ?");
 
-	DB::Query user_query(conn);
-	user_query.Prepare("select state, login, name, number from users where id = ?");
+	db::query user_query(conn);
+	user_query.prepare("select state, login, name, number from users where id = ?");
 
-	DB::Query contact_groups_query(conn);
-	contact_groups_query.Prepare("select group_id from client_groups where client_id = ?");
+	db::query contact_groups_query(conn);
+	contact_groups_query.prepare("select group_id from client_groups where client_id = ?");
 
-	DB::Query rolled_query(conn);
-	rolled_query.Prepare("select id from conference_rolled where id = ?");
+	db::query rolled_query(conn);
+	rolled_query.prepare("select id from conference_rolled where id = ?");
 
-	DB::Query conferences_query(conn);
-	conferences_query.Prepare("select id, tag, name, descr, founder_id, type, grants, duration, connect_members from conferences where deleted is null order by name");
-	while (conferences_query.Step())
+	db::query conferences_query(conn);
+	conferences_query.prepare("select id, tag, name, descr, founder_id, type, grants, duration, connect_members from conferences where deleted is null order by name");
+	while (conferences_query.step())
 	{
-		auto conferenceId = conferences_query.GetInt32(0);
+		auto conferenceId = conferences_query.get_int32(0);
 
 		std::vector<Proto::Member> members;
 
-		members_query.Set(0, conferenceId);
-		while (members_query.Step())
+		members_query.set(0, conferenceId);
+		while (members_query.step())
 		{
-			auto userId = members_query.GetInt64(0);
-			auto grants = members_query.GetInt32(1);
+			auto userId = members_query.get_int64(0);
+			auto grants = members_query.get_int32(1);
 			Proto::MemberState state = Proto::MemberState::Undefined;
 			std::string login, name, number;
 
-			user_query.Set(0, userId);
-			if (user_query.Step())
+			user_query.set(0, userId);
+			if (user_query.step())
 			{
-				state = static_cast<Proto::MemberState>(user_query.GetInt32(0));
-				login = user_query.GetString(1);
-				name = user_query.GetString(2);
-				number = user_query.GetString(3);
+				state = static_cast<Proto::MemberState>(user_query.get_int32(0));
+				login = user_query.get_string(1);
+				name = user_query.get_string(2);
+				number = user_query.get_string(3);
 			}
-			user_query.Reset();
+			user_query.reset();
 
 			std::vector<Proto::Group> groups_;
 
-			contact_groups_query.Set(0, userId);
-			while (contact_groups_query.Step())
+			contact_groups_query.set(0, userId);
+			while (contact_groups_query.step())
 			{
-				groups_.emplace_back(Proto::Group(contact_groups_query.GetInt64(0)));
+				groups_.emplace_back(Proto::Group(contact_groups_query.get_int64(0)));
 			}
-			contact_groups_query.Reset();
+			contact_groups_query.reset();
 
 			members.emplace_back(Proto::Member(userId, state, login, name, number, groups_, grants));
 		}
-		members_query.Reset();
+		members_query.reset();
 
-		rolled_query.Set(0, conferenceId);
-		bool rolled = rolled_query.Step();
-		rolled_query.Reset();
+		rolled_query.set(0, conferenceId);
+		bool rolled = rolled_query.step();
+		rolled_query.reset();
 
 		auto conference = Proto::Conference(
 			conferenceId,
-			conferences_query.GetString(1),
-			conferences_query.GetString(2),
-			conferences_query.GetString(3), "", 
-			conferences_query.GetInt32(4),
-			static_cast<Proto::ConferenceType>(conferences_query.GetInt32(5)),
-			conferences_query.GetInt32(6),
-			conferences_query.GetInt32(7),
+			conferences_query.get_string(1),
+			conferences_query.get_string(2),
+			conferences_query.get_string(3), "", 
+			conferences_query.get_int32(4),
+			static_cast<Proto::ConferenceType>(conferences_query.get_int32(5)),
+			conferences_query.get_int32(6),
+			conferences_query.get_int32(7),
 			members,
-			conferences_query.GetInt32(8) != 0,
+			conferences_query.get_int32(8) != 0,
 			false,
 			false,
 			rolled);
 
-        conference.unreaded_count = CalcUnreadedConference(conn, conferences_query.GetString(1));
+        conference.unreaded_count = CalcUnreadedConference(conn, conferences_query.get_string(1));
 
         conferences.emplace_back(conference);
 	}
@@ -1477,16 +1477,16 @@ void Storage::ChangeConferenceRolled(int64_t conferenceId)
 		{
 			conference.rolled = !conference.rolled;
 
-			DB::Connection conn(dbPath);
-			DB::Transaction writeTr(conn);
-			writeTr.Start();
+			db::connection conn(db::dbms::SQLite, dbPath);
+			db::transaction writeTr(conn);
+			writeTr.start();
 
-			DB::Query rolled_query(conn);
-			rolled_query.Prepare(conference.rolled ? "insert into conference_rolled (id) values (?)" : "delete from conference_rolled where id = ?");
-			rolled_query.Set(0, conferenceId);
-			rolled_query.Step();
+			db::query rolled_query(conn);
+			rolled_query.prepare(conference.rolled ? "insert into conference_rolled (id) values (?)" : "delete from conference_rolled where id = ?");
+			rolled_query.set(0, conferenceId);
+			rolled_query.step();
 
-			writeTr.Commit();
+			writeTr.commit();
 
 			break;
 		}
@@ -1519,302 +1519,302 @@ void Storage::UpdateDB()
 {
 	std::string currentDBVersion = "";
 
-	DB::Connection conn(dbPath);
+	db::connection conn(db::dbms::SQLite, dbPath);
 
-	DB::Query get_ver_query(conn);
-	get_ver_query.Prepare("select db_version from db_version");
-	if (get_ver_query.Step())
+	db::query get_ver_query(conn);
+	get_ver_query.prepare("select db_version from db_version");
+	if (get_ver_query.step())
 	{
-		currentDBVersion = get_ver_query.GetString(0);
+		currentDBVersion = get_ver_query.get_string(0);
 	}
-	get_ver_query.Close();
+	get_ver_query.close();
 
 	if (currentDBVersion == "") // no database, creating
 	{
 		currentDBVersion = "2.0.230304";
 
-		DB::Transaction writeTr(conn);
-		writeTr.Start();
+		db::transaction writeTr(conn);
+		writeTr.start();
 
-		DB::Query users_query(conn);
-		users_query.Prepare("CREATE TABLE `users` (`id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, `login` TEXT, `name` TEXT, `number` TEXT, `email` TEXT, `bio` TEXT, `icon` TEXT, `avatar` TEXT, `state` INTEGER, `deleted` INTEGER)");
-		users_query.Step();
+		db::query users_query(conn);
+		users_query.prepare("CREATE TABLE `users` (`id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, `login` TEXT, `name` TEXT, `number` TEXT, `email` TEXT, `bio` TEXT, `icon` TEXT, `avatar` TEXT, `state` INTEGER, `deleted` INTEGER)");
+		users_query.step();
 
-		DB::Query groups_query(conn);
-		groups_query.Prepare("CREATE TABLE \"groups\" (\"id\" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, \"parent_id\" INTEGER NOT NULL, \"tag\" TEXT NOT NULL, \"name\" TEXT NOT NULL, \"password\" TEXT, \"grants\" INTEGER, \"owner_id\" integer, \"deleted\" INTEGER)");
-		groups_query.Step();
+		db::query groups_query(conn);
+		groups_query.prepare("CREATE TABLE \"groups\" (\"id\" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, \"parent_id\" INTEGER NOT NULL, \"tag\" TEXT NOT NULL, \"name\" TEXT NOT NULL, \"password\" TEXT, \"grants\" INTEGER, \"owner_id\" integer, \"deleted\" INTEGER)");
+		groups_query.step();
 
-		DB::Query client_groups_query(conn);
-		client_groups_query.Prepare("CREATE TABLE \"client_groups\" (\"id\" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, \"client_id\" INTEGER NOT NULL, \"group_id\" INTEGER NOT NULL, \"deleted\" INTEGER);");
-		client_groups_query.Step();
+		db::query client_groups_query(conn);
+		client_groups_query.prepare("CREATE TABLE \"client_groups\" (\"id\" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, \"client_id\" INTEGER NOT NULL, \"group_id\" INTEGER NOT NULL, \"deleted\" INTEGER);");
+		client_groups_query.step();
 
-		DB::Query group_rolled_query(conn);
-		group_rolled_query.Prepare("CREATE TABLE \"group_rolled\" (\"id\" INTEGER NOT NULL PRIMARY KEY);");
-		group_rolled_query.Step();
+		db::query group_rolled_query(conn);
+		group_rolled_query.prepare("CREATE TABLE \"group_rolled\" (\"id\" INTEGER NOT NULL PRIMARY KEY);");
+		group_rolled_query.step();
 
-		DB::Query conference_rolled_query(conn);
-		conference_rolled_query.Prepare("CREATE TABLE \"conference_rolled\" (\"id\" INTEGER NOT NULL PRIMARY KEY);");
-		conference_rolled_query.Step();
+		db::query conference_rolled_query(conn);
+		conference_rolled_query.prepare("CREATE TABLE \"conference_rolled\" (\"id\" INTEGER NOT NULL PRIMARY KEY);");
+		conference_rolled_query.step();
 
-		DB::Query conferences_query(conn);
-		conferences_query.Prepare("CREATE TABLE `conferences` (`id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, `tag` TEXT NOT NULL, `name` TEXT NOT NULL, `descr` TEXT, `founder_id` INTEGER, `type` INTEGER, `grants` INTEGER, `duration` INTEGER, `connect_members` INTEGER, `deleted` INTEGER);");
-		conferences_query.Step();
+		db::query conferences_query(conn);
+		conferences_query.prepare("CREATE TABLE `conferences` (`id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, `tag` TEXT NOT NULL, `name` TEXT NOT NULL, `descr` TEXT, `founder_id` INTEGER, `type` INTEGER, `grants` INTEGER, `duration` INTEGER, `connect_members` INTEGER, `deleted` INTEGER);");
+		conferences_query.step();
 
-		DB::Query conference_members_query(conn);
-		conference_members_query.Prepare("CREATE TABLE `conference_members` (`conference_id` INTEGER NOT NULL, `user_id` INTEGER NOT NULL, `grants` INTEGER, PRIMARY KEY(`conference_id`, `user_id`));");
-		conference_members_query.Step();
+		db::query conference_members_query(conn);
+		conference_members_query.prepare("CREATE TABLE `conference_members` (`conference_id` INTEGER NOT NULL, `user_id` INTEGER NOT NULL, `grants` INTEGER, PRIMARY KEY(`conference_id`, `user_id`));");
+		conference_members_query.step();
 
-		DB::Query messages_query(conn);
-		messages_query.Prepare("CREATE TABLE \"messages\" ( `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, `guid`	TEXT NOT NULL UNIQUE, `dt` INTEGER, `type` INTEGER, `author_id` INTEGER, `sender_id` INTEGER, `subscriber_id` INTEGER, `conference_tag` TEXT, `text_value` TEXT, `call_duration` INTEGER, `call_result` INTEGER, `data_preview` TEXT, `data_url` TEXT, `data_local_path` TEXT, status INTEGER )");
-		messages_query.Step();
+		db::query messages_query(conn);
+		messages_query.prepare("CREATE TABLE \"messages\" ( `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, `guid`	TEXT NOT NULL UNIQUE, `dt` INTEGER, `type` INTEGER, `author_id` INTEGER, `sender_id` INTEGER, `subscriber_id` INTEGER, `conference_tag` TEXT, `text_value` TEXT, `call_duration` INTEGER, `call_result` INTEGER, `data_preview` TEXT, `data_url` TEXT, `data_local_path` TEXT, status INTEGER )");
+		messages_query.step();
 
-		DB::Query messages_guid_index_query(conn);
-		messages_guid_index_query.Prepare("CREATE INDEX `messages_guid_index` ON `messages` ( `guid` )");
-		messages_guid_index_query.Step();
+		db::query messages_guid_index_query(conn);
+		messages_guid_index_query.prepare("CREATE INDEX `messages_guid_index` ON `messages` ( `guid` )");
+		messages_guid_index_query.step();
 
-		DB::Query messages_author_id_index_query(conn);
-		messages_author_id_index_query.Prepare("CREATE INDEX `messages_author_id_index` ON `messages` ( `author_id` )");
-		messages_author_id_index_query.Step();
+		db::query messages_author_id_index_query(conn);
+		messages_author_id_index_query.prepare("CREATE INDEX `messages_author_id_index` ON `messages` ( `author_id` )");
+		messages_author_id_index_query.step();
 
-		DB::Query messages_sender_id_index_query(conn);
-		messages_sender_id_index_query.Prepare("CREATE INDEX `messages_sender_id_index` ON `messages` ( `sender_id` )");
-		messages_sender_id_index_query.Step();
+		db::query messages_sender_id_index_query(conn);
+		messages_sender_id_index_query.prepare("CREATE INDEX `messages_sender_id_index` ON `messages` ( `sender_id` )");
+		messages_sender_id_index_query.step();
 
-		DB::Query messages_subscriber_id_index_query(conn);
-		messages_subscriber_id_index_query.Prepare("CREATE INDEX `messages_subscriber_id_index` ON `messages` ( `subscriber_id` )");
-		messages_subscriber_id_index_query.Step();
+		db::query messages_subscriber_id_index_query(conn);
+		messages_subscriber_id_index_query.prepare("CREATE INDEX `messages_subscriber_id_index` ON `messages` ( `subscriber_id` )");
+		messages_subscriber_id_index_query.step();
 
-		DB::Query messages_conference_tag_index_query(conn);
-		messages_conference_tag_index_query.Prepare("CREATE INDEX `messages_conference_tag_index` ON `messages` ( `conference_tag` )");
-		messages_conference_tag_index_query.Step();
+		db::query messages_conference_tag_index_query(conn);
+		messages_conference_tag_index_query.prepare("CREATE INDEX `messages_conference_tag_index` ON `messages` ( `conference_tag` )");
+		messages_conference_tag_index_query.step();
 
-		DB::Query messages_dt_index_query(conn);
-		messages_dt_index_query.Prepare("CREATE INDEX `messages_dt_index` ON `messages` ( `dt` DESC )");
-		messages_dt_index_query.Step();
+		db::query messages_dt_index_query(conn);
+		messages_dt_index_query.prepare("CREATE INDEX `messages_dt_index` ON `messages` ( `dt` DESC )");
+		messages_dt_index_query.step();
 
-		DB::Query conferences_tag_index_query(conn);
-		conferences_tag_index_query.Prepare("CREATE UNIQUE INDEX `conferences_tag_index` ON `conferences` ( `tag` )");
-		conferences_tag_index_query.Step();
+		db::query conferences_tag_index_query(conn);
+		conferences_tag_index_query.prepare("CREATE UNIQUE INDEX `conferences_tag_index` ON `conferences` ( `tag` )");
+		conferences_tag_index_query.step();
 
-		DB::Query create_settings_query(conn);
-		create_settings_query.Prepare("CREATE TABLE \"settings\" (\"id\" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE, \"key\" TEXT, \"value\" TEXT);");
-		create_settings_query.Step();
+		db::query create_settings_query(conn);
+		create_settings_query.prepare("CREATE TABLE \"settings\" (\"id\" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE, \"key\" TEXT, \"value\" TEXT);");
+		create_settings_query.step();
 
-		DB::Query insert_settings_query(conn);
-		insert_settings_query.Prepare("insert into settings (key, value) values ('users_sort_type', '0')");
-		insert_settings_query.Step();
-        insert_settings_query.Prepare("insert into settings (key, value) values ('show_number_on_contact_list', '0')");
-        insert_settings_query.Step();
-        insert_settings_query.Prepare("insert into settings (key, value) values ('my_client_id', '0')");
-        insert_settings_query.Step();
+		db::query insert_settings_query(conn);
+		insert_settings_query.prepare("insert into settings (key, value) values ('users_sort_type', '0')");
+		insert_settings_query.step();
+        insert_settings_query.prepare("insert into settings (key, value) values ('show_number_on_contact_list', '0')");
+        insert_settings_query.step();
+        insert_settings_query.prepare("insert into settings (key, value) values ('my_client_id', '0')");
+        insert_settings_query.step();
 
-		DB::Query db_version_query(conn);
-		db_version_query.Prepare("CREATE TABLE `db_version` ( `db_version` TEXT )");
-		db_version_query.Step();
+		db::query db_version_query(conn);
+		db_version_query.prepare("CREATE TABLE `db_version` ( `db_version` TEXT )");
+		db_version_query.step();
 		
-		DB::Query upd_db_version_query(conn);
-		upd_db_version_query.Prepare("insert into db_version (db_version) values ('" + currentDBVersion + "')");
-		upd_db_version_query.Step();
+		db::query upd_db_version_query(conn);
+		upd_db_version_query.prepare("insert into db_version (db_version) values ('" + currentDBVersion + "')");
+		upd_db_version_query.step();
 
-		writeTr.Commit();
+		writeTr.commit();
 	}
 	if (currentDBVersion == "1.4.190606")
 	{
 		currentDBVersion = "1.4.191016";
 
-		DB::Transaction writeTr(conn);
-		writeTr.Start();
+		db::transaction writeTr(conn);
+		writeTr.start();
 
-		DB::Query create_settings_query(conn);
-		create_settings_query.Prepare("CREATE TABLE \"settings\" (\"id\" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE, \"key\" TEXT, \"value\" TEXT);");
-		create_settings_query.Step();
+		db::query create_settings_query(conn);
+		create_settings_query.prepare("CREATE TABLE \"settings\" (\"id\" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE, \"key\" TEXT, \"value\" TEXT);");
+		create_settings_query.step();
 
-		DB::Query insert_settings_query(conn);
-		insert_settings_query.Prepare("insert into settings (key, value) values ('users_sort_type', '0')");
-		insert_settings_query.Step();
+		db::query insert_settings_query(conn);
+		insert_settings_query.prepare("insert into settings (key, value) values ('users_sort_type', '0')");
+		insert_settings_query.step();
 
-		DB::Query upd_db_version_query(conn);
-		upd_db_version_query.Prepare("update db_version set db_version = '" + currentDBVersion + "'");
-		upd_db_version_query.Step();
+		db::query upd_db_version_query(conn);
+		upd_db_version_query.prepare("update db_version set db_version = '" + currentDBVersion + "'");
+		upd_db_version_query.step();
 
-		writeTr.Commit();
+		writeTr.commit();
 	}
 	if (currentDBVersion == "1.4.191016")
 	{
 		currentDBVersion = "1.4.200506";
 
-		DB::Transaction writeTr(conn);
-		writeTr.Start();
+		db::transaction writeTr(conn);
+		writeTr.start();
 
-		DB::Query alter_users_query(conn);
-		alter_users_query.Prepare("alter table `users` add `login` text;");
-		alter_users_query.Step();
+		db::query alter_users_query(conn);
+		alter_users_query.prepare("alter table `users` add `login` text;");
+		alter_users_query.step();
 
-		DB::Query upd_db_version_query(conn);
-		upd_db_version_query.Prepare("update db_version set db_version = '" + currentDBVersion + "'");
-		upd_db_version_query.Step();
+		db::query upd_db_version_query(conn);
+		upd_db_version_query.prepare("update db_version set db_version = '" + currentDBVersion + "'");
+		upd_db_version_query.step();
 
-		writeTr.Commit();
+		writeTr.commit();
 	}
 	if (currentDBVersion == "1.4.200506")
 	{
 		currentDBVersion = "1.4.210325";
 
-		DB::Transaction writeTr(conn);
-		writeTr.Start();
+		db::transaction writeTr(conn);
+		writeTr.start();
 
-		DB::Query alter_users_query(conn);
-		alter_users_query.Prepare("alter table users add group_id integer not null default 1;");
-		alter_users_query.Step();
+		db::query alter_users_query(conn);
+		alter_users_query.prepare("alter table users add group_id integer not null default 1;");
+		alter_users_query.step();
 
-		DB::Query groups_query(conn);
-		groups_query.Prepare("CREATE TABLE \"groups\" (\"id\" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, \"parent_id\" INTEGER NOT NULL, \"tag\" TEXT NOT NULL, \"name\" TEXT NOT NULL, \"password\" TEXT, \"grants\" INTEGER, \"deleted\"	INTEGER)");
-		groups_query.Step();
+		db::query groups_query(conn);
+		groups_query.prepare("CREATE TABLE \"groups\" (\"id\" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, \"parent_id\" INTEGER NOT NULL, \"tag\" TEXT NOT NULL, \"name\" TEXT NOT NULL, \"password\" TEXT, \"grants\" INTEGER, \"deleted\"	INTEGER)");
+		groups_query.step();
 
-		DB::Query upd_db_version_query(conn);
-		upd_db_version_query.Prepare("update db_version set db_version = '" + currentDBVersion + "'");
-		upd_db_version_query.Step();
+		db::query upd_db_version_query(conn);
+		upd_db_version_query.prepare("update db_version set db_version = '" + currentDBVersion + "'");
+		upd_db_version_query.step();
 
-		writeTr.Commit();
+		writeTr.commit();
 	}
 	if (currentDBVersion == "1.4.210325")
 	{
 		currentDBVersion = "1.5.210426";
 
-		DB::Transaction writeTr(conn);
-		writeTr.Start();
+		db::transaction writeTr(conn);
+		writeTr.start();
 
-		DB::Query client_groups_query(conn);
-		client_groups_query.Prepare("CREATE TABLE \"client_groups\" (\"id\" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, \"client_id\" INTEGER NOT NULL, \"group_id\" INTEGER NOT NULL, \"deleted\" INTEGER);");
-		client_groups_query.Step();
+		db::query client_groups_query(conn);
+		client_groups_query.prepare("CREATE TABLE \"client_groups\" (\"id\" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, \"client_id\" INTEGER NOT NULL, \"group_id\" INTEGER NOT NULL, \"deleted\" INTEGER);");
+		client_groups_query.step();
 
-		DB::Query upd_db_version_query(conn);
-		upd_db_version_query.Prepare("update db_version set db_version = '" + currentDBVersion + "'");
-		upd_db_version_query.Step();
+		db::query upd_db_version_query(conn);
+		upd_db_version_query.prepare("update db_version set db_version = '" + currentDBVersion + "'");
+		upd_db_version_query.step();
 
-		writeTr.Commit();
+		writeTr.commit();
 	}
 	if (currentDBVersion == "1.5.210426")
 	{
 		currentDBVersion = "1.5.210615";
 
-		DB::Transaction writeTr(conn);
-		writeTr.Start();
+		db::transaction writeTr(conn);
+		writeTr.start();
 
-		DB::Query client_groups_query(conn);
-		client_groups_query.Prepare("alter table groups add owner_id integer;");
-		client_groups_query.Step();
+		db::query client_groups_query(conn);
+		client_groups_query.prepare("alter table groups add owner_id integer;");
+		client_groups_query.step();
 
-		DB::Query upd_db_version_query(conn);
-		upd_db_version_query.Prepare("update db_version set db_version = '" + currentDBVersion + "'");
-		upd_db_version_query.Step();
+		db::query upd_db_version_query(conn);
+		upd_db_version_query.prepare("update db_version set db_version = '" + currentDBVersion + "'");
+		upd_db_version_query.step();
 
-		writeTr.Commit();
+		writeTr.commit();
 	}
 	if (currentDBVersion == "1.5.210615")
 	{
 		currentDBVersion = "1.5.210626";
 
-		DB::Transaction writeTr(conn);
-		writeTr.Start();
+		db::transaction writeTr(conn);
+		writeTr.start();
 
-		DB::Query group_rolled_query(conn);
-		group_rolled_query.Prepare("CREATE TABLE \"group_rolled\" (\"id\" INTEGER NOT NULL PRIMARY KEY);");
-		group_rolled_query.Step();
+		db::query group_rolled_query(conn);
+		group_rolled_query.prepare("CREATE TABLE \"group_rolled\" (\"id\" INTEGER NOT NULL PRIMARY KEY);");
+		group_rolled_query.step();
 
-		DB::Query upd_db_version_query(conn);
-		upd_db_version_query.Prepare("update db_version set db_version = '" + currentDBVersion + "'");
-		upd_db_version_query.Step();
+		db::query upd_db_version_query(conn);
+		upd_db_version_query.prepare("update db_version set db_version = '" + currentDBVersion + "'");
+		upd_db_version_query.step();
 
-		writeTr.Commit();
+		writeTr.commit();
 	}
 	if (currentDBVersion == "1.5.210626")
 	{
 		currentDBVersion = "1.6.211107";
 
-		DB::Transaction writeTr(conn);
-		writeTr.Start();
+		db::transaction writeTr(conn);
+		writeTr.start();
 
-		DB::Query conference_rolled_query(conn);
-		conference_rolled_query.Prepare("CREATE TABLE \"conference_rolled\" (\"id\" INTEGER NOT NULL PRIMARY KEY);");
-		conference_rolled_query.Step();
+		db::query conference_rolled_query(conn);
+		conference_rolled_query.prepare("CREATE TABLE \"conference_rolled\" (\"id\" INTEGER NOT NULL PRIMARY KEY);");
+		conference_rolled_query.step();
 
-		DB::Query upd_db_version_query(conn);
-		upd_db_version_query.Prepare("update db_version set db_version = '" + currentDBVersion + "'");
-		upd_db_version_query.Step();
+		db::query upd_db_version_query(conn);
+		upd_db_version_query.prepare("update db_version set db_version = '" + currentDBVersion + "'");
+		upd_db_version_query.step();
 
-		writeTr.Commit();
+		writeTr.commit();
 	}
 	if (currentDBVersion == "1.6.211107")
 	{
 		currentDBVersion = "1.6.211122";
 
-		DB::Transaction writeTr(conn);
-		writeTr.Start();
+		db::transaction writeTr(conn);
+		writeTr.start();
 
-		DB::Query conference_rolled_query(conn);
-		conference_rolled_query.Prepare("alter table conference_members add grants integer;");
-		conference_rolled_query.Step();
+		db::query conference_rolled_query(conn);
+		conference_rolled_query.prepare("alter table conference_members add grants integer;");
+		conference_rolled_query.step();
 
-		DB::Query upd_db_version_query(conn);
-		upd_db_version_query.Prepare("update db_version set db_version = '" + currentDBVersion + "'");
-		upd_db_version_query.Step();
+		db::query upd_db_version_query(conn);
+		upd_db_version_query.prepare("update db_version set db_version = '" + currentDBVersion + "'");
+		upd_db_version_query.step();
 
-		writeTr.Commit();
+		writeTr.commit();
 	}
     if (currentDBVersion == "1.6.211122")
     {
         currentDBVersion = "2.0.221122";
 
-        DB::Transaction writeTr(conn);
-        writeTr.Start();
+        db::transaction writeTr(conn);
+        writeTr.start();
 
-        DB::Query insert_settings_query(conn);
-        insert_settings_query.Prepare("insert into settings (key, value) values ('my_client_id', '0')");
-        insert_settings_query.Step();
+        db::query insert_settings_query(conn);
+        insert_settings_query.prepare("insert into settings (key, value) values ('my_client_id', '0')");
+        insert_settings_query.step();
 
-        DB::Query upd_db_version_query(conn);
-        upd_db_version_query.Prepare("update db_version set db_version = '" + currentDBVersion + "'");
-        upd_db_version_query.Step();
+        db::query upd_db_version_query(conn);
+        upd_db_version_query.prepare("update db_version set db_version = '" + currentDBVersion + "'");
+        upd_db_version_query.step();
 
-        writeTr.Commit();
+        writeTr.commit();
     }
     if (currentDBVersion == "2.0.221122")
     {
         currentDBVersion = "2.0.221204";
 
-        DB::Transaction writeTr(conn);
-        writeTr.Start();
+        db::transaction writeTr(conn);
+        writeTr.start();
 
-        DB::Query alter_query(conn);
-        alter_query.Prepare("alter table users add bio TEXT null;");
-        alter_query.Step();
+        db::query alter_query(conn);
+        alter_query.prepare("alter table users add bio TEXT null;");
+        alter_query.step();
 
-        alter_query.Prepare("alter table users add email TEXT null;");
-        alter_query.Step();
+        alter_query.prepare("alter table users add email TEXT null;");
+        alter_query.step();
 
-        DB::Query upd_db_version_query(conn);
-        upd_db_version_query.Prepare("update db_version set db_version = '" + currentDBVersion + "'");
-        upd_db_version_query.Step();
+        db::query upd_db_version_query(conn);
+        upd_db_version_query.prepare("update db_version set db_version = '" + currentDBVersion + "'");
+        upd_db_version_query.step();
 
-        writeTr.Commit();
+        writeTr.commit();
     }
     if (currentDBVersion == "2.0.221204")
     {
         currentDBVersion = "2.0.230304";
 
-        DB::Transaction writeTr(conn);
-        writeTr.Start();
+        db::transaction writeTr(conn);
+        writeTr.start();
 
-        DB::Query insert_settings_query(conn);
-        insert_settings_query.Prepare("insert into settings (key, value) values ('show_number_on_contact_list', '0')");
-        insert_settings_query.Step();
+        db::query insert_settings_query(conn);
+        insert_settings_query.prepare("insert into settings (key, value) values ('show_number_on_contact_list', '0')");
+        insert_settings_query.step();
 
-        DB::Query upd_db_version_query(conn);
-        upd_db_version_query.Prepare("update db_version set db_version = '" + currentDBVersion + "'");
-        upd_db_version_query.Step();
+        db::query upd_db_version_query(conn);
+        upd_db_version_query.prepare("update db_version set db_version = '" + currentDBVersion + "'");
+        upd_db_version_query.step();
 
-        writeTr.Commit();
+        writeTr.commit();
     }
 }
 

@@ -70,16 +70,16 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <TargetExt>.lib</TargetExt>
     <LibraryPath>$(LibraryPath)</LibraryPath>
-    <IncludePath>.;..\Lib\libVPX;..\Lib\libOpus;..\Lib\libWebM;..\Lib\boost_1_83_0\include;..\Lib\ipp\include;..\Lib\OpenSSL\include;..\Lib\lame\include;..\Lib\wui\include;$(VC_IncludePath);$(WindowsSdk_71A_IncludePath)</IncludePath>
+    <IncludePath>.;..\Lib\libVPX;..\Lib\libOpus;..\Lib\libWebM;..\Lib\boost_1_83_0\include;..\Lib\ipp\include;..\Lib\OpenSSL\include;..\Lib\lame\include;..\Lib\wui\include;..\Lib\db\include;$(VC_IncludePath);$(WindowsSdk_71A_IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <TargetExt>.lib</TargetExt>
     <LibraryPath>$(LibraryPath)</LibraryPath>
-    <IncludePath>.;..\Lib\libVPX;..\Lib\libOpus;..\Lib\libWebM;..\Lib\boost_1_83_0\include;..\Lib\ipp\include;..\Lib\OpenSSL\include;..\Lib\lame\include;..\Lib\wui\include;$(VC_IncludePath);$(WindowsSdk_71A_IncludePath)</IncludePath>
+    <IncludePath>.;..\Lib\libVPX;..\Lib\libOpus;..\Lib\libWebM;..\Lib\boost_1_83_0\include;..\Lib\ipp\include;..\Lib\OpenSSL\include;..\Lib\lame\include;..\Lib\wui\include;..\Lib\db\include;$(VC_IncludePath);$(WindowsSdk_71A_IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LibraryPath>$(LibraryPath)</LibraryPath>
-    <IncludePath>.;..\Lib\libVPX;..\Lib\libOpus;..\Lib\libWebM;..\Lib\boost_1_83_0\include;..\Lib\OpenSSL\include;..\Lib\ipp\include;..\Lib\lame\include;..\Lib\wui\include;$(VC_IncludePath);$(WindowsSdk_71A_IncludePath)</IncludePath>
+    <IncludePath>.;..\Lib\libVPX;..\Lib\libOpus;..\Lib\libWebM;..\Lib\boost_1_83_0\include;..\Lib\OpenSSL\include;..\Lib\ipp\include;..\Lib\lame\include;..\Lib\wui\include;..\Lib\db\include;$(VC_IncludePath);$(WindowsSdk_71A_IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LibraryPath>$(LibraryPath)</LibraryPath>
@@ -243,12 +243,6 @@
     <ClInclude Include="Crypto\IDecryptor.h" />
     <ClInclude Include="Crypto\IEncryptor.h" />
     <ClInclude Include="Crypto\StringEncryptor.h" />
-    <ClInclude Include="DB\Connection.h" />
-    <ClInclude Include="DB\Query.h" />
-    <ClInclude Include="DB\Result.h" />
-    <ClInclude Include="DB\sqlite\sqlite3.h" />
-    <ClInclude Include="DB\sqlite\sqlite3ext.h" />
-    <ClInclude Include="DB\Transaction.h" />
     <ClInclude Include="JitterBuffer\JB.h" />
     <ClInclude Include="License\Grants.h" />
     <ClInclude Include="mt\rw_lock.h" />
@@ -550,11 +544,6 @@
     <ClCompile Include="Crypto\Checker.cpp" />
     <ClCompile Include="Crypto\Decryptor.cpp" />
     <ClCompile Include="Crypto\Encryptor.cpp" />
-    <ClCompile Include="DB\Connection.cpp" />
-    <ClCompile Include="DB\Query.cpp" />
-    <ClCompile Include="DB\sqlite\shell.c" />
-    <ClCompile Include="DB\sqlite\sqlite3.c" />
-    <ClCompile Include="DB\Transaction.cpp" />
     <ClCompile Include="JitterBuffer\JB.cpp" />
     <ClCompile Include="License\Grants.cpp" />
     <ClCompile Include="NetTester\SpeedTester.cpp" />

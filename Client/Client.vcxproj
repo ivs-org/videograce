@@ -69,22 +69,22 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <LibraryPath>..\Debug;..\Lib\boost_1_83_0\lib\win;..\Lib\libVPX\x86\debug;..\Lib\libOpus\x86\debug;..\Lib\libWebM\lib\win\Win32\Debug;..\Lib\OpenSSL\lib\win32;..\Lib\ipp\lib\ia32_win;..\Lib\Filters\BaseClasses\Debug;..\Lib\lame\lib\i386\Debug;$(LibraryPath)</LibraryPath>
+    <LibraryPath>..\Debug;..\Lib\db\lib\win32\debug;..\Lib\boost_1_83_0\lib\win;..\Lib\libVPX\x86\debug;..\Lib\libOpus\x86\debug;..\Lib\libWebM\lib\win\Win32\Debug;..\Lib\OpenSSL\lib\win32;..\Lib\ipp\lib\ia32_win;..\Lib\Filters\BaseClasses\Debug;..\Lib\lame\lib\i386\Debug;$(LibraryPath)</LibraryPath>
     <IncludePath>.;..\Engine;..\Lib\wui\include;..\Lib\boost_1_83_0\include;..\Lib\libWebM;..\Lib\ipp\include;..\Lib\Filters\BaseClasses;..\Lib\lame\include;$(VC_IncludePath);$(WindowsSdk_71A_IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <LibraryPath>..\x64\Debug;..\Lib\wui\x64\Debug;..\Lib\libVPX\x64\debug;..\Lib\libOpus\x64\debug;..\Lib\libWebM\lib\win\x64\Debug;..\Lib\boost_1_83_0\lib\win;..\Lib\OpenSSL\lib\x64;..\Lib\ipp\lib\intel64_win;..\Lib\Filters\BaseClasses\x64\Debug;..\Lib\lame\lib\x64\Debug;$(LibraryPath)</LibraryPath>
+    <LibraryPath>..\x64\Debug;..\Lib\wui\x64\Debug;..\Lib\db\lib\win64\debug;..\Lib\libVPX\x64\debug;..\Lib\libOpus\x64\debug;..\Lib\libWebM\lib\win\x64\Debug;..\Lib\boost_1_83_0\lib\win;..\Lib\OpenSSL\lib\x64;..\Lib\ipp\lib\intel64_win;..\Lib\Filters\BaseClasses\x64\Debug;..\Lib\lame\lib\x64\Debug;$(LibraryPath)</LibraryPath>
     <IncludePath>.;..\Engine;..\Lib\wui\include;..\Lib\libWebM;..\Lib\boost_1_83_0\include;..\Lib\ipp\include;..\Lib\Filters\BaseClasses;..\Lib\lame\include;$(VC_IncludePath);$(WindowsSdk_71A_IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <LibraryPath>..\Release;..\Lib\wui\Release;..\Lib\boost_1_83_0\lib\win;..\Lib\libVPX\x86\release;..\Lib\libOpus\x86\release;..\Lib\libWebM\lib\win\Win32\Release;..\Lib\OpenSSL\lib\win32;..\Lib\ipp\lib\ia32_win;..\Lib\Filters\BaseClasses\Release;..\Lib\lame\lib\i386\Release;$(LibraryPath)</LibraryPath>
+    <LibraryPath>..\Release;..\Lib\wui\Release;..\Lib\db\lib\win32\release;..\Lib\boost_1_83_0\lib\win;..\Lib\libVPX\x86\release;..\Lib\libOpus\x86\release;..\Lib\libWebM\lib\win\Win32\Release;..\Lib\OpenSSL\lib\win32;..\Lib\ipp\lib\ia32_win;..\Lib\Filters\BaseClasses\Release;..\Lib\lame\lib\i386\Release;$(LibraryPath)</LibraryPath>
     <IncludePath>.;..\Engine;..\Lib\wui\include;..\Lib\boost_1_83_0\include;..\Lib\libWebM;..\Lib\ipp\include;..\Lib\Filters\BaseClasses;..\Lib\lame\include;$(VC_IncludePath);$(WindowsSdk_71A_IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <LibraryPath>..\x64\Release;..\Lib\wui\x64\Release;..\Lib\boost_1_83_0\lib\win;..\Lib\libVPX\x64\release;..\Lib\libOpus\x64\release;..\Lib\libWebM\lib\win\x64\Release;..\Lib\OpenSSL\lib\x64;..\Lib\ipp\lib\intel64_win;..\Lib\Filters\BaseClasses\x64\Release;..\Lib\lame\lib\x64\Release;$(LibraryPath)</LibraryPath>
+    <LibraryPath>..\x64\Release;..\Lib\wui\x64\Release;..\Lib\db\lib\win64\release;..\Lib\boost_1_83_0\lib\win;..\Lib\libVPX\x64\release;..\Lib\libOpus\x64\release;..\Lib\libWebM\lib\win\x64\Release;..\Lib\OpenSSL\lib\x64;..\Lib\ipp\lib\intel64_win;..\Lib\Filters\BaseClasses\x64\Release;..\Lib\lame\lib\x64\Release;$(LibraryPath)</LibraryPath>
     <IncludePath>.;..\Engine;..\Lib\wui\include;..\Lib\libWebM;..\Lib\boost_1_83_0\include;..\Lib\ipp\include;..\Lib\Filters\BaseClasses;..\Lib\lame\include;$(VC_IncludePath);$(WindowsSdk_71A_IncludePath)</IncludePath>
     <EmbedManifest>true</EmbedManifest>
   </PropertyGroup>
@@ -104,7 +104,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>atls.lib;engine.lib;strmiids.lib;quartz.lib;Htmlhelp.lib;uuid.lib;amstrmid.lib;wmcodecdspuuid.lib;dsound.lib;Winmm.lib;Avrt.lib;ippcoremt.lib;ippvmmt.lib;ippsmt.lib;ippimt.lib;ippccmt.lib;ippdcmt.lib;ws2_32.lib;Crypt32.lib;libcrypto.lib;libssl.lib;strmbasd.lib;opus.lib;libwebm.lib;vpxmtd.lib;vpxrcmtd.lib;Iphlpapi.lib;libmp3lame-static.lib;libmpghip-static.lib;Gdiplus.lib;msdmo.lib;dmoguids.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>atls.lib;engine.lib;db.lib;strmiids.lib;quartz.lib;Htmlhelp.lib;uuid.lib;amstrmid.lib;wmcodecdspuuid.lib;dsound.lib;Winmm.lib;Avrt.lib;ippcoremt.lib;ippvmmt.lib;ippsmt.lib;ippimt.lib;ippccmt.lib;ippdcmt.lib;ws2_32.lib;Crypt32.lib;libcrypto.lib;libssl.lib;strmbasd.lib;opus.lib;libwebm.lib;vpxmtd.lib;vpxrcmtd.lib;Iphlpapi.lib;libmp3lame-static.lib;libmpghip-static.lib;Gdiplus.lib;msdmo.lib;dmoguids.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>libcmt.lib</IgnoreSpecificDefaultLibraries>
     </Link>
@@ -132,7 +132,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>atls.lib;wui.lib;engine.lib;strmiids.lib;quartz.lib;Htmlhelp.lib;uuid.lib;amstrmid.lib;wmcodecdspuuid.lib;dsound.lib;Winmm.lib;Avrt.lib;ippcoremt.lib;ippvmmt.lib;ippsmt.lib;ippimt.lib;ippccmt.lib;ippdcmt.lib;ws2_32.lib;Crypt32.lib;libcrypto.lib;libssl.lib;strmbasd.lib;opus.lib;libwebm.lib;vpxmtd.lib;vpxrcmtd.lib;Iphlpapi.lib;libmp3lame-static.lib;libmpghip-static.lib;Gdiplus.lib;Dwmapi.lib;msdmo.lib;dmoguids.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>atls.lib;wui.lib;engine.lib;db.lib;strmiids.lib;quartz.lib;Htmlhelp.lib;uuid.lib;amstrmid.lib;wmcodecdspuuid.lib;dsound.lib;Winmm.lib;Avrt.lib;ippcoremt.lib;ippvmmt.lib;ippsmt.lib;ippimt.lib;ippccmt.lib;ippdcmt.lib;ws2_32.lib;Crypt32.lib;libcrypto.lib;libssl.lib;strmbasd.lib;opus.lib;libwebm.lib;vpxmtd.lib;vpxrcmtd.lib;Iphlpapi.lib;libmp3lame-static.lib;libmpghip-static.lib;Gdiplus.lib;Dwmapi.lib;msdmo.lib;dmoguids.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>libcmt.lib</IgnoreSpecificDefaultLibraries>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -167,7 +167,7 @@
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>atls.lib;engine.lib;wui.lib;strmiids.lib;quartz.lib;Htmlhelp.lib;uuid.lib;amstrmid.lib;wmcodecdspuuid.lib;dsound.lib;Winmm.lib;Avrt.lib;ippcoremt.lib;ippvmmt.lib;ippsmt.lib;ippimt.lib;ippccmt.lib;ippdcmt.lib;ws2_32.lib;Crypt32.lib;libcrypto.lib;libssl.lib;strmbase.lib;opus.lib;libwebm.lib;vpxmt.lib;vpxrcmt.lib;Iphlpapi.lib;delayimp.lib;libmp3lame-static.lib;libmpghip-static.lib;Gdiplus.lib;msdmo.lib;dmoguids.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>atls.lib;engine.lib;db.lib;wui.lib;strmiids.lib;quartz.lib;Htmlhelp.lib;uuid.lib;amstrmid.lib;wmcodecdspuuid.lib;dsound.lib;Winmm.lib;Avrt.lib;ippcoremt.lib;ippvmmt.lib;ippsmt.lib;ippimt.lib;ippccmt.lib;ippdcmt.lib;ws2_32.lib;Crypt32.lib;libcrypto.lib;libssl.lib;strmbase.lib;opus.lib;libwebm.lib;vpxmt.lib;vpxrcmt.lib;Iphlpapi.lib;delayimp.lib;libmp3lame-static.lib;libmpghip-static.lib;Gdiplus.lib;msdmo.lib;dmoguids.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
@@ -198,7 +198,7 @@
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>atls.lib;wui.lib;engine.lib;strmiids.lib;quartz.lib;Htmlhelp.lib;uuid.lib;amstrmid.lib;wmcodecdspuuid.lib;dsound.lib;Winmm.lib;Avrt.lib;ippcoremt.lib;ippvmmt.lib;ippsmt.lib;ippimt.lib;ippccmt.lib;ippdcmt.lib;ws2_32.lib;Crypt32.lib;libcrypto.lib;libssl.lib;strmbase.lib;opus.lib;libwebm.lib;vpxmt.lib;vpxrcmt.lib;Iphlpapi.lib;libmp3lame-static.lib;libmpghip-static.lib;Gdiplus.lib;msdmo.lib;dmoguids.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>atls.lib;wui.lib;engine.lib;db.lib;strmiids.lib;quartz.lib;Htmlhelp.lib;uuid.lib;amstrmid.lib;wmcodecdspuuid.lib;dsound.lib;Winmm.lib;Avrt.lib;ippcoremt.lib;ippvmmt.lib;ippsmt.lib;ippimt.lib;ippccmt.lib;ippdcmt.lib;ws2_32.lib;Crypt32.lib;libcrypto.lib;libssl.lib;strmbase.lib;opus.lib;libwebm.lib;vpxmt.lib;vpxrcmt.lib;Iphlpapi.lib;libmp3lame-static.lib;libmpghip-static.lib;Gdiplus.lib;msdmo.lib;dmoguids.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>

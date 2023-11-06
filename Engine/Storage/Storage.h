@@ -21,7 +21,7 @@
 #include <Proto/Conference.h>
 #include <Proto/CmdContactList.h>
 
-namespace DB { class Connection; }
+namespace db { class connection; }
 
 namespace Storage
 {
@@ -154,8 +154,8 @@ private:
     void UpdateUnreadedContacts();
 	void UpdateUnreadedConferences();
 
-    int32_t CalcUnreadedContact(DB::Connection &conn, int64_t clientId);
-    int32_t CalcUnreadedConference(DB::Connection &conn, const std::string &tag);
+    int32_t CalcUnreadedContact(db::connection &conn, int64_t clientId);
+    int32_t CalcUnreadedConference(db::connection &conn, const std::string &tag);
 
     Proto::CONTACT_LIST::SortType GetContactSortType();
 
