@@ -98,9 +98,10 @@ void Storage::AddMessage(const Proto::Message &message)
 	message_query.reset();
 	
 	if (messageSubscriber == message.subscriber_id || (!messagesConference.empty() && messagesConference == message.conference_tag))
-	
-	std::lock_guard<std::recursive_mutex> lock(messagesMutex);
-	messages.insert(messages.begin(), message);
+	{
+		std::lock_guard<std::recursive_mutex> lock(messagesMutex);
+		messages.insert(messages.begin(), message);
+	}
 	
 	writeTr.commit();
 
