@@ -1,3 +1,0 @@
-[submodule "Lib/db"]
-	path = Lib/db
-	url = https://github.com/ud84/db
