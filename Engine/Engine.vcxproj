@@ -83,7 +83,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LibraryPath>$(LibraryPath)</LibraryPath>
-    <IncludePath>.;..\Lib\libVPX;..\Lib\libOpus;..\Lib\libWebM;..\Lib\boost_1_83_0\include;..\Lib\OpenSSL\include;..\Lib\ipp\include;..\Lib\lame\include;..\Lib\wui\include;$(VC_IncludePath);$(WindowsSdk_71A_IncludePath)</IncludePath>
+    <IncludePath>.;..\Lib\libVPX;..\Lib\libOpus;..\Lib\libWebM;..\Lib\boost_1_83_0\include;..\Lib\OpenSSL\include;..\Lib\ipp\include;..\Lib\lame\include;..\Lib\wui\include;..\Lib\db\include;$(VC_IncludePath);$(WindowsSdk_71A_IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
