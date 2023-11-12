@@ -70,7 +70,7 @@ ContentPanel::ContentPanel(std::weak_ptr<wui::window> mainFrame_, Storage::Stora
     list->set_item_count(0);
     list->set_item_height_callback(std::bind(&ContentPanel::ListItemHeightCallback, this, std::placeholders::_1, std::placeholders::_2));
     list->set_draw_callback(std::bind(&ContentPanel::DrawListItem, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4));
-    list->set_scroll_callback(std::bind(&ContentPanel::ListScrollCallback, this, std::placeholders::_1));
+    list->set_scroll_callback(std::bind(&ContentPanel::ListScrollCallback, this, std::placeholders::_1, std::placeholders::_2));
     list->set_item_click_callback([this](wui::list::click_button btn, int32_t nItem, int32_t x, int32_t y) { if (btn == wui::list::click_button::right) RightClickItem(nItem, x, y); });
 
     input->set_return_callback(std::bind(&ContentPanel::SendMsg, this));
@@ -887,9 +887,9 @@ void ContentPanel::DrawListItem(wui::graphic &gr, int32_t nItem, const wui::rect
     }
 }
 
-void ContentPanel::ListScrollCallback(wui::list::scroll_state ss)
+void ContentPanel::ListScrollCallback(wui::scroll_state ss, int32_t)
 {
-    if (ss == wui::list::scroll_state::up_end)
+    if (ss == wui::scroll_state::up_end)
     {
         std::lock_guard<std::recursive_mutex> lock(storage.MessagesMutex());
 

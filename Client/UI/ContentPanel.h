@@ -135,7 +135,7 @@ private:
 
     void DrawListItem(wui::graphic &gr, int32_t nItem, const wui::rect &pos, wui::list::item_state state);
 
-    void ListScrollCallback(wui::list::scroll_state);
+    void ListScrollCallback(wui::scroll_state, int32_t);
 
     void MessagesUpdatedCallback(Storage::MessageAction, const Storage::Messages &messages);
 
