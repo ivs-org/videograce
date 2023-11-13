@@ -137,7 +137,7 @@ private:
     rect position_;
 
     std::weak_ptr<window> parent_;
-    std::string my_control_sid, scroll_plain_sid;
+    std::string my_control_sid;
 
     bool showed_, enabled_, focused_, mouse_on_control, mouse_on_slider;
 
@@ -148,6 +148,8 @@ private:
     std::atomic<int32_t> item_count, selected_item_, active_item_;
 
     int32_t title_height;
+
+    int32_t scroll_area;
 
     std::shared_ptr<scroll> vert_scroll;
 
@@ -174,7 +176,7 @@ private:
 
     bool has_scrollbar();
 
-    int32_t get_scroll_area() const;
+    int32_t calc_scroll_area() const;
 
     void update_selected_item(int32_t y);
     void update_active_item(int32_t y);
