@@ -73,6 +73,7 @@ public:
     void UpdateLeft(int32_t left);
     void UpdateTop(int32_t top);
     void UpdateSize(int32_t width, int32_t height);
+    void ScrollToEnd();
 
     void Pin();
     void Unpin();

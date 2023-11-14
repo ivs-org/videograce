@@ -241,6 +241,11 @@ void ContentPanel::UpdateSize(int32_t width, int32_t height)
     }
 }
 
+void ContentPanel::ScrollToEnd()
+{
+    list->scroll_to_end();
+}
+
 void ContentPanel::Pin()
 {
     if (pinned)

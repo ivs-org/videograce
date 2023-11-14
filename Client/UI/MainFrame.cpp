@@ -908,6 +908,7 @@ void MainFrame::ReceiveEvents(const wui::event &ev)
                     mainToolBar.UpdateWidth(ev.internal_event_.x);
                     listPanel.UpdateHeight(ev.internal_event_.y);
                     contentPanel.UpdateSize(ev.internal_event_.x, ev.internal_event_.y);
+                    contentPanel.ScrollToEnd();
                     
                     renderersBox.SetPosition({ listPanel.Right(), mainToolBar.Bottom(), contentPanel.Left(), ev.internal_event_.y });
                     timerBar.UpdatePosition(listPanel.Right(), mainToolBar.Bottom());
