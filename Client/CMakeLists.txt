@@ -19,6 +19,7 @@ add_executable(Client ${SOURCES})
 target_link_libraries(Client
 	Engine
 	wui
+	db
 	xcb
 	xcb-cursor
 	xcb-ewmh

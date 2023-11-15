@@ -2,8 +2,6 @@ file(GLOB SOURCES
 	Audio/*.cpp
 	AEC/*.cpp
 	API/*.cpp
-	DB/sqlite/*.c
-	DB/*.cpp
 	Common/*.cpp
 	Config/*.cpp
 	Controller/*.cpp
