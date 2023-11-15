@@ -13,7 +13,7 @@ set(CMAKE_MAKE_PROGRAM "make -j 3")
 #set(CMAKE_MODULE_LINKER_FLAGS:STRING=-fsanitize=address  -fsanitize=leak)
 
 include_directories(
-	Lib/boost_1_82_0/include
+	Lib/boost_1_83_0/include
 	Lib/libOpus
 	Lib/OpenSSL/include
 	Lib/libWebM
@@ -21,15 +21,17 @@ include_directories(
 	Lib/ipp/include
 	Lib/lame/include
 	Lib/wui/include
+	Lib/db/include
 	Engine)
 
-link_directories(Lib/boost_1_82_0/lib/lin_x64
+link_directories(Lib/boost_1_83_0/lib/lin_x64
 	Lib/libOpus/libs/x64
 	Lib/OpenSSL/lib/lin_x64
 	Lib/libWebM/lib/lin/x64
 	Lib/ipp/lib/intel64_lin
 	Lib/libVPX/linux/x64
 	Lib/lame/lib/lin/x64
+	Lib/db/lin/x64
 	Lib/wui/lin/x64)
 
 add_subdirectory (Engine)
