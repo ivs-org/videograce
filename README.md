@@ -7,7 +7,7 @@ https://videograce.com
 ## How to Build
 
 ### Windows
-Download the file: [Windows Library Binaries](https://drive.google.com/uc?export=download&id=1tjxAFGRxoIDanVjtvBDFFFuyhsRohw6C)
+Download the file: [Windows Library Binaries](https://drive.google.com/uc?export=download&id=1D-0Is2bY-ZPZUMWwDXsAAcTbjDOwKL9w)
 
 Extract it to: 
 
