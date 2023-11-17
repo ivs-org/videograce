@@ -10,6 +10,7 @@
 #include <wui/window/window.hpp>
 #include <wui/control/menu.hpp>
 #include <wui/control/button.hpp>
+#include <wui/control/progress.hpp>
 #include <wui/control/input.hpp>
 #include <wui/control/message.hpp>
 #include <wui/control/tray_icon.h>
@@ -146,6 +147,7 @@ private:
     std::shared_ptr<wui::window> window;
     std::shared_ptr<wui::message> messageBox;
     std::shared_ptr<wui::menu> mainMenu;
+    std::shared_ptr<wui::progress> mainProgress;
 
     std::shared_ptr<VolumeBox> volumeBox;
 
@@ -235,6 +237,8 @@ private:
 private:
     void Init();
 
+    void UpdateTitle(std::string_view text = "", int32_t progress = 0);
+
     void WindowControlCallback(wui::window_control control, std::string &tooltip_text, bool &continue_);
 
     void InitAudio();
@@ -242,6 +246,8 @@ private:
     void ShowBusy(std::string_view title);
     void SetBusyProgess(std::string_view sub_title, int32_t value);
     void HideBusy();
+
+    void SetMainProgess(std::string_view sub_title, int32_t value);
 
     void CheckConnectivity(bool showResult = false);
     void DetermineNetSpeed(bool force = false);

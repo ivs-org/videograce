@@ -55,6 +55,8 @@ enum class MyEvent : uint32_t
     SetBusyProgress           = 4001,
     HideBusy                  = 4002,
 
+    SetMainProgress           = 4010,
+
     CredentialsReady          = 4100,
 
     SpeedTestCompleted        = 4200,
@@ -154,6 +156,7 @@ MainFrame::MainFrame()
     : window(new wui::window()),
     messageBox(new wui::message(window)),
     mainMenu(new wui::menu()),
+    mainProgress(new wui::progress(0, 100, 0)),
     volumeBox(new VolumeBox(std::bind(&MainFrame::VolumeBoxChangeCallback, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3))),
     trayIcon(),
 
@@ -172,7 +175,7 @@ MainFrame::MainFrame()
     
     speedTester(wui::get_locale(),
         std::bind(&MainFrame::SpeedTestCompleted, this, std::placeholders::_1, std::placeholders::_2),
-        std::bind(&MainFrame::SetBusyProgess, this, std::placeholders::_1, std::placeholders::_2)),
+        std::bind(&MainFrame::SetMainProgess, this, std::placeholders::_1, std::placeholders::_2)),
     udpTester(wui::get_locale()),
     tcpTester(wui::get_locale(), std::bind(&MainFrame::TCPTestCompleted, this)),
 
@@ -273,6 +276,8 @@ MainFrame::MainFrame()
 
     audioRenderer.SetErrorHandler(std::bind(&MainFrame::AudioRendererErrorCallback, this, std::placeholders::_1, std::placeholders::_2));
     audioMixer.SetReceiver(&resampler);
+
+    mainProgress->hide();
 }
 
 MainFrame::~MainFrame()
@@ -292,6 +297,8 @@ void MainFrame::Run(bool minimized)
     {
         window->minimize();
     }
+
+    window->add_control(mainProgress, {});
 
     window->init(wui::locale("client", "title") + SHORT_VERSION " - " + wui::locale("common", "offline"),
         { -1, -1, wui::config::get_int("MainFrame", "Width", 1200), wui::config::get_int("MainFrame", "Height", 700) },
@@ -971,13 +978,16 @@ void MainFrame::ReceiveEvents(const wui::event &ev)
                         case MyEvent::SetBusyProgress:
                             busyBox.SetProgress(busySubTitle, ev.internal_event_.y);
                         break;
+                        case MyEvent::SetMainProgress:
+                            UpdateTitle(busySubTitle, ev.internal_event_.y);
+                        break;
                         case MyEvent::HideBusy:
                             busyBox.End();
                         break;
                         case MyEvent::CredentialsReady:
                             controller.SetCredentials(credentialsDialog.login, credentialsDialog.password);
 
-                            ShowBusy(wui::locale("common", "connecting_to_server"));
+                            UpdateTitle();
                             if (controller.Connected())
                             {
                                 controller.Disconnect();
@@ -989,6 +999,7 @@ void MainFrame::ReceiveEvents(const wui::event &ev)
                             storage.Connect(GetAppDataPath() + "local.db");
                         break;
                         case MyEvent::SpeedTestCompleted:
+                            UpdateTitle();
                             HideBusy();
                         break;
                         case MyEvent::ConnectivityTestCompleted:
@@ -1028,10 +1039,7 @@ void MainFrame::ReceiveEvents(const wui::event &ev)
                                         wui::message_button::ok);
                                 break;
                             }
-                            if (useTCPMedia)
-                            {
-                                window->set_caption(wui::locale("client", "title") + SHORT_VERSION " [" + controller.GetMyClientName() + " - " + controller.GetServerName() + "]" + " [TCP media!]");
-                            }
+                            UpdateTitle();
                         break;
                         case MyEvent::RingerEnd:
                             switch (static_cast<Ringer::RingType>(ev.internal_event_.y))
@@ -1120,7 +1128,7 @@ void MainFrame::ProcessControllerEvent()
                 controller.LoadMessages(storage.GetLastMessageDT());
                 controller.DeliveryMessages(storage.GetUndeliveredMessages());
 
-                window->set_caption(wui::locale("client", "title") + SHORT_VERSION " [" + controller.GetMyClientName() + " - " + controller.GetServerName() + "]");
+                UpdateTitle();
 
                 if (controller.GetMaxOutputBitrate() != 0)
                 {
@@ -1155,7 +1163,8 @@ void MainFrame::ProcessControllerEvent()
                 {
                     errLog->warn("Client is disconnected");
 
-                    window->set_caption(wui::locale("client", "title") + SHORT_VERSION " - " + wui::locale("common", "offline"));
+                    //window->set_caption(wui::locale("client", "title") + SHORT_VERSION " - " + wui::locale("common", "offline"));
+                    UpdateTitle();
                     trayIcon->change_icon(ICO_INACTIVE);
                     trayIcon->change_tip(wui::locale("client", "title") + "(" + wui::locale("common", "offline") + ")");
 
@@ -1276,7 +1285,7 @@ void MainFrame::ProcessControllerEvent()
 
                 HideBusy();
 
-                messageBox->show(wui::locale("message", "internal_server_error") + e.data,
+                messageBox->show(wui::locale("message", "internal_server_error") + ": " + e.data,
                     wui::locale("message", "title_error"),
                     wui::message_icon::alert,
                     wui::message_button::ok);
@@ -1298,7 +1307,7 @@ void MainFrame::ProcessControllerEvent()
                                 wui::config::set_string("Credentials", "Login", settingsDialog.GetLogin());
                                 wui::config::set_string("Credentials", "Password", settingsDialog.GetPassword());
 
-                                window->set_caption(wui::locale("client", "title") + SHORT_VERSION " [" + controller.GetMyClientName() + " - " + controller.GetServerName() + "]" + (useTCPMedia ? " [TCP media!]" : ""));
+                                UpdateTitle();
                             break;
                         }
                     }
@@ -1635,7 +1644,7 @@ void MainFrame::ProcessControllerEvent()
 
                 if (CheckInputBitrateTooSmall())
                 {
-                    return messageBox->show(wui::locale("message", "bitrate_too_small_to_show_video"),
+                    messageBox->show(wui::locale("message", "bitrate_too_small_to_show_video"),
                         wui::locale("message", "title_error"),
                         wui::message_icon::alert,
                         wui::message_button::ok);
@@ -1656,7 +1665,7 @@ void MainFrame::ProcessControllerEvent()
 
                     if (outputBitrateTooSmall)
                     {
-                        return messageBox->show(wui::locale("message", "bitrate_too_small_to_start_camera"),
+                        messageBox->show(wui::locale("message", "bitrate_too_small_to_start_camera"),
                             wui::locale("message", "title_error"),
                             wui::message_icon::alert,
                             wui::message_button::ok);
@@ -1684,7 +1693,7 @@ void MainFrame::ProcessControllerEvent()
 
                 if (!cc.temp)
                 {
-                    window->set_caption(wui::locale("client", "title") + SHORT_VERSION " [" + controller.GetMyClientName() + " - " + controller.GetServerName() + "] - " + cc.name  + (useTCPMedia ? " [TCP media!]" : ""));
+                    UpdateTitle(cc.name);
                 }
 
                 //killScreenSaverTimer.start(30000);
@@ -1742,14 +1751,7 @@ void MainFrame::ProcessControllerEvent()
                 }
                 callParams.currentConferenceOneTime = false;
 
-                if (online)
-                {
-                    window->set_caption(wui::locale("client", "title") + SHORT_VERSION " [" + controller.GetMyClientName() + " - " + controller.GetServerName() + "]" + (useTCPMedia ? " [TCP media!]" : ""));
-                }
-                else
-                {
-                    window->set_caption(wui::locale("client", "title") + SHORT_VERSION " - " + wui::locale("common", "offline"));
-                }
+                UpdateTitle();
 
                 miniWindow.End();
             }
@@ -2201,6 +2203,74 @@ void MainFrame::ProcessControllerEvent()
     }
 }
 
+void MainFrame::UpdateTitle(std::string_view text, int32_t progress)
+{
+    std::string title = wui::locale("client", "title") + SHORT_VERSION;
+
+    switch (controller.GetState())
+    { 
+        case Controller::State::NetworkError:
+            title += " :: " + wui::locale("message", "network_error");
+        break;
+        case Controller::State::UpdateRequired:
+            title += " :: " + wui::locale("message", "update_required");
+        break;
+        case Controller::State::CredentialsError:
+            title += " :: " + wui::locale("message", "invalid_credentionals");
+        break;
+        case Controller::State::ServerError:
+            title += " :: " + wui::locale("message", "internal_server_error");
+        break;
+
+        case Controller::State::Initial:
+            title += " :: " + wui::locale("common", "connecting_to_server");
+        break;
+        case Controller::State::Ready:
+            title += " :: [" + controller.GetMyClientName() + " - " + controller.GetServerName() + "]";
+        break;
+        case Controller::State::Conferencing:
+            title += " :: [" + controller.GetMyClientName() + " - " + controller.GetServerName() + "]";
+        break;
+        
+    }
+
+    if (!text.empty())
+    {
+        title += " :: " + std::string(text);
+    }
+
+    if (useTCPMedia)
+    {
+        title += " {" + wui::locale("common", "tcp_media") + "}";
+    }
+
+    window->set_caption(title);
+
+    mainProgress->set_value(progress);
+    if (progress > 0)
+    {
+        if (!mainProgress->showed())
+        {
+#ifdef _WIN32
+            auto memGr = std::unique_ptr<wui::graphic>(new wui::graphic(wui::system_context{ window->context().hwnd }));
+#elif __linux__
+            auto memGr = std::unique_ptr<wui::graphic>(new wui::graphic(window->context()));
+#endif
+            memGr->init(window->position(), 0);
+
+            auto titleWidth = memGr->measure_text(title, wui::theme_font("window", "caption_font")).width();
+
+            mainProgress->set_position({ titleWidth + 10, 8, titleWidth + 110, 22 });
+
+            mainProgress->show();
+        }
+    }
+    else
+    {
+        mainProgress->hide();
+    }
+}
+
 void MainFrame::Init()
 {
     mainToolBar.Run();
@@ -2218,11 +2288,8 @@ void MainFrame::Init()
         contentPanel.UpdateLeft(wui::config::get_int("ListPanel", "Enabled", 1) != 0 ? wui::config::get_int("ListPanel", "Width", 300) + 5 : 0);
     }
 
-    if (window->state() != wui::window_state::minimized)
-    {
-        ShowBusy(wui::locale("common", "connecting_to_server"));
-    }
-
+    UpdateTitle();
+    
     LoadCameras(cameraDevices);
     FindCamera();
     mainToolBar.EnableCamera(IsCameraEnabled() && IsCameraExists());
@@ -2359,6 +2426,12 @@ void MainFrame::HideBusy()
     window->emit_event(static_cast<int32_t>(MyEvent::HideBusy), 0);
 }
 
+void MainFrame::SetMainProgess(std::string_view sub_title, int32_t value)
+{
+    busySubTitle = sub_title;
+    window->emit_event(static_cast<int32_t>(MyEvent::SetMainProgress), value);
+}
+
 void MainFrame::CheckConnectivity(bool showResult)
 {
     showConnectivityResult = showResult;
@@ -2381,7 +2454,7 @@ void MainFrame::DetermineNetSpeed(bool force)
     {
         if (window->state() != wui::window_state::minimized)
         {
-            ShowBusy(wui::locale("common", "determine_network_speed"));
+            UpdateTitle(wui::locale("common", "determine_network_speed"));
         }
 
         speedTester.SetParams(wui::config::get_string("Connection", "Address", ""), wui::config::get_int("Connection", "Secure", 1) != 0);
@@ -2609,7 +2682,7 @@ void MainFrame::SettingsReadyCallback()
         controller.GetLogin() != wui::config::get_string("Credentials", "Login", "") ||
         controller.GetPassword() != wui::config::get_string("Credentials", "Password", ""))
     {
-        window->set_caption(wui::locale("client", "title") + SHORT_VERSION " - " + wui::locale("common", "offline"));
+        UpdateTitle(wui::locale("common", "offline"));
         trayIcon->change_icon(ICO_INACTIVE);
         trayIcon->change_tip(wui::locale("client", "title") + "(" + wui::locale("common", "offline") + ")");
 

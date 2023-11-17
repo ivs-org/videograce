@@ -44,6 +44,8 @@ private:
 	std::string serverAddress;
 	bool useHTTPS;
 	uint32_t inputSpeed, outputSpeed;
+
+	std::atomic<bool> runned;
 	
 	void TakeInputSpeed();
 	void TakeOutputSpeed();

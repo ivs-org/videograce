@@ -231,7 +231,8 @@
       "name": "Name",
       "user": "User",
       "member": "Participant",
-      "determine_network_speed": "Network speed detection"
+      "determine_network_speed": "Network speed detection",
+      "tcp_media": "TCP media"
     },
     {
       "type": "device",
@@ -255,7 +256,9 @@
       "title_confirmation": "Confirmation",
       "server_outdated": "The server version is outdated, you need to update the server to the latest version",
       "server_full": "Connection slots are over. It is necessary to purchase a license for additional channels",
-      "internal_server_error": "Internal server error: ",
+      "network_error": "Network error",
+      "update_required": "Client update required",
+      "internal_server_error": "Internal server error",
       "invalid_credentionals": "You have entered an incorrect username and/or password",
       "server_url_empty": "Enter the URL of your server in the form http://server-address:8778",
       "incorrect_server_url": "Invalid server address\n entered (must start with http or https)",
@@ -336,7 +339,7 @@
       "confirm_app_close": "When the application is closed, you will not be able to call.\n Close the application?",
       "conference_link_copied": "The link to connect to the conference has been copied to the clipboard",
       "new_message_received": "New messages received: ",
-    "no_contacts_selected": "No contact selected",
+      "no_contacts_selected": "No contact selected",
       "record_denied": "Recording of the conference is forbidden"
     },
     {

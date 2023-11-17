@@ -22,12 +22,14 @@ SpeedTester::SpeedTester(std::shared_ptr<wui::i_locale> locale_,
 	progressCallback(progressCallback_),
 	thread(),
 	serverAddress(), useHTTPS(false),
-	inputSpeed(0), outputSpeed(0)
+	inputSpeed(0), outputSpeed(0),
+	runned(false)
 {
 }
 
 SpeedTester::~SpeedTester()
 {
+	runned = false;
 	if (thread.joinable()) thread.join();
 }
 
@@ -41,13 +43,16 @@ void SpeedTester::DoTheTest()
 {
 	if (!serverAddress.empty())
 	{
+		runned = false;
 		if (thread.joinable()) thread.join();
 
-		thread = std::thread([this]() {
-			TakeInputSpeed();
-			TakeOutputSpeed();
+		runned = true;
 
-            readyCallback(inputSpeed, outputSpeed);
+		thread = std::thread([this]() {
+			if (runned)	TakeInputSpeed();
+			if (runned) TakeOutputSpeed();
+
+			if (runned) readyCallback(inputSpeed, outputSpeed);
 		});
 	}
 }
@@ -92,10 +97,15 @@ void SpeedTester::TakeOutputSpeed()
 
 		auto currentSpeed = static_cast<uint32_t>(avgSpeed / i);
 
-		progressCallback(locale->get("net_test", "out_speed_testing") + "\n" + 
+		progressCallback(locale->get("net_test", "out_speed_testing") + ": " + 
 			std::to_string(currentSpeed) + " " + 
 			locale->get("net_test", "kbps"),
 			i * (100 / COUNT));
+
+		if (!runned)
+		{
+			break;
+		}
 
 		std::this_thread::sleep_for(std::chrono::milliseconds(20));
 	}
@@ -133,10 +143,15 @@ void SpeedTester::TakeInputSpeed()
 
 		auto currentSpeed = static_cast<uint32_t>(avgSpeed / i);
 
-		progressCallback(locale->get("net_test", "in_speed_testing") + "\n" +
+		progressCallback(locale->get("net_test", "in_speed_testing") + ": " +
 			std::to_string(currentSpeed) + " " +
 			locale->get("net_test", "kbps"),
 			i * (100 / COUNT));
+
+		if (!runned)
+		{
+			break;
+		}
 
 		std::this_thread::sleep_for(std::chrono::milliseconds(20));
 	}
