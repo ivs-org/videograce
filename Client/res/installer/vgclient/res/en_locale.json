@@ -78,7 +78,15 @@
       "type": "net_test",
       "udp_sockets_unavailable": "There is no access to the following UDP sockets of the server:",
       "tcp_socket_unavailable": "There is no access to the TCP media socket of the server:",
-      "sockets_access_required": "Video communication is not possible. It is required to provide access to the specified sockets"
+      "sockets_access_required": "Video communication is not possible. It is required to provide access to the specified sockets",
+      "checking_connectivity": "Checking the availability\nUDP and TCP AV ports",
+      "connectivity_ok": "Access to all AV ports has been verified,\neverything is working properly",
+      "connectivity_tcp_only": "No access to UDP ports,\nthe AV traffic will be transmitted via TCP",
+      "connecting": "Connecting",
+      "connected": "Connection established",
+      "in_speed_testing": "Determining the incoming speed",
+      "out_speed_testing": "Determining the outgoing speed",
+      "kbps": "kbps"
     },
     {
       "type": "dialing_dialog",
@@ -223,7 +231,8 @@
       "name": "Name",
       "user": "User",
       "member": "Participant",
-      "determine_network_speed": "Network speed detection"
+      "determine_network_speed": "Network speed detection",
+      "tcp_media": "TCP media"
     },
     {
       "type": "device",
@@ -247,7 +256,9 @@
       "title_confirmation": "Confirmation",
       "server_outdated": "The server version is outdated, you need to update the server to the latest version",
       "server_full": "Connection slots are over. It is necessary to purchase a license for additional channels",
-      "internal_server_error": "Internal server error: ",
+      "network_error": "Network error",
+      "update_required": "Client update required",
+      "internal_server_error": "Internal server error",
       "invalid_credentionals": "You have entered an incorrect username and/or password",
       "server_url_empty": "Enter the URL of your server in the form http://server-address:8778",
       "incorrect_server_url": "Invalid server address\n entered (must start with http or https)",
@@ -328,7 +339,7 @@
       "confirm_app_close": "When the application is closed, you will not be able to call.\n Close the application?",
       "conference_link_copied": "The link to connect to the conference has been copied to the clipboard",
       "new_message_received": "New messages received: ",
-	  "no_contacts_selected": "No contact selected",
+      "no_contacts_selected": "No contact selected",
       "record_denied": "Recording of the conference is forbidden"
     },
     {
@@ -349,7 +360,7 @@
       "account": "Account",
       "connection": "Connection",
       "preferences": "Preferences",
-      "camera_resolution": "Permission",
+      "camera_resolution": "Resolution",
       "microphone_sensitivty": "Sensitivity",
       "microphone_aec": "Echo cancellation",
       "microphone_ns": "Noise reduction",
@@ -372,7 +383,8 @@
       "set_network_speed_manual": "Set the speed manually",
       "input_network_speed": "Incoming (kb/sec)",
       "output_network_speed": "Outgoing (kb/sec)",
-      "determine_network_speed": "Define now",
+      "determine_network_speed": "Determine now",
+      "check_connectivity": "Check port availability",
       "show_timer": "Show timer during conference",
       "auto_answer": "Automatically pick up the phone on an incoming call",
       "auto_connect_to_conference": "Automatically connect to the conference when it starts",
