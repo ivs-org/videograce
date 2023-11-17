@@ -1000,7 +1000,6 @@ void MainFrame::ReceiveEvents(const wui::event &ev)
                         break;
                         case MyEvent::SpeedTestCompleted:
                             UpdateTitle();
-                            HideBusy();
                         break;
                         case MyEvent::ConnectivityTestCompleted:
                             if (showConnectivityResult && ev.internal_event_.y != 0 && ev.internal_event_.y != 1)
@@ -1122,8 +1121,6 @@ void MainFrame::ProcessControllerEvent()
 
                 SetStanbyMode();
 
-                HideBusy();
-
                 DetermineNetSpeed();
                 CheckConnectivity();
 
@@ -1161,6 +1158,7 @@ void MainFrame::ProcessControllerEvent()
             break;
             case Controller::Event::Type::NetworkError:
                 controller.Disconnect();
+                UpdateTitle();
             break;
             case Controller::Event::Type::Disconnected:
                 if (online)
@@ -1179,7 +1177,7 @@ void MainFrame::ProcessControllerEvent()
                     renderersBox.Update();
                 }
 
-                HideBusy();
+                UpdateTitle();
 
                 controller.Connect(wui::config::get_string("Connection", "Address", ""), wui::config::get_int("Connection", "Secure", 0) != 0);
             break;
@@ -1196,7 +1194,7 @@ void MainFrame::ProcessControllerEvent()
             {
                 sysLog->info("Auth needed");
 
-                HideBusy();
+                UpdateTitle();
 
                 if (e.iData == 0)
                 {
@@ -1244,7 +1242,9 @@ void MainFrame::ProcessControllerEvent()
             /// Updating
             case Controller::Event::Type::UpdateRequired:
                 sysLog->info("Update required");
-                HideBusy();
+                
+                UpdateTitle();
+                
                 ShowBusy(wui::locale("common", "updating"));
 #ifdef _WIN32
                 controller.Update(SYSTEM_NAME "Client.exe", "\\IVS\\" SYSTEM_NAME "\\");
@@ -1285,6 +1285,8 @@ void MainFrame::ProcessControllerEvent()
             case Controller::Event::Type::ServerInternalError:
             {
                 errLog->error("Server internal error {0}", e.data);
+
+                UpdateTitle();
 
                 HideBusy();
 
@@ -2220,6 +2222,9 @@ void MainFrame::UpdateTitle(std::string_view text, int32_t progress)
         break;
         case Controller::State::ServerError:
             title += " :: " + wui::locale("message", "internal_server_error");
+        break;
+        case Controller::State::Ended:
+            title += " :: " + wui::locale("common", "offline");
         break;
 
         case Controller::State::Initial:
