@@ -231,7 +231,7 @@
       "user": "Пользователь",
       "member": "Участник",
       "determine_network_speed": "Определение скорости сети",
-      "tcp_media": "TCP канал медиа"
+      "tcp_media": "TCP медиа канал"
     },
     {
       "type": "device",

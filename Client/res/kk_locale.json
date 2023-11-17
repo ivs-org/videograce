@@ -230,7 +230,7 @@
       "user": "Пайдаланушы",
       "member": "Қатысушы",
       "determine_network_speed": "Желі жылдамдығын анықтау",
-      "tcp_media": "TCP media"
+      "tcp_media": "TCP медиа арнасы"
     },
     {
       "type": "device",
@@ -254,8 +254,8 @@
     "title_confirmation": "Растау",
     "server_outdated": "Сервер нұсқасы ескірген, серверді соңғы нұсқасына жаңарту қажет",
     "server_full": "Қосылу слоттары аяқталды. Қосымша арналарға Лицензия Сатып алу қажет",
-    "network_error": "Network error",
-    "update_required": "Client update required",
+    "network_error": "Желі қатесі",
+    "update_required": "Клиентті жаңарту қажет",
     "internal_server_error": "Ішкі сервер қатесі",
     "invalid_credentionals": "Сіз дұрыс емес логин және / немесе құпия сөзді енгіздіңіз",
     "server_url_empty": "Көрініс серверінің URL мекенжайын енгізіңіз http://server-address:8778",
