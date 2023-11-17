@@ -232,7 +232,7 @@
       "border": "#e0e0e0",
       "border_width": 1,
       "background": "#fcfcfc",
-      "meter": "#8dd28a"
+      "meter": "#0084bc"
     },
     {
       "type": "slider",
