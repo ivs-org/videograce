@@ -1039,7 +1039,11 @@ void MainFrame::ReceiveEvents(const wui::event &ev)
                                         wui::message_button::ok);
                                 break;
                             }
-                            UpdateTitle();
+
+                            if (useTCPMedia)
+                            {
+                                UpdateTitle();
+                            }
                         break;
                         case MyEvent::RingerEnd:
                             switch (static_cast<Ringer::RingType>(ev.internal_event_.y))
@@ -1163,8 +1167,7 @@ void MainFrame::ProcessControllerEvent()
                 {
                     errLog->warn("Client is disconnected");
 
-                    //window->set_caption(wui::locale("client", "title") + SHORT_VERSION " - " + wui::locale("common", "offline"));
-                    UpdateTitle();
+                    UpdateTitle(wui::locale("common", "offline"));
                     trayIcon->change_icon(ICO_INACTIVE);
                     trayIcon->change_tip(wui::locale("client", "title") + "(" + wui::locale("common", "offline") + ")");
 
@@ -1691,11 +1694,8 @@ void MainFrame::ProcessControllerEvent()
                     StartMicrophone();
                 }
 
-                if (!cc.temp)
-                {
-                    UpdateTitle(cc.name);
-                }
-
+                UpdateTitle();
+                
                 //killScreenSaverTimer.start(30000);
 
                 callParams.scheduleConferenceTag.clear();
@@ -2229,7 +2229,8 @@ void MainFrame::UpdateTitle(std::string_view text, int32_t progress)
             title += " :: [" + controller.GetMyClientName() + " - " + controller.GetServerName() + "]";
         break;
         case Controller::State::Conferencing:
-            title += " :: [" + controller.GetMyClientName() + " - " + controller.GetServerName() + "]";
+            title += " :: [" + controller.GetMyClientName() + " - " + controller.GetServerName() + "] :: " + 
+                controller.GetCurrentConference().name;
         break;
         
     }
