@@ -86,7 +86,7 @@ void AboutDialog::Run(uint32_t grants_)
     window->add_control(wuiInfo, { 10, 400, WND_WIDTH - 10, 440 });
     window->add_control(wuiURLAnchor, { 150, 440, 320, 455 });
 
-    window->add_control(vendorURLAnchor, { 145, WND_HEIGHT - 95, 280, WND_HEIGHT - 70 });
+    window->add_control(vendorURLAnchor, { 145, WND_HEIGHT - 100, 280, WND_HEIGHT - 75 });
     window->add_control(copyright, { 10, WND_HEIGHT - 70, WND_WIDTH - 10, WND_HEIGHT - 55 });
     window->add_control(closeButton, { WND_WIDTH - 110, WND_HEIGHT - 40, WND_WIDTH - 10, WND_HEIGHT - 10 });
 
