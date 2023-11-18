@@ -925,8 +925,6 @@ void MainFrame::ReceiveEvents(const wui::event &ev)
 
                     if (!controller.GetCurrentConference().tag.empty())
                     {
-                        window->set_style(wui::window_style::topmost);
-
                         mainToolBar.FullScreen();
                         
                         listPanel.UpdateTop(0);
@@ -2368,6 +2366,12 @@ void MainFrame::WindowControlCallback(wui::window_control control, std::string &
                 window->minimize();
 
                 trayIcon->show_message(wui::locale("client", "title"), wui::locale("message", "application_hided"));
+            }
+        break;
+        case wui::window_control::state:
+            if (tooltip_text == "expand" && !controller.GetCurrentConference().tag.empty())
+            {
+                window->set_style(wui::window_style::topmost);
             }
         break;
     }
