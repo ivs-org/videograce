@@ -94,7 +94,7 @@ public:
 		rtlRWLock()
 	{
 		wchar_t path[MAX_PATH] = { 0 };
-		GetSystemDirectory(path, sizeof(path));
+		GetSystemDirectory(path, sizeof(path) / sizeof(path[0]));
 		std::wstring dllPath = std::wstring(path) + L"\\ntdll.dll";
 		HINSTANCE hGetProcIDDLL = LoadLibrary(dllPath.c_str());
 		if (hGetProcIDDLL)
