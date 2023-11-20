@@ -20,6 +20,7 @@ RenderersBox::RenderersBox(std::weak_ptr<wui::window> mainFrame_, MiniWindow &mi
     sourceRenderers(renderersVideo_),
     showedRenderers(),
     demonstrationWindows(),
+    position{},
     gridType(GridType::MainUser),
     timer_(std::bind(&RenderersBox::Redraw, this))
 {

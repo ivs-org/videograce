@@ -88,7 +88,7 @@ class timer
 {
 public:
 	explicit timer(std::function<void(void)> callback_)
-		: callback(callback_), hTimer(NULL), runned(false)
+		: callback(callback_), hTimer(NULL), hTimerQueue(NULL), runned(false)
 	{
 	}
 
