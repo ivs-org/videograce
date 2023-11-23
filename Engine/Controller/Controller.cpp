@@ -440,12 +440,16 @@ void Controller::CallResponse(CallValues values)
     auto absentContacts = storage.GetAbsentContacts({ msg });
     if (!absentContacts.empty())
     {
-        AddContact(absentContacts[0]);
+		AddContact(absentContacts[0]);
     }
 }
 
 void Controller::AddContact(int64_t clientId)
 {
+	if (clientId == 0)
+	{
+		return errLog->critical("Controller::AddContact() clientId == 0");
+	}
 	SendCommand(Proto::CONTACTS_UPDATE::Command(
 		Proto::CONTACTS_UPDATE::Action::Add,
         clientId
