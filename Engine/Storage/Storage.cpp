@@ -286,6 +286,11 @@ std::vector<int64_t> Storage::GetAbsentContacts(const Messages &messages_)
 
     for (auto &msg : messages_)
     {
+		if (msg.author_id == 0)
+		{
+			continue;
+		}
+
         auto contact = std::find(contacts.begin(), contacts.end(), msg.author_id);
         if (contact == contacts.end())
         {
