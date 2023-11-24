@@ -20,9 +20,9 @@
 
 #define MAJOR_VERSION 2
 #define MINOR_VERSION 0
-#define RELEASE 231118
+#define RELEASE 231124
 
-#define CLIENT_VERSION 518
+#define CLIENT_VERSION 519
 #define SERVER_VERSION 316
 
 #define STR_HELPER(x) #x
