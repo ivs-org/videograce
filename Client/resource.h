@@ -109,6 +109,8 @@
 #define IMG_SETTING_PREFERENCES        4346
 #define IMG_SETTING_RECORD             4347
 #define IMG_SETTING_NO_SIGNAL          4348
+#define IMG_TB_REMOTE_CONTROL          4349
+#define IMG_TB_SCALE                   4350
 #define IMG_LOADING_01                 4360
 #define IMG_LOADING_02                 4361
 #define IMG_LOADING_03                 4362
@@ -218,6 +220,8 @@ static constexpr const char* IMG_SETTING_CONNECTION          = "Settings/connect
 static constexpr const char* IMG_SETTING_PREFERENCES         = "Settings/preferences.png";
 static constexpr const char* IMG_SETTING_RECORD              = "Settings/record.png";
 static constexpr const char* IMG_SETTING_NO_SIGNAL           = "Settings/no_signal.png";
+static constexpr const char* IMG_TB_REMOTE_CONTROL           = "ScreenCapture/remote_control.png";
+static constexpr const char* IMG_TB_SCALE                    = "ScreenCapture/scale.png";
 static constexpr const char* IMG_LOADING_01                  = "Loading/01.png";
 static constexpr const char* IMG_LOADING_02                  = "Loading/02.png";
 static constexpr const char* IMG_LOADING_03                  = "Loading/03.png";

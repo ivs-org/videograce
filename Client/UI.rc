@@ -330,6 +330,12 @@ IMG_SETTING_RECORD      IMAGES_LIGHT                 "res\\light\\Settings\\reco
 IMG_SETTING_NO_SIGNAL   IMAGES_DARK                  "res\\dark\\Settings\\no_signal.png"
 IMG_SETTING_NO_SIGNAL   IMAGES_LIGHT                 "res\\light\\Settings\\no_signal.png"
 
+IMG_TB_REMOTE_CONTROL   IMAGES_DARK                  "res\\dark\\ScreenCapture\\remote_control.png"
+IMG_TB_REMOTE_CONTROL   IMAGES_LIGHT                 "res\\light\\ScreenCapture\\remote_control.png"
+
+IMG_TB_SCALE            IMAGES_DARK                  "res\\dark\\ScreenCapture\\scale.png"
+IMG_TB_SCALE            IMAGES_LIGHT                 "res\\light\\ScreenCapture\\scale.png"
+
 IMG_LOADING_01          IMAGES_DARK                  "res\\dark\\Loading\\01.png"
 IMG_LOADING_01          IMAGES_LIGHT                 "res\\light\\Loading\\01.png"
 

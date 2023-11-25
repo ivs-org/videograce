@@ -8,6 +8,7 @@
 #pragma once
 
 #include <wui/window/window.hpp>
+#include <wui/control/button.hpp>
 
 #include <string>
 #include <memory>
@@ -15,7 +16,9 @@
 
 #include <mt/timer.h>
 
-#include <RendererSession/IRendererVideoSession.h>
+#include <RendererSession/RendererVideoSession.h>
+
+#include <Controller/IController.h>
 
 namespace Client
 {
@@ -23,19 +26,33 @@ namespace Client
 class DemonstrationWindow
 {
 public:
-    DemonstrationWindow(RendererSession::IRendererVideoSession &rvs, const wui::rect &screenSize);
+    DemonstrationWindow(RendererSession::RendererVideoSession &rvs,
+        Controller::IController& controller_,
+        const wui::rect &screenSize);
     ~DemonstrationWindow();
 
+    void EnableRC(bool yes);
+
+    int64_t GetClientId() const;
+
 private:
+    static const int32_t BTN_SIZE = 32;
+
+    RendererSession::RendererVideoSession& rvs;
+    Controller::IController& controller;
+
     std::shared_ptr<wui::window> window;
 
-    RendererSession::IRendererVideoSession &rvs;
+    std::shared_ptr<wui::button> rcButton, scaleButton;
 
     mt::timer timer_;
 
     void ReceiveEvents(const wui::event &ev);
 
     void Redraw();
+
+    void OnRemoteControl();
+    void OnScale();
 };
 
 }

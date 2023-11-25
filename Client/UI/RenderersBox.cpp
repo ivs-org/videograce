@@ -15,8 +15,11 @@
 namespace Client
 {
 
-RenderersBox::RenderersBox(std::weak_ptr<wui::window> mainFrame_, MiniWindow &miniWindow_, std::vector<std::shared_ptr<RendererSession::RendererVideoSession>> &renderersVideo_)
-    : parent(mainFrame_), miniWindow(miniWindow_),
+RenderersBox::RenderersBox(std::weak_ptr<wui::window> mainFrame_,
+    MiniWindow &miniWindow_,
+    std::vector<std::shared_ptr<RendererSession::RendererVideoSession>> &renderersVideo_,
+    Controller::IController& controller_)
+    : parent(mainFrame_), miniWindow(miniWindow_), controller(controller_),
     sourceRenderers(renderersVideo_),
     showedRenderers(),
     demonstrationWindows(),
@@ -99,7 +102,7 @@ void RenderersBox::Update()
                 auto dw = demonstrationWindows.find(deviceId);
                 if (dw == demonstrationWindows.end())
                 {
-                    demonstrationWindows[deviceId] = std::shared_ptr<DemonstrationWindow>(new DemonstrationWindow(*rvs, screenSize));
+                    demonstrationWindows[deviceId] = std::shared_ptr<DemonstrationWindow>(new DemonstrationWindow(*rvs, controller, screenSize));
                 }
             }
         }
@@ -239,6 +242,17 @@ void RenderersBox::SetPosition(const wui::rect &pos)
     if (parent_)
     {
         parent_->redraw(position, true);
+    }
+}
+
+void RenderersBox::EnableRC(int64_t clientId, bool yes)
+{
+    for (auto& dw : demonstrationWindows)
+    {
+        if (dw.second->GetClientId() == clientId)
+        {
+            dw.second->EnableRC(yes);
+        }
     }
 }
 

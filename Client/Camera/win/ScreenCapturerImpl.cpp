@@ -21,6 +21,12 @@
 
 #include <assert.h>
 
+#ifndef _WIN32
+#include <arpa/inet.h>
+#else
+#include <winsock2.h>
+#endif
+
 namespace Camera
 {
 
@@ -388,7 +394,7 @@ void ScreenCapturerImpl::MakeMouseAction(int x, int y, int flags)
 
 void ScreenCapturerImpl::MakeMouseAction(const uint8_t *payload)
 {
-	/*Transport::RTCPPacket::RemoteControlAction action = static_cast<Transport::RTCPPacket::RemoteControlAction>(ntohl(*reinterpret_cast<const uint32_t*>(payload)));
+	Transport::RTCPPacket::RemoteControlAction action = static_cast<Transport::RTCPPacket::RemoteControlAction>(ntohl(*reinterpret_cast<const uint32_t*>(payload)));
 	int x = ntohs(*reinterpret_cast<const uint16_t*>(payload + 4)) + left;
 	int y = ntohs(*reinterpret_cast<const uint16_t*>(payload + 6)) + top;
 
@@ -453,12 +459,12 @@ void ScreenCapturerImpl::MakeMouseAction(const uint8_t *payload)
 	if (action != Transport::RTCPPacket::rcaWheel && action != Transport::RTCPPacket::rcaLeftDblClick && action != Transport::RTCPPacket::rcaRightDblClick)
 	{
 		MakeMouseAction(x, y, flags);
-	}*/
+	}
 }
 
 void ScreenCapturerImpl::MakeKeyboardAction(const uint8_t *payload)
 {
-	/*bool keyDown = ntohl(*reinterpret_cast<const uint32_t*>(payload)) == Transport::RTCPPacket::rcaKeyDown;
+	bool keyDown = ntohl(*reinterpret_cast<const uint32_t*>(payload)) == Transport::RTCPPacket::rcaKeyDown;
 	int key = ntohl(*reinterpret_cast<const uint32_t*>(payload + 4));
 
 	INPUT input = { 0 };
@@ -471,7 +477,7 @@ void ScreenCapturerImpl::MakeKeyboardAction(const uint8_t *payload)
 	input.ki.wVk = key != VK_RETURN ? key : 0;
 	input.ki.wScan = key != VK_RETURN ? 0 : VK_RETURN;
 
-	SendInput(1, &input, sizeof(input));*/
+	SendInput(1, &input, sizeof(input));
 }
 
 }

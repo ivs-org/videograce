@@ -239,6 +239,13 @@
       "screen_capturer": "Screen Capture"
     },
     {
+      "type": "screen_capturer",
+      "enable_remote_control": "Enable remote computer management",
+      "disable_remote_control": "Disable remote computer management",
+      "scale_rc_to_100_percent": "100% size",
+      "scale_rc_to_window": "Fit to window size"
+    },
+    {
       "type": "about",
       "title": "About the program",
       "app_name": "VideoGrace",

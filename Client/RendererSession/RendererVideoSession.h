@@ -10,10 +10,12 @@
 #include <memory>
 #include <thread>
 
-#include "IRendererVideoSession.h"
+#include <RendererSession/IRendererVideoSession.h>
+#include <RendererSession/IActionReceiver.h>
 
 #include <Transport/RTPSocket.h>
 #include <Transport/SocketSplitter.h>
+#include <Transport/RTP/RTCPPacket.h>
 
 #include <Video/VideoDecoder.h>
 #include <Video/VP8RTPCollector.h>
@@ -38,7 +40,7 @@ namespace Client
 namespace RendererSession
 {
 
-class RendererVideoSession : public IRendererVideoSession, public Video::IPacketLossCallback
+class RendererVideoSession : public IRendererVideoSession, public Video::IPacketLossCallback, public IActionReceiver
 {
 public:
 	RendererVideoSession(Common::TimeMeter &timeMeter);
@@ -80,11 +82,26 @@ public:
 	virtual void Pause();
 	virtual void Resume();
 
-	/// derived from Video::IPacketLossCallback
+	/// Derived from Video::IPacketLossCallback
 	virtual void ForceKeyFrame(uint32_t lastRecvSeq);
 
 	/// Receive from JitterBuffer
 	void SlowRenderingCallback();
+
+	/// Derived from IActionReceiver
+	virtual void MouseMove(int32_t x, int32_t y);
+	virtual void MouseLeftDown(int32_t x, int32_t y);
+	virtual void MouseLeftUp(int32_t x, int32_t y);
+	virtual void MouseCenterDown(int32_t x, int32_t y);
+	virtual void MouseCenterUp(int32_t x, int32_t y);
+	virtual void MouseRightDown(int32_t x, int32_t y);
+	virtual void MouseRightUp(int32_t x, int32_t y);
+	virtual void MouseRightDblClick(int32_t x, int32_t y);
+	virtual void MouseLeftDblClick(int32_t x, int32_t y);
+	virtual void MouseWheel(int32_t delta);
+
+	virtual void KeyDown(int32_t virtkey);
+	virtual void KeyUp(int32_t virtkey);
 
 private:	
 	std::shared_ptr<VideoRenderer::VideoRenderer> renderer;
@@ -121,6 +138,8 @@ private:
 	void StopRemote();
 
 	void SetRemoteFrameRate(uint32_t rate);
+
+	void SendRCAction(Transport::RTCPPacket::RemoteControlAction rca, int32_t x, int32_t y);
 };
 
 typedef std::shared_ptr<RendererVideoSession> RendererVideoSessionPtr_t;

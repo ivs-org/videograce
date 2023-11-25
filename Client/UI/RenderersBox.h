@@ -18,6 +18,8 @@
 
 #include <mt/timer.h>
 
+#include <Controller/IController.h>
+
 namespace Client
 {
 
@@ -30,7 +32,10 @@ enum class GridType
 class RenderersBox
 {
 public:
-    RenderersBox(std::weak_ptr<wui::window> mainFrame, MiniWindow &miniWindow, std::vector<std::shared_ptr<RendererSession::RendererVideoSession>> &renderersVideo);
+    RenderersBox(std::weak_ptr<wui::window> mainFrame,
+        MiniWindow &miniWindow,
+        std::vector<std::shared_ptr<RendererSession::RendererVideoSession>> &renderersVideo,
+        Controller::IController& controller);
     ~RenderersBox();
 
     void Run(const wui::rect &pos);
@@ -49,9 +54,12 @@ public:
 	
     void SetPosition(const wui::rect &pos);
 
+    void EnableRC(int64_t clientId, bool yes);
+
 private:
     std::weak_ptr<wui::window> parent;
     MiniWindow &miniWindow;
+    Controller::IController &controller;
     std::vector<std::shared_ptr<RendererSession::RendererVideoSession>> &sourceRenderers, showedRenderers;
 
     std::map<uint32_t, std::shared_ptr<DemonstrationWindow>> demonstrationWindows;

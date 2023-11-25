@@ -5,8 +5,6 @@
  * Copyright (C), Infinity Video Soft LLC, 2014
  */
 
-#include <Transport/RTP/RTCPPacket.h>
-
 #include <Common/Common.h>
 
 #include "RendererVideoSession.h"
@@ -457,6 +455,81 @@ void RendererVideoSession::SlowRenderingCallback()
             deviceNotifyCallback(name, Client::DeviceNotifyType::OvertimeRendering, Proto::DeviceType::VideoRenderer, deviceId, 0);
 		}
 	}
+}
+
+void RendererVideoSession::SendRCAction(Transport::RTCPPacket::RemoteControlAction rca, int32_t x, int32_t y)
+{
+	Transport::RTCPPacket rtcpPacket;
+
+	rtcpPacket.rtcp_common.pt = Transport::RTCPPacket::RTCP_APP;
+	rtcpPacket.rtcp_common.length = 1;
+	rtcpPacket.rtcps[0].r.app.ssrc = receiverSSRC;
+	rtcpPacket.rtcps[0].r.app.messageType = Transport::RTCPPacket::amtRemoteControl;
+	*reinterpret_cast<uint32_t*>(rtcpPacket.rtcps[0].r.app.payload) = htonl(rca);
+	*reinterpret_cast<uint16_t*>(rtcpPacket.rtcps[0].r.app.payload + 4) = htons(x);
+	*reinterpret_cast<uint16_t*>(rtcpPacket.rtcps[0].r.app.payload + 6) = htons(y);
+
+	rtpSocket.Send(rtcpPacket);
+}
+
+void RendererVideoSession::MouseMove(int32_t x, int32_t y)
+{
+	SendRCAction(Transport::RTCPPacket::rcaMove, x, y);
+}
+
+void RendererVideoSession::MouseLeftDown(int32_t x, int32_t y)
+{
+	SendRCAction(Transport::RTCPPacket::rcaLeftDown, x, y);
+}
+
+void RendererVideoSession::MouseLeftUp(int32_t x, int32_t y)
+{
+	SendRCAction(Transport::RTCPPacket::rcaLeftUp, x, y);
+}
+
+void RendererVideoSession::MouseCenterDown(int32_t x, int32_t y)
+{
+	SendRCAction(Transport::RTCPPacket::rcaCenterDown, x, y);
+}
+
+void RendererVideoSession::MouseCenterUp(int32_t x, int32_t y)
+{
+	SendRCAction(Transport::RTCPPacket::rcaCenterUp, x, y);
+}
+
+void RendererVideoSession::MouseRightDown(int32_t x, int32_t y)
+{
+	SendRCAction(Transport::RTCPPacket::rcaRightDown, x, y);
+}
+
+void RendererVideoSession::MouseRightUp(int32_t x, int32_t y)
+{
+	SendRCAction(Transport::RTCPPacket::rcaRightUp, x, y);
+}
+
+void RendererVideoSession::MouseRightDblClick(int32_t x, int32_t y)
+{
+	SendRCAction(Transport::RTCPPacket::rcaRightDblClick, x, y);
+}
+
+void RendererVideoSession::MouseLeftDblClick(int32_t x, int32_t y)
+{
+	SendRCAction(Transport::RTCPPacket::rcaLeftDblClick, x, y);
+}
+
+void RendererVideoSession::MouseWheel(int32_t delta)
+{
+	SendRCAction(Transport::RTCPPacket::rcaWheel, delta, 0);
+}
+
+void RendererVideoSession::KeyDown(int32_t virtkey)
+{
+	SendRCAction(Transport::RTCPPacket::rcaKeyDown, virtkey, 0);
+}
+
+void RendererVideoSession::KeyUp(int32_t virtkey)
+{
+	SendRCAction(Transport::RTCPPacket::rcaKeyUp, virtkey, 0);
 }
 
 }

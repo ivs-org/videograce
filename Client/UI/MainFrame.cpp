@@ -199,7 +199,7 @@ MainFrame::MainFrame()
     mainToolBar(window, *this),
     listPanel(window, contactList, memberList, *this),
     contentPanel(window, storage, controller, *this),
-    renderersBox(window, miniWindow, renderersVideo),
+    renderersBox(window, miniWindow, renderersVideo, controller),
     timerBar(window, timeMeter, std::bind(&MainFrame::DisconnectFromConference, this)),
 
     busyBox(window),
@@ -353,8 +353,7 @@ void MainFrame::ActionCall()
 {
     if (controller.GetState() == Controller::State::Conferencing && listPanel.GetPanelMode() == ListPanel::PanelMode::MemberList)
     {
-        memberList.Add();
-        return;
+        return memberList.Add();
     }
     if (controller.GetState() != Controller::State::Conferencing && controller.GetState() != Controller::State::Ready)
     {
@@ -451,8 +450,7 @@ void MainFrame::ActionTurnCamera(bool my, int64_t actorId, const std::string &ac
     {
         if (actionQuested)
         {
-            controller.SendMemberActionResult(actorId, Proto::MEMBER_ACTION::Result::Busy);
-            return;
+            return controller.SendMemberActionResult(actorId, Proto::MEMBER_ACTION::Result::Busy);
         }
 
         actionQuested = true;
@@ -520,8 +518,7 @@ void MainFrame::ActionTurnMicrophone(bool my, int64_t actorId, const std::string
     {
         if (actionQuested)
         {
-            controller.SendMemberActionResult(actorId, Proto::MEMBER_ACTION::Result::Busy);
-            return;
+            return controller.SendMemberActionResult(actorId, Proto::MEMBER_ACTION::Result::Busy);
         }
 
         actionQuested = true;
@@ -616,8 +613,7 @@ void MainFrame::ActionTurnDemonstration(bool my, int64_t actorId, const std::str
     {
         if (actionQuested)
         {
-            controller.SendMemberActionResult(actorId, Proto::MEMBER_ACTION::Result::Busy);
-            return;
+            return controller.SendMemberActionResult(actorId, Proto::MEMBER_ACTION::Result::Busy);
         }
 
         actionQuested = true;
@@ -655,7 +651,49 @@ void MainFrame::ActionTurnDemonstration(bool my, int64_t actorId, const std::str
 
 void MainFrame::ActionTurnRemoteControl(bool my, int64_t actorId, const std::string &actorName, bool enable)
 {
+    if (!demonstrationSession)
+    {
+        return errLog->critical("MainFrame::ActionTurnRemoteControl() -> no screen capture enabled");
+    }
 
+    if (actionQuested)
+    {
+        return controller.SendMemberActionResult(actorId, Proto::MEMBER_ACTION::Result::Busy);
+    }
+
+    if (demonstrationSession->IsRCActionsEnabled())
+    {
+        if (!enable)
+        {
+            demonstrationSession->SetRCActions(false);
+        }
+        else
+        {
+            controller.SendMemberActionResult(actorId, Proto::MEMBER_ACTION::Result::Rejected);
+        }
+    }
+    else
+    {
+        if (enable)
+        {
+            actionQuested = true;
+
+            return messageBox->show(actorName + " " + wui::locale("message", "allow_enable_remote_control"),
+                wui::locale("message", "title_confirmation"),
+                wui::message_icon::alert,
+                wui::message_button::yes_no, [this, actorId](wui::message_result result) {
+                actionQuested = false;
+
+                controller.SendMemberActionResult(actorId, result == wui::message_result::yes ?
+                    Proto::MEMBER_ACTION::Result::Accepted : Proto::MEMBER_ACTION::Result::Rejected);
+
+                if (result == wui::message_result::yes)
+                {
+                    demonstrationSession->SetRCActions(true);
+                }
+            });
+        }
+    }
 }
 
 void MainFrame::ActionHand(bool my)
@@ -1784,20 +1822,14 @@ void MainFrame::ProcessControllerEvent()
                     wui::message_button::ok);
             break;
             case Controller::Event::Type::RejectedAction:
-                /*if (activeScreenCapturerRenderer)
-                {
-                    activeScreenCapturerRenderer->RejectRemoteControl();
-                }*/
+                renderersBox.EnableRC(e.iData, false);
                 messageBox->show(wui::locale("common", "user") + " " + e.data + " " + wui::locale("message", "action_rejected"),
                     wui::locale("message", "title_error"),
                     wui::message_icon::alert,
                     wui::message_button::ok);
             break;
             case Controller::Event::Type::AcceptedAction:
-                /*if (activeScreenCapturerRenderer)
-                {
-                    activeScreenCapturerRenderer->AcceptRemoteControl();
-                }*/
+                renderersBox.EnableRC(e.iData, true);
             break;
             case Controller::Event::Type::BusyAction:
                 messageBox->show(wui::locale("common", "user") + " " + e.data + " " + wui::locale("message", "action_busy"),

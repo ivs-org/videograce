@@ -238,6 +238,13 @@
       "screen_capturer": "Захват экрана"
     },
     {
+      "type": "screen_capturer",
+      "enable_remote_control": "Включить управление удаленным компьютером",
+      "disable_remote_control": "Отключить управление удаленным компьютером",
+      "scale_rc_to_100_percent": "100% размер",
+      "scale_rc_to_window": "Уместить в размер окна"
+    },
+    {
       "type": "about",
       "title": "О программе",
       "app_name": "VideoGrace",
