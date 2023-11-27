@@ -82,7 +82,7 @@ void DemonstrationWindow::UpdateRendererPos(int32_t width, int32_t height)
 
     wui::rect out = { 0 };
 
-    Video::ResolutionValues rv = Video::GetValues(resolution);
+    auto rv = Video::GetValues(resolution);
 
     double X = width,
         Y = height,
@@ -98,31 +98,24 @@ void DemonstrationWindow::UpdateRendererPos(int32_t width, int32_t height)
         y = Y;
         x = W * Y / H;
         
-        out.left = (X - x) / 2;
+        out.left = static_cast<int32_t>((X - x) / 2);
         out.top = 0;
 
         scaleFactor = Y / H;
-        
-        OutputDebugStringA("y > Y\n");
     }
     else
     {
         out.left = 0;
-        out.top = (Y - y) / 2;
+        out.top = static_cast<int32_t>((Y - y) / 2);
 
         scaleFactor = X / W;
-
-        OutputDebugStringA("y < Y\n");
     }
-
-    OutputDebugStringA(std::to_string(scaleFactor).c_str());
-    OutputDebugStringA("\n");
 
     shiftLeft = out.left;
     shiftTop = out.top;
 
-    out.right = out.left + x;
-    out.bottom = out.top + y;
+    out.right = out.left + static_cast<int32_t>(x);
+    out.bottom = out.top + static_cast<int32_t>(y);
 
     rvs.GetControl()->set_position(out);
 }
@@ -239,6 +232,12 @@ void DemonstrationWindow::OnRemoteControl()
 void DemonstrationWindow::OnScale()
 {
     scaleButton->turn(!scaleButton->turned());
+
+    if (scaleButton->turned())
+    {
+        horScroll->hide();
+        verScroll->hide();
+    }
     
     auto pos = window->position();
     Resize(pos.width(), pos.height());
@@ -269,8 +268,14 @@ void DemonstrationWindow::Resize(int32_t width, int32_t height)
 
         scaleFactor = 1.0;
 
-        shiftLeft = rv.width < width ? (width - rv.width) / 2 : 0;
-        shiftTop = rv.height < height ? (height - rv.height) / 2 : 0;
+        if (rv.width < width)
+        {
+            shiftLeft = (width - rv.width) / 2;
+        }
+        if (rv.height < height)
+        {
+            shiftTop = (height - rv.height) / 2;
+        }
 
         rvs.GetControl()->set_position({ shiftLeft,
             shiftTop,
@@ -279,7 +284,7 @@ void DemonstrationWindow::Resize(int32_t width, int32_t height)
 
         if (rv.width > width)
         {
-            horScroll->set_area(rv.width / width);
+            horScroll->set_area(rv.width - width);
             horScroll->show();
         }
         else
@@ -288,7 +293,7 @@ void DemonstrationWindow::Resize(int32_t width, int32_t height)
         }
         if (rv.height > height)
         {
-            verScroll->set_area(rv.height / height);
+            verScroll->set_area(rv.height - height);
             verScroll->show();
         }
         else
@@ -300,12 +305,37 @@ void DemonstrationWindow::Resize(int32_t width, int32_t height)
 
 void DemonstrationWindow::OnVertScroll(wui::scroll_state ss, int32_t v)
 {
-
+    MoveRenderer(-1, -v);
 }
 
 void DemonstrationWindow::OnHorScroll(wui::scroll_state ss, int32_t v)
 {
+    MoveRenderer(-v, -1);
+}
 
+void DemonstrationWindow::MoveRenderer(int32_t left, int32_t top)
+{
+    if (left != -1)
+    {
+        shiftLeft = left;
+    }
+    if (top != -1)
+    {
+        shiftTop = top;
+    }
+
+    auto resolution = rvs.GetResolution();
+    if (resolution == 0)
+    {
+        return;
+    }
+
+    auto rv = Video::GetValues(resolution);
+
+    rvs.GetControl()->set_position({ shiftLeft,
+        shiftTop,
+        shiftLeft + rv.width,
+        shiftTop + rv.height });
 }
 
 }

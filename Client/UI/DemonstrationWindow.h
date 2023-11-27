@@ -66,6 +66,7 @@ private:
     void OnHorScroll(wui::scroll_state ss, int32_t v);
 
     void UpdateRendererPos(int32_t width, int32_t height);
+    void MoveRenderer(int32_t left, int32_t top);
 
     int32_t NormMouseX(int32_t input) const;
     int32_t NormMouseY(int32_t input) const;
