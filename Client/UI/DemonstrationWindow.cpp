@@ -10,6 +10,7 @@
 #include <wui/locale/locale.hpp>
 #include <wui/theme/theme.hpp>
 #include <wui/system/tools.hpp>
+#include <wui/common/flag_helpers.hpp>
 
 #include <Proto/CmdMemberAction.h>
 
@@ -28,8 +29,11 @@ DemonstrationWindow::DemonstrationWindow(RendererSession::RendererVideoSession &
     timer_(std::bind(&DemonstrationWindow::Redraw, this))
 {
     window->subscribe(std::bind(&DemonstrationWindow::ReceiveEvents, this, std::placeholders::_1),
-        static_cast<wui::event_type>(static_cast<int32_t>(wui::event_type::internal) | static_cast<int32_t>(wui::event_type::system) |
-            static_cast<int32_t>(wui::event_type::keyboard) | static_cast<int32_t>(wui::event_type::mouse)));
+        wui::flags_map<wui::event_type>(4,
+            wui::event_type::internal,
+            wui::event_type::system,
+            wui::event_type::keyboard,
+            wui::event_type::mouse));
 
     window->add_control(rvs.GetControl(), { 0 });
 
@@ -44,7 +48,12 @@ DemonstrationWindow::DemonstrationWindow(RendererSession::RendererVideoSession &
         wndHeight = resoutionHeight < screenSize.height() ? resoutionHeight : screenSize.height();
 
     window->init(rvs.GetName() + " - " + wui::locale("device", "screen_capturer"), { 20, 20, wndWidth, wndHeight },
-        static_cast<wui::window_style>(static_cast<int32_t>(wui::window_style::title_showed) | static_cast<int32_t>(wui::window_style::expand_button) | static_cast<int32_t>(wui::window_style::minimize_button) | static_cast<int32_t>(wui::window_style::resizable) | static_cast<int32_t>(wui::window_style::moving)),
+        wui::flags_map<wui::window_style>(5,
+            wui::window_style::title_showed,
+            wui::window_style::expand_button,
+            wui::window_style::minimize_button,
+            wui::window_style::resizable,
+            wui::window_style::moving),
         [this]() {
         timer_.stop();
         window.reset();
@@ -151,6 +160,17 @@ void DemonstrationWindow::ReceiveEvents(const wui::event &ev)
                 break;
             }
         break;
+        case wui::event_type::keyboard:
+            switch (ev.keyboard_event_.type)
+            {
+                case wui::keyboard_event_type::down:
+                    rvs.KeyDown(ev.keyboard_event_.modifier, ev.keyboard_event_.key, ev.keyboard_event_.key_size);
+                break;
+                case wui::keyboard_event_type::up:
+                    rvs.KeyUp(ev.keyboard_event_.modifier, ev.keyboard_event_.key, ev.keyboard_event_.key_size);
+                break;
+            }
+        break;
     }
 }
 
@@ -166,6 +186,22 @@ void DemonstrationWindow::Redraw()
 void DemonstrationWindow::EnableRC(bool yes)
 {
     rcButton->turn(yes);
+    if (yes)
+    {
+        window->set_style(wui::flags_map<wui::window_style>(3,
+            wui::window_style::expand_button,
+            wui::window_style::minimize_button,
+            wui::window_style::resizable));
+    }
+    else
+    {
+        window->set_style(wui::flags_map<wui::window_style>(5,
+            wui::window_style::title_showed,
+            wui::window_style::expand_button,
+            wui::window_style::minimize_button,
+            wui::window_style::resizable,
+            wui::window_style::moving));
+    }
 }
 
 void DemonstrationWindow::OnRemoteControl()

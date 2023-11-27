@@ -12,6 +12,8 @@
 
 #include <wui/config/config.hpp>
 
+#include <wui/common/flag_helpers.hpp>
+
 #include <UI/MainToolBar.h>
 
 #include <resource.h>
@@ -169,7 +171,8 @@ void MainToolBar::Run()
 
     parent_->add_control(menu,           { width - (SHIFT + BTN_SIZE), top, width - SHIFT, bottom });
 
-    parent_->subscribe(std::bind(&MainToolBar::ReceiveEvents, this, std::placeholders::_1), static_cast<wui::event_type>(static_cast<int32_t>(wui::event_type::internal) | static_cast<int32_t>(wui::event_type::mouse)));
+    parent_->subscribe(std::bind(&MainToolBar::ReceiveEvents, this, std::placeholders::_1),
+        wui::flags_map<wui::event_type>(2, wui::event_type::internal, wui::event_type::mouse));
 }
 
 void MainToolBar::End()

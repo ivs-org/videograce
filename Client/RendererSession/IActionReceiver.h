@@ -26,8 +26,8 @@ public:
 	virtual void MouseLeftDblClick(int32_t x, int32_t y) = 0;
 	virtual void MouseWheel(int32_t delta) = 0;
 
-	virtual void KeyDown(int32_t virtkey) = 0;
-	virtual void KeyUp(int32_t virtkey) = 0;
+	virtual void KeyDown(uint8_t modifier, const char *key,	uint8_t key_size) = 0;
+	virtual void KeyUp(uint8_t modifier, const char* key, uint8_t key_size) = 0;
 		
 protected:
 	~IActionReceiver() {}

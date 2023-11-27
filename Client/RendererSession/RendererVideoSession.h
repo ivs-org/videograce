@@ -100,8 +100,8 @@ public:
 	virtual void MouseLeftDblClick(int32_t x, int32_t y);
 	virtual void MouseWheel(int32_t delta);
 
-	virtual void KeyDown(int32_t virtkey);
-	virtual void KeyUp(int32_t virtkey);
+	virtual void KeyDown(uint8_t modifier, const char* key, uint8_t key_size);
+	virtual void KeyUp(uint8_t modifier, const char* key, uint8_t key_size);
 
 private:	
 	std::shared_ptr<VideoRenderer::VideoRenderer> renderer;
@@ -140,6 +140,7 @@ private:
 	void SetRemoteFrameRate(uint32_t rate);
 
 	void SendRCAction(Transport::RTCPPacket::RemoteControlAction rca, int32_t x, int32_t y);
+	void SendRCAction(Transport::RTCPPacket::RemoteControlAction rca, uint8_t modifier, const char* key, uint8_t key_size);
 };
 
 typedef std::shared_ptr<RendererVideoSession> RendererVideoSessionPtr_t;

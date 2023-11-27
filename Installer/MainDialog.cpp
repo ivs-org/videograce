@@ -15,6 +15,7 @@
 #include <boost/filesystem.hpp>
 
 #include <wui/config/config_impl_reg.hpp>
+#include <wui/common/flag_helpers.hpp>
 
 #include <MainDialog.h>
 
@@ -98,9 +99,10 @@ MainDialog::~MainDialog()
 void MainDialog::Run()
 {
     window->init(wui::locale("installer", "title"), { -1, -1, WND_WIDTH, WND_HEIGHT },
-        static_cast<wui::window_style>(static_cast<uint32_t>(wui::window_style::dialog) |
-            static_cast<uint32_t>(wui::window_style::minimize_button) |
-            static_cast<uint32_t>(wui::window_style::switch_theme_button)),
+        wui::flags_map<wui::window_style>(3,
+            wui::window_style::dialog,
+            wui::window_style::minimize_button,
+            wui::window_style::switch_theme_button),
         [this]() {
             PostQuitMessage(IDCANCEL);
     });

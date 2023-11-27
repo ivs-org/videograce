@@ -394,9 +394,9 @@ void ScreenCapturerImpl::MakeMouseAction(int x, int y, int flags)
 
 void ScreenCapturerImpl::MakeMouseAction(const uint8_t *payload)
 {
-	Transport::RTCPPacket::RemoteControlAction action = static_cast<Transport::RTCPPacket::RemoteControlAction>(ntohl(*reinterpret_cast<const uint32_t*>(payload)));
-	int x = ntohs(*reinterpret_cast<const uint16_t*>(payload + 4)) + left;
-	int y = ntohs(*reinterpret_cast<const uint16_t*>(payload + 6)) + top;
+	Transport::RTCPPacket::RemoteControlAction action = static_cast<Transport::RTCPPacket::RemoteControlAction>(ntohs(*reinterpret_cast<const uint16_t*>(payload)));
+	int x = ntohs(*reinterpret_cast<const uint16_t*>(payload + 2)) + left;
+	int y = ntohs(*reinterpret_cast<const uint16_t*>(payload + 4)) + top;
 
 	int flags = MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_VIRTUALDESK;
 
@@ -464,8 +464,15 @@ void ScreenCapturerImpl::MakeMouseAction(const uint8_t *payload)
 
 void ScreenCapturerImpl::MakeKeyboardAction(const uint8_t *payload)
 {
-	bool keyDown = ntohl(*reinterpret_cast<const uint32_t*>(payload)) == Transport::RTCPPacket::rcaKeyDown;
-	int key = ntohl(*reinterpret_cast<const uint32_t*>(payload + 4));
+	bool keyDown = ntohs(*reinterpret_cast<const uint16_t*>(payload)) == Transport::RTCPPacket::rcaKeyDown;
+	int16_t modifier = ntohs(*reinterpret_cast<const uint16_t*>(payload + 2));
+	int32_t key = ntohl(*reinterpret_cast<const uint32_t*>(payload + 4));
+
+	OutputDebugStringA("modifier: ");
+	OutputDebugStringA(std::to_string(modifier).c_str());
+	OutputDebugStringA(", key: ");
+	OutputDebugStringA(std::to_string(key).c_str());
+	OutputDebugStringA("\n");
 
 	INPUT input = { 0 };
 	ZeroMemory(&input, sizeof(input));

@@ -11,6 +11,7 @@
 #include <wui/theme/theme.hpp>
 #include <wui/system/clipboard_tools.hpp>
 #include <wui/event/internal_event.hpp>
+#include <wui/common/flag_helpers.hpp>
 
 #include <wui/config/config.hpp>
 #include <Common/Process.h>
@@ -122,7 +123,7 @@ void ContentPanel::Run()
 
     window->init("",
         { 0 },
-        pinned ? static_cast<wui::window_style>(static_cast<uint32_t>(wui::window_style::pinned) | static_cast<uint32_t>(wui::window_style::border_left)) : wui::window_style::pinned,
+        pinned ? wui::flags_map<wui::window_style>(2, wui::window_style::pinned, wui::window_style::border_left) : wui::window_style::pinned,
         [this]() { 
             if (!window->context().valid() || !pinned)
             {
@@ -255,7 +256,7 @@ void ContentPanel::Pin()
 
     pinned = true;
 
-    window->set_style(static_cast<wui::window_style>(static_cast<uint32_t>(wui::window_style::pinned) | static_cast<uint32_t>(wui::window_style::border_left)));
+    window->set_style(wui::flags_map<wui::window_style>(2, wui::window_style::pinned, wui::window_style::border_left));
 
     auto parentWindow_ = mainFrame.lock();
     if (parentWindow_)

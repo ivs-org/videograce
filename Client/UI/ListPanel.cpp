@@ -8,7 +8,7 @@
 #include <UI/ListPanel.h>
 
 #include <wui/locale/locale.hpp>
-
+#include <wui/common/flag_helpers.hpp>
 #include <wui/config/config.hpp>
 
 #include <resource.h>
@@ -71,7 +71,7 @@ void ListPanel::Run()
 
     window->init("",
         { 0 },
-        pinned ? static_cast<wui::window_style>(static_cast<uint32_t>(wui::window_style::pinned) | static_cast<uint32_t>(wui::window_style::border_right)) : wui::window_style::pinned,
+        pinned ? wui::flags_map<wui::window_style>(2, wui::window_style::pinned, wui::window_style::border_right) : wui::window_style::pinned,
         [this]() { 
             if (!window->context().valid() || !pinned)
             {
@@ -143,7 +143,7 @@ void ListPanel::Pin()
 
     pinned = true;
 
-    window->set_style(static_cast<wui::window_style>(static_cast<uint32_t>(wui::window_style::pinned) | static_cast<uint32_t>(wui::window_style::border_right)));
+    window->set_style(wui::flags_map<wui::window_style>(2, wui::window_style::pinned, wui::window_style::border_right));
 
     auto parentWindow_ = mainFrame.lock();
     if (parentWindow_)

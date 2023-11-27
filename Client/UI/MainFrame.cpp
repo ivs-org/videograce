@@ -16,6 +16,7 @@
 #include <wui/system/tools.hpp>
 #include <wui/system/wm_tools.hpp>
 #include <wui/system/uri_tools.hpp>
+#include <wui/common/flag_helpers.hpp>
 #include <wui/config/config.hpp>
 #include <wui/config/config_impl_reg.hpp>
 
@@ -236,7 +237,11 @@ MainFrame::MainFrame()
 
     sysLog(spdlog::get("System")), errLog(spdlog::get("Error"))
 {
-    window->subscribe(std::bind(&MainFrame::ReceiveEvents, this, std::placeholders::_1), static_cast<wui::event_type>(static_cast<int32_t>(wui::event_type::internal) | static_cast<int32_t>(wui::event_type::system) | static_cast<int32_t>(wui::event_type::keyboard)));
+    window->subscribe(std::bind(&MainFrame::ReceiveEvents, this, std::placeholders::_1),
+        wui::flags_map<wui::event_type>(3,
+            wui::event_type::internal,
+            wui::event_type::system,
+            wui::event_type::keyboard));
     window->set_control_callback(std::bind(&MainFrame::WindowControlCallback, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
     window->set_min_size(700, 400);
 
@@ -302,8 +307,7 @@ void MainFrame::Run(bool minimized)
 
     window->init(wui::locale("client", "title") + SHORT_VERSION " - " + wui::locale("common", "offline"),
         { -1, -1, wui::config::get_int("MainFrame", "Width", 1200), wui::config::get_int("MainFrame", "Height", 700) },
-        static_cast<wui::window_style>(static_cast<uint32_t>(wui::window_style::frame) |
-            static_cast<uint32_t>(wui::window_style::switch_theme_button)),
+        wui::flags_map<wui::window_style>(2, wui::window_style::frame, wui::window_style::switch_theme_button),
         [this]() {
         if (controller.GetState() == Controller::State::Conferencing)
         {
@@ -838,8 +842,7 @@ void MainFrame::ActionFullScreen()
     {
         window->normal();
 
-        window->set_style(static_cast<wui::window_style>(static_cast<uint32_t>(wui::window_style::frame) |
-            static_cast<uint32_t>(wui::window_style::switch_theme_button)));
+        window->set_style(wui::flags_map<wui::window_style>(2, wui::window_style::frame, wui::window_style::switch_theme_button));
     }
 }
 
@@ -980,8 +983,7 @@ void MainFrame::ReceiveEvents(const wui::event &ev)
                     }
                 break;
                 case wui::internal_event_type::window_normalized:
-                    window->set_style(static_cast<wui::window_style>(static_cast<uint32_t>(wui::window_style::frame) |
-                        static_cast<uint32_t>(wui::window_style::switch_theme_button)));
+                    window->set_style(wui::flags_map<wui::window_style>(2, wui::window_style::frame, wui::window_style::switch_theme_button));
                     
                     mainToolBar.Normalize();
 
@@ -2516,8 +2518,7 @@ void MainFrame::SetStanbyMode()
 
     if (window->state() == wui::window_state::maximized)
     {
-        window->set_style(static_cast<wui::window_style>(static_cast<uint32_t>(wui::window_style::frame) |
-            static_cast<uint32_t>(wui::window_style::switch_theme_button)));
+        window->set_style(wui::flags_map<wui::window_style>(2, wui::window_style::frame, wui::window_style::switch_theme_button));
         mainToolBar.Normalize();
         listPanel.UpdateTop(mainToolBar.Bottom());
     }

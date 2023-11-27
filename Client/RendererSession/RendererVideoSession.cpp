@@ -465,9 +465,25 @@ void RendererVideoSession::SendRCAction(Transport::RTCPPacket::RemoteControlActi
 	rtcpPacket.rtcp_common.length = 1;
 	rtcpPacket.rtcps[0].r.app.ssrc = receiverSSRC;
 	rtcpPacket.rtcps[0].r.app.messageType = Transport::RTCPPacket::amtRemoteControl;
-	*reinterpret_cast<uint32_t*>(rtcpPacket.rtcps[0].r.app.payload) = htonl(rca);
-	*reinterpret_cast<uint16_t*>(rtcpPacket.rtcps[0].r.app.payload + 4) = htons(x);
-	*reinterpret_cast<uint16_t*>(rtcpPacket.rtcps[0].r.app.payload + 6) = htons(y);
+	*reinterpret_cast<uint16_t*>(rtcpPacket.rtcps[0].r.app.payload) = htons(rca);
+	*reinterpret_cast<uint16_t*>(rtcpPacket.rtcps[0].r.app.payload + 2) = htons(x);
+	*reinterpret_cast<uint16_t*>(rtcpPacket.rtcps[0].r.app.payload + 4) = htons(y);
+
+	rtpSocket.Send(rtcpPacket);
+}
+
+void RendererVideoSession::SendRCAction(Transport::RTCPPacket::RemoteControlAction rca, uint8_t modifier, const char* key, uint8_t key_size)
+{
+	Transport::RTCPPacket rtcpPacket;
+
+	rtcpPacket.rtcp_common.pt = Transport::RTCPPacket::RTCP_APP;
+	rtcpPacket.rtcp_common.length = 1;
+	rtcpPacket.rtcps[0].r.app.ssrc = receiverSSRC;
+	rtcpPacket.rtcps[0].r.app.messageType = Transport::RTCPPacket::amtRemoteControl;
+	*reinterpret_cast<uint16_t*>(rtcpPacket.rtcps[0].r.app.payload) = htons(rca);
+	*reinterpret_cast<uint16_t*>(rtcpPacket.rtcps[0].r.app.payload + 2) = htons(modifier);
+	memcpy(rtcpPacket.rtcps[0].r.app.payload + 4, key, key_size);
+
 
 	rtpSocket.Send(rtcpPacket);
 }
@@ -522,14 +538,14 @@ void RendererVideoSession::MouseWheel(int32_t delta)
 	SendRCAction(Transport::RTCPPacket::rcaWheel, delta, 0);
 }
 
-void RendererVideoSession::KeyDown(int32_t virtkey)
+void RendererVideoSession::KeyDown(uint8_t modifier, const char* key, uint8_t key_size)
 {
-	SendRCAction(Transport::RTCPPacket::rcaKeyDown, virtkey, 0);
+	SendRCAction(Transport::RTCPPacket::rcaKeyDown, modifier, key, key_size);
 }
 
-void RendererVideoSession::KeyUp(int32_t virtkey)
+void RendererVideoSession::KeyUp(uint8_t modifier, const char* key, uint8_t key_size)
 {
-	SendRCAction(Transport::RTCPPacket::rcaKeyUp, virtkey, 0);
+	SendRCAction(Transport::RTCPPacket::rcaKeyUp, modifier, key, key_size);
 }
 
 }
