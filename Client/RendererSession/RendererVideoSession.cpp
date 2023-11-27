@@ -482,8 +482,7 @@ void RendererVideoSession::SendRCAction(Transport::RTCPPacket::RemoteControlActi
 	rtcpPacket.rtcps[0].r.app.messageType = Transport::RTCPPacket::amtRemoteControl;
 	*reinterpret_cast<uint16_t*>(rtcpPacket.rtcps[0].r.app.payload) = htons(rca);
 	*reinterpret_cast<uint16_t*>(rtcpPacket.rtcps[0].r.app.payload + 2) = htons(modifier);
-	memcpy(rtcpPacket.rtcps[0].r.app.payload + 4, key, key_size);
-
+	*reinterpret_cast<uint32_t*>(rtcpPacket.rtcps[0].r.app.payload + 4) = htonl(*reinterpret_cast<const int32_t*>(key));
 
 	rtpSocket.Send(rtcpPacket);
 }

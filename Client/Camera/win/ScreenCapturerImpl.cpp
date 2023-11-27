@@ -466,13 +466,7 @@ void ScreenCapturerImpl::MakeKeyboardAction(const uint8_t *payload)
 {
 	bool keyDown = ntohs(*reinterpret_cast<const uint16_t*>(payload)) == Transport::RTCPPacket::rcaKeyDown;
 	int16_t modifier = ntohs(*reinterpret_cast<const uint16_t*>(payload + 2));
-	int32_t key = ntohl(*reinterpret_cast<const uint32_t*>(payload + 4));
-
-	OutputDebugStringA("modifier: ");
-	OutputDebugStringA(std::to_string(modifier).c_str());
-	OutputDebugStringA(", key: ");
-	OutputDebugStringA(std::to_string(key).c_str());
-	OutputDebugStringA("\n");
+	int32_t key = ntohl(*reinterpret_cast<const int32_t*>(payload + 4));
 
 	INPUT input = { 0 };
 	ZeroMemory(&input, sizeof(input));

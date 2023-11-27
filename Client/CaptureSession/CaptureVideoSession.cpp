@@ -301,8 +301,8 @@ void CaptureVideoSession::Send(const Transport::IPacket &packet_, const Transpor
 			case Transport::RTCPPacket::amtRemoteControl:
 				if (rcActionsEnabled)
 				{
-					if (static_cast<Transport::RTCPPacket::RemoteControlAction>(ntohl(*reinterpret_cast<const uint32_t*>(packet.rtcps[0].r.app.payload))) == Transport::RTCPPacket::rcaKeyDown ||
-						static_cast<Transport::RTCPPacket::RemoteControlAction>(ntohl(*reinterpret_cast<const uint32_t*>(packet.rtcps[0].r.app.payload))) == Transport::RTCPPacket::rcaKeyUp)
+					if (static_cast<Transport::RTCPPacket::RemoteControlAction>(ntohs(*reinterpret_cast<const uint16_t*>(packet.rtcps[0].r.app.payload))) == Transport::RTCPPacket::rcaKeyDown ||
+						static_cast<Transport::RTCPPacket::RemoteControlAction>(ntohs(*reinterpret_cast<const uint16_t*>(packet.rtcps[0].r.app.payload))) == Transport::RTCPPacket::rcaKeyUp)
 					{
 						static_cast<Camera::ScreenCapturer*>(camera.get())->MakeKeyboardAction(packet.rtcps[0].r.app.payload);
 					}
