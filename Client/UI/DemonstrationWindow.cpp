@@ -284,7 +284,12 @@ void DemonstrationWindow::Resize(int32_t width, int32_t height)
 
         if (rv.width > width)
         {
-            horScroll->set_area(rv.width - width);
+            auto area = rv.width - width;
+            if (area < horScroll->get_scroll_pos())
+            {
+                horScroll->set_scroll_pos(0);
+            }
+            horScroll->set_area(area);
             horScroll->show();
         }
         else
@@ -293,7 +298,12 @@ void DemonstrationWindow::Resize(int32_t width, int32_t height)
         }
         if (rv.height > height)
         {
-            verScroll->set_area(rv.height - height);
+            auto area = rv.height - height;
+            if (area < verScroll->get_scroll_pos())
+            {
+                verScroll->set_scroll_pos(0);
+            }
+            verScroll->set_area(area);
             verScroll->show();
         }
         else
