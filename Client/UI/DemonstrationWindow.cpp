@@ -19,14 +19,24 @@
 namespace Client
 {
 
+static const wui::window_style full_style = wui::flags_map<wui::window_style>(4,
+    wui::window_style::expand_button,
+    wui::window_style::minimize_button,
+    wui::window_style::resizable,
+    wui::window_style::moving);
+
 DemonstrationWindow::DemonstrationWindow(RendererSession::RendererVideoSession &rvs_,
     Controller::IController& controller_,
     const wui::rect &screenSize)
     : rvs(rvs_), controller(controller_),
     window(new wui::window()),
     rcButton(new wui::button(wui::locale("screen_capturer", "enable_remote_control"), std::bind(&DemonstrationWindow::OnRemoteControl, this), wui::button_view::image, IMG_TB_REMOTE_CONTROL, BTN_SIZE, wui::button::tc_tool)),
-    scaleButton(new wui::button(wui::locale("screen_capturer", "scale_rc_to_100_percent"), std::bind(&DemonstrationWindow::OnScale, this), wui::button_view::image, IMG_TB_SCALE, BTN_SIZE, wui::button::tc_tool)),
-    timer_(std::bind(&DemonstrationWindow::Redraw, this))
+    scaleButton(new wui::button(wui::locale("screen_capturer", "scale_rc_to_window"), std::bind(&DemonstrationWindow::OnScale, this), wui::button_view::image, IMG_TB_SCALE, BTN_SIZE, wui::button::tc_tool)),
+    verScroll(new wui::scroll(0, 0, wui::orientation::vertical, std::bind(&DemonstrationWindow::OnVertScroll, this, std::placeholders::_1, std::placeholders::_2))),
+    horScroll(new wui::scroll(0, 0, wui::orientation::horizontal, std::bind(&DemonstrationWindow::OnHorScroll, this, std::placeholders::_1, std::placeholders::_2))),
+    timer_(std::bind(&DemonstrationWindow::Redraw, this)),
+    scaleFactor(1.0),
+    shiftLeft(0), shiftTop(0)
 {
     window->subscribe(std::bind(&DemonstrationWindow::ReceiveEvents, this, std::placeholders::_1),
         wui::flags_map<wui::event_type>(4,
@@ -35,53 +45,51 @@ DemonstrationWindow::DemonstrationWindow(RendererSession::RendererVideoSession &
             wui::event_type::keyboard,
             wui::event_type::mouse));
 
+    scaleButton->turn(true);
+
     window->add_control(rvs.GetControl(), { 0 });
 
     window->add_control(rcButton, { 0 });
     window->add_control(scaleButton, { 100 + BTN_SIZE, 0, (BTN_SIZE * 2) + 100, BTN_SIZE });
+    window->add_control(verScroll, { 0 });
+    window->add_control(horScroll, { 0 });
+    verScroll->hide();
+    horScroll->hide();
 
-    auto resolution = rvs.GetResolution();
-    auto resoutionWidth = Video::GetValues(resolution).width;
-    auto resoutionHeight = Video::GetValues(resolution).height;
+    auto rv = Video::GetValues(rvs.GetResolution());
+    int32_t wndWidth = rv.width < screenSize.width() ? rv.width : screenSize.width(),
+        wndHeight = rv.height < screenSize.height() ? rv.height : screenSize.height();
 
-    int32_t wndWidth = resoutionWidth < screenSize.width() ? resoutionWidth : screenSize.width(),
-        wndHeight = resoutionHeight < screenSize.height() ? resoutionHeight : screenSize.height();
-
-    window->init(rvs.GetName() + " - " + wui::locale("device", "screen_capturer"), { 20, 20, wndWidth, wndHeight },
-        wui::flags_map<wui::window_style>(5,
-            wui::window_style::title_showed,
-            wui::window_style::expand_button,
-            wui::window_style::minimize_button,
-            wui::window_style::resizable,
-            wui::window_style::moving),
+    window->init(rvs.GetName() + " - " + wui::locale("device", "screen_capturer"), { -1, -1, wndWidth, wndHeight },
+        full_style,
         [this]() {
         timer_.stop();
-        window.reset();
     });
 }
 
 DemonstrationWindow::~DemonstrationWindow()
 {
-    window.reset();
+    window->destroy();
 }
 
-wui::rect FitRenderer(Video::Resolution resolution, int32_t width, int32_t height)
+void DemonstrationWindow::UpdateRendererPos(int32_t width, int32_t height)
 {
-    wui::rect out = { 0 };
-
+    auto resolution = rvs.GetResolution();
     if (resolution == 0)
     {
-        return out;
+        return;
     }
+
+    wui::rect out = { 0 };
 
     Video::ResolutionValues rv = Video::GetValues(resolution);
 
-    int32_t X = width,
+    double X = width,
         Y = height,
         W = rv.width,
         H = rv.height;
 
-    int32_t x = 0, y = 0;
+    double x = 0, y = 0;
 
     x = X;
     y = H * X / W;
@@ -89,19 +97,44 @@ wui::rect FitRenderer(Video::Resolution resolution, int32_t width, int32_t heigh
     {
         y = Y;
         x = W * Y / H;
+        
         out.left = (X - x) / 2;
         out.top = 0;
+
+        scaleFactor = Y / H;
+        
+        OutputDebugStringA("y > Y\n");
     }
     else
     {
         out.left = 0;
         out.top = (Y - y) / 2;
+
+        scaleFactor = X / W;
+
+        OutputDebugStringA("y < Y\n");
     }
+
+    OutputDebugStringA(std::to_string(scaleFactor).c_str());
+    OutputDebugStringA("\n");
+
+    shiftLeft = out.left;
+    shiftTop = out.top;
 
     out.right = out.left + x;
     out.bottom = out.top + y;
 
-    return out;
+    rvs.GetControl()->set_position(out);
+}
+
+int32_t DemonstrationWindow::NormMouseX(int32_t input) const
+{
+    return static_cast<int32_t>((input - shiftLeft) / scaleFactor);
+}
+
+int32_t DemonstrationWindow::NormMouseY(int32_t input) const
+{
+    return static_cast<int32_t>((input - shiftTop) / scaleFactor);
 }
 
 void DemonstrationWindow::ReceiveEvents(const wui::event &ev)
@@ -117,14 +150,7 @@ void DemonstrationWindow::ReceiveEvents(const wui::event &ev)
                 break;
                 case wui::internal_event_type::size_changed:
                 case wui::internal_event_type::window_expanded:
-                {
-                    rvs.GetControl()->set_position(FitRenderer(rvs.GetResolution(), ev.internal_event_.x, ev.internal_event_.y));
-
-                    int32_t btnWidth = BTN_SIZE * 2;
-                    int32_t left = (ev.internal_event_.x - btnWidth) / 2;
-                    rcButton->set_position({ left, 0, left + BTN_SIZE, BTN_SIZE });
-                    scaleButton->set_position({ left + BTN_SIZE, 0, left + (BTN_SIZE * 2), BTN_SIZE });
-                }
+                    Resize(ev.internal_event_.x, ev.internal_event_.y);
                 break;
             }
         }
@@ -132,28 +158,28 @@ void DemonstrationWindow::ReceiveEvents(const wui::event &ev)
             switch (ev.mouse_event_.type)
             {
                 case wui::mouse_event_type::move:
-                    rvs.MouseMove(ev.mouse_event_.x, ev.mouse_event_.y);
+                    rvs.MouseMove        (NormMouseX(ev.mouse_event_.x), NormMouseY(ev.mouse_event_.y));
                 break;
                 case wui::mouse_event_type::left_down:
-                    rvs.MouseLeftDown(ev.mouse_event_.x, ev.mouse_event_.y);
+                    rvs.MouseLeftDown    (NormMouseX(ev.mouse_event_.x), NormMouseY(ev.mouse_event_.y));
                 break;
                 case wui::mouse_event_type::left_up:
-                    rvs.MouseLeftUp(ev.mouse_event_.x, ev.mouse_event_.y);
+                    rvs.MouseLeftUp      (NormMouseX(ev.mouse_event_.x), NormMouseY(ev.mouse_event_.y));
                 break;
                 case wui::mouse_event_type::center_down:
-                    rvs.MouseCenterDown(ev.mouse_event_.x, ev.mouse_event_.y);
+                    rvs.MouseCenterDown  (NormMouseX(ev.mouse_event_.x), NormMouseY(ev.mouse_event_.y));
                 break;
                 case wui::mouse_event_type::center_up:
-                    rvs.MouseCenterUp(ev.mouse_event_.x, ev.mouse_event_.y);
+                    rvs.MouseCenterUp    (NormMouseX(ev.mouse_event_.x), NormMouseY(ev.mouse_event_.y));
                 break;
                 case wui::mouse_event_type::right_down:
-                    rvs.MouseRightDown(ev.mouse_event_.x, ev.mouse_event_.y);
+                    rvs.MouseRightDown   (NormMouseX(ev.mouse_event_.x), NormMouseY(ev.mouse_event_.y));
                 break;
                 case wui::mouse_event_type::right_up:
-                    rvs.MouseRightUp(ev.mouse_event_.x, ev.mouse_event_.y);
+                    rvs.MouseRightUp     (NormMouseX(ev.mouse_event_.x), NormMouseY(ev.mouse_event_.y));
                 break;
                 case wui::mouse_event_type::left_double:
-                    rvs.MouseLeftDblClick(ev.mouse_event_.x, ev.mouse_event_.y);
+                    rvs.MouseLeftDblClick(NormMouseX(ev.mouse_event_.x), NormMouseY(ev.mouse_event_.y));
                 break;
                 case wui::mouse_event_type::wheel:
                     rvs.MouseWheel(ev.mouse_event_.wheel_delta);
@@ -195,12 +221,7 @@ void DemonstrationWindow::EnableRC(bool yes)
     }
     else
     {
-        window->set_style(wui::flags_map<wui::window_style>(5,
-            wui::window_style::title_showed,
-            wui::window_style::expand_button,
-            wui::window_style::minimize_button,
-            wui::window_style::resizable,
-            wui::window_style::moving));
+        window->set_style(full_style);
     }
 }
 
@@ -210,18 +231,81 @@ void DemonstrationWindow::OnRemoteControl()
     if (!rcEnabled)
     {
         rcButton->turn(false);
+        window->set_style(full_style);
     }
     controller.SendMemberAction(std::vector<int64_t>{ rvs.GetClientId() }, rcEnabled ? Proto::MEMBER_ACTION::Action::EnableRemoteControl : Proto::MEMBER_ACTION::Action::DisableRemoteControl);
 }
 
 void DemonstrationWindow::OnScale()
 {
-
+    scaleButton->turn(!scaleButton->turned());
+    
+    auto pos = window->position();
+    Resize(pos.width(), pos.height());
 }
 
 int64_t DemonstrationWindow::GetClientId() const
 {
     return rvs.GetClientId();
+}
+
+void DemonstrationWindow::Resize(int32_t width, int32_t height)
+{
+    int32_t btnWidth = BTN_SIZE * 2;
+    int32_t left = (width - btnWidth) / 2;
+    rcButton->set_position({ left, 0, left + BTN_SIZE, BTN_SIZE });
+    scaleButton->set_position({ left + BTN_SIZE, 0, left + (BTN_SIZE * 2), BTN_SIZE });
+    
+    verScroll->set_position({ width - 14, 30, width, height });
+    horScroll->set_position({ 0, height - 14, width - 14, height });
+
+    if (scaleButton->turned())
+    {
+        UpdateRendererPos(width, height);
+    }
+    else
+    {
+        auto rv = Video::GetValues(rvs.GetResolution());
+
+        scaleFactor = 1.0;
+
+        shiftLeft = rv.width < width ? (width - rv.width) / 2 : 0;
+        shiftTop = rv.height < height ? (height - rv.height) / 2 : 0;
+
+        rvs.GetControl()->set_position({ shiftLeft,
+            shiftTop,
+            shiftLeft + rv.width,
+            shiftTop + rv.height });
+
+        if (rv.width > width)
+        {
+            horScroll->set_area(rv.width / width);
+            horScroll->show();
+        }
+        else
+        {
+            horScroll->hide();
+        }
+        if (rv.height > height)
+        {
+            verScroll->set_area(rv.height / height);
+            verScroll->show();
+        }
+        else
+        {
+            verScroll->hide();
+        }
+    }
+}
+
+void DemonstrationWindow::OnVertScroll(wui::scroll_state ss, int32_t v)
+{
+
+}
+
+void DemonstrationWindow::OnHorScroll(wui::scroll_state ss, int32_t v)
+{
+
 }
 
 }

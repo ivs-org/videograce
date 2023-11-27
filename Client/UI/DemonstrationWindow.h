@@ -9,6 +9,7 @@
 
 #include <wui/window/window.hpp>
 #include <wui/control/button.hpp>
+#include <wui/control/scroll.hpp>
 
 #include <string>
 #include <memory>
@@ -45,7 +46,12 @@ private:
 
     std::shared_ptr<wui::button> rcButton, scaleButton;
 
+    std::shared_ptr<wui::scroll> verScroll, horScroll;
+
     mt::timer timer_;
+
+    double scaleFactor;
+    int32_t shiftLeft, shiftTop;
 
     void ReceiveEvents(const wui::event &ev);
 
@@ -53,6 +59,16 @@ private:
 
     void OnRemoteControl();
     void OnScale();
+
+    void Resize(int32_t width, int32_t height);
+
+    void OnVertScroll(wui::scroll_state ss, int32_t v);
+    void OnHorScroll(wui::scroll_state ss, int32_t v);
+
+    void UpdateRendererPos(int32_t width, int32_t height);
+
+    int32_t NormMouseX(int32_t input) const;
+    int32_t NormMouseY(int32_t input) const;
 };
 
 }
