@@ -8,6 +8,7 @@
 #pragma once
 
 #include <string>
+#include <string_view>
 #include <cstdint>
 
 namespace API
@@ -18,20 +19,44 @@ namespace SERVER_INFO
 	{
 		std::string company;
 		std::string server_id;
+
+		std::string installation_id;
+		std::string license_key;
+		int64_t key_expired; // Unix timestamp
+		int32_t channels_count;
+		
 		std::string address;
-		uint16_t port;
-		bool enabled_crypt;
-		uint16_t translators_count;
 		std::string admin_email;
+
+		bool enabled_crypt;
+
+		uint16_t command_port, first_av_port, tcp_port;
+		uint16_t translators_count;
+		
+		std::string server_version;
+		std::string system;
 		
 		Command();
-		Command(const std::string &company,
-			const std::string &server_id,
-			const std::string &address,
-			uint16_t port,
+		Command(std::string_view company,
+			std::string_view server_id,
+
+			std::string_view installation_id,
+			std::string_view license_key,
+			int64_t key_expired,
+			int32_t channels_count,
+
+			std::string_view address,
+			std::string_view admin_email,
+
 			bool enabled_crypt,
+
+			uint16_t command_port,
+			uint16_t first_av_port,
+			uint16_t tcp_port,
 			uint16_t translators_count,
-			const std::string &admin_email);
+			
+			std::string_view server_version,
+			std::string_view system);
 
 		~Command();
 
