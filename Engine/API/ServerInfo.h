@@ -28,7 +28,7 @@ namespace SERVER_INFO
 		std::string address;
 		std::string admin_email;
 
-		bool enabled_crypt;
+		int8_t enabled_crypt;
 
 		uint16_t command_port, first_av_port, tcp_port;
 		uint16_t translators_count;
@@ -55,6 +55,15 @@ namespace SERVER_INFO
 			uint16_t tcp_port,
 			uint16_t translators_count,
 			
+			std::string_view server_version,
+			std::string_view system);
+
+		Command(std::string_view company,
+			std::string_view server_id,
+
+			std::string_view address,
+			std::string_view admin_email,
+
 			std::string_view server_version,
 			std::string_view system);
 

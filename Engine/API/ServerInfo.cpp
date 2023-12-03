@@ -49,7 +49,7 @@ Command::Command()
 	channels_count(-1),
 	address(),
 	admin_email(),
-	enabled_crypt(false),
+	enabled_crypt(-1),
 	command_port(0),
 	first_av_port(0),
 	tcp_port(0),
@@ -87,11 +87,37 @@ Command::Command(std::string_view company_,
 	channels_count(channels_count_),
 	address(address_),
 	admin_email(admin_email_),
-	enabled_crypt(enabled_crypt_),
+	enabled_crypt(enabled_crypt_ ? 1 : 0),
 	command_port(command_port_),
 	first_av_port(first_av_port_),
 	tcp_port(tcp_port_),
 	translators_count(translators_count_),
+	server_version(server_version_),
+	system(system_)
+{
+}
+
+Command::Command(std::string_view company_,
+	std::string_view server_id_,
+
+	std::string_view address_,
+	std::string_view admin_email_,
+
+	std::string_view server_version_,
+	std::string_view system_)
+	: company(company_),
+	server_id(server_id_),
+	installation_id(),
+	license_key(),
+	key_expired(-1),
+	channels_count(-1),
+	address(address_),
+	admin_email(admin_email_),
+	enabled_crypt(-1),
+	command_port(0),
+	first_av_port(0),
+	tcp_port(0),
+	translators_count(0),
 	server_version(server_version_),
 	system(system_)
 {
@@ -114,20 +140,20 @@ std::string Command::Serialize()
 		(quot(COMPANY) + ":" + quot(Common::JSON::Screen(company)) + ",") +
 		(!server_id.empty() ? quot(SERVER_ID) + ":" + quot(Common::JSON::Screen(server_id)) + "," : "") + 
 
-		(quot(INSTALLATION_ID) + ":" + quot(Common::JSON::Screen(installation_id)) + ",") +
-		(quot(LICENCE_KEY) + ":" + quot(Common::JSON::Screen(license_key)) + ",") +
+		(!installation_id.empty() ? quot(INSTALLATION_ID) + ":" + quot(Common::JSON::Screen(installation_id)) + "," : "") +
+		(!license_key.empty() ? quot(LICENCE_KEY) + ":" + quot(Common::JSON::Screen(license_key)) + "," : "") +
 		(key_expired != -1 ? quot(KEY_EXPIRED) + ":" + std::to_string(key_expired) + "," : "") +
-		(quot(CHANNELS_COUNT) + ":" + std::to_string(channels_count) + ",") +
+		(channels_count != -1 ? quot(CHANNELS_COUNT) + ":" + std::to_string(channels_count) + "," : "") +
 		
 		(!address.empty() ? quot(ADDRESS) + ":" + quot(Common::JSON::Screen(address)) + "," : "") +
 		(!admin_email.empty() ? quot(ADMIN_EMAIL) + ":" + quot(Common::JSON::Screen(admin_email)) + "," : "") +
 
-		(quot(ENABLED_CRYPT) + (enabled_crypt ? ":1," : ":0,")) +
+		(enabled_crypt != -1 ? quot(ENABLED_CRYPT) + (enabled_crypt ? ":1," : ":0,") : "") +
 
-		(quot(COMMAND_PORT) + ":" + std::to_string(command_port) + ",") +
-		(quot(FIRST_AV_PORT) + ":" + std::to_string(first_av_port) + ",") +
-		(quot(TCP_PORT) + ":" + std::to_string(tcp_port) + ",") +
-		(quot(TRANSLATORS_COUNT) + ":" + std::to_string(translators_count) + ",") +
+		(command_port != 0 ? quot(COMMAND_PORT) + ":" + std::to_string(command_port) + "," : "") +
+		(first_av_port != 0 ? quot(FIRST_AV_PORT) + ":" + std::to_string(first_av_port) + "," : "") +
+		(tcp_port != 0 ? quot(TCP_PORT) + ":" + std::to_string(tcp_port) + "," : "") +
+		(translators_count != 0 ? quot(TRANSLATORS_COUNT) + ":" + std::to_string(translators_count) + "," : "") +
 
 		(quot(SERVER_VERSION) + ":" + quot(Common::JSON::Screen(server_version))) + "," +
 		(quot(SYSTEM) + ":" + quot(Common::JSON::Screen(system))) + "}";
