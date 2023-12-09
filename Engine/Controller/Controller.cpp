@@ -101,14 +101,14 @@ const char* Controller::toString(Controller::DisconnectReason reason)
 {
 	switch (reason)
 	{
-		case Controller::DisconnectReason::NetworkError: return"NetworkError";
-		case Controller::DisconnectReason::Redirected: return"Redirected";
-		case Controller::DisconnectReason::AuthNeeded: return"AuthNeeded";
-		case Controller::DisconnectReason::InvalidCredentionals: return"InvalidCredentionals";
-		case Controller::DisconnectReason::UpdateRequired: return"UpdateRequired";
-		case Controller::DisconnectReason::ServerOutdated: return"ServerOutdated";
-		case Controller::DisconnectReason::ServerFull: return"ServerFull";
-		case Controller::DisconnectReason::InternalServerError: return"InternalServerError";
+		case Controller::DisconnectReason::NetworkError: return "NetworkError";
+		case Controller::DisconnectReason::Redirected: return "Redirected";
+		case Controller::DisconnectReason::AuthNeeded: return "AuthNeeded";
+		case Controller::DisconnectReason::InvalidCredentionals: return "InvalidCredentionals";
+		case Controller::DisconnectReason::UpdateRequired: return "UpdateRequired";
+		case Controller::DisconnectReason::ServerOutdated: return "ServerOutdated";
+		case Controller::DisconnectReason::ServerFull: return "ServerFull";
+		case Controller::DisconnectReason::InternalServerError: return "InternalServerError";
 	};
 	return "";
 }
@@ -1449,7 +1449,7 @@ void Controller::OnWebSocket(Transport::WSMethod method, const std::string &mess
 		}
 		break;
 		case Transport::WSMethod::Close:
-            DBGTRACE("Controller :: WebSocket closed (%s), disconnect reason: %d\n", message.c_str(), toString(disconnectReason));
+            DBGTRACE("Controller :: WebSocket closed (%s), disconnect reason: %s\n", message.c_str(), toString(disconnectReason));
 			sysLog->info("Controller :: WebSocket closed ({0}), disconnect reason: {1}", message, toString(disconnectReason));
 			switch (disconnectReason)
 			{
