@@ -1030,10 +1030,6 @@ void MainFrame::ReceiveEvents(const wui::event &ev)
                             {
                                 controller.Disconnect();
                             }
-                            else
-                            {
-                                controller.Connect(wui::config::get_string("Connection", "Address", ""), wui::config::get_int("Connection", "Secure", 0) != 0);
-                            }
                             storage.Connect(GetAppDataPath() + "local.db");
                         break;
                         case MyEvent::SpeedTestCompleted:
