@@ -44,6 +44,7 @@
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/sinks/rotating_file_sink.h>
+#include <spdlog/sinks/msvc_sink.h>
 
 #include <UI/MainFrame.h>
 
@@ -104,6 +105,7 @@ void CreateLogger()
 #endif
             1024 * 1024 * 5, 3));
         sinks.push_back(std::make_shared<spdlog::sinks::stdout_color_sink_mt>());
+        sinks.push_back(std::make_shared<spdlog::sinks::msvc_sink_mt>());
 
         auto sysLog = std::make_shared<spdlog::logger>("System", begin(sinks), end(sinks));
         auto errLog = std::make_shared<spdlog::logger>("Error", begin(sinks), end(sinks));

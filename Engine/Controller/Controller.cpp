@@ -171,7 +171,6 @@ void Controller::SetContactListHandler(std::function<void(const Storage::Contact
 
 void Controller::Connect(const std::string &serverAddress_, bool secureConnection_)
 {
-    DBGTRACE("Controller :: Connect\n");
 	sysLog->info("Controller :: Connect");
 	
 	serverAddress = serverAddress_;
@@ -195,7 +194,6 @@ void Controller::Connect(const std::string &serverAddress_, bool secureConnectio
 
 void Controller::Disconnect(DisconnectReason disconnectReason_)
 {
-	DBGTRACE("Controller :: Disconnect %s\n", toString(disconnectReason_));
 	sysLog->info("Controller :: Disconnect, reason {0}", toString(disconnectReason_));
 
 	disconnectReason = disconnectReason_;
@@ -313,7 +311,6 @@ void Controller::ConnectToConference(const Proto::Conference &conference, bool h
 {
 	if (GetState() < State::Ready)
 	{
-		DBGTRACE("Controller::ConnectToConference can't work in state %s\n", toString(GetState()));
 		return errLog->error("Controller::ConnectToConference can't work in state {0}", toString(GetState()));
 	}
 
@@ -670,7 +667,6 @@ void Controller::OnWebSocket(Transport::WSMethod method, const std::string &mess
 	{
 		case Transport::WSMethod::Open:
 		{
-			DBGTRACE("Controller :: Connection to server established\n");
 			sysLog->info("Controller :: Connection to server established");
 
 			Logon();
@@ -692,7 +688,6 @@ void Controller::OnWebSocket(Transport::WSMethod method, const std::string &mess
 							if (cmd.server_version < SERVER_VERSION)
 							{
 								ChangeState(State::ServerError);
-								DBGTRACE("Controller :: Server version is outdated\n");
 								errLog->critical("Controller :: Server version is outdated\n");
 								return Disconnect(DisconnectReason::ServerOutdated);
 							}
@@ -740,14 +735,12 @@ void Controller::OnWebSocket(Transport::WSMethod method, const std::string &mess
 						case Proto::CONNECT_RESPONSE::Result::InvalidCredentials:
 						{
 							ChangeState(State::CredentialsError);
-							DBGTRACE("Controller :: Credentials error in connecting to server\n");
 							errLog->critical("Controller :: Credentials error in connecting to server\n");
 							Disconnect(DisconnectReason::InvalidCredentionals);
 						}
 						break;
 						case Proto::CONNECT_RESPONSE::Result::UpdateRequired:
 							ChangeState(State::UpdateRequired);
-							DBGTRACE("Controller :: Update required\n");
 							sysLog->critical("Controller :: Update required\n");
 							Disconnect(DisconnectReason::UpdateRequired);
 						break;
@@ -778,13 +771,11 @@ void Controller::OnWebSocket(Transport::WSMethod method, const std::string &mess
 						break;
 						case Proto::CONNECT_RESPONSE::Result::ServerFull:
 							ChangeState(State::ServerError);
-							DBGTRACE("Controller :: Server full\n");
 							sysLog->critical("Controller :: Server full\n");
 							Disconnect(DisconnectReason::ServerFull);
 						break;
 						case Proto::CONNECT_RESPONSE::Result::InternalServerError:
 							ChangeState(State::ServerError);
-							DBGTRACE("Controller :: Internal server error\n");
 							sysLog->critical("Controller :: Internal server error\n");
 							Disconnect(DisconnectReason::InternalServerError);
 						break;
@@ -825,8 +816,7 @@ void Controller::OnWebSocket(Transport::WSMethod method, const std::string &mess
 					Proto::DEVICE_PARAMS::Command cmd;
 					cmd.Parse(message);
 
-                    DBGTRACE("Controller :: Received device params device_type %d id %d\n", static_cast<int32_t>(cmd.device_type), cmd.id);
-					sysLog->info("Controller :: Received device params device_type {0:d} id {1:d}", static_cast<int32_t>(cmd.device_type), cmd.id);
+                    sysLog->info("Controller :: Received device params device_type {0:d} id {1:d}", static_cast<int32_t>(cmd.device_type), cmd.id);
 
 					Event event_;
 					event_.type = cmd.device_type == Proto::DeviceType::Microphone ? Event::Type::MicrophoneCreated : Event::Type::CameraCreated;
@@ -846,8 +836,7 @@ void Controller::OnWebSocket(Transport::WSMethod method, const std::string &mess
 					Proto::DEVICE_CONNECT::Command cmd;
 					cmd.Parse(message);
 
-					DBGTRACE("Controller :: Received device connect connect_type %d, device %d, client %d\n", static_cast<int32_t>(cmd.connect_type), cmd.device_id, cmd.client_id);
-					sysLog->info("Controller :: Received connect connect_type {0:d} device {1:d}, client: {2:d}", static_cast<int32_t>(cmd.connect_type), cmd.device_id, cmd.client_id);
+					sysLog->info("Controller :: Received device connect (connect_type: {0:d} device_id {1:d}, client_id: {2:d})", static_cast<int32_t>(cmd.connect_type), cmd.device_id, cmd.client_id);
 
 					switch (cmd.connect_type)
 					{
@@ -905,8 +894,7 @@ void Controller::OnWebSocket(Transport::WSMethod method, const std::string &mess
 					Proto::DEVICE_DISCONNECT::Command cmd;
 					cmd.Parse(message);
 					
-					DBGTRACE("Controller :: Received disconnect device %d\n", cmd.device_id);
-					sysLog->info("Controller :: Received disconnect device {0:d}, {1:d}", cmd.device_id, cmd.client_id);
+					sysLog->info("Controller :: Received disconnect device (device_id: {0:d}), client_id: {1:d})", cmd.device_id, cmd.client_id);
 
 					Event event_;
 					event_.type = Event::Type::DeviceDisconnect;
@@ -921,8 +909,7 @@ void Controller::OnWebSocket(Transport::WSMethod method, const std::string &mess
 					Proto::RESOLUTION_CHANGE::Command cmd;
 					cmd.Parse(message);
 
-					DBGTRACE("Controller :: Received resolution changed %d -> %d\n", cmd.id, static_cast<uint32_t>(cmd.resolution));
-					sysLog->info("Controller :: Received resolution changed ({0:d} -> {0:d})", cmd.id, static_cast<uint32_t>(cmd.resolution));
+					sysLog->info("Controller :: Received resolution changed (device_id: {0:d}, resolution: {1:d})", cmd.id, static_cast<uint32_t>(cmd.resolution));
 					Event event_;
 					event_.type = Event::Type::ResolutionChanged;
 					event_.deviceValues.deviceId = cmd.id;
@@ -935,8 +922,7 @@ void Controller::OnWebSocket(Transport::WSMethod method, const std::string &mess
 					Proto::MICROPHONE_ACTIVE::Command cmd;
 					cmd.Parse(message);
 
-					DBGTRACE("Controller :: Received microphone active, user id: %d, device id: %d, value: %d\n", cmd.client_id, cmd.device_id, static_cast<uint32_t>(cmd.active_type));
-					sysLog->info("Controller :: Received microphone active, user id: {0:d}, device id: {1:d}, value: {2:d}", cmd.client_id, cmd.device_id, static_cast<uint32_t>(cmd.active_type));
+					sysLog->info("Controller :: Received microphone active (client_id: {0:d}, device_id: {1:d}, value: {2:d})", cmd.client_id, cmd.device_id, static_cast<uint32_t>(cmd.active_type));
 					Event event_;
 					event_.type = Event::Type::MicrophoneActive;
 					event_.deviceValues.clientId = cmd.client_id;
@@ -950,8 +936,7 @@ void Controller::OnWebSocket(Transport::WSMethod method, const std::string &mess
 					Proto::CALL_REQUEST::Command cmd;
 					cmd.Parse(message);
 
-					DBGTRACE("Controller :: Received call request (%d, %d)\n", cmd.id, static_cast<int32_t>(cmd.type));
-					sysLog->info("Controller :: Received call request ({0:d}, {1:d})", cmd.id, static_cast<int32_t>(cmd.type));
+					sysLog->info("Controller :: Received call request (subscriber_id: {0:d}, type: {1:d})", cmd.id, static_cast<int32_t>(cmd.type));
 					
                     subscriberId = cmd.id;
 
@@ -970,8 +955,7 @@ void Controller::OnWebSocket(Transport::WSMethod method, const std::string &mess
 					Proto::CALL_RESPONSE::Command cmd;
 					cmd.Parse(message);
 					
-					DBGTRACE("Controller :: Received call response\n");
-					sysLog->info("Controller :: Received call response id: {0:d}, type: {1:d})", cmd.id, static_cast<int32_t>(cmd.type));
+					sysLog->info("Controller :: Received call response (subscriber_id: {0:d}, type: {1:d})", cmd.id, static_cast<int32_t>(cmd.type));
 
 					switch (cmd.type)
 					{
@@ -1066,8 +1050,7 @@ void Controller::OnWebSocket(Transport::WSMethod method, const std::string &mess
 					Proto::SEND_CONNECT_TO_CONFERENCE::Command cmd;
 					cmd.Parse(message);
 					
-					DBGTRACE("Controller :: Received send connect to conference %s\n", cmd.tag.c_str());
-					sysLog->info("Controller :: Received send connect to conference {0}", cmd.tag);
+					sysLog->info("Controller :: Received send connect to conference (tag: {0})", cmd.tag);
 					
 					Event event_;
 					event_.type = Event::Type::StartConnectToConference;
@@ -1081,8 +1064,7 @@ void Controller::OnWebSocket(Transport::WSMethod method, const std::string &mess
 					Proto::CONNECT_TO_CONFERENCE_RESPONSE::Command cmd;
 					cmd.Parse(message);
 
-					DBGTRACE("Controller :: Received connect to conference response %d\n", static_cast<int32_t>(cmd.result));
-					sysLog->info("Controller :: Received connect to conference response {0:d}", static_cast<int32_t>(cmd.result));
+					sysLog->info("Controller :: Received connect to conference response (result: {0:d})", static_cast<int32_t>(cmd.result));
 
 					switch (cmd.result)
 					{
@@ -1096,8 +1078,7 @@ void Controller::OnWebSocket(Transport::WSMethod method, const std::string &mess
 							currentConference.grants = cmd.grants;
 							currentConference.temp = cmd.temp;
 
-							DBGTRACE("Controller :: Successfully Connected to conference: %s\n", currentConference.tag.c_str());
-							sysLog->info("Controller :: Successfully Connected to conference: {0}", currentConference.tag);
+							sysLog->info("Controller :: Successfully connected to conference (tag: {0})", currentConference.tag);
 							
 							callStart = time(0);
 
@@ -1139,7 +1120,6 @@ void Controller::OnWebSocket(Transport::WSMethod method, const std::string &mess
 				break;
 				case Proto::CommandType::DisconnectFromConference:
 				{
-					DBGTRACE("Controller :: Received disconnect from conference\n");
 					sysLog->info("Controller :: Received disconnect from conference");
 
 					if (GetState() == State::Conferencing)
@@ -1220,8 +1200,7 @@ void Controller::OnWebSocket(Transport::WSMethod method, const std::string &mess
 
 					for (auto &member : cmd.members)
 					{
-						DBGTRACE("Controller :: Received changed member state %d\n", member.id);
-						sysLog->info("Controller :: Received changed member state, id: {0}, state: {1}", member.id, static_cast<int>(member.state));
+						sysLog->info("Controller :: Received changed member state (member_id: {0}, state: {1:d})", member.id, static_cast<int>(member.state));
 						if (member.state == Proto::MemberState::Conferencing)
 						{
 							if (!memberList.ExistsMember(member.id))
@@ -1428,8 +1407,7 @@ void Controller::OnWebSocket(Transport::WSMethod method, const std::string &mess
 		}
 		break;
 		case Transport::WSMethod::Close:
-            DBGTRACE("Controller :: WebSocket closed (%s), disconnect reason: %s\n", message.c_str(), toString(disconnectReason));
-			sysLog->info("Controller :: WebSocket closed ({0}), disconnect reason: {1}", message, toString(disconnectReason));
+			sysLog->info("Controller :: WebSocket closed (message: \"{0}\", reason: {1})", message, toString(disconnectReason));
 			switch (disconnectReason)
 			{
 				case DisconnectReason::NetworkError: case DisconnectReason::Redirected:
@@ -1469,8 +1447,7 @@ void Controller::OnWebSocket(Transport::WSMethod method, const std::string &mess
 			disconnectReason = DisconnectReason::NetworkError;
 		break;
 		case Transport::WSMethod::Error:
-			DBGTRACE("Controller :: WebSocket error (%s)\n", message.c_str());
-			errLog->critical("Controller :: WebSocket error {0}", message);
+			errLog->critical("Controller :: WebSocket error (message: \"{0}\")", message);
 			
             std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
@@ -1486,7 +1463,6 @@ void Controller::Logon()
 		return Disconnect(DisconnectReason::AuthNeeded);
 	}
 
-	DBGTRACE("Controller :: Logon\n");
 	sysLog->info("Controller :: Logon");
 
 	Proto::CONNECT_REQUEST::Command cmd;
@@ -1504,6 +1480,8 @@ void Controller::Logon()
 	cmd.password = password;
 
 	SendCommand(cmd.Serialize());
+
+	sysLog->info("Controller :: Logon sended");
 }
 
 void Controller::Logout()
@@ -1513,7 +1491,6 @@ void Controller::Logout()
 		return;
 	}
 
-	DBGTRACE("Controller :: Logout\n");
 	sysLog->info("Controller :: Logout");
 
 	ChangeState(State::Ended);
@@ -1525,6 +1502,8 @@ void Controller::Logout()
 	}
 
 	webSocket.Disconnect();
+
+	sysLog->info("Controller :: Logout finisned");
 }
 
 #ifndef WIN32
@@ -1649,8 +1628,7 @@ void Controller::ChangeState(State newState)
 {
 	State prevState = state;
 	state = newState;
-	DBGTRACE("Controller :: Changed state from %s to %s\n", toString(prevState), toString(newState));
-	sysLog->info("Controller :: Changed state from {0} to {1}", toString(prevState), toString(newState));
+	sysLog->info("Controller :: Changed state (from: {0}, to: {1})", toString(prevState), toString(newState));
 }
 
 void Controller::SendCommand(const std::string &command)
