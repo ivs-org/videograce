@@ -126,11 +126,15 @@ void ContactDialog::Run(std::weak_ptr<wui::window> parentWindow_, ContactDialogM
             }
         }
         callback(mode, selectedContacts);
+
+        controller.SetContactListHandler(nullptr);
     });
+
+    controller.SetContactListHandler(std::bind(&ContactDialog::ContactListCallback, this, std::placeholders::_1));
 
     if (mode != ContactDialogMode::AddContacts)
     {
-        MakeItems();
+        MakeCurrentContactListItems();
     }
 }
 
@@ -141,7 +145,6 @@ void ContactDialog::Search()
         case ContactDialogMode::AddContacts:
             items.clear();
             controller.SearchContact(input->text());
-            MakeItems();
         break;
         case ContactDialogMode::ConnectToConference:
         case ContactDialogMode::InviteToConference:
@@ -208,43 +211,13 @@ void ContactDialog::Add()
     window->destroy();
 }
 
-void ContactDialog::MakeItems()
+void ContactDialog::MakeCurrentContactListItems()
 {
-    std::lock_guard<std::mutex> lock(itemsMutex);
+    std::lock_guard<std::mutex> lockItems(itemsMutex);
 
     items.clear();
 
-    switch (mode)
-    {
-        case ContactDialogMode::AddContacts:
-            MakeFindedContactListItems();
-        break;
-        case ContactDialogMode::ConnectToConference:
-        case ContactDialogMode::InviteToConference:
-        case ContactDialogMode::ForwardMessage:
-            MakeCurrentContactListItems();
-        break;
-    }
-
-    list->set_item_count(static_cast<int32_t>(items.size()));
-}
-
-void ContactDialog::MakeFindedContactListItems()
-{
-    auto &contacts = controller.GetFindedContects();
-
-    for (auto &contact : contacts)
-    {
-        items.emplace_back(Item(contact.id, -1,
-            ItemType::Contact,
-            contact.name, contact.number, "", -1, 
-            contact.state != Proto::MemberState::Offline ? onlineImg : offlineImg, false));
-    }
-}
-
-void ContactDialog::MakeCurrentContactListItems()
-{
-    std::lock_guard<std::recursive_mutex> lock(storage.GetGroupsMutex());
+    std::lock_guard<std::recursive_mutex> lockGroups(storage.GetGroupsMutex());
 
     for (const auto &group : storage.GetGroups())
     {
@@ -281,6 +254,8 @@ void ContactDialog::MakeCurrentContactListItems()
             }
         }
     }
+
+    list->set_item_count(static_cast<int32_t>(items.size()));
 }
 
 void ContactDialog::DrawItem(wui::graphic &gr, int32_t nItem, const wui::rect &itemRect, wui::list::item_state state)
@@ -348,6 +323,23 @@ void ContactDialog::CheckChildren(int64_t parentID, bool checked)
             }
         }
     }
+}
+
+void ContactDialog::ContactListCallback(const Storage::Contacts &contacts)
+{
+    std::lock_guard<std::mutex> lock(itemsMutex);
+
+    items.clear();
+
+    for (const auto& contact : contacts)
+    {
+        items.emplace_back(Item(contact.id, -1,
+            ItemType::Contact,
+            contact.name, contact.number, "", -1,
+            contact.state != Proto::MemberState::Offline ? onlineImg : offlineImg, false));
+    }
+
+    list->set_item_count(static_cast<int32_t>(items.size()));
 }
 
 void ContactDialog::ClickItem(int32_t nItem, int32_t x, int32_t y)

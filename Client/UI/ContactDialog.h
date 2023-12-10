@@ -96,8 +96,6 @@ private:
     void Search();
     void Add();
 
-    void MakeItems();
-    void MakeFindedContactListItems();
     void MakeCurrentContactListItems();
 
     void DrawItem(wui::graphic &gr, int32_t nItem, const wui::rect &pos, wui::list::item_state state);
@@ -107,6 +105,8 @@ private:
     const Item *GetItem(int32_t nItem);
 
     void CheckChildren(int64_t parentID, bool checked);
+
+    void ContactListCallback(const Storage::Contacts&);
 };
 
 }

@@ -30,7 +30,7 @@ namespace Client
 class ConferenceDialog
 {
 public:
-    ConferenceDialog(std::weak_ptr<wui::window> parentWindow_,  Controller::IController &controller_, Storage::Storage &storage_);
+    ConferenceDialog(std::weak_ptr<wui::window> parentWindow_, Controller::IController &controller_, Storage::Storage &storage_);
     ~ConferenceDialog();
 
     void Run(const Proto::Conference &editedConf_ = Proto::Conference(), std::function<void(const std::string &)> readyCallback = [](const std::string &) {});
@@ -82,6 +82,8 @@ private:
     std::shared_ptr<wui::image> groupRolledImg, groupExpandedImg,
         ownerImg, moderatorImg, ordinaryImg, readOnlyImg;
 
+    bool startPushed;
+
     std::function<void(const std::string &)> readyCallback;
 
     enum class CurrentSheet
@@ -115,7 +117,7 @@ private:
     void DenyRecordChange();
     void AutoConnectChange();
 
-    bool Update();
+    void Update();
     void Start();
     void Close();
 
@@ -126,6 +128,7 @@ private:
     void DrawMemberItem(wui::graphic &gr, int32_t nItem, const wui::rect &pos, wui::list::item_state state);
     void ClickMemberItem(int32_t nItem, int32_t xPos);
 
+    void ConferenceUpdateCallback(const Proto::CONFERENCE_UPDATE_RESPONSE::Command &response);
     void ContactDialogCallback(ContactDialogMode mode, const Storage::Contacts &contacts);
 };
 

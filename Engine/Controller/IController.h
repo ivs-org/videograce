@@ -10,6 +10,7 @@
 #include <cstdint>
 #include <string>
 #include <vector>
+#include <functional>
 
 #include <Proto/DeviceType.h>
 #include <Proto/Member.h>
@@ -220,10 +221,17 @@ namespace Controller
 	class IController
 	{
 	public:
+		/// Callbacks
+		virtual void SetEventHandler(std::function<void(const Event&)> handler) = 0;
+		virtual void SetConferenceUpdateHandler(std::function<void(const Proto::CONFERENCE_UPDATE_RESPONSE::Command&)> handler) = 0;
+		virtual void SetContactListHandler(std::function<void(const Storage::Contacts&)> handler) = 0;
+
+		/// Network
 		virtual void Connect(const std::string &serverAddress, bool secureConnection) = 0;
 		virtual void Disconnect() = 0;
 		virtual bool Connected() = 0;
 
+		/// Change user's bio and credentials
 		virtual void UserUpdate(int64_t userId, const std::string &name = "", const std::string &avatar = "", const std::string &login = "", const std::string &password = "") = 0;
 
 		/// Set login / password from user input
@@ -271,19 +279,19 @@ namespace Controller
 		virtual void DeleteContact(int64_t clientId) = 0;
 
 		/// Send create conference action
-		virtual Proto::CONFERENCE_UPDATE_RESPONSE::Command CreateConference(const Proto::Conference &conference) = 0;
+		virtual void CreateConference(const Proto::Conference &conference) = 0;
 
 		/// Send edit conference action
-		virtual Proto::CONFERENCE_UPDATE_RESPONSE::Command EditConference(const Proto::Conference &conference) = 0;
+		virtual void EditConference(const Proto::Conference &conference) = 0;
 
 		/// Send delete conference action
-		virtual Proto::CONFERENCE_UPDATE_RESPONSE::Command DeleteConference(int64_t conferenceId) = 0;
+		virtual void DeleteConference(int64_t conferenceId) = 0;
 
         /// Add me to confrence's members
-        virtual Proto::CONFERENCE_UPDATE_RESPONSE::Command AddMeToConference(const std::string &tag) = 0;
+        virtual void AddMeToConference(const std::string &tag) = 0;
 
         /// Remove me from confrence's members
-        virtual Proto::CONFERENCE_UPDATE_RESPONSE::Command DeleteMeFromConference(int64_t conferenceId) = 0;
+        virtual void DeleteMeFromConference(int64_t conferenceId) = 0;
 
 		/// Send create temp conference action
 		virtual void CreateTempConference() = 0;
@@ -299,9 +307,6 @@ namespace Controller
 
 		/// Search the contact
 		virtual void SearchContact(const std::string &name) = 0;
-
-        /// Return the finded contacts after call SearchContact()
-        virtual const Storage::Contacts &GetFindedContects() = 0;
 
 		/// Update the conferences list
 		virtual void UpdateConferencesList() = 0;

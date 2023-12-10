@@ -10,16 +10,12 @@
 #include <atomic>
 #include <thread>
 
-#include <mt/semaphore.h>
-
 #include "IController.h"
 #include "IMemberList.h"
 
 #include <Transport/WebSocket/WebSocket.h>
 
 #include <spdlog/spdlog.h>
-
-#include <functional>
 
 namespace Controller
 {
@@ -29,7 +25,9 @@ namespace Controller
 		Controller(Storage::Storage &storage, IMemberList &memberList);
 		~Controller();
 
-		void SetEventHandler(std::function<void(const Event &ev)> handler);
+		virtual void SetEventHandler(std::function<void(const Event&)> handler);
+		virtual void SetConferenceUpdateHandler(std::function<void(const Proto::CONFERENCE_UPDATE_RESPONSE::Command&)> handler);
+		virtual void SetContactListHandler(std::function<void(const Storage::Contacts&)> handler);
 		
 		virtual void Connect(const std::string &serverAddress, bool secureConnection);
 		virtual void Disconnect();
@@ -60,11 +58,11 @@ namespace Controller
         virtual void AddContact(int64_t clientId);
         virtual void DeleteContact(int64_t clientId);
 
-		virtual Proto::CONFERENCE_UPDATE_RESPONSE::Command CreateConference(const Proto::Conference &conference);
-		virtual Proto::CONFERENCE_UPDATE_RESPONSE::Command EditConference(const Proto::Conference &conference);
-		virtual Proto::CONFERENCE_UPDATE_RESPONSE::Command DeleteConference(int64_t conferenceId);
-        virtual Proto::CONFERENCE_UPDATE_RESPONSE::Command AddMeToConference(const std::string &tag);
-        virtual Proto::CONFERENCE_UPDATE_RESPONSE::Command DeleteMeFromConference(int64_t conferenceId);
+		virtual void CreateConference(const Proto::Conference &conference);
+		virtual void EditConference(const Proto::Conference &conference);
+		virtual void DeleteConference(int64_t conferenceId);
+        virtual void AddMeToConference(const std::string &tag);
+        virtual void DeleteMeFromConference(int64_t conferenceId);
 		virtual void CreateTempConference();
 		virtual void SendConnectToConference(const std::string &tag, int64_t connecter_id, uint32_t connecter_connection_id, uint32_t flags);
 
@@ -73,7 +71,6 @@ namespace Controller
 		virtual void UpdateContactList();
 		
         virtual void SearchContact(const std::string &name);
-        virtual const Storage::Contacts &GetFindedContects();
 
 		virtual void UpdateConferencesList();
 
@@ -107,7 +104,9 @@ namespace Controller
 		virtual uint16_t GetReducedFrameRate();
 
 	private:
-        std::function<void(const Event &ev)> eventHandler;
+        std::function<void(const Event&)> eventHandler;
+		std::function<void(const Proto::CONFERENCE_UPDATE_RESPONSE::Command&)> conferenceUpdateHandler;
+		std::function<void(const Storage::Contacts&)> contactListHandler;
 
 		Storage::Storage &storage;
         IMemberList &memberList;
@@ -138,10 +137,6 @@ namespace Controller
 		std::string serverName;
 
         Storage::Contacts findedContacts;
-
-        Proto::CONFERENCE_UPDATE_RESPONSE::Command modifyConfResult;
-		
-        mt::semaphore readySem;
 
 		enum class DisconnectReason
 		{

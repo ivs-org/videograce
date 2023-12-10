@@ -75,6 +75,8 @@ ConferenceDialog::ConferenceDialog(std::weak_ptr<wui::window> parentWindow__, Co
     groupRolledImg(), groupExpandedImg(),
     ownerImg(), moderatorImg(), ordinaryImg(), readOnlyImg(),
 
+    startPushed(false),
+
     readyCallback(),
 
     currentSheet(CurrentSheet::Base),
@@ -149,6 +151,8 @@ void ConferenceDialog::Run(const Proto::Conference &editedConf_, std::function<v
 
     editedConf = editedConf_;
     readyCallback = readyCallback_;
+
+    startPushed = false;
 
     bool newConference = editedConf.tag.empty();
 
@@ -244,7 +248,11 @@ void ConferenceDialog::Run(const Proto::Conference &editedConf_, std::function<v
         optionsSheet.reset();
         membersSheet.reset();
         baseSheet.reset();
+
+        controller.SetConferenceUpdateHandler(nullptr);
     });
+
+    controller.SetConferenceUpdateHandler(std::bind(&ConferenceDialog::ConferenceUpdateCallback, this, std::placeholders::_1));
 }
 
 void ConferenceDialog::ShowBase()
@@ -566,31 +574,28 @@ void ConferenceDialog::AutoConnectChange()
     }
 }
 
-bool ConferenceDialog::Update()
+void ConferenceDialog::Update()
 {
     if (nameInput->text().empty())
     {
-        messageBox->show(wui::locale("message", "conference_name_empty"),
+        return messageBox->show(wui::locale("message", "conference_name_empty"),
             wui::locale("message", "title_error"),
             wui::message_icon::alert,
             wui::message_button::ok, [this](wui::message_result) { ShowBase(); window->set_focused(nameInput); });
-        return false;
     }
     if (tagInput->text().empty())
     {
-        messageBox->show(wui::locale("message", "conference_tag_empty"),
+        return messageBox->show(wui::locale("message", "conference_tag_empty"),
             wui::locale("message", "title_error"),
             wui::message_icon::alert,
             wui::message_button::ok, [this](wui::message_result) { ShowBase(); window->set_focused(tagInput); });
-        return false;
     }
     if (tagInput->text().find_first_not_of("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz") != std::string::npos)
     {
-        messageBox->show(wui::locale("message", "conference_tag_incorrect"),
+        return messageBox->show(wui::locale("message", "conference_tag_incorrect"),
             wui::locale("message", "title_error"),
             wui::message_icon::alert,
             wui::message_button::ok, [this](wui::message_result) { ShowBase(); window->set_focused(tagInput); });
-        return false;
     }
 
     editedConf.name = nameInput->text();
@@ -602,52 +607,18 @@ bool ConferenceDialog::Update()
 
     if (editedConf.id == 0)
     {
-        result = controller.CreateConference(editedConf);
+        controller.CreateConference(editedConf);
     }
     else
     {
-        result = controller.EditConference(editedConf);
-    }
-
-    if (result.result == Proto::CONFERENCE_UPDATE_RESPONSE::Result::DuplicateTag)
-    {
-        messageBox->show(wui::locale("message", "conference_tag_duplicate"),
-            wui::locale("message", "title_error"),
-            wui::message_icon::alert,
-            wui::message_button::ok, [this](wui::message_result) { ShowBase(); window->set_focused(tagInput); });
-        return false;
-    }
-    else if (result.result == Proto::CONFERENCE_UPDATE_RESPONSE::Result::OK)
-    {
-        editedConf.id = result.id;
-        editedConf.tag = tagInput->text();
-
-        updateButton->set_caption(wui::locale("button", "change"));
-
-        return true;
-    }
-    else
-    {
-        messageBox->show(wui::locale("message", "unspecified_error_or_not_response"),
-            wui::locale("message", "title_error"),
-            wui::message_icon::alert,
-            wui::message_button::ok);
-
-        return false;
+        controller.EditConference(editedConf);
     }
 }
 
 void ConferenceDialog::Start()
 {
-    if (Update())
-    {
-        window->destroy();
-
-        if (readyCallback)
-        {
-            readyCallback(editedConf.tag);
-        }
-    }
+    startPushed = true;
+    Update();
 }
 
 void ConferenceDialog::Close()
@@ -819,6 +790,41 @@ void ConferenceDialog::ClickMemberItem(int32_t nItem, int32_t xPos)
     }
 
     UpdateMemberList();
+}
+
+void ConferenceDialog::ConferenceUpdateCallback(const Proto::CONFERENCE_UPDATE_RESPONSE::Command& response)
+{
+    if (response.result == Proto::CONFERENCE_UPDATE_RESPONSE::Result::DuplicateTag)
+    {
+        return messageBox->show(wui::locale("message", "conference_tag_duplicate"),
+            wui::locale("message", "title_error"),
+            wui::message_icon::alert,
+            wui::message_button::ok, [this](wui::message_result) { ShowBase(); window->set_focused(tagInput); });
+    }
+    else if (response.result == Proto::CONFERENCE_UPDATE_RESPONSE::Result::OK)
+    {
+        editedConf.id = response.id;
+        editedConf.tag = tagInput->text();
+
+        updateButton->set_caption(wui::locale("button", "change"));
+
+        if (startPushed)
+        {
+            window->destroy();
+
+            if (readyCallback)
+            {
+                readyCallback(editedConf.tag);
+            }
+        }
+    }
+    else
+    {
+        return messageBox->show(wui::locale("message", "unspecified_error_or_not_response"),
+            wui::locale("message", "title_error"),
+            wui::message_icon::alert,
+            wui::message_button::ok);
+    }
 }
 
 void ConferenceDialog::ContactDialogCallback(ContactDialogMode mode, const Storage::Contacts &contacts)

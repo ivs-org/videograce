@@ -117,6 +117,8 @@ const char* Controller::toString(Controller::DisconnectReason reason)
 
 Controller::Controller(Storage::Storage &storage_, IMemberList &memberList_)
 	: eventHandler(),
+	conferenceUpdateHandler(),
+	contactListHandler(),
 	storage(storage_),
     memberList(memberList_),
 	state(State::Initial),
@@ -134,10 +136,7 @@ Controller::Controller(Storage::Storage &storage_, IMemberList &memberList_)
 	clientName(),
 	secureKey(),
 	serverName(),
-    findedContacts(),
-    modifyConfResult(),
-	readySem(),
-	disconnectReason(DisconnectReason::NetworkError),
+    disconnectReason(DisconnectReason::NetworkError),
 	pingerMutex(),
 	pinging(false),
 	pinger(),
@@ -158,6 +157,16 @@ Controller::~Controller()
 void Controller::SetEventHandler(std::function<void(const Event &ev)> handler_)
 {
     eventHandler = handler_;
+}
+
+void Controller::SetConferenceUpdateHandler(std::function<void(const Proto::CONFERENCE_UPDATE_RESPONSE::Command&)> handler)
+{
+	conferenceUpdateHandler = handler;
+}
+
+void Controller::SetContactListHandler(std::function<void(const Storage::Contacts&)> handler)
+{
+	contactListHandler = handler;
 }
 
 void Controller::Connect(const std::string &serverAddress_, bool secureConnection_)
@@ -464,64 +473,44 @@ void Controller::DeleteContact(int64_t clientId)
     ).Serialize());
 }
 
-Proto::CONFERENCE_UPDATE_RESPONSE::Command Controller::CreateConference(const Proto::Conference &conference)
+void Controller::CreateConference(const Proto::Conference &conference)
 {
 	SendCommand(Proto::CONFERENCE_UPDATE_REQUEST::Command(
 		Proto::CONFERENCE_UPDATE_REQUEST::Action::Create,
 		conference
 	).Serialize());
-
-    readySem.wait_for(5000);
-
-	return modifyConfResult;
 }
 
-Proto::CONFERENCE_UPDATE_RESPONSE::Command Controller::EditConference(const Proto::Conference &conference)
+void Controller::EditConference(const Proto::Conference &conference)
 {
 	SendCommand(Proto::CONFERENCE_UPDATE_REQUEST::Command(
 		Proto::CONFERENCE_UPDATE_REQUEST::Action::Edit,
 		conference
 	).Serialize());
-
-    readySem.wait_for(5000);
-
-	return modifyConfResult;
 }
 
-Proto::CONFERENCE_UPDATE_RESPONSE::Command Controller::DeleteConference(int64_t conferenceId)
+void Controller::DeleteConference(int64_t conferenceId)
 {
 	SendCommand(Proto::CONFERENCE_UPDATE_REQUEST::Command(
 		Proto::CONFERENCE_UPDATE_REQUEST::Action::Delete,
 		Proto::Conference(conferenceId)
 	).Serialize());
-
-    readySem.wait_for(5000);
-
-	return modifyConfResult;
 }
 
-Proto::CONFERENCE_UPDATE_RESPONSE::Command Controller::AddMeToConference(const std::string &tag)
+void Controller::AddMeToConference(const std::string &tag)
 {
     SendCommand(Proto::CONFERENCE_UPDATE_REQUEST::Command(
         Proto::CONFERENCE_UPDATE_REQUEST::Action::AddMe,
         Proto::Conference(tag)
     ).Serialize());
-
-    readySem.wait_for(5000);
-
-    return modifyConfResult;
 }
 
-Proto::CONFERENCE_UPDATE_RESPONSE::Command Controller::DeleteMeFromConference(int64_t conferenceId)
+void Controller::DeleteMeFromConference(int64_t conferenceId)
 {
     SendCommand(Proto::CONFERENCE_UPDATE_REQUEST::Command(
         Proto::CONFERENCE_UPDATE_REQUEST::Action::DeleteMe,
         Proto::Conference(conferenceId)
     ).Serialize());
-
-    readySem.wait_for(5000);
-
-    return modifyConfResult;
 }
 
 void Controller::CreateTempConference()
@@ -565,14 +554,7 @@ void Controller::SearchContact(const std::string &name)
 	{
 		contactListReceving = ContactListReceiving::Search;
 		SendCommand(Proto::SEARCH_CONTACT::Command(name).Serialize());
-
-        readySem.wait_for(5000);
 	}
-}
-
-const Storage::Contacts &Controller::GetFindedContects()
-{
-    return findedContacts;
 }
 
 void Controller::UpdateConferencesList()
@@ -1065,9 +1047,7 @@ void Controller::OnWebSocket(Transport::WSMethod method, const std::string &mess
 					Proto::CONFERENCE_UPDATE_RESPONSE::Command cmd;
 					cmd.Parse(message);
 
-					modifyConfResult = cmd;
-
-                    readySem.notify();
+					if (conferenceUpdateHandler) conferenceUpdateHandler(cmd);
 				}
 				break;
 				case Proto::CommandType::CreateTempConference:
@@ -1189,8 +1169,7 @@ void Controller::OnWebSocket(Transport::WSMethod method, const std::string &mess
 							}
 						break;
 						case ContactListReceiving::Search:
-                            findedContacts = cmd.members;
-                            readySem.notify();
+							if (contactListHandler) contactListHandler(cmd.members);
 						break;
 						default: break;
 					}
