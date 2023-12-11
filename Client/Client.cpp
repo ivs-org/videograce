@@ -105,7 +105,9 @@ void CreateLogger()
 #endif
             1024 * 1024 * 5, 3));
         sinks.push_back(std::make_shared<spdlog::sinks::stdout_color_sink_mt>());
+#ifdef _WIN32
         sinks.push_back(std::make_shared<spdlog::sinks::msvc_sink_mt>());
+#endif
 
         auto sysLog = std::make_shared<spdlog::logger>("System", begin(sinks), end(sinks));
         auto errLog = std::make_shared<spdlog::logger>("Error", begin(sinks), end(sinks));

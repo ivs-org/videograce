@@ -74,7 +74,7 @@ ContentPanel::ContentPanel(std::weak_ptr<wui::window> mainFrame_, Storage::Stora
     list->set_scroll_callback(std::bind(&ContentPanel::ListScrollCallback, this, std::placeholders::_1, std::placeholders::_2));
     list->set_item_click_callback([this](wui::list::click_button btn, int32_t nItem, int32_t x, int32_t y) { if (btn == wui::list::click_button::right) RightClickItem(nItem, x, y); });
 
-    input->set_return_callback(std::bind(&ContentPanel::SendMsg, this));
+    window->set_default_push_control(sendButton);
 }
 
 ContentPanel::~ContentPanel()
