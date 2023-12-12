@@ -269,7 +269,10 @@ MainFrame::MainFrame()
         std::lock_guard<std::mutex> lock(controllerEventsQueueMutex);
         controllerEventsQueue.push(ev);
 
-        window->emit_event(static_cast<int32_t>(MyEvent::Controller), 0);
+        if (window)
+        {
+            window->emit_event(static_cast<int32_t>(MyEvent::Controller), 0);
+        }
     });
 
     storage.SubscribeMessagesReceiver(std::bind(&MainFrame::MessagesUpdatedCallback, this, std::placeholders::_1, std::placeholders::_2));
@@ -2454,18 +2457,27 @@ void MainFrame::InitAudio()
 void MainFrame::ShowBusy(std::string_view title)
 {
     busyTitle = title;
-    window->emit_event(static_cast<int32_t>(MyEvent::ShowBusy), 0);
+    if (window)
+    {
+        window->emit_event(static_cast<int32_t>(MyEvent::ShowBusy), 0);
+    }
 }
 
 void MainFrame::SetBusyProgess(std::string_view sub_title, int32_t value)
 {
     busySubTitle = sub_title;
-    window->emit_event(static_cast<int32_t>(MyEvent::SetBusyProgress), value);
+    if (window)
+    {
+        window->emit_event(static_cast<int32_t>(MyEvent::SetBusyProgress), value);
+    }
 }
 
 void MainFrame::HideBusy()
 {
-    window->emit_event(static_cast<int32_t>(MyEvent::HideBusy), 0);
+    if (window)
+    {
+        window->emit_event(static_cast<int32_t>(MyEvent::HideBusy), 0);
+    }
 }
 
 void MainFrame::SetMainProgess(std::string_view sub_title, int32_t value)
@@ -2553,11 +2565,19 @@ void MainFrame::SpeedTestCompleted(uint32_t inputSpeed, uint32_t outputSpeed)
 
     controller.SetMaxBitrate(inputSpeed);
 
-    window->emit_event(static_cast<int32_t>(MyEvent::SpeedTestCompleted), 0);
+    if (window)
+    {
+        window->emit_event(static_cast<int32_t>(MyEvent::SpeedTestCompleted), 0);
+    }
 }
 
 void MainFrame::TCPTestCompleted()
 {
+    if (!window)
+    {
+        return;
+    }
+
     bool udpOK = udpTester.TestPassed();
     bool tcpOK = tcpTester.TestPassed();
 
@@ -2578,6 +2598,11 @@ void MainFrame::TCPTestCompleted()
 
 void MainFrame::ReceiveDeviceNotify(const std::string &name, DeviceNotifyType notifyType, Proto::DeviceType deviceType, uint32_t deviceId, int32_t iData)
 {
+    if (!window)
+    {
+        return;
+    }
+
     Controller::Event event_;
     switch (notifyType)
     {
