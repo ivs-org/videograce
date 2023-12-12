@@ -321,6 +321,8 @@ void MainFrame::Run(bool minimized)
 
         trayIcon.reset();
 
+        speedTester.Stop();
+
         sysLog->info("The application ended");
 
 #ifdef _WIN32
@@ -2469,7 +2471,10 @@ void MainFrame::HideBusy()
 void MainFrame::SetMainProgess(std::string_view sub_title, int32_t value)
 {
     busySubTitle = sub_title;
-    window->emit_event(static_cast<int32_t>(MyEvent::SetMainProgress), value);
+    if (window)
+    {
+        window->emit_event(static_cast<int32_t>(MyEvent::SetMainProgress), value);
+    }
 }
 
 void MainFrame::CheckConnectivity(bool showResult)

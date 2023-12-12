@@ -29,8 +29,7 @@ SpeedTester::SpeedTester(std::shared_ptr<wui::i_locale> locale_,
 
 SpeedTester::~SpeedTester()
 {
-	runned = false;
-	if (thread.joinable()) thread.join();
+	Stop();
 }
 
 void SpeedTester::SetParams(std::string_view serverAddress_, bool useHTTPS_)
@@ -55,6 +54,12 @@ void SpeedTester::DoTheTest()
 			if (runned) readyCallback(inputSpeed, outputSpeed);
 		});
 	}
+}
+
+void SpeedTester::Stop()
+{
+	runned = false;
+	if (thread.joinable()) thread.join();
 }
 
 uint32_t SpeedTester::GetInputSpeed() const

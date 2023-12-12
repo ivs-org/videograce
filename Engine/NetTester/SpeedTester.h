@@ -30,6 +30,7 @@ public:
 	void SetParams(std::string_view serverAddress, bool useHTTPS);
 
 	void DoTheTest();
+	void Stop();
 
 	uint32_t GetInputSpeed() const;
 	uint32_t GetOutputSpeed() const;
