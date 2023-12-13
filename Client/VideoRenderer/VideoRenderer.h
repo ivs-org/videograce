@@ -13,7 +13,6 @@
 #include <memory>
 
 #include <Transport/ISocket.h>
-#include <mt/semaphore.h>
 
 #include <UI/DeviceNotifies.h>
 
