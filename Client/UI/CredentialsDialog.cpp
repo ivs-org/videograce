@@ -157,7 +157,7 @@ void CredentialsDialog::OK()
         login = loginInput->text();
         password = passwordInput->text();
 
-        mainFrame.lock()->emit_event(4100, 0);
+        mainFrame.lock()->emit_event(4101, 0);
         
         ok = true;
         window->destroy();
@@ -250,7 +250,7 @@ void CredentialsDialog::RegistrationEndCallback(RegistrationResult result, const
         wui::config::set_string("Credentials", "Login", login);
         wui::config::set_string("Credentials", "Password", password);
 
-        mainFrame.lock()->emit_event(4100, 0);
+        mainFrame.lock()->emit_event(4101, 0);
 
         ok = true;
         window->destroy();

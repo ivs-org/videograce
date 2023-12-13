@@ -59,6 +59,7 @@ enum class MyEvent : uint32_t
     SetMainProgress           = 4010,
 
     CredentialsReady          = 4100,
+    NewCredentials            = 4101,
 
     SpeedTestCompleted        = 4200,
     ConnectivityTestCompleted = 4201,
@@ -1035,6 +1036,13 @@ void MainFrame::ReceiveEvents(const wui::event &ev)
                             {
                                 controller.Disconnect();
                             }
+                            storage.Connect(GetAppDataPath() + "local.db");
+                        break;
+                        case MyEvent::NewCredentials:
+                            controller.SetCredentials(credentialsDialog.login, credentialsDialog.password);
+
+                            UpdateTitle();
+                            controller.Connect(wui::config::get_string("Connection", "Address", ""), wui::config::get_int("Connection", "Secure", 0) != 0);
                             storage.Connect(GetAppDataPath() + "local.db");
                         break;
                         case MyEvent::SpeedTestCompleted:
