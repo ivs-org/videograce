@@ -7,8 +7,6 @@
 
 #include <Registrator/Registrator.h>
 
-#include <Common/Common.h>
-
 #include <Proto/CommandType.h>
 #include <Proto/CmdGroupList.h>
 #include <Proto/CmdUserUpdateRequest.h>
@@ -86,8 +84,7 @@ void Registrator::OnWebSocket(Transport::WSMethod method, const std::string &mes
     switch (method)
     {
         case Transport::WSMethod::Open:
-            DBGTRACE("Registartor's connection to server established\n");
-            sysLog->info("Registartor's connection to server established");
+            sysLog->info("Registrator's connection to server established");
         break;
         case Transport::WSMethod::Message:
         {
@@ -110,12 +107,10 @@ void Registrator::OnWebSocket(Transport::WSMethod method, const std::string &mes
         }
         break;
         case Transport::WSMethod::Close:
-            DBGTRACE("Registartor's connection to server closed\n");
-            sysLog->info("Registartor's connection to server closed");
+            sysLog->info("Registrator's connection to server closed");
         break;
         case Transport::WSMethod::Error:
-            DBGTRACE("Registartor's WebSocket error (%s)\n", message.c_str());
-            errLog->critical("Registartor's WebSocket error {0}", message);
+            errLog->critical("Registrator's WebSocket error {0}", message);
         break;
     }
 
