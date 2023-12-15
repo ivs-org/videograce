@@ -19,173 +19,174 @@
 
 namespace Controller
 {
-	class Controller : public IController, public Transport::IWebSocketCallback
-	{
-	public:
-		Controller(Storage::Storage &storage, IMemberList &memberList);
-		~Controller();
 
-		virtual void SetEventHandler(std::function<void(const Event&)> handler);
-		virtual void SetConferenceUpdateHandler(std::function<void(const Proto::CONFERENCE_UPDATE_RESPONSE::Command&)> handler);
-		virtual void SetContactListHandler(std::function<void(const Storage::Contacts&)> handler);
-		
-		virtual void Connect(const std::string &serverAddress, bool secureConnection);
-		virtual void Disconnect();
-		virtual bool Connected();
+class Controller : public IController, public Transport::IWebSocketCallback
+{
+public:
+    Controller(Storage::Storage &storage, IMemberList &memberList);
+    ~Controller();
 
-		virtual void UserUpdate(int64_t userId, const std::string &name = "", const std::string &avatar = "", const std::string &login = "", const std::string &password = "");
+    virtual void SetEventHandler(std::function<void(const Event&)> handler);
+    virtual void SetConferenceUpdateHandler(std::function<void(const Proto::CONFERENCE_UPDATE_RESPONSE::Command&)> handler);
+    virtual void SetContactListHandler(std::function<void(const Storage::Contacts&)> handler);
+    
+    virtual void Connect(const std::string &serverAddress, bool secureConnection);
+    virtual void Disconnect();
+    virtual bool Connected();
 
-		virtual void SetCredentials(const std::string &login, const std::string &password);
-		virtual void Update(const std::string &fileName, const std::string &appFolder = "");
-		virtual void SetMaxBitrate(uint32_t value);
+    virtual void UserUpdate(int64_t userId, const std::string &name = "", const std::string &avatar = "", const std::string &login = "", const std::string &password = "");
 
-		virtual void CreateCapturer(const DeviceValues &device);
-		virtual void ConnectCapturer(const DeviceValues &device);
-		virtual void DeleteCapturer(uint32_t deviceId);
+    virtual void SetCredentials(const std::string &login, const std::string &password);
+    virtual void Update(const std::string &fileName, const std::string &appFolder = "");
+    virtual void SetMaxBitrate(uint32_t value);
 
-		virtual void ConnectToConference(const Proto::Conference &conference, bool hasCamera, bool hasMicrophone, bool hasDemonstration);
-		virtual void DisconnectFromConference(std::vector<DeviceValues> capturers, std::vector<DeviceValues> renderers);
+    virtual void CreateCapturer(const DeviceValues &device);
+    virtual void ConnectCapturer(const DeviceValues &device);
+    virtual void DeleteCapturer(uint32_t deviceId);
 
-		virtual void ConnectRenderer(uint32_t deviceId, uint32_t ssrc);
-		virtual void DisconnectRenderer(uint32_t deviceId, uint32_t ssrc);
+    virtual void ConnectToConference(const Proto::Conference &conference, bool hasCamera, bool hasMicrophone, bool hasDemonstration);
+    virtual void DisconnectFromConference(std::vector<DeviceValues> capturers, std::vector<DeviceValues> renderers);
 
-		virtual void ChangeResolution(uint32_t deviceId, Video::Resolution resolution);
-		virtual void MicrophoneActive(uint32_t deviceId, Proto::MICROPHONE_ACTIVE::ActiveType activeType);
+    virtual void ConnectRenderer(uint32_t deviceId, uint32_t ssrc);
+    virtual void DisconnectRenderer(uint32_t deviceId, uint32_t ssrc);
 
-		virtual void CallRequest(CallValues values);
-		virtual void CallResponse(CallValues values);
+    virtual void ChangeResolution(uint32_t deviceId, Video::Resolution resolution);
+    virtual void MicrophoneActive(uint32_t deviceId, Proto::MICROPHONE_ACTIVE::ActiveType activeType);
 
-        virtual void AddContact(int64_t clientId);
-        virtual void DeleteContact(int64_t clientId);
+    virtual void CallRequest(CallValues values);
+    virtual void CallResponse(CallValues values);
 
-		virtual void CreateConference(const Proto::Conference &conference);
-		virtual void EditConference(const Proto::Conference &conference);
-		virtual void DeleteConference(int64_t conferenceId);
-        virtual void AddMeToConference(const std::string &tag);
-        virtual void DeleteMeFromConference(int64_t conferenceId);
-		virtual void CreateTempConference();
-		virtual void SendConnectToConference(const std::string &tag, int64_t connecter_id, uint32_t connecter_connection_id, uint32_t flags);
+    virtual void AddContact(int64_t clientId);
+    virtual void DeleteContact(int64_t clientId);
 
-		virtual void UpdateGroupList();
+    virtual void CreateConference(const Proto::Conference &conference);
+    virtual void EditConference(const Proto::Conference &conference);
+    virtual void DeleteConference(int64_t conferenceId);
+    virtual void AddMeToConference(const std::string &tag);
+    virtual void DeleteMeFromConference(int64_t conferenceId);
+    virtual void CreateTempConference();
+    virtual void SendConnectToConference(const std::string &tag, int64_t connecter_id, uint32_t connecter_connection_id, uint32_t flags);
 
-		virtual void UpdateContactList();
-		
-        virtual void SearchContact(const std::string &name);
+    virtual void UpdateGroupList();
 
-		virtual void UpdateConferencesList();
+    virtual void UpdateContactList();
 
-		virtual void SendMemberAction(const std::vector<int64_t> &members, Proto::MEMBER_ACTION::Action action, uint32_t grants = 0);
-		virtual void SendMemberActionResult(int64_t member, Proto::MEMBER_ACTION::Result result);
+    virtual void SearchContact(const std::string &name);
 
-		virtual void SendTurnSpeaker();
-		virtual void SendWantSpeak();
+    virtual void UpdateConferencesList();
 
-		virtual void LoadMessages(uint64_t fromDT);
-		virtual void DeliveryMessages(const Storage::Messages &messages);
+    virtual void SendMemberAction(const std::vector<int64_t> &members, Proto::MEMBER_ACTION::Action action, uint32_t grants = 0);
+    virtual void SendMemberActionResult(int64_t member, Proto::MEMBER_ACTION::Result result);
 
-		virtual void RequestMediaAddresses();
+    virtual void SendTurnSpeaker();
+    virtual void SendWantSpeak();
 
-		virtual State GetState() const;
+    virtual void LoadMessages(uint64_t fromDT);
+    virtual void DeliveryMessages(const Storage::Messages &messages);
 
-		virtual bool IsSecureConnection() const;
-		virtual std::string GetServerAddress() const;
-		virtual std::string GetLogin() const;
-		virtual std::string GetPassword() const;
+    virtual void RequestMediaAddresses();
 
-		virtual uint32_t GetGrants() const;
-		virtual uint32_t GetMaxOutputBitrate() const;
+    virtual State GetState() const;
 
-		virtual int64_t GetMyClientId() const;
-		virtual std::string GetMyClientName() const;
-		virtual std::string GetServerName() const;
+    virtual bool IsSecureConnection() const;
+    virtual std::string GetServerAddress() const;
+    virtual std::string GetLogin() const;
+    virtual std::string GetPassword() const;
 
-		virtual Proto::Conference &GetCurrentConference();
+    virtual uint32_t GetGrants() const;
+    virtual uint32_t GetMaxOutputBitrate() const;
 
-		virtual uint16_t GetReducedFrameRate();
+    virtual int64_t GetMyClientId() const;
+    virtual std::string GetMyClientName() const;
+    virtual std::string GetServerName() const;
 
-	private:
-        std::function<void(const Event&)> eventHandler;
-		std::function<void(const Proto::CONFERENCE_UPDATE_RESPONSE::Command&)> conferenceUpdateHandler;
-		std::function<void(const Storage::Contacts&)> contactListHandler;
+    virtual Proto::Conference &GetCurrentConference();
 
-		Storage::Storage &storage;
-        IMemberList &memberList;
+    virtual uint16_t GetReducedFrameRate();
 
-		std::atomic<State> state;
+private:
+    std::function<void(const Event&)> eventHandler;
+    std::function<void(const Proto::CONFERENCE_UPDATE_RESPONSE::Command&)> conferenceUpdateHandler;
+    std::function<void(const Storage::Contacts&)> contactListHandler;
 
-		uint32_t grants;
-		uint32_t maxOutputBitrate;
-		uint16_t reducedFrameRate;
+    Storage::Storage &storage;
+    IMemberList &memberList;
 
-		time_t callStart;
+    std::atomic<State> state;
 
-		Proto::Conference currentConference;
-        int64_t subscriberId;
+    uint32_t grants;
+    uint32_t maxOutputBitrate;
+    uint16_t reducedFrameRate;
 
-		std::string baseURL;
-		Transport::WebSocket webSocket;
+    time_t callStart;
 
-		std::string serverAddress;
-		bool secureConnection;
-		std::string login, password;
+    Proto::Conference currentConference;
+    int64_t subscriberId;
 
-		int64_t clientId;
-		uint32_t connectionId;
-		std::string clientName;
-		std::string secureKey;
+    std::string baseURL;
+    Transport::WebSocket webSocket;
 
-		std::string serverName;
+    std::string serverAddress;
+    bool secureConnection;
+    std::string login, password;
 
-        Storage::Contacts findedContacts;
+    int64_t clientId;
+    uint32_t connectionId;
+    std::string clientName;
+    std::string secureKey;
 
-		enum class DisconnectReason
-		{
-			NetworkError = 0,
+    std::string serverName;
 
-			Redirected,
+    Storage::Contacts findedContacts;
 
-			AuthNeeded,
-			InvalidCredentionals,
-			
-			UpdateRequired,
-			ServerOutdated,
-			
-			ServerFull,
-			InternalServerError
-		} disconnectReason;
+    enum class DisconnectReason
+    {
+        NetworkError = 0,
 
-		const char* toString(DisconnectReason reason);
-		const char* toString(State state);
+        Redirected,
 
-		std::mutex pingerMutex;
-		bool pinging;
-		std::thread pinger;
+        AuthNeeded,
+        InvalidCredentionals,
+        
+        UpdateRequired,
+        ServerOutdated,
+        
+        ServerFull,
+        InternalServerError
+    } disconnectReason;
 
-		std::thread updater;
+    const char* toString(DisconnectReason reason);
+    const char* toString(State state);
 
-		enum class ContactListReceiving
-		{
-			Undefined = 0,
+    bool pinging;
+    std::thread pinger;
 
-			Update,
-			Search
-		};
-		ContactListReceiving contactListReceving;
+    std::thread updater;
 
-		std::shared_ptr<spdlog::logger> sysLog, errLog;
+    enum class ContactListReceiving
+    {
+        Undefined = 0,
 
-		void PingerStart();
-		void PingerStop();
-		
-		virtual void OnWebSocket(Transport::WSMethod method, const std::string &message);
+        Update,
+        Search
+    };
+    ContactListReceiving contactListReceving;
 
-		void Logon();
-		void Logout();
+    std::shared_ptr<spdlog::logger> sysLog, errLog;
 
-		void Disconnect(DisconnectReason disconnectReason);
-		
-		void ChangeState(State newState);
+    void PingerStart();
+    void PingerStop();
+    
+    virtual void OnWebSocket(Transport::WSMethod method, const std::string &message);
 
-		void SendCommand(const std::string &command);
-	};
+    void Logon();
+    void Logout();
+
+    void Disconnect(DisconnectReason disconnectReason);
+    
+    void ChangeState(State newState);
+
+    void SendCommand(const std::string &command);
+};
+
 }

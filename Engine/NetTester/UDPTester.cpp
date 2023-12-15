@@ -28,8 +28,7 @@ UDPTester::UDPTester(std::shared_ptr<wui::i_locale> locale_, std::function<void(
 
 UDPTester::~UDPTester()
 {
-	runned = false;
-	if (thread.joinable()) thread.join();
+	Stop();
 }
 
 void UDPTester::AddAddress(const char* address, uint16_t port)
@@ -49,7 +48,7 @@ void UDPTester::DoTheTest()
 {
 	if (!runned && !connections.empty())
 	{
-		if (thread.joinable()) thread.join();
+		Stop();
 
 		thread = std::thread([this]() {
 			runned = true;
@@ -88,6 +87,12 @@ void UDPTester::DoTheTest()
 			runned = false;
 		});
 	}
+}
+
+void UDPTester::Stop()
+{
+	runned = false;
+	if (thread.joinable()) thread.join();
 }
 
 bool UDPTester::TestPassed() const

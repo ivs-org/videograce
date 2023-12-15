@@ -42,8 +42,7 @@ void SpeedTester::DoTheTest()
 {
 	if (!serverAddress.empty())
 	{
-		runned = false;
-		if (thread.joinable()) thread.join();
+		Stop();
 
 		runned = true;
 

@@ -31,6 +31,7 @@ public:
 	void ClearAddresses();
 
 	void DoTheTest();
+	void Stop();
 
 	bool TestPassed() const;
 

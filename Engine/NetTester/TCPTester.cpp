@@ -71,8 +71,7 @@ TCPTester::TCPTester(std::shared_ptr<wui::i_locale> locale_, std::function<void(
 
 TCPTester::~TCPTester()
 {
-	runned = false;
-	if (thread.joinable()) thread.join();
+	Stop();
 }
 
 void TCPTester::SetAddress(const std::string &address_, uint16_t port_)
@@ -91,7 +90,7 @@ void TCPTester::DoTheTest()
 {
 	if (!runned && !address.empty())
 	{
-		if (thread.joinable()) thread.join();
+		Stop();
 
 		thread = std::thread([this]() {
 			runned = true;
@@ -127,6 +126,12 @@ void TCPTester::DoTheTest()
 			runned = false;
 		});
 	}
+}
+
+void TCPTester::Stop()
+{
+	runned = false;
+	if (thread.joinable()) thread.join();
 }
 
 bool TCPTester::TestPassed() const
