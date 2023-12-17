@@ -65,7 +65,8 @@ TCPTester::TCPTester(std::shared_ptr<wui::i_locale> locale_, std::function<void(
 	runned(false),
 	address(), port(0),
 	isOK(false),
-	thread()
+	thread(),
+	sysLog(spdlog::get("System")), errLog(spdlog::get("Error"))
 {
 }
 
@@ -101,6 +102,7 @@ void TCPTester::DoTheTest()
 			tcp::resolver::query query(address, std::to_string(port));
 			tcp::resolver::iterator iterator = resolver.resolve(query);
 
+			sysLog->trace("TCPTester :: DoTheTest :: Connecting to address: {0}:{1}", address, port);
 			tcp_client c(io_service, iterator);
 
 			std::thread t([&io_service]() { try { io_service.run(); } catch (...) {} });
@@ -116,6 +118,8 @@ void TCPTester::DoTheTest()
 			
 			isOK = c.is_ok();
 
+			sysLog->trace("TCPTester :: DoTheTest :: Result: {0}:{1} -> {2}", address, port, isOK ? "PASS" : "FAIL");
+
 			io_service.stop();
 
 			if (runned)
@@ -130,8 +134,12 @@ void TCPTester::DoTheTest()
 
 void TCPTester::Stop()
 {
+	sysLog->trace("TCPTester :: Perform ending");
+
 	runned = false;
 	if (thread.joinable()) thread.join();
+
+	sysLog->trace("TCPTester :: Ended");
 }
 
 bool TCPTester::TestPassed() const

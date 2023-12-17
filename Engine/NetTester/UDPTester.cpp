@@ -22,7 +22,8 @@ UDPTester::UDPTester(std::shared_ptr<wui::i_locale> locale_, std::function<void(
     readyCallback(readyCallback_),
 	runned(false),
 	thread(),
-	connections()
+	connections(),
+	sysLog(spdlog::get("System")), errLog(spdlog::get("Error"))
 {
 }
 
@@ -33,14 +34,19 @@ UDPTester::~UDPTester()
 
 void UDPTester::AddAddress(const char* address, uint16_t port)
 {
+	sysLog->trace("UDPTester :: AddAddress :: Perform adding {0}:{1}", address, port);
+
 	if (std::find(connections.begin(), connections.end(), Connection(Transport::Address(address, port))) == connections.end())
 	{
+		sysLog->trace("UDPTester :: AddAddress :: Added {0}:{1}", address, port);
 		connections.emplace_back(Connection(Transport::Address(address, port)));
 	}
 }
 
 void UDPTester::ClearAddresses()
 {
+	sysLog->trace("UDPTester :: ClearAddresses()");
+
 	connections.clear();
 }
 
@@ -70,12 +76,16 @@ void UDPTester::DoTheTest()
 
 					rtpSocket.Start(connection.address.type);
 
+					sysLog->trace("UDPTester :: DoTheTest :: First send to address: {0}", connection.address.toString());
+
 					rtpSocket.Send(packet, &connection.address);
 
 					std::this_thread::sleep_for(std::chrono::milliseconds(2000));
 					rtpSocket.Send(packet, &connection.address);
 
 					rtpSocket.Stop();
+
+					sysLog->trace("UDPTester :: DoTheTest :: Sending end to address: {0}", connection.address.toString());
 				}
 			}
 
@@ -91,8 +101,12 @@ void UDPTester::DoTheTest()
 
 void UDPTester::Stop()
 {
+	sysLog->trace("UDPTester :: Perform ending");
+
 	runned = false;
 	if (thread.joinable()) thread.join();
+
+	sysLog->trace("UDPTester :: Ended");
 }
 
 bool UDPTester::TestPassed() const
@@ -103,6 +117,7 @@ bool UDPTester::TestPassed() const
 		{
 			return false;
 		}
+		sysLog->trace("UDPTester :: TestPassed :: Result: {0} -> {1}", connection.address.toString(), connection.available ? "PASS" : "FAIL");
 	}
 	return true;
 }

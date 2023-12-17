@@ -23,7 +23,8 @@ SpeedTester::SpeedTester(std::shared_ptr<wui::i_locale> locale_,
 	thread(),
 	serverAddress(), useHTTPS(false),
 	inputSpeed(0), outputSpeed(0),
-	runned(false)
+	runned(false),
+	sysLog(spdlog::get("System")), errLog(spdlog::get("Error"))
 {
 }
 
@@ -57,8 +58,12 @@ void SpeedTester::DoTheTest()
 
 void SpeedTester::Stop()
 {
+	sysLog->trace("SpeedTester :: Perform ending");
+	
 	runned = false;
 	if (thread.joinable()) thread.join();
+	
+	sysLog->trace("SpeedTester :: Ended");
 }
 
 uint32_t SpeedTester::GetInputSpeed() const
@@ -77,8 +82,14 @@ void SpeedTester::TakeOutputSpeed()
 
 	progressCallback(locale->get("net_test", "connecting"), 0);
 
-	Transport::HTTPClient httpClient;
+	sysLog->trace("SpeedTester :: TakeOutputSpeed :: Perform connecting to url: {0}", baseURL);
+
+	Transport::HTTPClient httpClient([&](int32_t c, const char *m){
+		errLog->error("SpeedTester :: TakeOutputSpeed ERROR(code: {0}, msg: {1})", c, m);
+	});
 	httpClient.Connect(baseURL);
+
+	sysLog->trace("SpeedTester :: TakeOutputSpeed :: Connection established");
 
 	progressCallback(locale->get("net_test", "connected"), 0);
 
@@ -93,6 +104,8 @@ void SpeedTester::TakeOutputSpeed()
 	Common::TimeMeter timeMeter;
 	for (auto i = 1; i != COUNT + 1; ++i)
 	{
+		sysLog->trace("SpeedTester :: TakeOutputSpeed :: Perform iteration {0}", i);
+
 		timeMeter.Reset();
 
 		httpClient.Request("/nettest/output", "POST", dummy);
@@ -101,6 +114,8 @@ void SpeedTester::TakeOutputSpeed()
 
 		auto currentSpeed = static_cast<uint32_t>(avgSpeed / i);
 
+		sysLog->trace("SpeedTester :: TakeOutputSpeed :: iteration {0} result : {1} kbps", i, currentSpeed);
+
 		progressCallback(locale->get("net_test", "out_speed_testing") + ": " + 
 			std::to_string(currentSpeed) + " " + 
 			locale->get("net_test", "kbps"),
@@ -108,6 +123,7 @@ void SpeedTester::TakeOutputSpeed()
 
 		if (!runned)
 		{
+			sysLog->trace("SpeedTester :: TakeOutputSpeed :: iteration {0} stoped immidiately", i);
 			break;
 		}
 
@@ -116,17 +132,27 @@ void SpeedTester::TakeOutputSpeed()
 	
     outputSpeed = static_cast<uint32_t>(avgSpeed / COUNT);
 
+	sysLog->trace("SpeedTester :: TakeOutputSpeed :: result: {0} kbps", outputSpeed);
+
 	httpClient.Disconnect();
+
+	sysLog->trace("SpeedTester :: TakeOutputSpeed :: ended");
 }
 
 void SpeedTester::TakeInputSpeed()
 {
 	auto baseURL = (useHTTPS ? std::string("https://") : std::string("http://")) + serverAddress;
 
+	sysLog->trace("SpeedTester :: TakeInputSpeed :: Perform connecting to url: {0}", baseURL);
+
 	progressCallback(locale->get("net_test", "connecting"), 0);
 
-	Transport::HTTPClient httpClient;
+	Transport::HTTPClient httpClient([&](int32_t c, const char *m){
+		errLog->error("SpeedTester :: TakeInputSpeed ERROR(code: {0}, msg: {1})", c, m);
+	});
 	httpClient.Connect(baseURL);
+
+	sysLog->trace("SpeedTester :: TakeInputSpeed :: Connection established");
 
 	progressCallback(locale->get("net_test", "connected"), 0);
 
@@ -139,6 +165,8 @@ void SpeedTester::TakeInputSpeed()
 	Common::TimeMeter timeMeter;
 	for (auto i = 1; i != COUNT + 1; ++i)
 	{
+		sysLog->trace("SpeedTester :: TakeInputSpeed :: Perform iteration {0}", i);
+
 		timeMeter.Reset();
 
 		dummy = httpClient.Request("/nettest/input", "GET");
@@ -147,6 +175,8 @@ void SpeedTester::TakeInputSpeed()
 
 		auto currentSpeed = static_cast<uint32_t>(avgSpeed / i);
 
+		sysLog->trace("SpeedTester :: TakeInputSpeed :: iteration {0} result : {1} kbps", i, currentSpeed);
+
 		progressCallback(locale->get("net_test", "in_speed_testing") + ": " +
 			std::to_string(currentSpeed) + " " +
 			locale->get("net_test", "kbps"),
@@ -154,6 +184,7 @@ void SpeedTester::TakeInputSpeed()
 
 		if (!runned)
 		{
+			sysLog->trace("SpeedTester :: TakeInputSpeed :: iteration {0} stoped immidiately", i);
 			break;
 		}
 
@@ -162,7 +193,11 @@ void SpeedTester::TakeInputSpeed()
 
 	inputSpeed = static_cast<uint32_t>(avgSpeed / COUNT);
 
+	sysLog->trace("SpeedTester :: TakeInputSpeed :: result: {0} kbps", inputSpeed);
+
 	httpClient.Disconnect();
+
+	sysLog->trace("SpeedTester :: TakeInputSpeed :: ended");
 }
 
 }

@@ -1051,7 +1051,6 @@ void MainFrame::ReceiveEvents(const wui::event &ev)
                         case MyEvent::ConnectivityTestCompleted:
                             if (showConnectivityResult && ev.internal_event_.y != 0 && ev.internal_event_.y != 1)
                             {
-                                HideBusy();
                                 if (udpTester.TestPassed())
                                 {
                                     messageBox->show(wui::locale("net_test", "connectivity_ok"),
@@ -1086,10 +1085,7 @@ void MainFrame::ReceiveEvents(const wui::event &ev)
                                 break;
                             }
 
-                            if (useTCPMedia)
-                            {
-                                UpdateTitle();
-                            }
+                            UpdateTitle();
                         break;
                         case MyEvent::RingerEnd:
                             switch (static_cast<Ringer::RingType>(ev.internal_event_.y))
@@ -2502,10 +2498,8 @@ void MainFrame::CheckConnectivity(bool showResult)
     showConnectivityResult = showResult;
     udpTester.ClearAddresses();
     controller.RequestMediaAddresses();
-    if (showResult)
-    {
-        ShowBusy(wui::locale("net_test", "checking_connectivity"));
-    }
+
+    UpdateTitle(wui::locale("net_test", "checking_connectivity"));
 }
 
 void MainFrame::DetermineNetSpeed(bool force)

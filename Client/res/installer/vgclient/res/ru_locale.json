@@ -79,7 +79,7 @@
       "udp_sockets_unavailable": "Нет доступа к следующим UDP сокетам сервера:",
       "tcp_socket_unavailable": "Нет доступа к TCP медиа сокету сервера:",
       "sockets_access_required": "Работа видеосвязи невозможна. Требуется обеспечить доступ к указанным сокетам",
-      "checking_connectivity": "Проверка доступности\nUDP и TCP AV портов",
+      "checking_connectivity": "Проверка доступности UDP и TCP AV портов",
       "connectivity_ok": "Доступ ко всем портам AV проверен,\nвсе работает исправно",
       "connectivity_tcp_only": "Нет доступа к UDP портам,\nAV трафик будет передаваться по TCP",
       "connecting": "Подключение",

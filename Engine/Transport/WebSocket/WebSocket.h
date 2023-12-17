@@ -13,23 +13,25 @@
 
 namespace Transport
 {
-	class WebSocketImpl;
 
-	class WebSocket : public IWebSocket
-	{
-	public:
-		WebSocket(IWebSocketCallback &callback);
-		virtual ~WebSocket();
+class WebSocketImpl;
 
-		virtual void Connect(const std::string &url);
-		virtual void Send(const std::string &message);
-		virtual void Disconnect();
+class WebSocket : public IWebSocket
+{
+public:
+    WebSocket(IWebSocketCallback &callback);
+    virtual ~WebSocket();
 
-		virtual bool IsConnected();
-		
-	private:
-		std::recursive_mutex implMutex;
-		std::unique_ptr<WebSocketImpl> impl;
-		IWebSocketCallback &callback;
-	};
+    virtual void Connect(const std::string &url);
+    virtual void Send(const std::string &message);
+    virtual void Disconnect();
+
+    virtual bool IsConnected();
+        
+private:
+    std::recursive_mutex implMutex;
+    std::unique_ptr<WebSocketImpl> impl;
+    IWebSocketCallback &callback;
+};
+
 }

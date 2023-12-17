@@ -139,6 +139,8 @@ Controller::Controller(Storage::Storage &storage_, IMemberList &memberList_)
     disconnectReason(DisconnectReason::NetworkError),
     pinging(false),
     pinger(),
+    lastPingTime(0),
+    pingTimeMeter(),
     updater(),
     contactListReceving(ContactListReceiving::Update),
     sysLog(spdlog::get("System")), errLog(spdlog::get("Error"))
@@ -201,6 +203,7 @@ void Controller::Disconnect(DisconnectReason disconnectReason_)
         if (webSocket.IsConnected()) {
             webSocket.Send(Proto::DISCONNECT::Command().Serialize());
         }
+        PingerStop();
         webSocket.Disconnect();
     }).detach();
 }
@@ -233,19 +236,35 @@ void Controller::SetCredentials(const std::string &login_, const std::string &pa
 
 void Controller::PingerStart()
 {
+    sysLog->trace("Controller::PingerStart :: Perform starting");
+
     if (!pinging)
     {
         pinging = true;
 
         pinger = std::thread([this]() {
-            static uint16_t cnt = 0;
+            sysLog->trace("Controller::PingerStart :: Started");
+
+            uint16_t cnt = 0;
+            
+            lastPingTime = 0;
+            pingTimeMeter.Reset();
+
             while (pinging)
             {
-                if (++cnt > 32)
+                if (++cnt > 8)
                 {
                     SendCommand(Proto::PING::Command().Serialize());
                     cnt = 0;
                 }
+
+                if (lastPingTime != 0 && lastPingTime + 3000000 < pingTimeMeter.Measure())
+                {
+                    errLog->error("Controller :: Connection to server ping timeouted last ping: {0}, now {1}", lastPingTime, pingTimeMeter.Measure());
+                    Disconnect(DisconnectReason::NetworkError);
+                    return;
+                }
+
                 std::this_thread::sleep_for(std::chrono::milliseconds(250));
             }
         });
@@ -254,8 +273,12 @@ void Controller::PingerStart()
 
 void Controller::PingerStop()
 {
+    sysLog->trace("Controller::PingerStop :: Perform stoping");
+
     pinging = false;
     if (pinger.joinable()) pinger.join();
+
+    sysLog->trace("Controller::PingerStop :: Stoped");
 }
 
 std::string GetDefaultAddress(const std::string &serverAddress)
@@ -1396,6 +1419,7 @@ void Controller::OnWebSocket(Transport::WSMethod method, const std::string &mess
                 case Proto::CommandType::Undefined:
                 break;
                 case Proto::CommandType::Ping:
+                    lastPingTime = pingTimeMeter.Measure();
                 break;
                 default: break;
             }

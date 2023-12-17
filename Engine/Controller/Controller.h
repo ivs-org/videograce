@@ -15,6 +15,8 @@
 
 #include <Transport/WebSocket/WebSocket.h>
 
+#include <Common/TimeMeter.h>
+
 #include <spdlog/spdlog.h>
 
 namespace Controller
@@ -160,6 +162,9 @@ private:
 
     bool pinging;
     std::thread pinger;
+    uint64_t lastPingTime;
+
+    Common::TimeMeter pingTimeMeter;
 
     std::thread updater;
 

@@ -20,6 +20,8 @@
 
 #include <Transport/Address.h>
 
+#include <spdlog/spdlog.h>
+
 namespace NetTester
 {
 
@@ -66,6 +68,8 @@ private:
 	std::thread thread;
 
 	std::vector<Connection> connections;
+
+	std::shared_ptr<spdlog::logger> sysLog, errLog;
 	
 	virtual void Send(const Transport::IPacket &packet, const Transport::Address *address = nullptr);
 };

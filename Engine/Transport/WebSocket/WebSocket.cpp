@@ -22,6 +22,8 @@
 #include <thread>
 #include <atomic>
 
+#include <spdlog/spdlog.h>
+
 using tcp = boost::asio::ip::tcp;               // from <boost/asio/ip/tcp.hpp>
 namespace ssl = boost::asio::ssl;               // from <boost/asio/ssl.hpp>
 namespace websocket = boost::beast::websocket;  // from <boost/beast/websocket.hpp>
@@ -50,6 +52,8 @@ class session : public std::enable_shared_from_this<session>
 
 	bool secure;
 
+	std::shared_ptr<spdlog::logger> sysLog, errLog;
+
 public:
 	// Resolver and socket require an io_context
 	explicit session(boost::asio::io_context& ioc, IWebSocketCallback &callback, bool secure_)
@@ -64,7 +68,8 @@ public:
 		write_queue_(),
 		writing_(false),
 		callback_(callback),
-		secure(secure_)
+		secure(secure_),
+		sysLog(spdlog::get("System")), errLog(spdlog::get("Error"))
 	{
 	}
 
@@ -83,12 +88,15 @@ public:
 				shared_from_this(),
 				std::placeholders::_1,
 				std::placeholders::_2));
+
+		sysLog->trace("WebSocket::session :: run (host: {0}, post: {1})", host, port);
 	}
 	
 	void on_resolve(boost::system::error_code ec, tcp::resolver::results_type results)
 	{
 		if (ec && !ioc_.stopped())
 		{
+			errLog->error("WebSocket::session :: on_resolve :: error: {0}", ec.message());
 			callback_.OnWebSocket(WSMethod::Error, "on_resolve " + ec.message());
 			return;
 		}
@@ -102,12 +110,15 @@ public:
 				&session::on_connect,
 				shared_from_this(),
 				std::placeholders::_1));
+
+		sysLog->trace("WebSocket::session :: on_resolve [OK]");
 	}
 	
 	void on_connect(boost::system::error_code ec)
 	{
 		if (ec && !ioc_.stopped())
 		{
+			errLog->error("WebSocket::session :: on_connect :: error: {0}", ec.message());
 			callback_.OnWebSocket(WSMethod::Error, "on_connect " + ec.message());
 			return;
 		}
@@ -121,6 +132,8 @@ public:
 					&session::on_ssl_handshake,
 					shared_from_this(),
 					std::placeholders::_1));
+
+			sysLog->trace("WebSocket::session :: on_connect :: Perform the SSL handshake");
 		}
 		else
 		{
@@ -130,6 +143,8 @@ public:
 					&session::on_handshake,
 					shared_from_this(),
 					std::placeholders::_1));
+
+			sysLog->trace("WebSocket::session :: on_connect :: Perform the websocket handshake");
 		}
 	}
 	
@@ -137,6 +152,7 @@ public:
 	{
 		if (ec && !ioc_.stopped())
 		{
+			errLog->error("WebSocket::session :: on_ssl_handshake :: error: {0}", ec.message());
 			callback_.OnWebSocket(WSMethod::Error, "on_ssl_handshake " + ec.message());
 			return;
 		}
@@ -147,15 +163,20 @@ public:
 				&session::on_handshake,
 				shared_from_this(),
 				std::placeholders::_1));
+
+		sysLog->trace("WebSocket::session :: on_ssl_handshake :: Perform the websocket handshake");
 	}
 
 	void on_handshake(boost::system::error_code ec)
 	{
 		if (ec && !ioc_.stopped())
 		{
+			errLog->error("WebSocket::session :: handshake :: error: {0}", ec.message());
 			callback_.OnWebSocket(WSMethod::Error, "on_handshake " + ec.message());
 			return;
 		}
+
+		sysLog->trace("WebSocket::session :: on_handshake :: [OK] success connected!");
 
 		callback_.OnWebSocket(WSMethod::Open, "");
 
@@ -191,6 +212,7 @@ public:
 		boost::ignore_unused(bytes_transferred);
 		if (ec && !ioc_.stopped())
 		{
+			errLog->error("WebSocket::session :: on_read :: error: {0}", ec.message());
 			callback_.OnWebSocket(WSMethod::Error, "on_read " + ec.message());
 			return;
 		}
@@ -204,6 +226,7 @@ public:
 
 	void write(const std::string &message)
 	{
+		sysLog->trace("WebSocket::write :: perform writing: {0}", message);
 		std::lock_guard<std::mutex> lock(write_mutex_);
 		write_queue_.push(message);
 		if (!writing_)
@@ -240,6 +263,8 @@ public:
 					std::placeholders::_1,
 					std::placeholders::_2));
 		}
+
+		sysLog->trace("WebSocket::do_write :: sended: {0}", message);
 	}
 
 	void on_write(boost::system::error_code ec,
@@ -249,23 +274,28 @@ public:
 
 		if (ec && !ioc_.stopped())
 		{
+			errLog->error("WebSocket::session :: on_write :: error: {0}", ec.message());
 			callback_.OnWebSocket(WSMethod::Error, "on_write " + ec.message());
 			return;
 		}
+
+		sysLog->trace("WebSocket::on_write :: Perform writing");
 
 		std::lock_guard<std::mutex> lock(write_mutex_);
 		if (!write_queue_.empty())
 			do_write();
 		else
 			writing_ = false;
+
+		sysLog->trace("WebSocket::on_write :: writed");
 	}
 
 	void close()
 	{
-		while (writing_) /// wait ending of writing
+		/*while (writing_) /// wait ending of writing
 		{
 			std::this_thread::sleep_for(std::chrono::milliseconds(100));
-		}
+		}*/
 
 		if (secure)
 		{
@@ -288,6 +318,8 @@ public:
 	void on_close(boost::system::error_code ec)
 	{
 		ioc_.stop();
+
+		sysLog->trace("WebSocket::session :: on_close {0}", ec ? "error: " + ec.message() : ":: NICE");
 
 		callback_.OnWebSocket(WSMethod::Close, ec ? "error: " + ec.message() : "");
 	}
@@ -318,6 +350,8 @@ class WebSocketImpl
 	std::shared_ptr<session> session_;
 
 	std::thread thread;
+
+	std::shared_ptr<spdlog::logger> sysLog;
 public:
 	WebSocketImpl(const std::string &url, IWebSocketCallback &callback_)
 		: ioc(),
@@ -325,7 +359,8 @@ public:
 		secure(false),
 		address(), port(),
 		session_(),
-		thread()
+		thread(),
+		sysLog(spdlog::get("System"))
 	{
 		std::string proto;
 		ParseURI(url, proto, address, port);
@@ -348,7 +383,11 @@ public:
 				session_ = std::make_shared<session>(ioc, callback, secure);
 				session_->run(address.c_str(), port.c_str());
 
+				sysLog->trace("WebSocketImpl :: started secure: {0}", secure ? "Y" : "N");
+
 				ioc.run();
+
+				sysLog->trace("WebSocketImpl :: ended");
 			});
 		}
 	}

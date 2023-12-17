@@ -2,12 +2,13 @@
  * HttpClient.cpp - Contains http client's impl
  *
  * Author: Anton (ud) Golovkov, udattsk@gmail.com
- * Copyright (C), Infinity Video Soft LLC, 2020
+ * Copyright (C), Infinity Video Soft LLC, 2020, 2023
  */
 
 #include <Version.h>
 
 #include <Transport/URI/URI.h>
+#include <Transport/HTTP/HttpClient.h>
 
 #include <boost/beast/core.hpp>
 #include <boost/beast/http.hpp>
@@ -20,7 +21,8 @@
 #include <cstdlib>
 #include <string>
 #include <vector>
-#include "HttpClient.h"
+
+#include <spdlog/spdlog.h>
 
 using tcp = boost::asio::ip::tcp;       // from <boost/asio/ip/tcp.hpp>
 namespace ssl = boost::asio::ssl;       // from <boost/asio/ssl.hpp>
@@ -49,9 +51,15 @@ public:
 	tcp::socket socket;
 
     std::function<void(int32_t, const char*)> errorCallback;
+
+	std::shared_ptr<spdlog::logger> sysLog, errLog;
 	
 	HttpImpl(const std::string &url, std::function<void(int32_t, const char*)> errorCallback_)
-		: host(), port(), ioc(), socket(ioc), errorCallback(errorCallback_)
+		: host(), port(),
+		ioc(),
+		socket(ioc),
+		errorCallback(errorCallback_),
+		sysLog(spdlog::get("System")), errLog(spdlog::get("Error"))
 	{
 		std::string proto;
 		ParseURI(url, proto, host, port);
@@ -62,10 +70,13 @@ public:
 			
 			port = port.empty() ? "80" : port;
 
+			sysLog->trace("HttpImpl::HttpImpl :: Perform connect to: {0}", url);
+
 			boost::system::error_code ec;
 			auto const results = resolver.resolve(host, port, ec);
 			if (ec)
 			{
+				errLog->error("HttpImpl::HttpImpl :: resolver error: (v: {0:d}, m:{1})", ec.value(), ec.message());
 				if (errorCallback) errorCallback(ec.value(), ec.message().c_str());
 				return;
 			}
@@ -73,8 +84,11 @@ public:
 			boost::asio::connect(socket, results.begin(), results.end(), ec);
 			if (ec && errorCallback)
 			{
+				errLog->error("HttpImpl::HttpImpl :: connect error: (v: {0:d}, m:{1})", ec.value(), ec.message());
                 errorCallback(ec.value(), ec.message().c_str());
 			}
+
+			sysLog->trace("HttpImpl::HttpImpl :: Connected to: {0}", url);
 		}
 	}
 
@@ -84,8 +98,11 @@ public:
 		socket.shutdown(tcp::socket::shutdown_both, ec);
 		if (ec.value() != 0 && ec != boost::asio::error::eof && errorCallback)
 		{
+			errLog->error("HttpImpl::~HttpImpl :: shutdown error: (v: {0:d}, m:{1})", ec.value(), ec.message());
             errorCallback(ec.value(), ec.message().c_str());
 		}
+
+		sysLog->trace("HttpImpl::~HttpImpl :: Ended");
 	}
 
 	virtual std::string Request(const std::string &target, const std::string &method, const std::string &body)
@@ -102,6 +119,7 @@ public:
 		http::write(socket, req, ec);
 		if (ec)
 		{
+			errLog->error("HttpImpl::Request :: http::write error: (v: {0:d}, m:{1})", ec.value(), ec.message());
 			if (errorCallback) errorCallback(ec.value(), ec.message().c_str());
 			return "";
 		}
@@ -113,7 +131,7 @@ public:
 		http::read(socket, buffer, res, ec);
 		if (ec)
 		{
-			auto msg = ec.message();
+			errLog->error("HttpImpl::Request :: http::read error: (v: {0:d}, m:{1})", ec.value(), ec.message());
 			if (errorCallback) errorCallback(ec.value(), ec.message().c_str());
 			return "";
 		}
@@ -138,8 +156,15 @@ public:
 
     std::function<void(int32_t, const char*)> errorCallback;
 
+	std::shared_ptr<spdlog::logger> sysLog, errLog;
+
 	HttpsImpl(const std::string &url, std::function<void(int32_t, const char*)> errorCallback_)
-		: host(), port(), ioc(), ctx{ ssl::context::sslv23_client }, stream{ ioc, ctx }, errorCallback(errorCallback_)
+		: host(), port(),
+		ioc(),
+		ctx{ ssl::context::sslv23_client },
+		stream{ ioc, ctx },
+		errorCallback(errorCallback_),
+		sysLog(spdlog::get("System")), errLog(spdlog::get("Error"))
 	{
 		std::vector<std::string> vals, addr;
 		std::string query = url;
@@ -152,11 +177,14 @@ public:
 				tcp::resolver resolver(ioc);
 				host = addr[0];
 				port = addr.size() > 1 ? addr[1] : "443";
+
+				sysLog->trace("HttpsImpl::HttpsImpl :: Perform connect to: {0}", url);
 								
 				// Set SNI Hostname (many hosts need this to handshake successfully)
 				if (!SSL_set_tlsext_host_name(stream.native_handle(), host.c_str()) && errorCallback)
 				{
 					boost::system::error_code ec{ static_cast<int>(::ERR_get_error()), boost::asio::error::get_ssl_category() };
+					errLog->error("HttpsImpl::HttpsImpl :: SSL_set_tlsext_host_name: (v: {0:d}, m:{1})", ec.value(), ec.message());
                     errorCallback(ec.value(), ec.message().c_str());
 				}
 
@@ -165,6 +193,7 @@ public:
 				auto const results = resolver.resolve(host, port, ec);
 				if (ec)
 				{
+					errLog->error("HttpsImpl::HttpsImpl :: resolver error: (v: {0:d}, m:{1})", ec.value(), ec.message());
 					if (errorCallback) errorCallback(ec.value(), ec.message().c_str());
 					return;
 				}
@@ -172,6 +201,7 @@ public:
 				boost::asio::connect(stream.next_layer(), results.begin(), results.end(), ec);
 				if (ec)
 				{
+					errLog->error("HttpsImpl::HttpsImpl :: connect error: (v: {0:d}, m:{1})", ec.value(), ec.message());
 					if (errorCallback) errorCallback(ec.value(), ec.message().c_str());
 					return;
 				}
@@ -179,6 +209,7 @@ public:
 				stream.handshake(ssl::stream_base::client, ec);
 				if (ec)
 				{
+					errLog->error("HttpsImpl::HttpsImpl :: handshake error: (v: {0:d}, m:{1})", ec.value(), ec.message());
 					if (errorCallback) errorCallback(ec.value(), ec.message().c_str());
 					return;
 				}
@@ -192,8 +223,10 @@ public:
 		stream.shutdown(ec);
 		if (ec.value() != 0 && ec != boost::asio::error::eof && errorCallback)
 		{
+			errLog->error("HttpsImpl::~HttpsImpl :: shutdown error: (v: {0:d}, m:{1})", ec.value(), ec.message());
             errorCallback(ec.value(), ec.message().c_str());
 		}
+		sysLog->trace("HttpsImpl::~HttpsImpl :: Ended");
 	}
 
 	virtual std::string Request(const std::string &target, const std::string &method, const std::string &body)
@@ -210,6 +243,7 @@ public:
 		http::write(stream, req, ec);
 		if (ec)
 		{
+			errLog->error("HttpsImpl::Request :: http::write error: (v: {0:d}, m:{1})", ec.value(), ec.message());
 			if (errorCallback) errorCallback(ec.value(), ec.message().c_str());
 			return "";
 		}
@@ -221,6 +255,7 @@ public:
 		http::read(stream, buffer, res, ec);
 		if (ec)
 		{
+			errLog->error("HttpsImpl::Request :: http::read error: (v: {0:d}, m:{1})", ec.value(), ec.message());
 			if (errorCallback) errorCallback(ec.value(), ec.message().c_str());
 			return "";
 		}

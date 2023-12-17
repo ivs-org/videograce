@@ -16,6 +16,8 @@
 
 #include <wui/locale/i_locale.hpp>
 
+#include <spdlog/spdlog.h>
+
 namespace NetTester
 {
 
@@ -48,6 +50,8 @@ private:
 	uint16_t port;
 
 	bool isOK;
+
+	std::shared_ptr<spdlog::logger> sysLog, errLog;
 
 	std::thread thread;
 };

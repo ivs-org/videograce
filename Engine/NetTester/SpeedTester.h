@@ -16,6 +16,8 @@
 
 #include <wui/locale/i_locale.hpp>
 
+#include <spdlog/spdlog.h>
+
 namespace NetTester
 {
 
@@ -47,6 +49,8 @@ private:
 	uint32_t inputSpeed, outputSpeed;
 
 	std::atomic<bool> runned;
+
+	std::shared_ptr<spdlog::logger> sysLog, errLog;
 	
 	void TakeInputSpeed();
 	void TakeOutputSpeed();
