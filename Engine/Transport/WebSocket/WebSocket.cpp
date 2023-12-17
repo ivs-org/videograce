@@ -297,6 +297,8 @@ public:
 			std::this_thread::sleep_for(std::chrono::milliseconds(100));
 		}*/
 
+		sysLog->trace("WebSocket::session :: close :: Perform closing");
+
 		if (secure)
 		{
 			ssl_ws_.async_close(websocket::close_code::normal,
@@ -317,6 +319,8 @@ public:
 
 	void on_close(boost::system::error_code ec)
 	{
+		sysLog->trace("WebSocket::session :: on_close :: Perform ioc_.stop");
+
 		ioc_.stop();
 
 		sysLog->trace("WebSocket::session :: on_close {0}", ec ? "error: " + ec.message() : ":: NICE");
