@@ -692,6 +692,8 @@ void Controller::OnWebSocket(Transport::WSMethod method, const std::string &mess
         break;
         case Transport::WSMethod::Message:
         {
+            sysLog->trace("Controller::WebSocket recv message: {0}", message);
+
             auto commandType = Proto::GetCommandType(message);
             switch (commandType)
             {
@@ -1387,6 +1389,7 @@ void Controller::OnWebSocket(Transport::WSMethod method, const std::string &mess
 
                     std::thread([this]() { Logout(); }).detach();
                 }
+                break;
                 case Proto::CommandType::ChangeServer:
                 {
                     Proto::CHANGE_SERVER::Command cmd;
@@ -1468,9 +1471,9 @@ void Controller::OnWebSocket(Transport::WSMethod method, const std::string &mess
         case Transport::WSMethod::Error:
             errLog->critical("Controller :: WebSocket error (message: \"{0}\")", message);
             
-            std::this_thread::sleep_for(std::chrono::milliseconds(500));
-
             eventHandler(Event(Event::Type::NetworkError));
+
+            std::this_thread::yield();
         break;
     }
 }

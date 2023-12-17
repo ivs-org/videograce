@@ -227,7 +227,7 @@ public:
 	void write(const std::string &message)
 	{
 		sysLog->trace("WebSocket::write :: perform writing: {0}", message);
-		std::lock_guard<std::mutex> lock(write_mutex_);
+		//std::lock_guard<std::mutex> lock(write_mutex_);
 		write_queue_.push(message);
 		if (!writing_)
 		{
@@ -281,7 +281,7 @@ public:
 
 		sysLog->trace("WebSocket::on_write :: Perform writing");
 
-		std::lock_guard<std::mutex> lock(write_mutex_);
+		//std::lock_guard<std::mutex> lock(write_mutex_);
 		if (!write_queue_.empty())
 			do_write();
 		else
@@ -425,7 +425,7 @@ public:
 };
 
 WebSocket::WebSocket(IWebSocketCallback &callback_)
-	: implMutex(),
+	: //implMutex(),
 	  impl(),
 	  callback(callback_)
 {
@@ -438,7 +438,7 @@ WebSocket::~WebSocket()
 
 void WebSocket::Connect(const std::string &url)
 {
-	std::lock_guard<std::recursive_mutex> lock(implMutex);
+	//std::lock_guard<std::recursive_mutex> lock(implMutex);
 	if (impl)
 	{
 		impl.reset(nullptr);
@@ -448,7 +448,7 @@ void WebSocket::Connect(const std::string &url)
 
 void WebSocket::Send(const std::string &message)
 {
-	std::lock_guard<std::recursive_mutex> lock(implMutex);
+	//std::lock_guard<std::recursive_mutex> lock(implMutex);
 	if (impl)
 	{
 		impl->Send(message);
@@ -457,13 +457,13 @@ void WebSocket::Send(const std::string &message)
 
 void WebSocket::Disconnect()
 {
-	std::lock_guard<std::recursive_mutex> lock(implMutex);
+	//std::lock_guard<std::recursive_mutex> lock(implMutex);
 	impl.reset(nullptr);
 }
 
 bool WebSocket::IsConnected()
 {
-	std::lock_guard<std::recursive_mutex> lock(implMutex);
+	//std::lock_guard<std::recursive_mutex> lock(implMutex);
 	if (impl)
 	{
 		return impl->IsConnected();

@@ -267,7 +267,7 @@ MainFrame::MainFrame()
     window->add_control(volumeBox, { 0 });
 
     controller.SetEventHandler([this](const Controller::Event &ev) {
-        std::lock_guard<std::mutex> lock(controllerEventsQueueMutex);
+        //std::lock_guard<std::mutex> lock(controllerEventsQueueMutex);
         controllerEventsQueue.push(ev);
 
         if (window)
@@ -1137,7 +1137,7 @@ void MainFrame::ReceiveEvents(const wui::event &ev)
 
 bool MainFrame::GetEventFromQueue(Controller::Event &ev)
 {
-    std::lock_guard<std::mutex> lock(controllerEventsQueueMutex);
+    //std::lock_guard<std::mutex> lock(controllerEventsQueueMutex);
     if (!controllerEventsQueue.empty())
     {
         ev = controllerEventsQueue.front();

@@ -81,6 +81,7 @@ void SpeedTester::TakeOutputSpeed()
 	auto baseURL = (useHTTPS ? std::string("https://") : std::string("http://")) + serverAddress;
 
 	progressCallback(locale->get("net_test", "connecting"), 0);
+	std::this_thread::yield();
 
 	sysLog->trace("SpeedTester :: TakeOutputSpeed :: Perform connecting to url: {0}", baseURL);
 
@@ -92,6 +93,7 @@ void SpeedTester::TakeOutputSpeed()
 	sysLog->trace("SpeedTester :: TakeOutputSpeed :: Connection established");
 
 	progressCallback(locale->get("net_test", "connected"), 0);
+	std::this_thread::yield();
 
 	const auto SIZE = 1024 * 100;
 	const auto COUNT = 5;
@@ -127,7 +129,7 @@ void SpeedTester::TakeOutputSpeed()
 			break;
 		}
 
-		std::this_thread::sleep_for(std::chrono::milliseconds(20));
+		std::this_thread::yield();
 	}
 	
     outputSpeed = static_cast<uint32_t>(avgSpeed / COUNT);
@@ -146,6 +148,7 @@ void SpeedTester::TakeInputSpeed()
 	sysLog->trace("SpeedTester :: TakeInputSpeed :: Perform connecting to url: {0}", baseURL);
 
 	progressCallback(locale->get("net_test", "connecting"), 0);
+	std::this_thread::yield();
 
 	Transport::HTTPClient httpClient([&](int32_t c, const char *m){
 		errLog->error("SpeedTester :: TakeInputSpeed ERROR(code: {0}, msg: {1})", c, m);
@@ -155,6 +158,7 @@ void SpeedTester::TakeInputSpeed()
 	sysLog->trace("SpeedTester :: TakeInputSpeed :: Connection established");
 
 	progressCallback(locale->get("net_test", "connected"), 0);
+	std::this_thread::yield();
 
 	const auto COUNT = 5;
 
@@ -188,7 +192,7 @@ void SpeedTester::TakeInputSpeed()
 			break;
 		}
 
-		std::this_thread::sleep_for(std::chrono::milliseconds(20));
+		std::this_thread::yield();
 	}
 
 	inputSpeed = static_cast<uint32_t>(avgSpeed / COUNT);

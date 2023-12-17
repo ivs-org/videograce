@@ -29,7 +29,7 @@ public:
     virtual bool IsConnected();
         
 private:
-    std::recursive_mutex implMutex;
+    //std::recursive_mutex implMutex;
     std::unique_ptr<WebSocketImpl> impl;
     IWebSocketCallback &callback;
 };
