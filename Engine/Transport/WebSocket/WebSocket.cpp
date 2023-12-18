@@ -27,6 +27,7 @@
 using tcp = boost::asio::ip::tcp;               // from <boost/asio/ip/tcp.hpp>
 namespace ssl = boost::asio::ssl;               // from <boost/asio/ssl.hpp>
 namespace websocket = boost::beast::websocket;  // from <boost/beast/websocket.hpp>
+using ws_timeout = boost::beast::websocket::stream_base::timeout;
 
 namespace Transport
 {
@@ -122,7 +123,7 @@ public:
 			callback_.OnWebSocket(WSMethod::Error, "on_connect " + ec.message());
 			return;
 		}
-		
+
 		if (secure)
 		{
 			// Perform the SSL handshake
@@ -137,6 +138,12 @@ public:
 		}
 		else
 		{
+			ws_timeout opt;
+			opt.handshake_timeout = std::chrono::seconds(1);
+			opt.idle_timeout = std::chrono::seconds(1); //boost::beast::websocket::stream_base::none();
+			opt.keep_alive_pings = false;
+			plain_ws_.set_option(opt);
+
 			// Perform the websocket handshake
 			plain_ws_.async_handshake(host_, "/",
 				std::bind(
@@ -156,6 +163,12 @@ public:
 			callback_.OnWebSocket(WSMethod::Error, "on_ssl_handshake " + ec.message());
 			return;
 		}
+
+		ws_timeout opt;
+		opt.handshake_timeout = std::chrono::seconds(3);
+		opt.idle_timeout = std::chrono::seconds(5); //boost::beast::websocket::stream_base::none();
+		opt.keep_alive_pings = false;
+		ssl_ws_.set_option(opt);
 
 		// Perform the websocket handshake
 		ssl_ws_.async_handshake(host_, "/",
@@ -227,7 +240,8 @@ public:
 	void write(const std::string &message)
 	{
 		sysLog->trace("WebSocket::write :: perform writing: {0}", message);
-		//std::lock_guard<std::mutex> lock(write_mutex_);
+		
+		std::lock_guard<std::mutex> lock(write_mutex_);
 		write_queue_.push(message);
 		if (!writing_)
 		{
@@ -281,7 +295,7 @@ public:
 
 		sysLog->trace("WebSocket::on_write :: Perform writing");
 
-		//std::lock_guard<std::mutex> lock(write_mutex_);
+		std::lock_guard<std::mutex> lock(write_mutex_);
 		if (!write_queue_.empty())
 			do_write();
 		else
@@ -292,12 +306,14 @@ public:
 
 	void close()
 	{
-		/*while (writing_) /// wait ending of writing
+		sysLog->trace("WebSocket::session :: close :: Perform closing");
+
+		while (writing_) /// wait ending of writing
 		{
 			std::this_thread::sleep_for(std::chrono::milliseconds(100));
-		}*/
+		}
 
-		sysLog->trace("WebSocket::session :: close :: Perform closing");
+		sysLog->trace("WebSocket::session :: close :: Perform async_close");
 
 		if (secure)
 		{

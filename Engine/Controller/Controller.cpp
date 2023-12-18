@@ -258,11 +258,11 @@ void Controller::PingerStart()
                     cnt = 0;
                 }
 
-                if (lastPingTime + 5000000 < pingTimeMeter.Measure())
+                /*if (lastPingTime + 5000000 < pingTimeMeter.Measure())
                 {
                     errLog->error("Controller :: Connection to server ping timeouted last ping: {0}, now {1}", lastPingTime, pingTimeMeter.Measure());
                     return Disconnect(DisconnectReason::NetworkError);
-                }
+                }*/
 
                 std::this_thread::sleep_for(std::chrono::milliseconds(250));
             }

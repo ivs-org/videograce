@@ -81,6 +81,14 @@ public:
 				return;
 			}
 
+			socket.set_option(boost::asio::detail::socket_option::integer<SOL_SOCKET, SO_RCVTIMEO>{ 2000 }, ec);
+			if (ec)
+			{
+				errLog->error("HttpImpl::HttpImpl :: set_option error: (v: {0:d}, m:{1})", ec.value(), ec.message());
+				if (errorCallback) errorCallback(ec.value(), ec.message().c_str());
+				return;
+			}
+
 			boost::asio::connect(socket, results.begin(), results.end(), ec);
 			if (ec && errorCallback)
 			{
@@ -197,11 +205,19 @@ public:
 					if (errorCallback) errorCallback(ec.value(), ec.message().c_str());
 					return;
 				}
-				
+
 				boost::asio::connect(stream.next_layer(), results.begin(), results.end(), ec);
 				if (ec)
 				{
 					errLog->error("HttpsImpl::HttpsImpl :: connect error: (v: {0:d}, m:{1})", ec.value(), ec.message());
+					if (errorCallback) errorCallback(ec.value(), ec.message().c_str());
+					return;
+				}
+
+				stream.next_layer().set_option(boost::asio::detail::socket_option::integer<SOL_SOCKET, SO_RCVTIMEO>{ 2000 }, ec);
+				if (ec)
+				{
+					errLog->error("HttpsImpl::HttpsImpl :: set_option error: (v: {0:d}, m:{1})", ec.value(), ec.message());
 					if (errorCallback) errorCallback(ec.value(), ec.message().c_str());
 					return;
 				}
