@@ -22,7 +22,7 @@
 namespace Controller
 {
 
-class Controller : public IController, public Transport::IWebSocketCallback
+class Controller : public IController
 {
 public:
     Controller(Storage::Storage &storage, IMemberList &memberList);
@@ -32,14 +32,14 @@ public:
     virtual void SetConferenceUpdateHandler(std::function<void(const Proto::CONFERENCE_UPDATE_RESPONSE::Command&)> handler);
     virtual void SetContactListHandler(std::function<void(const Storage::Contacts&)> handler);
     
-    virtual void Connect(const std::string &serverAddress, bool secureConnection);
+    virtual void Connect(std::string_view serverAddress, bool secureConnection);
     virtual void Disconnect();
     virtual bool Connected();
 
-    virtual void UserUpdate(int64_t userId, const std::string &name = "", const std::string &avatar = "", const std::string &login = "", const std::string &password = "");
+    virtual void UserUpdate(int64_t userId, std::string_view name = "", std::string_view avatar = "", std::string_view login = "", std::string_view password = "");
 
-    virtual void SetCredentials(const std::string &login, const std::string &password);
-    virtual void Update(const std::string &fileName, const std::string &appFolder = "");
+    virtual void SetCredentials(std::string_view login, std::string_view password);
+    virtual void Update(std::string_view fileName, std::string_view appFolder = "");
     virtual void SetMaxBitrate(uint32_t value);
 
     virtual void CreateCapturer(const DeviceValues &device);
@@ -64,16 +64,16 @@ public:
     virtual void CreateConference(const Proto::Conference &conference);
     virtual void EditConference(const Proto::Conference &conference);
     virtual void DeleteConference(int64_t conferenceId);
-    virtual void AddMeToConference(const std::string &tag);
+    virtual void AddMeToConference(std::string_view tag);
     virtual void DeleteMeFromConference(int64_t conferenceId);
     virtual void CreateTempConference();
-    virtual void SendConnectToConference(const std::string &tag, int64_t connecter_id, uint32_t connecter_connection_id, uint32_t flags);
+    virtual void SendConnectToConference(std::string_view tag, int64_t connecter_id, uint32_t connecter_connection_id, uint32_t flags);
 
     virtual void UpdateGroupList();
 
     virtual void UpdateContactList();
 
-    virtual void SearchContact(const std::string &name);
+    virtual void SearchContact(std::string_view name);
 
     virtual void UpdateConferencesList();
 
@@ -182,7 +182,7 @@ private:
     void PingerStart();
     void PingerStop();
     
-    virtual void OnWebSocket(Transport::WSMethod method, const std::string &message);
+    void OnWebSocket(Transport::WSMethod method, std::string_view message);
 
     void Logon();
     void Logout();
@@ -191,7 +191,7 @@ private:
     
     void ChangeState(State newState);
 
-    void SendCommand(const std::string &command);
+    void SendCommand(std::string_view command);
 };
 
 }

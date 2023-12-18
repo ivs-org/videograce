@@ -39,14 +39,14 @@ namespace USER_UPDATE_REQUEST
 		Command();
 		Command(Action action,
 			int64_t id,
-			const std::string &name,
-			const std::string &avatar,
-			const std::string &login,
-			const std::string &password);
+			std::string_view name,
+			std::string_view avatar,
+			std::string_view login,
+			std::string_view password);
 
 		~Command();
 
-		bool Parse(const std::string &message);
+		bool Parse(std::string_view message);
 		std::string Serialize();
 	};
 }

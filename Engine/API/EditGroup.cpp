@@ -42,7 +42,7 @@ Command::~Command()
 {
 }
 
-bool Command::Parse(const std::string &message_)
+bool Command::Parse(std::string_view message_)
 {
 	using boost::property_tree::ptree;
 

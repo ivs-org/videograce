@@ -2,36 +2,45 @@
  * WebSocket.h - Contains WebSocket's header
  *
  * Author: Anton (ud) Golovkov, udattsk@gmail.com
- * Copyright (C), Infinity Video Soft LLC, 2016
+ * Copyright (C), Infinity Video Soft LLC, 2016, 2023
  */
 
 #pragma once
 
 #include <memory>
-#include <mutex>
-#include "IWebSocket.h"
+#include <string_view>
+#include <functional>
 
 namespace Transport
 {
 
+enum class WSMethod
+{
+    Open,
+    Message,
+    Close,
+    Error
+};
+
+using ws_callback = std::function<void(WSMethod method, std::string_view message)>;
+
 class WebSocketImpl;
 
-class WebSocket : public IWebSocket
+class WebSocket
 {
 public:
-    WebSocket(IWebSocketCallback &callback);
-    virtual ~WebSocket();
+    WebSocket(ws_callback callback);
+    ~WebSocket();
 
-    virtual void Connect(const std::string &url);
-    virtual void Send(const std::string &message);
-    virtual void Disconnect();
+    void Connect(std::string_view url);
+    void Send(std::string_view message);
+    void Disconnect();
 
-    virtual bool IsConnected();
+    bool IsConnected();
         
 private:
-    //std::recursive_mutex implMutex;
     std::unique_ptr<WebSocketImpl> impl;
-    IWebSocketCallback &callback;
+    ws_callback callback;
 };
 
 }

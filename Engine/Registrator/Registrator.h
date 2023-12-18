@@ -23,7 +23,7 @@
 namespace Registrator
 {
 
-class Registrator : public Transport::IWebSocketCallback
+class Registrator
 {
 public:
     Registrator();
@@ -47,7 +47,7 @@ private:
 
     std::shared_ptr<spdlog::logger> sysLog, errLog;
 
-    virtual void OnWebSocket(Transport::WSMethod method, const std::string &message);
+    void OnWebSocket(Transport::WSMethod method, std::string_view message);
 };
 
 }

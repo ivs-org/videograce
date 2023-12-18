@@ -49,7 +49,7 @@ class session : public std::enable_shared_from_this<session>
 	std::queue<std::string> write_queue_;
 	std::atomic<bool> writing_;
 
-	IWebSocketCallback &callback_;
+	ws_callback callback_;
 
 	bool secure;
 
@@ -57,7 +57,7 @@ class session : public std::enable_shared_from_this<session>
 
 public:
 	// Resolver and socket require an io_context
-	explicit session(boost::asio::io_context& ioc, IWebSocketCallback &callback, bool secure_)
+	explicit session(boost::asio::io_context& ioc, ws_callback callback, bool secure_)
 		: resolver_(ioc),
 		ioc_(ioc),
 		plain_ws_(ioc),
@@ -98,7 +98,7 @@ public:
 		if (ec && !ioc_.stopped())
 		{
 			errLog->error("WebSocket::session :: on_resolve :: error: {0}", ec.message());
-			callback_.OnWebSocket(WSMethod::Error, "on_resolve " + ec.message());
+			callback_(WSMethod::Error, "on_resolve " + ec.message());
 			return;
 		}
 		
@@ -120,7 +120,7 @@ public:
 		if (ec && !ioc_.stopped())
 		{
 			errLog->error("WebSocket::session :: on_connect :: error: {0}", ec.message());
-			callback_.OnWebSocket(WSMethod::Error, "on_connect " + ec.message());
+			callback_(WSMethod::Error, "on_connect " + ec.message());
 			return;
 		}
 
@@ -160,7 +160,7 @@ public:
 		if (ec && !ioc_.stopped())
 		{
 			errLog->error("WebSocket::session :: on_ssl_handshake :: error: {0}", ec.message());
-			callback_.OnWebSocket(WSMethod::Error, "on_ssl_handshake " + ec.message());
+			callback_(WSMethod::Error, "on_ssl_handshake " + ec.message());
 			return;
 		}
 
@@ -185,13 +185,13 @@ public:
 		if (ec && !ioc_.stopped())
 		{
 			errLog->error("WebSocket::session :: handshake :: error: {0}", ec.message());
-			callback_.OnWebSocket(WSMethod::Error, "on_handshake " + ec.message());
+			callback_(WSMethod::Error, "on_handshake " + ec.message());
 			return;
 		}
 
 		sysLog->trace("WebSocket::session :: on_handshake :: [OK] success connected!");
 
-		callback_.OnWebSocket(WSMethod::Open, "");
+		callback_(WSMethod::Open, "");
 
 		do_read();
 	}
@@ -226,23 +226,23 @@ public:
 		if (ec && !ioc_.stopped())
 		{
 			errLog->error("WebSocket::session :: on_read :: error: {0}", ec.message());
-			callback_.OnWebSocket(WSMethod::Error, "on_read " + ec.message());
+			callback_(WSMethod::Error, "on_read " + ec.message());
 			return;
 		}
 		
 		const std::string &readed = buffers_to_string(buffer_.data());
 		buffer_.consume(buffer_.size());
-		callback_.OnWebSocket(WSMethod::Message, readed);
+		callback_(WSMethod::Message, readed);
 
 		do_read();
 	}
 
-	void write(const std::string &message)
+	void write(std::string_view message)
 	{
 		sysLog->trace("WebSocket::write :: perform writing: {0}", message);
 		
 		std::lock_guard<std::mutex> lock(write_mutex_);
-		write_queue_.push(message);
+		write_queue_.push(message.data());
 		if (!writing_)
 		{
 			writing_ = true;
@@ -289,7 +289,7 @@ public:
 		if (ec && !ioc_.stopped())
 		{
 			errLog->error("WebSocket::session :: on_write :: error: {0}", ec.message());
-			callback_.OnWebSocket(WSMethod::Error, "on_write " + ec.message());
+			callback_(WSMethod::Error, "on_write " + ec.message());
 			return;
 		}
 
@@ -341,7 +341,7 @@ public:
 
 		sysLog->trace("WebSocket::session :: on_close {0}", ec ? "error: " + ec.message() : ":: NICE");
 
-		callback_.OnWebSocket(WSMethod::Close, ec ? "error: " + ec.message() : "");
+		callback_(WSMethod::Close, ec ? "error: " + ec.message() : "");
 	}
 
 	bool is_connected()
@@ -361,7 +361,7 @@ class WebSocketImpl
 {
 	boost::asio::io_context ioc;
 	
-	IWebSocketCallback &callback;
+	ws_callback callback;
 
 	bool secure;
 	
@@ -373,7 +373,7 @@ class WebSocketImpl
 
 	std::shared_ptr<spdlog::logger> sysLog;
 public:
-	WebSocketImpl(const std::string &url, IWebSocketCallback &callback_)
+	WebSocketImpl(std::string_view url, ws_callback callback_)
 		: ioc(),
 		callback(callback_),
 		secure(false),
@@ -412,7 +412,7 @@ public:
 		}
 	}
 
-	void Send(const std::string &message)
+	void Send(std::string_view message)
 	{
 		if (session_)
 		{
@@ -428,7 +428,7 @@ public:
 		}
 		else
 		{
-			callback.OnWebSocket(WSMethod::Close, "session not established");
+			callback(WSMethod::Close, "session not established");
 		}
 
 		if (thread.joinable()) thread.join();
@@ -444,9 +444,8 @@ public:
 	}
 };
 
-WebSocket::WebSocket(IWebSocketCallback &callback_)
-	: //implMutex(),
-	  impl(),
+WebSocket::WebSocket(ws_callback callback_)
+	: impl(),
 	  callback(callback_)
 {
 }
@@ -456,9 +455,8 @@ WebSocket::~WebSocket()
 	Disconnect();
 }
 
-void WebSocket::Connect(const std::string &url)
+void WebSocket::Connect(std::string_view url)
 {
-	//std::lock_guard<std::recursive_mutex> lock(implMutex);
 	if (impl)
 	{
 		impl.reset(nullptr);
@@ -466,9 +464,8 @@ void WebSocket::Connect(const std::string &url)
 	impl = std::unique_ptr<WebSocketImpl>(new WebSocketImpl(url, callback));
 }
 
-void WebSocket::Send(const std::string &message)
+void WebSocket::Send(std::string_view message)
 {
-	//std::lock_guard<std::recursive_mutex> lock(implMutex);
 	if (impl)
 	{
 		impl->Send(message);
@@ -477,13 +474,11 @@ void WebSocket::Send(const std::string &message)
 
 void WebSocket::Disconnect()
 {
-	//std::lock_guard<std::recursive_mutex> lock(implMutex);
 	impl.reset(nullptr);
 }
 
 bool WebSocket::IsConnected()
 {
-	//std::lock_guard<std::recursive_mutex> lock(implMutex);
 	if (impl)
 	{
 		return impl->IsConnected();

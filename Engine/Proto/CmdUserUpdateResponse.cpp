@@ -38,7 +38,7 @@ Command::~Command()
 {
 }
 
-bool Command::Parse(const std::string &msg)
+bool Command::Parse(std::string_view msg)
 {
 	using boost::property_tree::ptree;
 

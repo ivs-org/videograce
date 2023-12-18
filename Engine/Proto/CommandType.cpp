@@ -59,7 +59,7 @@
 namespace Proto
 {
 
-CommandType GetCommandType(const std::string &message)
+CommandType GetCommandType(std::string_view message)
 {
 	auto firstQuotePos = message.find_first_of('"');
 	if (firstQuotePos == std::string::npos)
@@ -72,7 +72,7 @@ CommandType GetCommandType(const std::string &message)
 		return CommandType::Undefined;
 	}
 
-	std::string command = message.substr(firstQuotePos, secondQuotePos);
+	std::string command = std::string(message.substr(firstQuotePos, secondQuotePos));
 	std::transform(command.begin(), command.end(), command.begin(), ::tolower);
 
 	if (command == quot(Proto::USER_UPDATE_REQUEST::NAME))

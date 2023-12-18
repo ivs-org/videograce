@@ -32,7 +32,7 @@ Command::Command()
 {
 }
 
-Command::Command(const std::string &tag_, int64_t connecter_id_, uint32_t connecter_connection_id_, uint32_t flags_)
+Command::Command(std::string_view tag_, int64_t connecter_id_, uint32_t connecter_connection_id_, uint32_t flags_)
 	: tag(tag_), connecter_id(connecter_id_), connecter_connection_id(connecter_connection_id_), flags(flags_)
 {
 }
@@ -41,7 +41,7 @@ Command::~Command()
 {
 }
 
-bool Command::Parse(const std::string &message)
+bool Command::Parse(std::string_view message)
 {
 	using boost::property_tree::ptree;
 

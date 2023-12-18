@@ -42,7 +42,7 @@ Conference::Conference(int64_t id_)
 {
 }
 
-Conference::Conference(const std::string &tag_)
+Conference::Conference(std::string_view tag_)
     : id(0), tag(tag_), name(), descr(), founder(), founder_id(0), type(ConferenceType::Undefined), grants(0), duration(0), members(), connect_members(false), deleted(false), temp(false), unreaded_count(0), rolled(true)
 {
 }
@@ -53,10 +53,10 @@ Conference::Conference(int64_t id_, bool deleted_)
 }
 
 Conference::Conference(int64_t id_,
-		const std::string &tag_,
-		const std::string &name_,
-		const std::string &descr_,
-		const std::string &founder_,
+		std::string_view tag_,
+		std::string_view name_,
+		std::string_view descr_,
+		std::string_view founder_,
 		int64_t founder_id_,
 		ConferenceType type_,
 		uint32_t grants_,

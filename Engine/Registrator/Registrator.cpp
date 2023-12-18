@@ -17,7 +17,7 @@ namespace Registrator
 {
 
 Registrator::Registrator()
-    : webSocket(*this),
+    : webSocket(std::bind(&Registrator::OnWebSocket, this, std::placeholders::_1, std::placeholders::_2)),
     readySem(),
     registerResult(Proto::USER_UPDATE_RESPONSE::Result::Undefined),
     credentialsResponse(),
@@ -79,7 +79,7 @@ void Registrator::GetCredentials(const std::string &guid, bool &ok, std::string 
     }
 }
 
-void Registrator::OnWebSocket(Transport::WSMethod method, const std::string &message)
+void Registrator::OnWebSocket(Transport::WSMethod method, std::string_view message)
 {
     switch (method)
     {

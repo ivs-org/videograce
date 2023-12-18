@@ -362,9 +362,6 @@
     <ClInclude Include="Video\ColorSpace.h">
       <Filter>Header Files\Video</Filter>
     </ClInclude>
-    <ClInclude Include="Transport\WebSocket\IWebSocket.h">
-      <Filter>Header Files\Transport\WebSocket</Filter>
-    </ClInclude>
     <ClInclude Include="Transport\WebSocket\WebSocket.h">
       <Filter>Header Files\Transport\WebSocket</Filter>
     </ClInclude>

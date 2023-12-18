@@ -129,7 +129,7 @@ Controller::Controller(Storage::Storage &storage_, IMemberList &memberList_)
     currentConference(),
     subscriberId(0),
     baseURL(),
-    webSocket(*this),
+    webSocket(std::bind(&Controller::OnWebSocket, this, std::placeholders::_1, std::placeholders::_2)),
     serverAddress(), secureConnection(false),
     login(), password(),
     clientId(0), connectionId(0),
@@ -170,7 +170,7 @@ void Controller::SetContactListHandler(std::function<void(const Storage::Contact
     contactListHandler = handler;
 }
 
-void Controller::Connect(const std::string &serverAddress_, bool secureConnection_)
+void Controller::Connect(std::string_view serverAddress_, bool secureConnection_)
 {
     sysLog->info("Controller :: Connect");
     
@@ -213,7 +213,7 @@ bool Controller::Connected()
     return webSocket.IsConnected();
 }
 
-void Controller::UserUpdate(int64_t userId, const std::string &name_, const std::string &avatar_, const std::string &login_, const std::string &password_)
+void Controller::UserUpdate(int64_t userId, std::string_view name_, std::string_view avatar_, std::string_view login_, std::string_view password_)
 {
     SendCommand(Proto::USER_UPDATE_REQUEST::Command(Proto::USER_UPDATE_REQUEST::Action::ChangeMeta,
         userId,
@@ -228,7 +228,7 @@ void Controller::Disconnect()
     Logout();
 }
 
-void Controller::SetCredentials(const std::string &login_, const std::string &password_)
+void Controller::SetCredentials(std::string_view login_, std::string_view password_)
 {
     login = login_;
     password = password_;
@@ -280,9 +280,9 @@ void Controller::PingerStop()
     sysLog->trace("Controller::PingerStop :: Stoped");
 }
 
-std::string GetDefaultAddress(const std::string &serverAddress)
+std::string GetDefaultAddress(std::string_view serverAddress)
 {
-    std::string serverAddress_ = "proto://" + serverAddress;
+    std::string serverAddress_ = "proto://" + std::string(serverAddress);
 
     std::string proto, host, port;
 
@@ -511,7 +511,7 @@ void Controller::DeleteConference(int64_t conferenceId)
     ).Serialize());
 }
 
-void Controller::AddMeToConference(const std::string &tag)
+void Controller::AddMeToConference(std::string_view tag)
 {
     SendCommand(Proto::CONFERENCE_UPDATE_REQUEST::Command(
         Proto::CONFERENCE_UPDATE_REQUEST::Action::AddMe,
@@ -546,7 +546,7 @@ void Controller::CreateTempConference()
     SendCommand(Proto::CREATE_TEMP_CONFERENCE::Command(confTag).Serialize());
 }
 
-void Controller::SendConnectToConference(const std::string &tag, int64_t connecter_id, uint32_t connecter_connection_id, uint32_t flags)
+void Controller::SendConnectToConference(std::string_view tag, int64_t connecter_id, uint32_t connecter_connection_id, uint32_t flags)
 {
     SendCommand(Proto::SEND_CONNECT_TO_CONFERENCE::Command(tag, connecter_id, connecter_connection_id, flags).Serialize());
 }
@@ -562,7 +562,7 @@ void Controller::UpdateContactList()
     SendCommand(Proto::SEARCH_CONTACT::Command("==UPDATE==").Serialize());
 }
 
-void Controller::SearchContact(const std::string &name)
+void Controller::SearchContact(std::string_view name)
 {
     if (Connected())
     {
@@ -678,7 +678,7 @@ uint16_t Controller::GetReducedFrameRate()
     return reducedFrameRate;
 }
 
-void Controller::OnWebSocket(Transport::WSMethod method, const std::string &message)
+void Controller::OnWebSocket(Transport::WSMethod method, std::string_view message)
 {
     switch (method)
     {
@@ -1539,7 +1539,7 @@ std::string get_path()
     return std::string(exepath);
 }
 
-void Controller::Update(const std::string &fileName, const std::string &appFolder)
+void Controller::Update(std::string_view fileName, std::string_view appFolder)
 {
     std::thread thread([this, fileName]()
     {
@@ -1583,7 +1583,7 @@ void Controller::Update(const std::string &fileName, const std::string &appFolde
     thread.detach();
 }
 #else
-void Controller::Update(const std::string &fileName, const std::string &appFolder)
+void Controller::Update(std::string_view fileName, std::string_view appFolder)
 {
     if (updater.joinable()) updater.join();
     updater = std::thread([this, fileName, appFolder]()
@@ -1596,11 +1596,11 @@ void Controller::Update(const std::string &fileName, const std::string &appFolde
 
             if (Common::Is64BitSystem())
             {
-                updatedExe = httpClient.Request("/update/x64/" + fileName, "GET");
+                updatedExe = httpClient.Request("/update/x64/" + std::string(fileName), "GET");
             }
             else
             {
-                updatedExe = httpClient.Request("/update/" + fileName, "GET");
+                updatedExe = httpClient.Request("/update/" + std::string(fileName), "GET");
             }
             std::this_thread::sleep_for(std::chrono::milliseconds(250));
         }
@@ -1652,7 +1652,7 @@ void Controller::ChangeState(State newState)
     sysLog->info("Controller :: Changed state (from: {0}, to: {1})", toString(prevState), toString(newState));
 }
 
-void Controller::SendCommand(const std::string &command)
+void Controller::SendCommand(std::string_view command)
 {
     if (webSocket.IsConnected())
     {

@@ -26,7 +26,7 @@ Command::Command()
 {
 }
 
-Command::Command(const std::string &query_)
+Command::Command(std::string_view query_)
 	: query(query_)
 {
 }
@@ -35,7 +35,7 @@ Command::~Command()
 {
 }
 
-bool Command::Parse(const std::string &message)
+bool Command::Parse(std::string_view message)
 {
 	using boost::property_tree::ptree;
 

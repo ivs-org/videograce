@@ -34,10 +34,10 @@ Command::Command()
 
 Command::Command(Action action_,
 	int64_t id_,
-	const std::string &name_,
-	const std::string &avatar_,
-	const std::string &login_,
-	const std::string &password_)
+	std::string_view name_,
+	std::string_view avatar_,
+	std::string_view login_,
+	std::string_view password_)
 	: action(action_),
 	id(id_),
 	name(name_),
@@ -50,7 +50,7 @@ Command::~Command()
 {
 }
 
-bool Command::Parse(const std::string &message)
+bool Command::Parse(std::string_view message)
 {
 	using boost::property_tree::ptree;
 

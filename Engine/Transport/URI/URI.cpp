@@ -12,7 +12,7 @@
 namespace Transport
 {
 
-void ParseURI(const std::string &url, std::string &proto, std::string &host, std::string &port)
+void ParseURI(std::string_view url, std::string &proto, std::string &host, std::string &port)
 {
 	proto.clear();
 	host.clear();

@@ -21,11 +21,11 @@ namespace SEARCH_CONTACT
 		std::string query;
 		
 		Command();
-		Command(const std::string &query);
+		Command(std::string_view query);
 
 		~Command();
 
-		bool Parse(const std::string &message);
+		bool Parse(std::string_view message);
 		std::string Serialize();
 	};
 }

@@ -108,7 +108,7 @@ namespace Controller
 		{
 		}
 
-		CallValues(Proto::CALL_RESPONSE::Type responseType_, int64_t requesterId_, uint32_t subscriberConnectionId_, const std::string &name_)
+		CallValues(Proto::CALL_RESPONSE::Type responseType_, int64_t requesterId_, uint32_t subscriberConnectionId_, std::string_view name_)
 			: requestType(Proto::CALL_REQUEST::Type::Undefined), responseType(responseType_), subscriberId(requesterId_), subscriberConnectionId(subscriberConnectionId_), name(name_), timeLimit(0)
 		{
 		}
@@ -227,18 +227,18 @@ namespace Controller
 		virtual void SetContactListHandler(std::function<void(const Storage::Contacts&)> handler) = 0;
 
 		/// Network
-		virtual void Connect(const std::string &serverAddress, bool secureConnection) = 0;
+		virtual void Connect(std::string_view serverAddress, bool secureConnection) = 0;
 		virtual void Disconnect() = 0;
 		virtual bool Connected() = 0;
 
 		/// Change user's bio and credentials
-		virtual void UserUpdate(int64_t userId, const std::string &name = "", const std::string &avatar = "", const std::string &login = "", const std::string &password = "") = 0;
+		virtual void UserUpdate(int64_t userId, std::string_view name = "", std::string_view avatar = "", std::string_view login = "", std::string_view password = "") = 0;
 
 		/// Set login / password from user input
-		virtual void SetCredentials(const std::string &login, const std::string &password) = 0;
+		virtual void SetCredentials(std::string_view login, std::string_view password) = 0;
 
 		/// Do update
-		virtual void Update(const std::string &fileName, const std::string &appFolder = "") = 0;
+		virtual void Update(std::string_view fileName, std::string_view appFolder = "") = 0;
 
 		/// Set maximum bitrates
 		virtual void SetMaxBitrate(uint32_t value) = 0;
@@ -288,7 +288,7 @@ namespace Controller
 		virtual void DeleteConference(int64_t conferenceId) = 0;
 
         /// Add me to confrence's members
-        virtual void AddMeToConference(const std::string &tag) = 0;
+        virtual void AddMeToConference(std::string_view tag) = 0;
 
         /// Remove me from confrence's members
         virtual void DeleteMeFromConference(int64_t conferenceId) = 0;
@@ -297,7 +297,7 @@ namespace Controller
 		virtual void CreateTempConference() = 0;
 
 		/// Send connect to conference message to subscriber
-		virtual void SendConnectToConference(const std::string &tag, int64_t connecter_id, uint32_t connecter_connection_id, uint32_t flags) = 0;
+		virtual void SendConnectToConference(std::string_view tag, int64_t connecter_id, uint32_t connecter_connection_id, uint32_t flags) = 0;
 
 		/// Update group list
 		virtual void UpdateGroupList() = 0;
@@ -306,7 +306,7 @@ namespace Controller
 		virtual void UpdateContactList() = 0;
 
 		/// Search the contact
-		virtual void SearchContact(const std::string &name) = 0;
+		virtual void SearchContact(std::string_view name) = 0;
 
 		/// Update the conferences list
 		virtual void UpdateConferencesList() = 0;

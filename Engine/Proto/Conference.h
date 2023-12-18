@@ -46,13 +46,13 @@ namespace Proto
 
 		Conference();
 		Conference(int64_t id);
-        Conference(const std::string &tag);
+        Conference(std::string_view tag);
 		Conference(int64_t id, bool deleted);
 		Conference(int64_t id,
-			const std::string &tag,
-			const std::string &name,
-			const std::string &descr,
-			const std::string &founder,
+			std::string_view tag,
+			std::string_view name,
+			std::string_view descr,
+			std::string_view founder,
 			int64_t founder_id,
 			ConferenceType type,
 			uint32_t grants,
@@ -75,7 +75,7 @@ namespace Proto
 			return id == id_;
 		}
 
-		inline bool operator==(const std::string &tag_)
+		inline bool operator==(std::string_view tag_)
 		{
 			return tag == tag_;
 		}

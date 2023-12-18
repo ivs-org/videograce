@@ -84,5 +84,5 @@ namespace Proto
 		MediaAddressesList
 	};
 
-	CommandType GetCommandType(const std::string &message);
+	CommandType GetCommandType(std::string_view message);
 }

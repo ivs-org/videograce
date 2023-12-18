@@ -30,11 +30,11 @@ namespace SEND_CONNECT_TO_CONFERENCE
         uint32_t flags;
 		
 		Command();
-		Command(const std::string &tag, int64_t connecter_id, uint32_t connecter_connection_id, uint32_t flags);
+		Command(std::string_view tag, int64_t connecter_id, uint32_t connecter_connection_id, uint32_t flags);
 
 		~Command();
 
-		bool Parse(const std::string &message);
+		bool Parse(std::string_view message);
 		std::string Serialize();
 	};
 }

@@ -29,7 +29,7 @@ namespace CHANGE_MEMBER_STATE
 
 		~Command();
 
-		bool Parse(const std::string &message);
+		bool Parse(std::string_view message);
 		std::string Serialize();
 	};
 }
