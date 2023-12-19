@@ -241,7 +241,7 @@ public:
 	{
 		sysLog->trace("WebSocket::write :: perform writing: {0}", message);
 		
-		std::lock_guard<std::mutex> lock(write_mutex_);
+		//std::lock_guard<std::mutex> lock(write_mutex_);
 		write_queue_.push(std::string(message));
 		if (!writing_)
 		{
@@ -295,7 +295,7 @@ public:
 
 		sysLog->trace("WebSocket::on_write :: Perform writing");
 
-		std::lock_guard<std::mutex> lock(write_mutex_);
+		//std::lock_guard<std::mutex> lock(write_mutex_);
 		if (!write_queue_.empty())
 			do_write();
 		else
