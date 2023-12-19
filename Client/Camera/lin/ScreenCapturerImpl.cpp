@@ -65,7 +65,7 @@ void ScreenCapturerImpl::MakeMouseAction(const uint8_t *payload)
 
 }
 
-void ScreenCapturerImpl::SetName(const std::string &name_)
+void ScreenCapturerImpl::SetName(std::string_view name_)
 {
 	/// Not supported
 }

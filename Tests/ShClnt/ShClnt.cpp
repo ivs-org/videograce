@@ -29,7 +29,7 @@
 void CreateLogger(std::string_view login)
 {
 #ifndef _WIN32
-	const std::string fileName = "./ShClnt-" + login + ".log";
+	const std::string fileName = "./ShClnt-" + std::string(login) + ".log";
 #else
 	wchar_t moduleFileName[MAX_PATH] = { 0 };
 	GetModuleFileName(NULL, moduleFileName, MAX_PATH);

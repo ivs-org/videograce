@@ -90,7 +90,7 @@ ButtonParams Params(Button button)
         break;
     }
 
-    return { 0 };
+    return { "", "" };
 }
 
 MainToolBar::MainToolBar(std::weak_ptr<wui::window> mainFrame_, IControlActions &receiver)

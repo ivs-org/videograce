@@ -37,7 +37,7 @@ MicrophoneImpl::~MicrophoneImpl()
 	Stop();
 }
 
-void MicrophoneImpl::SetDeviceName(const std::string &name)
+void MicrophoneImpl::SetDeviceName(std::string_view name)
 {
 	deviceName = name;
 	if (runned)

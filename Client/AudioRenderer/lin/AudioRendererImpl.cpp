@@ -34,7 +34,7 @@ AudioRendererImpl::~AudioRendererImpl()
 	Stop();
 }
 
-bool AudioRendererImpl::SetDeviceName(const std::string &name)
+bool AudioRendererImpl::SetDeviceName(std::string_view name)
 {
 	deviceName = name;
 	return true;
@@ -127,7 +127,7 @@ void AudioRendererImpl::SetAECReceiver(Transport::ISocket *socket)
 	aecReceiver = socket;
 }
 
-void AudioRendererImpl::SetErrorHandler(std::function<void(uint32_t code, const std::string &msg)>)
+void AudioRendererImpl::SetErrorHandler(std::function<void(uint32_t code, std::string_view msg)>)
 {
 }
 

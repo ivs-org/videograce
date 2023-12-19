@@ -1550,13 +1550,13 @@ void Controller::Update(std::string_view fileName, std::string_view appFolder)
             httpClient.Connect(baseURL);
             if (Common::Is64BitSystem())
             {
-                updatedExe = httpClient.Request("/update/x64/" + fileName, "GET");
+                updatedExe = httpClient.Request("/update/x64/" + std::string(fileName), "GET");
             }
             else
             {
-                updatedExe = httpClient.Request("/update/" + fileName, "GET");
+                updatedExe = httpClient.Request("/update/" + std::string(fileName), "GET");
             }
-            std::this_thread::sleep_for(std::chrono::milliseconds(250));
+            std::this_thread::yield;
         }
 
         const std::string path = get_path();
@@ -1565,13 +1565,13 @@ void Controller::Update(std::string_view fileName, std::string_view appFolder)
 
         {
             std::ofstream exefile;
-            exefile.open(tmpPath + fileName, std::ios::binary);
+            exefile.open(tmpPath + std::string(fileName), std::ios::binary);
             exefile << updatedExe;
             exefile.close();
         }
-        std::string cmd = "chmod 755 " + tmpPath + fileName;
+        std::string cmd = "chmod 755 " + tmpPath + std::string(fileName);
         int ret = system(cmd.c_str());
-        cmd = "mv " + tmpPath + fileName + " " + path;
+        cmd = "mv " + tmpPath + std::string(fileName) + " " + path;
         ret = system(cmd.c_str());
         cmd = path + " /restart &";
         ret = system(cmd.c_str());
@@ -1602,7 +1602,7 @@ void Controller::Update(std::string_view fileName, std::string_view appFolder)
             {
                 updatedExe = httpClient.Request("/update/" + std::string(fileName), "GET");
             }
-            std::this_thread::sleep_for(std::chrono::milliseconds(250));
+            std::this_thread::yield;
         }
 
         wchar_t moduleFileName_[MAX_PATH] = { 0 };

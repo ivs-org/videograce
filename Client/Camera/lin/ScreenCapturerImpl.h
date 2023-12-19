@@ -30,7 +30,7 @@ public:
 	virtual ~ScreenCapturerImpl();
 
 	/// Impl of ICamera
-    virtual void SetName(const std::string &name);
+    virtual void SetName(std::string_view name);
     virtual void SetDeviceId(uint32_t id);
     virtual void Start(Video::ColorSpace colorSpace);
     virtual void Stop();

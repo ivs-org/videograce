@@ -1,4 +1,4 @@
-# Install script for directory: /home/ud/dev/videograce/VideoGrace/Client
+# Install script for directory: /home/ud/dev/videograce/Client
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

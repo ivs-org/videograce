@@ -66,7 +66,7 @@ void CameraImpl::SetDeviceNotifyCallback(Client::DeviceNotifyCallback deviceNoti
     deviceNotifyCallback_ = deviceNotifyCallback_;
 }
 
-void CameraImpl::SetName(const std::string &name_)
+void CameraImpl::SetName(std::string_view name_)
 {
 	name = name_;
 	if (runned)
