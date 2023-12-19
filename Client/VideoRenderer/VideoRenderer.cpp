@@ -167,7 +167,7 @@ wui::error VideoRenderer::get_error() const
 	return err;
 }
 
-void VideoRenderer::SetName(const std::string &name_)
+void VideoRenderer::SetName(std::string_view name_)
 {
 	name = name_;
 }

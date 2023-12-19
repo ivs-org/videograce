@@ -26,7 +26,7 @@ class query;
 class connection : public i_connection
 {
 public:
-    connection(dbms dbms_, const std::string &conn_info);
+    connection(dbms dbms_, std::string_view conn_info);
     virtual ~connection();
 
     virtual bool is_ok() const final;

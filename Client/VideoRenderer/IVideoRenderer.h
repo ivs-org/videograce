@@ -19,7 +19,7 @@ namespace VideoRenderer
 class IVideoRenderer
 {
 public:
-	virtual void SetName(const std::string &name) = 0;
+	virtual void SetName(std::string_view name) = 0;
 	virtual void SetId(uint32_t id, int64_t clientId) = 0;
 
     virtual void SetDeviceType(Proto::DeviceType deviceType) = 0;

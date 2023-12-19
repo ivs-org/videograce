@@ -57,7 +57,7 @@ namespace MEMBER_ACTION
 
 		Command();
         Command(const std::vector<int64_t> &ids, Action action, uint32_t grants);
-		Command(Action action, Result result, int64_t actor_id, const std::string &actor_name);
+		Command(Action action, Result result, int64_t actor_id, std::string_view actor_name);
 		Command(int64_t actor_id, Result result);
 		Command(Result result);
 

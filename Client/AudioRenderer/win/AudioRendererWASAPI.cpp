@@ -69,7 +69,7 @@ AudioRendererWASAPI::~AudioRendererWASAPI()
 	Stop();
 }
 
-bool AudioRendererWASAPI::SetDeviceName(const std::string &name)
+bool AudioRendererWASAPI::SetDeviceName(std::string_view name)
 {
 	if (deviceName == name)
 	{
@@ -377,7 +377,7 @@ void AudioRendererWASAPI::SetAECReceiver(Transport::ISocket *socket)
 	aecReceiver = socket;
 }
 
-void AudioRendererWASAPI::SetErrorHandler(std::function<void(uint32_t code, const std::string &msg)> errorHandler_)
+void AudioRendererWASAPI::SetErrorHandler(std::function<void(uint32_t code, std::string_view msg)> errorHandler_)
 {
     errorHandler = errorHandler_;
 }

@@ -21,7 +21,7 @@ namespace AudioRenderer
 class IAudioRenderer
 {
 public:
-	virtual bool SetDeviceName(const std::string &name) = 0;
+	virtual bool SetDeviceName(std::string_view name) = 0;
 
 	virtual void Start(int32_t sampleFreq) = 0;
 	virtual void Stop() = 0;
@@ -37,7 +37,7 @@ public:
 
 	virtual void SetAECReceiver(Transport::ISocket *socket) = 0;
 
-    virtual void SetErrorHandler(std::function<void(uint32_t code, const std::string &msg)>) = 0;
+    virtual void SetErrorHandler(std::function<void(uint32_t code, std::string_view msg)>) = 0;
 
 	virtual ~IAudioRenderer() {}
 };

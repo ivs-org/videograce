@@ -262,7 +262,7 @@ void MainDialog::ActionClick()
     }
 }
 
-void MainDialog::ShowError(const std::string &error_)
+void MainDialog::ShowError(std::string_view error_)
 {
     messageBox->show(error_, wui::locale("installer_error", "title"), wui::message_icon::alert, wui::message_button::ok, [this](wui::message_result) { window->destroy(); });
 }
@@ -290,11 +290,11 @@ void MainDialog::SetCloudParams()
     }
 }
 
-void MainDialog::SetParams(const std::string &address,
-    const std::string &login,
-    const std::string &password,
-    const std::string &conf_tag,
-    const std::string &user_name,
+void MainDialog::SetParams(std::string_view address,
+    std::string_view login,
+    std::string_view password,
+    std::string_view conf_tag,
+    std::string_view user_name,
     uint16_t secure, uint16_t port)
 {
     auto server = address + (port != 0 ? ":" + std::to_string(port) : "");

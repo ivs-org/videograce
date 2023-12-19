@@ -59,7 +59,7 @@ void CaptureAudioSession::SetDeviceNotifyCallback(Client::DeviceNotifyCallback d
 	microphone.SetDeviceNotifyCallback(deviceNotifyCallback);
 }
 
-void CaptureAudioSession::SetDeviceName(const std::string &name_)
+void CaptureAudioSession::SetDeviceName(std::string_view name_)
 {
 	name = name_;
 	microphone.SetDeviceName(name_);
@@ -147,7 +147,7 @@ void CaptureAudioSession::SetRTPParams(const char* addr, uint16_t port)
 	rtpSocket.SetDefaultAddress(addr, port);
 }
 
-const std::string &CaptureAudioSession::GetName() const
+std::string_view CaptureAudioSession::GetName() const
 {
 	return name;
 }
@@ -167,7 +167,7 @@ void CaptureAudioSession::SetLocalReceiver(Transport::ISocket* receiver)
 	localReceiverSplitter.SetReceiver1(receiver);
 }
 
-void CaptureAudioSession::Start(uint32_t ssrc_, uint32_t deviceId_, const std::string &secureKey)
+void CaptureAudioSession::Start(uint32_t ssrc_, uint32_t deviceId_, std::string_view secureKey)
 {
 	if (runned)
 	{

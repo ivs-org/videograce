@@ -21,7 +21,7 @@ extern const IID IID_ISampleGrabberMicro = { 0x50e1b8a6, 0x90b4, 0x4866, { 0xa2,
 static const CLSID CLSID_NullRendererMicro = { 0xC1F400A4, 0x3F08, 0x11d3, { 0x9F, 0x0B, 0x00, 0x60, 0x08, 0x03, 0x9E, 0x37 } };
 
 HRESULT BuildGraph(IFilterGraph2 *pGraph,
-	const std::string &deviceName,
+	std::string_view deviceName,
 	int gain,
 	int freq,
 	bool stereo,

@@ -21,7 +21,7 @@ namespace CREATE_TEMP_CONFERENCE
 		std::string tag;
 		
 		Command();
-		Command(const std::string &tag);
+		Command(std::string_view tag);
 
 		~Command();
 

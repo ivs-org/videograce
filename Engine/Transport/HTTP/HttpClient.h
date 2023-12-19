@@ -23,8 +23,8 @@ public:
     HTTPClient(std::function<void(int32_t, const char*)> errorCallback = [](int32_t, const char*) {});
 	virtual ~HTTPClient();
 
-	virtual void Connect(const std::string &url);
-	virtual std::string Request(const std::string &target, const std::string &method, const std::string &body = "");
+	virtual void Connect(std::string_view url);
+	virtual std::string Request(std::string_view target, std::string_view method, std::string_view body = "");
 	virtual void Disconnect();
 
 	virtual bool IsConnected();

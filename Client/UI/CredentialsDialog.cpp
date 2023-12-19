@@ -237,7 +237,7 @@ void CredentialsDialog::UpdateServerAddress()
     wui::config::set_string("Connection", "Address", vals[2]);
 }
 
-void CredentialsDialog::RegistrationEndCallback(RegistrationResult result, const std::string &login_, const std::string &password_)
+void CredentialsDialog::RegistrationEndCallback(RegistrationResult result, std::string_view login_, std::string_view password_)
 {
     registrationDialog.reset();
 

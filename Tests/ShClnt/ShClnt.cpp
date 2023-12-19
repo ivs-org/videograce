@@ -26,7 +26,7 @@
 #include <boost/asio/signal_set.hpp>
 #include <boost/asio.hpp>
 
-void CreateLogger(const std::string &login)
+void CreateLogger(std::string_view login)
 {
 #ifndef _WIN32
 	const std::string fileName = "./ShClnt-" + login + ".log";

@@ -27,7 +27,7 @@ MicrophoneImpl::~MicrophoneImpl()
     use_dmo ? dmo.Stop() : dshow.Stop();
 }
 
-void MicrophoneImpl::SetDeviceName(const std::string &name)
+void MicrophoneImpl::SetDeviceName(std::string_view name)
 {
     use_dmo ? dmo.SetDeviceName(name) : dshow.SetDeviceName(name);
 }

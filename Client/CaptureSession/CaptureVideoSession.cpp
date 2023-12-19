@@ -54,7 +54,7 @@ void CaptureVideoSession::SetDeviceType(Proto::DeviceType deviceType_)
 	deviceType = deviceType_;
 }
 
-void CaptureVideoSession::SetName(const std::string &name_)
+void CaptureVideoSession::SetName(std::string_view name_)
 {
 	name = name_;
 	if (camera)
@@ -143,7 +143,7 @@ void CaptureVideoSession::SetRTPParams(const char* addr, uint16_t port)
 	rtpSocket.SetDefaultAddress(addr, port);
 }
 
-const std::string &CaptureVideoSession::GetName() const
+std::string_view CaptureVideoSession::GetName() const
 {
 	return name;
 }
@@ -173,7 +173,7 @@ void CaptureVideoSession::SetLocalReceiver(Transport::ISocket* receiver)
 	localReceiverSplitter.SetReceiver1(receiver);
 }
 
-void CaptureVideoSession::Start(uint32_t ssrc_, Video::ColorSpace colorSpace_, uint32_t deviceId_, const std::string &secureKey)
+void CaptureVideoSession::Start(uint32_t ssrc_, Video::ColorSpace colorSpace_, uint32_t deviceId_, std::string_view secureKey)
 {
 	if (runned)
 	{

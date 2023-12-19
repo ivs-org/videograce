@@ -29,7 +29,7 @@ Command::Command()
 {
 }
 
-Command::Command(uint32_t client_version_, const std::string &system_, const std::string &login_, const std::string &password_)
+Command::Command(uint32_t client_version_, std::string_view system_, std::string_view login_, std::string_view password_)
 	: client_version(client_version_), system(system_), login(login_), password(password_)
 {
 }

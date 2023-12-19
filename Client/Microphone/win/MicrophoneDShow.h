@@ -34,7 +34,7 @@ public:
     ~MicrophoneDShow();
 
     /// Impl of IMicrophone
-    virtual void SetDeviceName(const std::string &name) final;
+    virtual void SetDeviceName(std::string_view name) final;
     virtual void SetDeviceId(uint32_t id) final;
 
     virtual void Start() final;

@@ -33,7 +33,7 @@ public:
     ConferenceDialog(std::weak_ptr<wui::window> parentWindow_, Controller::IController &controller_, Storage::Storage &storage_);
     ~ConferenceDialog();
 
-    void Run(const Proto::Conference &editedConf_ = Proto::Conference(), std::function<void(const std::string &)> readyCallback = [](const std::string &) {});
+    void Run(const Proto::Conference &editedConf_ = Proto::Conference(), std::function<void(std::string_view )> readyCallback = [](std::string_view ) {});
 
 private:
     static const int32_t WND_WIDTH = 530, WND_HEIGHT = 600,
@@ -84,7 +84,7 @@ private:
 
     bool startPushed;
 
-    std::function<void(const std::string &)> readyCallback;
+    std::function<void(std::string_view )> readyCallback;
 
     enum class CurrentSheet
     {
@@ -100,7 +100,7 @@ private:
     void ShowMembers();
     void ShowOptions();
 
-    void MakeURL(const std::string &tag);
+    void MakeURL(std::string_view tag);
 
     void AddMember();
     void DeleteMember();

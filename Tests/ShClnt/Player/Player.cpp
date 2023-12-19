@@ -66,7 +66,7 @@ Player::~Player()
 {
 }
 
-void Player::SetFileName(const std::string &fileName_)
+void Player::SetFileName(std::string_view fileName_)
 {
 	playMode = PlayMode::undefined;
 
@@ -191,7 +191,7 @@ void Player::SetMicrophoneRTPParams(const char* addr, uint16_t rtpPort)
 	microphoneSocket.SetDefaultAddress(addr, rtpPort);
 }
 
-void Player::StartCamera(uint32_t ssrc, const std::string &secureKey)
+void Player::StartCamera(uint32_t ssrc, std::string_view secureKey)
 {
 	if (!cameraStarted)
 	{
@@ -229,7 +229,7 @@ void Player::StopCamera()
 	videoEncoder.Stop();
 }
 
-void Player::StartMicrophone(uint32_t ssrc, const std::string &secureKey)
+void Player::StartMicrophone(uint32_t ssrc, std::string_view secureKey)
 {
 	if (!microphoneStarted)
 	{

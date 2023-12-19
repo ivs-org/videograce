@@ -64,7 +64,7 @@ public:
     virtual wui::error get_error() const;
 
 	/// Impl of IVideoRenderer
-	virtual void SetName(const std::string &name);
+	virtual void SetName(std::string_view name);
 	virtual void SetId(uint32_t id, int64_t clientId);
     virtual void SetDeviceType(Proto::DeviceType deviceType);
     virtual Proto::DeviceType GetDeviceType();

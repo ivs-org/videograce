@@ -81,8 +81,8 @@ public:
 
     int32_t Left() const;
 
-    void SetUser(const int64_t id, const std::string &name);
-    void SetConference(const std::string &tag, const std::string &name);
+    void SetUser(const int64_t id, std::string_view name);
+    void SetConference(std::string_view tag, std::string_view name);
 
 private:
     std::weak_ptr<wui::window> mainFrame;
@@ -140,7 +140,7 @@ private:
 
     void MessagesUpdatedCallback(Storage::MessageAction, const Storage::Messages &messages);
 
-    void FormatPost(const std::string &source_, FormattedPost &post);
+    void FormatPost(std::string_view source_, FormattedPost &post);
 
     void RightClickItem(int32_t nItem, int32_t x, int32_t y);
 

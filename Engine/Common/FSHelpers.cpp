@@ -21,7 +21,7 @@ namespace Common
 {
 
 #ifdef _WIN32
-bool CheckAllowFileWrite(const std::string &path)
+bool CheckAllowFileWrite(std::string_view path)
 {
 	bool yes = false;
 
@@ -70,7 +70,7 @@ bool CheckAllowFileWrite(const std::string &path)
 	return yes;
 }
 #else
-bool CheckAllowFileWrite(const std::string &path)
+bool CheckAllowFileWrite(std::string_view path)
 {
 	return false;
 }

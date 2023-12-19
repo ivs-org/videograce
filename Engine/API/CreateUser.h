@@ -27,7 +27,7 @@ namespace CREATE_USER
 		std::string guid;
 		
 		Command();
-		Command(int64_t group_id, const std::string &name, const std::string &login, const std::string &password, uint32_t number, uint64_t time_limit, bool allow_create_conference, bool use_only_tcp, const std::string &guid);
+		Command(int64_t group_id, std::string_view name, std::string_view login, std::string_view password, uint32_t number, uint64_t time_limit, bool allow_create_conference, bool use_only_tcp, std::string_view guid);
 
 		~Command();
 

@@ -10,14 +10,14 @@
 namespace Common
 {
 
-std::string URLDecode(const std::string &input) noexcept
+std::string URLDecode(std::string_view input) noexcept
 {
 	std::string output;
 	output.reserve(input.size());
 
 	bool inQuery = false;
-	std::string::const_iterator it = input.begin();
-	std::string::const_iterator end = input.end();
+	auto it = input.begin();
+	auto end = input.end();
 	while (it != end)
 	{
 		char c = *it++;

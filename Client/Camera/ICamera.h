@@ -32,7 +32,7 @@ enum class MoveType
 class ICamera
 {
 public:
-	virtual void SetName(const std::string &name) = 0;
+	virtual void SetName(std::string_view name) = 0;
 	virtual void SetDeviceId(uint32_t id) = 0;
 
 	virtual void Start(Video::ColorSpace colorSpace) = 0;

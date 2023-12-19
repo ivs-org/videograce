@@ -109,16 +109,16 @@ private:
     void SelectPath();
     void ActionClick();
 
-    void ShowError(const std::string &error);
+    void ShowError(std::string_view error);
     void SetProgress(int32_t value);
 
     void SetCloudParams();
 
-    void SetParams(const std::string &address,
-        const std::string &login = "",
-        const std::string &password = "",
-        const std::string &conf_tag = "",
-        const std::string &user_name = "",
+    void SetParams(std::string_view address,
+        std::string_view login = "",
+        std::string_view password = "",
+        std::string_view conf_tag = "",
+        std::string_view user_name = "",
         uint16_t secure = 0, uint16_t port = 0); 
 
     /// Installation flow

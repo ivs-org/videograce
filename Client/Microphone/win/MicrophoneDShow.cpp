@@ -42,7 +42,7 @@ MicrophoneDShow::~MicrophoneDShow()
 	Stop();
 }
 
-void MicrophoneDShow::SetDeviceName(const std::string &name)
+void MicrophoneDShow::SetDeviceName(std::string_view name)
 {
 	deviceName = name;
 	if (runned)

@@ -28,7 +28,7 @@ enum class MyEvent : uint32_t
 
 struct ButtonParams
 {
-    const std::string &tooltip;
+    std::string_view tooltip;
 
 #ifdef _WIN32
     int32_t image;

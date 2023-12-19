@@ -22,7 +22,7 @@ namespace Camera
 {
 
 HRESULT BuildGraph(IFilterGraph2 *pGraph,
-	const std::string &cameraName,
+	std::string_view cameraName,
 	Video::Resolution resolution,
 	Video::ColorSpace colorSpace,
 	void *inst,

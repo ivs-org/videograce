@@ -18,7 +18,7 @@ namespace MicrophoneNS
 {
 
 HRESULT BuildGraph(IFilterGraph2 *pGraph,
-    const std::string &deviceName,
+    std::string_view deviceName,
     int gain,
     int frequency,
     bool strero,

@@ -2880,7 +2880,7 @@ class exception : public std::exception
         }
 
         return "(" + std::accumulate(tokens.rbegin(), tokens.rend(), std::string{},
-                                     [](const std::string & a, const std::string & b)
+                                     [](std::string_view  a, std::string_view  b)
         {
             return a + "/" + detail::escape(b);
         }) + ") ";
@@ -12275,7 +12275,7 @@ class json_pointer
     {
         return std::accumulate(reference_tokens.begin(), reference_tokens.end(),
                                std::string{},
-                               [](const std::string & a, const std::string & b)
+                               [](std::string_view  a, std::string_view  b)
         {
             return a + "/" + detail::escape(b);
         });
@@ -21402,7 +21402,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
         // the valid JSON Patch operations
         enum class patch_operations {add, remove, replace, move, copy, test, invalid};
 
-        const auto get_op = [](const std::string & op)
+        const auto get_op = [](std::string_view  op)
         {
             if (op == "add")
             {
@@ -21538,8 +21538,8 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
         for (const auto& val : json_patch)
         {
             // wrapper to get a value for an operation
-            const auto get_value = [&val](const std::string & op,
-                                          const std::string & member,
+            const auto get_value = [&val](std::string_view  op,
+                                          std::string_view  member,
                                           bool string_type) -> basic_json &
             {
                 // find value

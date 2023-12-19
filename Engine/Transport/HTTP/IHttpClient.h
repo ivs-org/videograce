@@ -15,8 +15,8 @@ namespace Transport
 class IHTTPClient
 {
 public:
-	virtual void Connect(const std::string &url) = 0;
-	virtual std::string Request(const std::string &target, const std::string &method, const std::string &body = "") = 0;
+	virtual void Connect(std::string_view url) = 0;
+	virtual std::string Request(std::string_view target, std::string_view method, std::string_view body = "") = 0;
 	virtual void Disconnect() = 0;
 
 	virtual bool IsConnected() = 0;

@@ -66,12 +66,12 @@ std::shared_ptr<wui::i_control> RendererVideoSession::GetControl()
     return renderer;
 }
 
-void RendererVideoSession::SetName(const std::string &name_)
+void RendererVideoSession::SetName(std::string_view name_)
 {
 	name = name_;
 	renderer->SetName(name_);
 }
-const std::string &RendererVideoSession::GetName()
+std::string_view RendererVideoSession::GetName()
 {
 	return name;
 }
@@ -185,7 +185,7 @@ int64_t RendererVideoSession::GetClientId() const
 	return clientId;
 }
 
-void RendererVideoSession::Start(uint32_t receiverSSRC_, uint32_t authorSSRC_, uint32_t deviceId_, const std::string &secureKey_)
+void RendererVideoSession::Start(uint32_t receiverSSRC_, uint32_t authorSSRC_, uint32_t deviceId_, std::string_view secureKey_)
 {
 	if (runned)
 	{

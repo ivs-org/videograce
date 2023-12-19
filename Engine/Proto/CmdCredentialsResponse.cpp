@@ -28,7 +28,7 @@ Command::Command()
 {
 }
 
-Command::Command(Result result_, const std::string &login_, const std::string &password_)
+Command::Command(Result result_, std::string_view login_, std::string_view password_)
 	: result(result_), login(login_), password(password_)
 {
 }

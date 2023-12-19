@@ -25,7 +25,7 @@ public:
     DialingDialog(std::weak_ptr<wui::window> transientWindow, std::function<void()> cancelCallback);
     ~DialingDialog();
 
-    void Run(const std::string &subscriber);
+    void Run(std::string_view subscriber);
     void End();
 
 private:

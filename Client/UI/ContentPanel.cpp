@@ -319,7 +319,7 @@ int32_t ContentPanel::Left() const
     return 0;
 }
 
-void ContentPanel::SetUser(const int64_t id, const std::string &name)
+void ContentPanel::SetUser(const int64_t id, std::string_view name)
 {
     if (id == 0 || userId == id)
     {
@@ -350,7 +350,7 @@ void ContentPanel::SetUser(const int64_t id, const std::string &name)
     }
 }
 
-void ContentPanel::SetConference(const std::string &tag, const std::string &name)
+void ContentPanel::SetConference(std::string_view tag, std::string_view name)
 {
     if (tag.empty() || conferenceTag == tag)
     {
@@ -381,7 +381,7 @@ void ContentPanel::SetConference(const std::string &tag, const std::string &name
     }
 }
 
-void ParseMessageJSON(const std::string &input, std::string &text, std::string *replyAuthor = nullptr, std::string *reply = nullptr)
+void ParseMessageJSON(std::string_view input, std::string &text, std::string *replyAuthor = nullptr, std::string *reply = nullptr)
 {
     try
     {
@@ -466,9 +466,9 @@ void ParseMessageJSON(const std::string &input, std::string &text, std::string *
     }
 }
 
-void SplitLines(const std::string &source_, std::vector<std::string> &lines, int32_t &maxWidth, int32_t &lineHeight, wui::graphic &gr)
+void SplitLines(std::string_view source_, std::vector<std::string> &lines, int32_t &maxWidth, int32_t &lineHeight, wui::graphic &gr)
 {
-    std::stringstream source(source_);
+    std::stringstream source(source_.data());
     std::string line;
     int32_t maxLine = 0;
 
@@ -726,7 +726,7 @@ void ContentPanel::SplitterCallback(int32_t x, int32_t)
         callback.ContentPanelWidthChanged(x);
     }
 }
-void ContentPanel::FormatPost(const std::string &source, FormattedPost &post)
+void ContentPanel::FormatPost(std::string_view source, FormattedPost &post)
 {
     if (list->position().width() <= 0 || !memGr)
     {

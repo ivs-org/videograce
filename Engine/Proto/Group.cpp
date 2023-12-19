@@ -38,7 +38,7 @@ Group::Group(int64_t id_, bool deleted_)
 
 }
 
-Group::Group(int64_t id_, int64_t parent_id_, const std::string &tag_, const std::string &name_, int64_t owner_id_, const std::string &password_, uint32_t grants_, int32_t level_, bool deleted_)
+Group::Group(int64_t id_, int64_t parent_id_, std::string_view tag_, std::string_view name_, int64_t owner_id_, std::string_view password_, uint32_t grants_, int32_t level_, bool deleted_)
 	: id(id_), parent_id(parent_id_), tag(tag_), name(name_), owner_id(owner_id_), password(password_), grants(grants_), deleted(deleted_), level(level_), rolled(false)
 {
 }

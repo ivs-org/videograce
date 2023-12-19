@@ -39,7 +39,7 @@ namespace CaptureSession
         void SetDeviceNotifyCallback(Client::DeviceNotifyCallback deviceNotifyCallback);
 
 		/// derived from ICaptureAudioSession
-		virtual void SetDeviceName(const std::string &name);
+		virtual void SetDeviceName(std::string_view name);
 		virtual void EnableAEC(bool yes);
 		virtual void EnableNS(bool yes);
 		virtual void EnableAGC(bool yes);
@@ -54,11 +54,11 @@ namespace CaptureSession
 		virtual bool GetMute() const;
 		virtual void SetEncoderType(Audio::CodecType et);
 		virtual void SetRTPParams(const char* addr, uint16_t rtpPort);
-		virtual const std::string &GetName() const;
+		virtual std::string_view GetName() const;
 		virtual uint32_t GetDeviceId() const;
 		virtual int32_t GetBitrate() const;
 		virtual void SetLocalReceiver(Transport::ISocket* receiver);
-		virtual void Start(uint32_t ssrc, uint32_t deviceId, const std::string &secureKey);
+		virtual void Start(uint32_t ssrc, uint32_t deviceId, std::string_view secureKey);
 		virtual bool Started() const;
 		virtual void Stop();
 

@@ -26,7 +26,7 @@ namespace EDIT_GROUP
 		int64_t owner_id;
 		
 		Command();
-		Command(int64_t id, int64_t parent_id, const std::string &name, const std::string &tag, const std::string &password, bool limited, const std::string &guid, int64_t owner_id);
+		Command(int64_t id, int64_t parent_id, std::string_view name, std::string_view tag, std::string_view password, bool limited, std::string_view guid, int64_t owner_id);
 
 		~Command();
 

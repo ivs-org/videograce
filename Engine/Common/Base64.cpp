@@ -14,7 +14,7 @@
 namespace Common
 {
 
-std::string toBase64(const std::string &source)
+std::string toBase64(std::string_view source)
 {
 	BIO *b64 = BIO_new(BIO_f_base64());
 	BIO *bio = BIO_new(BIO_s_mem());
@@ -22,7 +22,7 @@ std::string toBase64(const std::string &source)
 
 	BIO_set_flags(bio, BIO_FLAGS_BASE64_NO_NL);
 	BIO_set_close(bio, BIO_CLOSE);
-	BIO_write(bio, source.c_str(), (int)source.size());
+	BIO_write(bio, source.data(), (int)source.size());
 	BIO_flush(bio);
 
 	BUF_MEM *bufferPtr;
@@ -39,7 +39,7 @@ std::string toBase64(const std::string &source)
 	return result;
 }
 
-std::string fromBase64(const std::string &source_)
+std::string fromBase64(std::string_view source_)
 {
 	std::string source(source_);
 	std::replace(source.begin(), source.end(), '-', '+');

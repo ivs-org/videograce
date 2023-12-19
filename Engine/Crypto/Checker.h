@@ -12,6 +12,6 @@
 namespace Crypto
 {
 
-bool CheckSSLCertificate(const std::string &certificate_, const std::string &privateKey_);
+bool CheckSSLCertificate(std::string_view certificate_, std::string_view privateKey_);
 
 }

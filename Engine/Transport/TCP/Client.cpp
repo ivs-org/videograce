@@ -272,7 +272,7 @@ public:
         EndSession();
     }
 
-    void SetServerAddress(const std::string &address_, uint16_t port_)
+    void SetServerAddress(std::string_view address_, uint16_t port_)
     {
         address = address_;
         port = port_;
@@ -320,7 +320,7 @@ TCPClient::~TCPClient()
     impl.reset();
 }
 
-void TCPClient::SetServerAddress(const std::string &address_, uint16_t port_)
+void TCPClient::SetServerAddress(std::string_view address_, uint16_t port_)
 {
     impl->SetServerAddress(address_, port_);
 }

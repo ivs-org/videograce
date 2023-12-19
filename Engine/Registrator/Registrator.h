@@ -29,13 +29,13 @@ public:
     Registrator();
     ~Registrator();
 
-    void Connect(const std::string &url);
+    void Connect(std::string_view url);
     void Disconnect();
     bool Connected();
 
-    Proto::USER_UPDATE_RESPONSE::Result Register(const std::string &name, const std::string &avatar, const std::string &login, const std::string &password);
+    Proto::USER_UPDATE_RESPONSE::Result Register(std::string_view name, std::string_view avatar, std::string_view login, std::string_view password);
 
-    void GetCredentials(const std::string &guid, bool &ok, std::string &login, std::string &password);
+    void GetCredentials(std::string_view guid, bool &ok, std::string &login, std::string &password);
 
 private:
     Transport::WebSocket webSocket;

@@ -46,10 +46,10 @@ public:
 
 	void ReceiveEvent(const Controller::Event &event_);
 
-	void SetParams(const std::string &address,
-		const std::string &login,
-		const std::string &password,
-		const std::string &conference);
+	void SetParams(std::string_view address,
+		std::string_view login,
+		std::string_view password,
+		std::string_view conference);
 
 	void Start();
 	void Stop();

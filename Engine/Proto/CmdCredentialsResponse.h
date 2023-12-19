@@ -32,7 +32,7 @@ namespace CREDENTIALS_RESPONSE
 		std::string password;
 		
 		Command();
-		Command(Result result, const std::string &login, const std::string &password);
+		Command(Result result, std::string_view login, std::string_view password);
 
 		~Command();
 

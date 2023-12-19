@@ -38,6 +38,6 @@ enum class DeviceNotifyType
 	MicrophoneSilent
 };
 
-typedef std::function<void(const std::string &name, DeviceNotifyType notifyType, Proto::DeviceType deviceType, uint32_t deviceId, int32_t iData)> DeviceNotifyCallback;
+typedef std::function<void(std::string_view name, DeviceNotifyType notifyType, Proto::DeviceType deviceType, uint32_t deviceId, int32_t iData)> DeviceNotifyCallback;
 
 }

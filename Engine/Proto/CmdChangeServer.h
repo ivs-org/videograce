@@ -21,7 +21,7 @@ namespace CHANGE_SERVER
 		std::string url;
 
 		Command();
-		Command(const std::string &url);
+		Command(std::string_view url);
 
 		~Command();
 

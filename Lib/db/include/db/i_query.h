@@ -22,11 +22,11 @@ namespace db
 class i_query
 {
 public:
-    virtual result prepare(const std::string &sql) = 0;
+    virtual result prepare(std::string_view sql) = 0;
     virtual result set(size_t position, int32_t value) = 0;
     virtual result set(size_t position, int64_t value) = 0;
     virtual result set(size_t position, double value) = 0;
-    virtual result set(size_t position, const std::string &value) = 0;
+    virtual result set(size_t position, std::string_view value) = 0;
     virtual result set_null(size_t position) = 0;
 
     virtual bool step() = 0;

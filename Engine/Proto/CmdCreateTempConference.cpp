@@ -26,7 +26,7 @@ Command::Command()
 {
 }
 
-Command::Command(const std::string &tag_)
+Command::Command(std::string_view tag_)
 	: tag(tag_)
 {
 }

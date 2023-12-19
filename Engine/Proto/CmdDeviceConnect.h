@@ -45,7 +45,7 @@ namespace DEVICE_CONNECT
 		std::string secure_key;
 
 		Command();
-		Command(ConnectType connect_type, DeviceType device_type, uint32_t device_id, int64_t client_id, const std::string &metadata, uint32_t receiver_ssrc, uint32_t author_ssrc, const std::string &address, uint32_t port, const std::string &name, uint32_t resolution, Video::ColorSpace color_space, bool my, const std::string &secure_key);
+		Command(ConnectType connect_type, DeviceType device_type, uint32_t device_id, int64_t client_id, std::string_view metadata, uint32_t receiver_ssrc, uint32_t author_ssrc, std::string_view address, uint32_t port, std::string_view name, uint32_t resolution, Video::ColorSpace color_space, bool my, std::string_view secure_key);
 
 		~Command();
 

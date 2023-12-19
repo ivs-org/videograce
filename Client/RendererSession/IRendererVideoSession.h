@@ -33,8 +33,8 @@ namespace RendererSession
 	public:
 		virtual std::shared_ptr<wui::i_control> GetControl() = 0;
         
-		virtual void SetName(const std::string &name) = 0;
-		virtual const std::string &GetName() = 0;
+		virtual void SetName(std::string_view name) = 0;
+		virtual std::string_view GetName() = 0;
 
 		virtual void SetDeviceType(Proto::DeviceType deviceType) = 0;
 		virtual Proto::DeviceType GetDeviceType() = 0;
@@ -70,7 +70,7 @@ namespace RendererSession
 		virtual uint32_t GetAuthorSSRC() const = 0;
 		virtual std::string GetSecureKey() const = 0;
 		
-		virtual void Start(uint32_t receiverSSRC, uint32_t authorSSRC, uint32_t deviceId, const std::string &secureKey) = 0;
+		virtual void Start(uint32_t receiverSSRC, uint32_t authorSSRC, uint32_t deviceId, std::string_view secureKey) = 0;
 		virtual bool Started() const = 0;
 		virtual void Stop() = 0;
 		

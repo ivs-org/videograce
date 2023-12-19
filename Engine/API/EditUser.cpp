@@ -35,7 +35,7 @@ Command::Command()
 {
 }
 
-Command::Command(int64_t id_, const std::string &name_, const std::string &login_, const std::string &password_, uint32_t number_, const std::vector<Proto::Group> &groups_, uint64_t time_limit_, bool allow_create_conference_, bool use_only_tcp_, const std::string &guid_)
+Command::Command(int64_t id_, std::string_view name_, std::string_view login_, std::string_view password_, uint32_t number_, const std::vector<Proto::Group> &groups_, uint64_t time_limit_, bool allow_create_conference_, bool use_only_tcp_, std::string_view guid_)
 	: id(id_), name(name_), login(login_), password(password_), number(number_), groups(groups_), time_limit(time_limit_), allow_create_conference(allow_create_conference_), use_only_tcp(use_only_tcp_), guid(guid_)
 {
 }

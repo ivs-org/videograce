@@ -75,20 +75,20 @@ void RendererAudioSession::SetDecoderType(Audio::CodecType dt)
 	decoderType = dt;
 }
 
-void RendererAudioSession::SetName(const std::string &name_)
+void RendererAudioSession::SetName(std::string_view name_)
 {
 	name = name_;
 }
-const std::string &RendererAudioSession::GetName()
+std::string_view RendererAudioSession::GetName()
 {
 	return name;
 }
 
-void RendererAudioSession::SetMetadata(const std::string &metadata_)
+void RendererAudioSession::SetMetadata(std::string_view metadata_)
 {
 	metadata = metadata_;
 }
-const std::string &RendererAudioSession::GetMetadata()
+std::string_view RendererAudioSession::GetMetadata()
 {
 	return metadata;
 }
@@ -148,7 +148,7 @@ std::string RendererAudioSession::GetSecureKey() const
 	return secureKey;
 }
 
-void RendererAudioSession::Start(uint32_t receiverSSRC_, uint32_t authorSSRC_, uint32_t deviceId_, const std::string &secureKey_)
+void RendererAudioSession::Start(uint32_t receiverSSRC_, uint32_t authorSSRC_, uint32_t deviceId_, std::string_view secureKey_)
 {
 	if (runned)
 	{

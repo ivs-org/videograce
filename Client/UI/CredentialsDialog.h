@@ -66,7 +66,7 @@ private:
     bool CheckServerAddress();
     void UpdateServerAddress();
     
-    void RegistrationEndCallback(RegistrationResult result, const std::string &login, const std::string &password);
+    void RegistrationEndCallback(RegistrationResult result, std::string_view login, std::string_view password);
 };
 
 }

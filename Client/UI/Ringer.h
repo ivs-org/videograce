@@ -68,7 +68,7 @@ private:
 #ifdef _WIN32
     void Load(int res);
 #else
-    void Load(const std::string &fileName);
+    void Load(std::string_view fileName);
 #endif
     void Play();
 };

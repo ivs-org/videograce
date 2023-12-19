@@ -52,8 +52,8 @@ public:
 	/// derived from IRendererVideoSession
     virtual std::shared_ptr<wui::i_control> GetControl();
 
-	virtual void SetName(const std::string &name);
-	virtual const std::string &GetName();
+	virtual void SetName(std::string_view name);
+	virtual std::string_view GetName();
 	virtual void SetDeviceType(Proto::DeviceType deviceType);
 	virtual Proto::DeviceType GetDeviceType();
 	virtual void SetMy(bool yes);
@@ -76,7 +76,7 @@ public:
 	virtual uint32_t GetSSRC() const;
 	virtual uint32_t GetAuthorSSRC() const;
 	virtual std::string GetSecureKey() const;
-	virtual void Start(uint32_t receiverSSRC, uint32_t authorSSRC, uint32_t deviceId, const std::string &secureKey);
+	virtual void Start(uint32_t receiverSSRC, uint32_t authorSSRC, uint32_t deviceId, std::string_view secureKey);
 	virtual bool Started() const;
 	virtual void Stop();
 	virtual void Pause();

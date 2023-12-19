@@ -25,7 +25,7 @@ Microphone::~Microphone()
 {
 }
 
-void Microphone::SetDeviceName(const std::string &name)
+void Microphone::SetDeviceName(std::string_view name)
 {
     impl->SetDeviceName(name);
 }

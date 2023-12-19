@@ -33,7 +33,7 @@ namespace DEVICE_PARAMS
 		Video::ColorSpace color_space;
 
 		Command();
-		Command(uint32_t id, uint32_t ssrc, DeviceType device_type, uint32_t ord, const std::string &name, const std::string &metadata, uint32_t resolution, Video::ColorSpace color_space);
+		Command(uint32_t id, uint32_t ssrc, DeviceType device_type, uint32_t ord, std::string_view name, std::string_view metadata, uint32_t resolution, Video::ColorSpace color_space);
 
 		~Command();
 

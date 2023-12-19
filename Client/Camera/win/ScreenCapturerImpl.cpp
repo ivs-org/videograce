@@ -57,7 +57,7 @@ ScreenCapturerImpl::~ScreenCapturerImpl()
 	Stop();
 }
 
-void ScreenCapturerImpl::SetName(const std::string &)
+void ScreenCapturerImpl::SetName(std::string_view )
 {
 	/// Not supported
 }

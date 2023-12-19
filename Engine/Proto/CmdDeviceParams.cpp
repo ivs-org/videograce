@@ -40,7 +40,7 @@ Command::Command()
 {
 }
 
-Command::Command(uint32_t id_, uint32_t ssrc_, DeviceType device_type_, uint32_t ord_, const std::string &name_, const std::string &metadata_, uint32_t resolution_, Video::ColorSpace color_space_)
+Command::Command(uint32_t id_, uint32_t ssrc_, DeviceType device_type_, uint32_t ord_, std::string_view name_, std::string_view metadata_, uint32_t resolution_, Video::ColorSpace color_space_)
 	: id(id_),
 	ssrc(ssrc_),
 	device_type(device_type_),

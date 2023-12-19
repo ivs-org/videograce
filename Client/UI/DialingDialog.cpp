@@ -28,14 +28,14 @@ DialingDialog::~DialingDialog()
 {
 }
 
-void DialingDialog::Run(const std::string &subscriber)
+void DialingDialog::Run(std::string_view subscriber)
 {
     window->set_transient_for(transientWindow.lock());
     text = std::shared_ptr<wui::text>(new wui::text());
     image = std::shared_ptr<wui::image>(new wui::image(IMG_CALLOUT));
     cancelButton = std::shared_ptr<wui::button>(new wui::button(wui::locale("button", "cancel"), std::bind(&DialingDialog::Cancel, this)));
 
-    text->set_text(wui::locale("dialing_dialog", "dial") + " " + subscriber);
+    text->set_text(wui::locale("dialing_dialog", "dial") + " " + std::string(subscriber));
 
     window->add_control(text, { 84, 10, WND_WIDTH - 10, 65 });
     window->add_control(image, { 10, 10, 74, 74 });

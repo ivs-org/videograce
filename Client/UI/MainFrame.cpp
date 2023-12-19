@@ -409,7 +409,7 @@ void MainFrame::ActionConference()
             wui::message_button::ok);
     }
 
-    conferenceDialog.Run(Proto::Conference(), [this](const std::string &tag) {
+    conferenceDialog.Run(Proto::Conference(), [this](std::string_view tag) {
         ConnectToConference(tag, true);
     });
 }
@@ -431,7 +431,7 @@ void MainFrame::ActionDevices()
 
 }
 
-void MainFrame::ActionTurnCamera(bool my, int64_t actorId, const std::string &actorName)
+void MainFrame::ActionTurnCamera(bool my, int64_t actorId, std::string_view actorName)
 {
     if (!IsCameraExists())
     {
@@ -465,7 +465,7 @@ void MainFrame::ActionTurnCamera(bool my, int64_t actorId, const std::string &ac
 
         actionQuested = true;
 
-        return messageBox->show(actorName + " " + wui::locale("message", "allow_enable_camera"),
+        return messageBox->show(std::string(actorName) + " " + wui::locale("message", "allow_enable_camera"),
             wui::locale("message", "title_error"),
             wui::message_icon::alert,
             wui::message_button::yes_no, [this, actorId](wui::message_result result) {
@@ -499,7 +499,7 @@ void MainFrame::ActionTurnCamera(bool my, int64_t actorId, const std::string &ac
     }
 }
 
-void MainFrame::ActionTurnMicrophone(bool my, int64_t actorId, const std::string &actorName)
+void MainFrame::ActionTurnMicrophone(bool my, int64_t actorId, std::string_view actorName)
 {
     if (!IsMicrophoneExists())
     {
@@ -533,7 +533,7 @@ void MainFrame::ActionTurnMicrophone(bool my, int64_t actorId, const std::string
 
         actionQuested = true;
 
-        return messageBox->show(actorName + " " + wui::locale("message", "allow_enable_microphone"),
+        return messageBox->show(std::string(actorName) + " " + wui::locale("message", "allow_enable_microphone"),
             wui::locale("message", "title_error"),
             wui::message_icon::alert,
             wui::message_button::yes_no, [this, actorId](wui::message_result result) {
@@ -605,11 +605,11 @@ void MainFrame::ActionTurnRendererGrid()
     wui::config::set_int("VideoRenderer", "GridType", big ? 1 : 0);
 }
 
-void MainFrame::ActionTurnDemonstration(bool my, int64_t actorId, const std::string &actorName)
+void MainFrame::ActionTurnDemonstration(bool my, int64_t actorId, std::string_view actorName)
 {
     if (controller.GetState() != Controller::State::Conferencing)
     {
-        return messageBox->show(actorName + " " + wui::locale("message", "demonstration_only_on_conference"),
+        return messageBox->show(std::string(actorName) + " " + wui::locale("message", "demonstration_only_on_conference"),
             wui::locale("message", "title_error"),
             wui::message_icon::alert,
             wui::message_button::ok);
@@ -628,7 +628,7 @@ void MainFrame::ActionTurnDemonstration(bool my, int64_t actorId, const std::str
 
         actionQuested = true;
 
-        return messageBox->show(actorName + " " + wui::locale("message", "allow_enable_screen_capturing"),
+        return messageBox->show(std::string(actorName) + " " + wui::locale("message", "allow_enable_screen_capturing"),
             wui::locale("message", "title_confirmation"),
             wui::message_icon::alert,
             wui::message_button::yes_no, [this, actorId](wui::message_result result) {
@@ -659,7 +659,7 @@ void MainFrame::ActionTurnDemonstration(bool my, int64_t actorId, const std::str
     }
 }
 
-void MainFrame::ActionTurnRemoteControl(bool my, int64_t actorId, const std::string &actorName, bool enable)
+void MainFrame::ActionTurnRemoteControl(bool my, int64_t actorId, std::string_view actorName, bool enable)
 {
     if (!demonstrationSession)
     {
@@ -688,7 +688,7 @@ void MainFrame::ActionTurnRemoteControl(bool my, int64_t actorId, const std::str
         {
             actionQuested = true;
 
-            return messageBox->show(actorName + " " + wui::locale("message", "allow_enable_remote_control"),
+            return messageBox->show(std::string(actorName) + " " + wui::locale("message", "allow_enable_remote_control"),
                 wui::locale("message", "title_confirmation"),
                 wui::message_icon::alert,
                 wui::message_button::yes_no, [this, actorId](wui::message_result result) {
@@ -858,22 +858,22 @@ void MainFrame::ActionMenu()
 }
 
 /// IContactListCallback impl
-void MainFrame::ContactSelected(int64_t id, const std::string &name)
+void MainFrame::ContactSelected(int64_t id, std::string_view name)
 {
     contentPanel.SetUser(id, name);
 }
 
-void MainFrame::ContactCall(const std::string &name)
+void MainFrame::ContactCall(std::string_view name)
 {
     Call(name);
 }
 
-void MainFrame::ConferenceSelected(const std::string &tag, const std::string &name)
+void MainFrame::ConferenceSelected(std::string_view tag, std::string_view name)
 {
     contentPanel.SetConference(tag, name);
 }
 
-void MainFrame::ConferenceConnect(const std::string &tag, bool my)
+void MainFrame::ConferenceConnect(std::string_view tag, bool my)
 {
     ConnectToConference(tag, my);
 }
@@ -2598,7 +2598,7 @@ void MainFrame::TCPTestCompleted()
     window->emit_event(static_cast<int32_t>(MyEvent::ConnectivityTestCompleted), 2);
 }
 
-void MainFrame::ReceiveDeviceNotify(const std::string &name, DeviceNotifyType notifyType, Proto::DeviceType deviceType, uint32_t deviceId, int32_t iData)
+void MainFrame::ReceiveDeviceNotify(std::string_view name, DeviceNotifyType notifyType, Proto::DeviceType deviceType, uint32_t deviceId, int32_t iData)
 {
     if (!window)
     {
@@ -2647,7 +2647,7 @@ void MainFrame::ReceiveDeviceNotify(const std::string &name, DeviceNotifyType no
     window->emit_event(static_cast<int32_t>(MyEvent::Controller), 0);
 }
 
-void MainFrame::AudioRendererErrorCallback(uint32_t code, const std::string &msg)
+void MainFrame::AudioRendererErrorCallback(uint32_t code, std::string_view msg)
 {
     errLog->warn("Audio renderer error: code: {0}, msg: {1}", code, msg);
 
@@ -2867,7 +2867,7 @@ void MainFrame::MessagesUpdatedCallback(Storage::MessageAction, const Storage::M
     prevUnreaded = unreaded;
 }
 
-void MainFrame::AutoRegisterUser(const std::string &name)
+void MainFrame::AutoRegisterUser(std::string_view name)
 {
     Registrator::Registrator registrator;
     registrator.Connect((wui::config::get_int("Connection", "Secure", 0) != 0 ? "https://" : "http://") + wui::config::get_string("Connection", "Address", "server_address:8778"));
@@ -3159,7 +3159,7 @@ void MainFrame::KillScreenSaver()
 
 }
 
-void MainFrame::Call(const std::string &subscriber)
+void MainFrame::Call(std::string_view subscriber)
 {
     if (controller.GetState() != Controller::State::Ready && controller.GetState() != Controller::State::Conferencing)
     {
@@ -3249,7 +3249,7 @@ void MainFrame::ConnectToURIConference()
     }
 }
 
-void MainFrame::ConnectToConference(const std::string &tag, bool connectMembers)
+void MainFrame::ConnectToConference(std::string_view tag, bool connectMembers)
 {
     if (tag.empty() || controller.GetState() != Controller::State::Ready || controller.GetState() == Controller::State::Conferencing)
     {
@@ -3326,7 +3326,7 @@ void MainFrame::DisconnectFromConference()
     controller.DisconnectFromConference(capturers, renderers);
 }
 
-void MainFrame::ScheduleConnect(const std::string &tag, const std::string &name, bool forceQuestion)
+void MainFrame::ScheduleConnect(std::string_view tag, std::string_view name, bool forceQuestion)
 {
     callParams.scheduleConferenceTag = tag;
     callParams.scheduleConferenceName = name;
@@ -3336,13 +3336,13 @@ void MainFrame::ScheduleConnect(const std::string &tag, const std::string &name,
     if (wui::config::get_int("User", "AutoConnectToConf", 1) != 0 && !forceQuestion)
     {
         ringer.Ring(Ringer::RingType::ScheduleConnectQuick);
-        ShowBusy(wui::locale("common", "starting_conference") + "\n" + name);
+        ShowBusy(wui::locale("common", "starting_conference") + "\n" + std::string(name));
         contactList.SelectConference(tag, name);
     }
     else
     {
         ringer.Ring(Ringer::RingType::ScheduleConnectLong);
-        questionDialog.Run(wui::locale("common", "starting_conference") + "\n" + name + "\n" + wui::locale("common", "connect_to_starting_conference"));
+        questionDialog.Run(wui::locale("common", "starting_conference") + "\n" + std::string(name) + "\n" + wui::locale("common", "connect_to_starting_conference"));
     }
 }
 
@@ -3583,7 +3583,7 @@ void MainFrame::FindMicrophone()
     wui::config::set_string("CaptureDevices", "MicrophoneName", microphoneDevices.front().name);
 }
 
-void MainFrame::ShowAvatar(int64_t clientId, const std::string &name)
+void MainFrame::ShowAvatar(int64_t clientId, std::string_view name)
 {
     if (wui::config::get_int("User", "OutputAvatar", 1) == 0)
     {

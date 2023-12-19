@@ -36,7 +36,7 @@ namespace Transport
 class IImpl
 {
 public:
-	virtual std::string Request(const std::string &target, const std::string &method, const std::string &body) = 0;
+	virtual std::string Request(std::string_view target, std::string_view method, std::string_view body) = 0;
 	virtual bool IsConnected() = 0;
 
 	virtual ~IImpl() {}
@@ -54,7 +54,7 @@ public:
 
 	std::shared_ptr<spdlog::logger> sysLog, errLog;
 	
-	HttpImpl(const std::string &url, std::function<void(int32_t, const char*)> errorCallback_)
+	HttpImpl(std::string_view url, std::function<void(int32_t, const char*)> errorCallback_)
 		: host(), port(),
 		ioc(),
 		socket(ioc),
@@ -81,19 +81,19 @@ public:
 				return;
 			}
 
-			socket.set_option(boost::asio::detail::socket_option::integer<SOL_SOCKET, SO_RCVTIMEO>{ 2000 }, ec);
-			if (ec)
-			{
-				errLog->error("HttpImpl::HttpImpl :: set_option error: (v: {0:d}, m:{1})", ec.value(), ec.message());
-				if (errorCallback) errorCallback(ec.value(), ec.message().c_str());
-				return;
-			}
-
 			boost::asio::connect(socket, results.begin(), results.end(), ec);
 			if (ec && errorCallback)
 			{
 				errLog->error("HttpImpl::HttpImpl :: connect error: (v: {0:d}, m:{1})", ec.value(), ec.message());
                 errorCallback(ec.value(), ec.message().c_str());
+			}
+
+			socket.set_option(boost::asio::detail::socket_option::integer<SOL_SOCKET, SO_RCVTIMEO>{ 3000 }, ec);
+			if (ec)
+			{
+				errLog->error("HttpImpl::HttpImpl :: set_option error: (v: {0:d}, m:{1})", ec.value(), ec.message());
+				if (errorCallback) errorCallback(ec.value(), ec.message().c_str());
+				return;
 			}
 
 			sysLog->trace("HttpImpl::HttpImpl :: Connected to: {0}", url);
@@ -113,7 +113,7 @@ public:
 		sysLog->trace("HttpImpl::~HttpImpl :: Ended");
 	}
 
-	virtual std::string Request(const std::string &target, const std::string &method, const std::string &body)
+	virtual std::string Request(std::string_view target, std::string_view method, std::string_view body)
 	{
 		http::request<http::string_body> req{method == "POST" ? http::verb::post : http::verb::get, target, 11};
 		req.set(http::field::host, host + ":" + port);
@@ -166,7 +166,7 @@ public:
 
 	std::shared_ptr<spdlog::logger> sysLog, errLog;
 
-	HttpsImpl(const std::string &url, std::function<void(int32_t, const char*)> errorCallback_)
+	HttpsImpl(std::string_view url, std::function<void(int32_t, const char*)> errorCallback_)
 		: host(), port(),
 		ioc(),
 		ctx{ ssl::context::sslv23_client },
@@ -175,7 +175,7 @@ public:
 		sysLog(spdlog::get("System")), errLog(spdlog::get("Error"))
 	{
 		std::vector<std::string> vals, addr;
-		std::string query = url;
+		std::string query(url);
 		boost::split(vals, query, boost::is_any_of("/"));
 		if (vals.size() >= 2)
 		{
@@ -214,7 +214,7 @@ public:
 					return;
 				}
 
-				stream.next_layer().set_option(boost::asio::detail::socket_option::integer<SOL_SOCKET, SO_RCVTIMEO>{ 2000 }, ec);
+				stream.next_layer().set_option(boost::asio::detail::socket_option::integer<SOL_SOCKET, SO_RCVTIMEO>{ 3000 }, ec);
 				if (ec)
 				{
 					errLog->error("HttpsImpl::HttpsImpl :: set_option error: (v: {0:d}, m:{1})", ec.value(), ec.message());
@@ -245,7 +245,7 @@ public:
 		sysLog->trace("HttpsImpl::~HttpsImpl :: Ended");
 	}
 
-	virtual std::string Request(const std::string &target, const std::string &method, const std::string &body)
+	virtual std::string Request(std::string_view target, std::string_view method, std::string_view body)
 	{
 		http::request<http::string_body> req{ method == "POST" ? http::verb::post : http::verb::get, target, 11 };
 		req.set(http::field::host, host + ":" + port);
@@ -295,7 +295,7 @@ HTTPClient::~HTTPClient()
 	Disconnect();
 }
 
-void HTTPClient::Connect(const std::string &url)
+void HTTPClient::Connect(std::string_view url)
 {
 	if (impl)
 	{
@@ -312,7 +312,7 @@ void HTTPClient::Connect(const std::string &url)
 	}
 }
 
-std::string HTTPClient::Request(const std::string &path, const std::string &method, const std::string &body)
+std::string HTTPClient::Request(std::string_view path, std::string_view method, std::string_view body)
 {
 	if (impl)
 	{

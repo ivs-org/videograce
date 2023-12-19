@@ -21,9 +21,9 @@ public:
     virtual void ActionHangup() = 0;
 
     virtual void ActionDevices() = 0;
-    virtual void ActionTurnCamera(bool my, int64_t actorId = 0, const std::string &actorName = "") = 0;
+    virtual void ActionTurnCamera(bool my, int64_t actorId = 0, std::string_view actorName = "") = 0;
     
-    virtual void ActionTurnMicrophone(bool my, int64_t actorId = 0, const std::string &actorName = "") = 0;
+    virtual void ActionTurnMicrophone(bool my, int64_t actorId = 0, std::string_view actorName = "") = 0;
     virtual void ActionVolumeMicrophone() = 0;
     
     virtual void ActionTurnLoudspeaker() = 0;
@@ -31,8 +31,8 @@ public:
 		
     virtual void ActionTurnRendererGrid() = 0;
     
-    virtual void ActionTurnDemonstration(bool my, int64_t actorId = 0, const std::string &actorName = "") = 0;
-    virtual void ActionTurnRemoteControl(bool my, int64_t actorId = 0, const std::string &actorName = "", bool enable = true) = 0;
+    virtual void ActionTurnDemonstration(bool my, int64_t actorId = 0, std::string_view actorName = "") = 0;
+    virtual void ActionTurnRemoteControl(bool my, int64_t actorId = 0, std::string_view actorName = "", bool enable = true) = 0;
 
     virtual void ActionHand(bool my) = 0;
 		

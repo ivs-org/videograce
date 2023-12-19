@@ -25,11 +25,11 @@ namespace RendererSession
 	class IRendererAudioSession
 	{
 	public:
-		virtual void SetName(const std::string &name) = 0;
-		virtual const std::string &GetName() = 0;
+		virtual void SetName(std::string_view name) = 0;
+		virtual std::string_view GetName() = 0;
 
-		virtual void SetMetadata(const std::string &metadata) = 0;
-		virtual const std::string &GetMetadata() = 0;
+		virtual void SetMetadata(std::string_view metadata) = 0;
+		virtual std::string_view GetMetadata() = 0;
 
 		virtual void SetMy(bool yes) = 0;
 		virtual bool GetMy() = 0;
@@ -54,7 +54,7 @@ namespace RendererSession
 
 		virtual void SetRecorder(Recorder::Recorder* recorder) = 0;
 		
-		virtual void Start(uint32_t receiverSSRC, uint32_t authorSSRC, uint32_t deviceId, const std::string &secureKey) = 0;
+		virtual void Start(uint32_t receiverSSRC, uint32_t authorSSRC, uint32_t deviceId, std::string_view secureKey) = 0;
 		virtual bool Started() const = 0;
 		virtual void Stop() = 0;
 

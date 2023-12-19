@@ -30,6 +30,6 @@ CComPtr<IPin> GetSecondInPin(IBaseFilter *pFilter);
 
 typedef void(*CaptureCallback)(uint8_t* data, int len, void *instance);
 
-CComPtr<IBaseFilter> CreateFilterByName(const std::string &name, const GUID &category);
+CComPtr<IBaseFilter> CreateFilterByName(std::string_view name, const GUID &category);
 
 HRESULT GetCategoryFilters(const GUID &category, std::vector<Client::Device> &devices);

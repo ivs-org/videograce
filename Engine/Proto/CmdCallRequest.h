@@ -34,7 +34,7 @@ struct Command
 	uint64_t time_limit;
 		
 	Command();
-	Command(const std::string &name, int64_t id, uint32_t connection_id, Type type, uint64_t time_limit);
+	Command(std::string_view name, int64_t id, uint32_t connection_id, Type type, uint64_t time_limit);
 
 	~Command();
 	

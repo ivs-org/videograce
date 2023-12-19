@@ -37,7 +37,7 @@ Command::Command()
 {
 }
 
-Command::Command(Result result_, uint32_t server_version_, int64_t id_, uint32_t connection_id_, const std::string &name_, const std::string &redirect_url_, const std::string &secure_key_, const std::string &server_name_, uint32_t options_, uint32_t grants_, uint32_t max_output_bitrate_, uint16_t reduced_frame_rate_)
+Command::Command(Result result_, uint32_t server_version_, int64_t id_, uint32_t connection_id_, std::string_view name_, std::string_view redirect_url_, std::string_view secure_key_, std::string_view server_name_, uint32_t options_, uint32_t grants_, uint32_t max_output_bitrate_, uint16_t reduced_frame_rate_)
 	: result(result_), server_version(server_version_), id(id_), connection_id(connection_id_), name(name_), redirect_url(redirect_url_), secure_key(secure_key_), server_name(server_name_), options(options_), grants(grants_), max_output_bitrate(max_output_bitrate_), reduced_frame_rate(reduced_frame_rate_)
 {
 }

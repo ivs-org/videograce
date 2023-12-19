@@ -21,7 +21,7 @@ namespace CREDENTIALS_REQUEST
 		std::string guid;
 
 		Command();
-		Command(const std::string &guid);
+		Command(std::string_view guid);
 
 		~Command();
 

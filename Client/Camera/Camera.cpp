@@ -35,7 +35,7 @@ void Camera::Zoom(int value)
     impl->Zoom(value);
 }
 
-void Camera::SetName(const std::string &name_)
+void Camera::SetName(std::string_view name_)
 {
     impl->SetName(name_);
 }

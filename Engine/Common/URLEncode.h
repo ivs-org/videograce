@@ -12,6 +12,6 @@
 namespace Common
 {
 
-std::string URLEncode(const std::string &input) noexcept;
+std::string URLEncode(std::string_view input) noexcept;
 
 }

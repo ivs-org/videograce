@@ -30,7 +30,7 @@ QuestionDialog::~QuestionDialog()
 {
 }
 
-void QuestionDialog::Run(const std::string &question)
+void QuestionDialog::Run(std::string_view question)
 {
     window->set_transient_for(transientWindow.lock());
     text = std::shared_ptr<wui::text>(new wui::text());

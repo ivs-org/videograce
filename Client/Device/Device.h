@@ -34,7 +34,7 @@ struct Device
 	{
 	}
 
-    inline bool operator==(const std::string &name_)
+    inline bool operator==(std::string_view name_)
 	{
 		return name == name_;
 	}

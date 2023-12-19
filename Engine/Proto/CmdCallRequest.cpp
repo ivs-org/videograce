@@ -36,7 +36,7 @@ Command::Command()
 {
 }
 
-Command::Command(const std::string &name_, int64_t id_, uint32_t connection_id_, Type type_, uint64_t time_limit_)
+Command::Command(std::string_view name_, int64_t id_, uint32_t connection_id_, Type type_, uint64_t time_limit_)
 	: name(name_), id(id_), connection_id(connection_id_), type(type_), time_limit(time_limit_)
 {
 }

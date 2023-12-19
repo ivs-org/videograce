@@ -44,7 +44,7 @@ Storage::~Storage()
 {
 }
 
-void Storage::Connect(const std::string &dbPath_)
+void Storage::Connect(std::string_view dbPath_)
 {
 	dbPath = dbPath_;
 	UpdateDB();
@@ -112,7 +112,7 @@ void Storage::AddMessage(const Proto::Message &message)
 }
 
 template <typename T>
-inline void AddSQLValue(const std::string &fieldName, T value, std::string &fields, std::string &values, bool exists, bool allowNull = true)
+inline void AddSQLValue(std::string_view fieldName, T value, std::string &fields, std::string &values, bool exists, bool allowNull = true)
 {
 	std::string value_ = std::to_string(value);
 	if (value == 0 && allowNull)
@@ -122,16 +122,16 @@ inline void AddSQLValue(const std::string &fieldName, T value, std::string &fiel
 
 	if (!exists)
 	{
-		fields += fieldName + ",";
+		fields += std::string(fieldName) + ",";
 		values += value_ + ",";
 	}
 	else
 	{
-		values += fieldName + "=" + value_ + ",";
+		values += std::string(fieldName) + "=" + value_ + ",";
 	}
 }
 
-inline void AddSQLValue(const std::string &fieldName, const std::string &value, std::string &fields, std::string &values, bool exists)
+inline void AddSQLValue(std::string_view fieldName, const std::string& value, std::string& fields, std::string& values, bool exists)
 {
 	std::string value_ = "'" + value + "'";
 	if (value.empty())
@@ -141,44 +141,44 @@ inline void AddSQLValue(const std::string &fieldName, const std::string &value, 
 
 	if (!exists)
 	{
-		fields += fieldName + ",";
+		fields += std::string(fieldName) + ",";
 		values += value_ + ",";
 	}
 	else
 	{
-		values += fieldName + "=" + value_ + ",";
+		values += std::string(fieldName) + "=" + value_ + ",";
 	}
 }
 
 template <typename T>
-inline void AddOnlyDataSQLValue(const std::string &fieldName, T value, std::string &fields, std::string &values, bool exists)
+inline void AddOnlyDataSQLValue(std::string_view fieldName, T value, std::string &fields, std::string &values, bool exists)
 {
 	if (value != 0)
 	{
 		if (!exists)
 		{
-			fields += fieldName + ",";
+			fields += std::string(fieldName) + ",";
 			values += std::to_string(value) + ",";
 		}
 		else
 		{
-			values += fieldName + "=" + std::to_string(value) + ",";
+			values += std::string(fieldName) + "=" + std::to_string(value) + ",";
 		}
 	}
 }
 
-inline void AddOnlyDataSQLValue(const std::string &fieldName, const std::string &value, std::string &fields, std::string &values, bool exists)
+inline void AddOnlyDataSQLValue(std::string_view fieldName, const std::string &value, std::string &fields, std::string &values, bool exists)
 {
 	if (!value.empty())
 	{
 		if (!exists)
 		{
-			fields += fieldName + ",";
+			fields += std::string(fieldName) + ",";
 			values += "'" + value + "',";
 		}
 		else
 		{
-			values += fieldName + "='" + value + "',";
+			values += std::string(fieldName) + "='" + value + "',";
 		}
 	}
 }
@@ -398,7 +398,7 @@ int32_t Storage::CalcUnreadedContact(db::connection &conn, int64_t clientId)
     return 0;
 }
 
-int32_t Storage::CalcUnreadedConference(db::connection &conn, const std::string &tag)
+int32_t Storage::CalcUnreadedConference(db::connection &conn, std::string_view tag)
 {
     if (GetMyClientId() == 0)
     {
@@ -419,7 +419,7 @@ int32_t Storage::CalcUnreadedConference(db::connection &conn, const std::string 
     return 0;
 }
 
-size_t Storage::LoadMessages(int64_t start, int64_t subscriber, const std::string &conference, uint32_t limit)
+size_t Storage::LoadMessages(int64_t start, int64_t subscriber, std::string_view conference, uint32_t limit)
 {
 	messages.clear();
 
@@ -632,11 +632,11 @@ std::string Storage::SubscribeMessagesReceiver(std::function<void(MessageAction,
     return id;
 }
 
-void Storage::UnsubscribeMessagesReceiver(const std::string &subscriberId)
+void Storage::UnsubscribeMessagesReceiver(std::string_view subscriberId)
 {
     std::lock_guard<std::recursive_mutex> lock(messagesMutex);
 
-    auto it = messagesReceivers.find(subscriberId);
+    auto it = messagesReceivers.find(subscriberId.data());
     if (it != messagesReceivers.end())
     {
         messagesReceivers.erase(it);
@@ -1022,11 +1022,11 @@ std::string Storage::SubscribeContactsReceiver(std::function<void(const Contacts
     return id;
 }
 
-void Storage::UnsubscribeContactsReceiver(const std::string &subscriberId)
+void Storage::UnsubscribeContactsReceiver(std::string_view subscriberId)
 {
     std::lock_guard<std::recursive_mutex> lock(contactsMutex);
 
-    auto it = contactsReceivers.find(subscriberId);
+    auto it = contactsReceivers.find(subscriberId.data());
     if (it != contactsReceivers.end())
     {
         contactsReceivers.erase(it);
@@ -1233,11 +1233,11 @@ std::string Storage::SubscribeGroupsReceiver(std::function<void(const Groups &gr
     return id;
 }
 
-void Storage::UnsubscribeGroupsReceiver(const std::string &subscriberId)
+void Storage::UnsubscribeGroupsReceiver(std::string_view subscriberId)
 {
     std::lock_guard<std::recursive_mutex> lock(groupsMutex);
 
-    auto it = groupsReceivers.find(subscriberId);
+    auto it = groupsReceivers.find(subscriberId.data());
     if (it != groupsReceivers.end())
     {
         groupsReceivers.erase(it);
@@ -1510,11 +1510,11 @@ std::string Storage::SubscribeConferencesReceiver(std::function<void(const Confe
     return id;
 }
 
-void Storage::UnsubscribeConferencesReceiver(const std::string &subscriberId)
+void Storage::UnsubscribeConferencesReceiver(std::string_view subscriberId)
 {
     std::lock_guard<std::recursive_mutex> lock(conferencesMutex);
 
-    auto it = conferencesReceivers.find(subscriberId);
+    auto it = conferencesReceivers.find(subscriberId.data());
     if (it != conferencesReceivers.end())
     {
         conferencesReceivers.erase(it);

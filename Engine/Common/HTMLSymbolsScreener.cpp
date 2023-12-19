@@ -13,7 +13,7 @@ namespace Common
 namespace HTML
 {
 
-std::string Screen(const std::string &value)
+std::string Screen(std::string_view value)
 {
 	std::string buffer;
 	buffer.reserve(value.size());

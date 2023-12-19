@@ -21,7 +21,7 @@ AudioRendererImpl::~AudioRendererImpl()
 {
 }
 
-bool AudioRendererImpl::SetDeviceName(const std::string &name)
+bool AudioRendererImpl::SetDeviceName(std::string_view name)
 {
     return use_wasapi ? wasapi.SetDeviceName(name) : wave.SetDeviceName(name);
 }
@@ -76,7 +76,7 @@ void AudioRendererImpl::SetAECReceiver(Transport::ISocket *socket)
     use_wasapi ? wasapi.SetAECReceiver(socket) : wave.SetAECReceiver(socket);
 }
 
-void AudioRendererImpl::SetErrorHandler(std::function<void(uint32_t code, const std::string &msg)> handler)
+void AudioRendererImpl::SetErrorHandler(std::function<void(uint32_t code, std::string_view msg)> handler)
 {
     use_wasapi ? wasapi.SetErrorHandler(handler) : wave.SetErrorHandler(handler);
 }

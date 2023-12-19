@@ -30,7 +30,7 @@ Registrator::~Registrator()
     Disconnect();
 }
 
-void Registrator::Connect(const std::string &url)
+void Registrator::Connect(std::string_view url)
 {
     webSocket.Connect(url);
     readySem.wait_for(2000);
@@ -46,7 +46,7 @@ bool Registrator::Connected()
     return webSocket.IsConnected();
 }
 
-Proto::USER_UPDATE_RESPONSE::Result Registrator::Register(const std::string &name, const std::string &avatar, const std::string &login, const std::string &password)
+Proto::USER_UPDATE_RESPONSE::Result Registrator::Register(std::string_view name, std::string_view avatar, std::string_view login, std::string_view password)
 {
     registerResult = Proto::USER_UPDATE_RESPONSE::Result::Undefined;
 
@@ -65,7 +65,7 @@ Proto::USER_UPDATE_RESPONSE::Result Registrator::Register(const std::string &nam
     return registerResult;
 }
 
-void Registrator::GetCredentials(const std::string &guid, bool &ok, std::string &login, std::string &password)
+void Registrator::GetCredentials(std::string_view guid, bool &ok, std::string &login, std::string &password)
 {
     if (webSocket.IsConnected())
     {

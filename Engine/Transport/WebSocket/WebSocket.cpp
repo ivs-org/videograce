@@ -139,8 +139,8 @@ public:
 		else
 		{
 			ws_timeout opt;
-			opt.handshake_timeout = std::chrono::seconds(1);
-			opt.idle_timeout = std::chrono::seconds(1); //boost::beast::websocket::stream_base::none();
+			opt.handshake_timeout = std::chrono::seconds(3);
+			opt.idle_timeout = std::chrono::seconds(5); //boost::beast::websocket::stream_base::none();
 			opt.keep_alive_pings = false;
 			plain_ws_.set_option(opt);
 
@@ -230,7 +230,7 @@ public:
 			return;
 		}
 		
-		const std::string &readed = buffers_to_string(buffer_.data());
+		auto readed(buffers_to_string(buffer_.data()));
 		buffer_.consume(buffer_.size());
 		callback_(WSMethod::Message, readed);
 
@@ -242,7 +242,7 @@ public:
 		sysLog->trace("WebSocket::write :: perform writing: {0}", message);
 		
 		std::lock_guard<std::mutex> lock(write_mutex_);
-		write_queue_.push(message.data());
+		write_queue_.push(std::string(message));
 		if (!writing_)
 		{
 			writing_ = true;

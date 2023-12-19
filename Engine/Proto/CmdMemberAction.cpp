@@ -36,7 +36,7 @@ Command::Command(const std::vector<int64_t> &ids_, Action action_, uint32_t gran
 {
 }
 
-Command::Command(Action action_, Result result_, int64_t actor_id_, const std::string &actor_name_)
+Command::Command(Action action_, Result result_, int64_t actor_id_, std::string_view actor_name_)
 	: ids(), action(action_), result(result_), actor_id(actor_id_), actor_name(actor_name_), grants(0)
 {
 }

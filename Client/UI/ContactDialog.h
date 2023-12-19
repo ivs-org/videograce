@@ -85,7 +85,7 @@ private:
         Item()
             : id(0), parent_id(-1), type(ItemType::Undefined), name(), number(), tag(), level(0), image(), checked(false) {}
 
-        Item(int64_t id_, int64_t parent_id_, ItemType type_, const std::string &name_, const std::string &number_, const std::string &tag_, int32_t level_, std::shared_ptr<wui::image> image_, bool checked_)
+        Item(int64_t id_, int64_t parent_id_, ItemType type_, std::string_view name_, std::string_view number_, std::string_view tag_, int32_t level_, std::shared_ptr<wui::image> image_, bool checked_)
             : id(id_), parent_id(parent_id_), type(type_), name(name_), number(number_), tag(tag_), level(level_), image(image_), checked(checked_) {}
     };
 

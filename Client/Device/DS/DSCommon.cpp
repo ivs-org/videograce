@@ -334,9 +334,9 @@ HRESULT GetCategoryFilters(const GUID &category, std::vector<Client::Device> &de
 	return hr;
 }
 
-CComPtr<IBaseFilter> CreateFilterByName(const std::string &name_, const GUID &category)
+CComPtr<IBaseFilter> CreateFilterByName(std::string_view name_, const GUID &category)
 {
-	auto filterName = name_;
+	std::string filterName(name_);
 
 	/// Extract duplicate number (if exists) and trim filter name to original
 	int duplicateNumber = 0;

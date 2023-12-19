@@ -27,7 +27,7 @@ Command::Command()
 {
 }
 
-Command::Command(uint32_t code_, const std::string &message_, const std::string &opt_)
+Command::Command(uint32_t code_, std::string_view message_, std::string_view opt_)
 	: code(code_), message(message_), opt(opt_)
 {
 }

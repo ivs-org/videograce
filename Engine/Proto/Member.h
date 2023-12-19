@@ -51,19 +51,19 @@ namespace Proto
 
 		Member();
 		Member(int64_t id);
-        Member(int64_t id, const std::string &name);
+        Member(int64_t id, std::string_view name);
 		Member(int64_t id, bool deleted);
-		Member(int64_t id, MemberState state, const std::string &login, const std::string &name, const std::string &number, const std::vector<Group> &groups);
-		Member(int64_t id, MemberState state, const std::string &login, const std::string &name, const std::string &number, const std::vector<Group> &groups, uint32_t grants);
+		Member(int64_t id, MemberState state, std::string_view login, std::string_view name, std::string_view number, const std::vector<Group> &groups);
+		Member(int64_t id, MemberState state, std::string_view login, std::string_view name, std::string_view number, const std::vector<Group> &groups, uint32_t grants);
 		Member(int64_t id, MemberState state);
 		Member(int64_t id,
 			MemberState state,
-			const std::string &login,
-			const std::string &name,
-			const std::string &number,
+			std::string_view login,
+			std::string_view name,
+			std::string_view number,
 			const std::vector<Group> &groups,
-			const std::string &icon,
-			const std::string &avatar,
+			std::string_view icon,
+			std::string_view avatar,
 			uint32_t max_input_bitrate,
 			uint32_t order,
 			bool has_camera,

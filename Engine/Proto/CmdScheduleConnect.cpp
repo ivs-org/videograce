@@ -30,7 +30,7 @@ Command::Command()
 {
 }
 
-Command::Command(const std::string &tag_, const std::string &name_, uint64_t time_limit_)
+Command::Command(std::string_view tag_, std::string_view name_, uint64_t time_limit_)
 	: tag(tag_), name(name_), time_limit(time_limit_)
 {
 }

@@ -82,7 +82,7 @@ MicrophoneDMO::~MicrophoneDMO()
 	Stop();
 }
 
-void MicrophoneDMO::SetDeviceName(const std::string &name)
+void MicrophoneDMO::SetDeviceName(std::string_view name)
 {
 	deviceName = name;
 	if (runned)

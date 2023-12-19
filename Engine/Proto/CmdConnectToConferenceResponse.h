@@ -38,7 +38,7 @@ namespace CONNECT_TO_CONFERENCE_RESPONSE
 		bool temp;
 		
 		Command();
-		Command(Result result, int64_t id, uint32_t grants, int64_t founder_id, const std::string &tag, const std::string &name, bool temp);
+		Command(Result result, int64_t id, uint32_t grants, int64_t founder_id, std::string_view tag, std::string_view name, bool temp);
 		Command(Result result);
 
 		~Command();

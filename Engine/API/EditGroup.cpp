@@ -33,7 +33,7 @@ Command::Command()
 {
 }
 
-Command::Command(int64_t id_, int64_t parent_id_, const std::string &name_, const std::string &tag_, const std::string &password_, bool limited_, const std::string &guid_, int64_t owner_id_)
+Command::Command(int64_t id_, int64_t parent_id_, std::string_view name_, std::string_view tag_, std::string_view password_, bool limited_, std::string_view guid_, int64_t owner_id_)
 	: id(id_), parent_id(parent_id_), name(name_), tag(tag_), password(password_), limited(limited_), guid(guid_), owner_id(owner_id_)
 {
 }

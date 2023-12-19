@@ -50,7 +50,7 @@ public:
 	Storage();
 	~Storage();
 
-	void Connect(const std::string &dbPath);
+	void Connect(std::string_view dbPath);
 	void SetMyClientId(int64_t id);
     
 	/// Messages and calls API
@@ -59,7 +59,7 @@ public:
 
     std::vector<int64_t> GetAbsentContacts(const Messages &messages);
 
-	size_t LoadMessages(int64_t start, int64_t subscriber, const std::string &conference, uint32_t limit);
+	size_t LoadMessages(int64_t start, int64_t subscriber, std::string_view conference, uint32_t limit);
 	size_t LoadNextMessages(int32_t count);
 
 	Messages GetUndeliveredMessages();
@@ -70,7 +70,7 @@ public:
 	const Messages &GetMessages() const;
 
     std::string SubscribeMessagesReceiver(std::function<void(MessageAction, const Messages &messages)> receiver);
-    void UnsubscribeMessagesReceiver(const std::string &subscriberId);
+    void UnsubscribeMessagesReceiver(std::string_view subscriberId);
 
 	/// ContactList API
 	void UpdateContacts(Proto::CONTACT_LIST::SortType sortType, bool showNumbers, const Contacts &contacts);
@@ -87,7 +87,7 @@ public:
     bool GetShowNumbers();
 
     std::string SubscribeContactsReceiver(std::function<void(const Contacts &contacts)> receiver);
-    void UnsubscribeContactsReceiver(const std::string &subscriberId);
+    void UnsubscribeContactsReceiver(std::string_view subscriberId);
 
 	/// GroupList API
 	void UpdateGroups(const Groups &groups);
@@ -102,7 +102,7 @@ public:
 	void ChangeGroupRolled(int64_t groupId);
 
     std::string SubscribeGroupsReceiver(std::function<void(const Groups &groups)> receiver);
-    void UnsubscribeGroupsReceiver(const std::string &subscriberId);
+    void UnsubscribeGroupsReceiver(std::string_view subscriberId);
 
 	/// Conferences API
 	void UpdateConferences(const Conferences &conferences);
@@ -116,7 +116,7 @@ public:
 	void ChangeConferenceRolled(int64_t conferenceId);
 
     std::string SubscribeConferencesReceiver(std::function<void(const Conferences &conferences)> receiver);
-    void UnsubscribeConferencesReceiver(const std::string &subscriberId);
+    void UnsubscribeConferencesReceiver(std::string_view subscriberId);
 
 private:
 	std::string dbPath;
@@ -155,7 +155,7 @@ private:
 	void UpdateUnreadedConferences();
 
     int32_t CalcUnreadedContact(db::connection &conn, int64_t clientId);
-    int32_t CalcUnreadedConference(db::connection &conn, const std::string &tag);
+    int32_t CalcUnreadedConference(db::connection &conn, std::string_view tag);
 
     Proto::CONTACT_LIST::SortType GetContactSortType();
 

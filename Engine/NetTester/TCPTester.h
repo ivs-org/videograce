@@ -29,7 +29,7 @@ public:
 	TCPTester(std::shared_ptr<wui::i_locale> locale, std::function<void()> readyCallback);
 	~TCPTester();
 
-	void SetAddress(const std::string &address, uint16_t port);
+	void SetAddress(std::string_view address, uint16_t port);
 	void ClearAddresses();
 
 	void DoTheTest();

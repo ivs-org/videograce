@@ -40,10 +40,10 @@ namespace RendererSession
         void SetDeviceNotifyCallback(Client::DeviceNotifyCallback deviceNotifyCallback);
 
 		/// derived from IRendererAudioSession
-		virtual void SetName(const std::string &name);
-		virtual const std::string &GetName();
-		virtual void SetMetadata(const std::string &metadata);
-		virtual const std::string &GetMetadata();
+		virtual void SetName(std::string_view name);
+		virtual std::string_view GetName();
+		virtual void SetMetadata(std::string_view metadata);
+		virtual std::string_view GetMetadata();
 		virtual void SetMy(bool yes);
 		virtual bool GetMy();
 		virtual Transport::ISocket* GetDirectReceiver();
@@ -59,7 +59,7 @@ namespace RendererSession
 		virtual uint32_t GetAuthorSSRC() const;
 		virtual std::string GetSecureKey() const;
 		virtual void SetRecorder(Recorder::Recorder* recorder);
-		virtual void Start(uint32_t receiverSSRC, uint32_t authorSSRC, uint32_t deviceId, const std::string &secureKey);
+		virtual void Start(uint32_t receiverSSRC, uint32_t authorSSRC, uint32_t deviceId, std::string_view secureKey);
 		virtual bool Started() const;
 		virtual void Stop();
 

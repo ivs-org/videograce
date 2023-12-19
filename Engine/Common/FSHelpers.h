@@ -12,7 +12,7 @@
 namespace Common
 {
 
-bool CheckAllowFileWrite(const std::string &path);
+bool CheckAllowFileWrite(std::string_view path);
 std::string DirNameOf(const std::string& fileNameWithPath);
 std::string FileNameOf(const std::string& fileNameWithPath);
 

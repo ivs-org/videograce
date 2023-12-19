@@ -30,12 +30,12 @@ Command::Command()
 {
 }
 
-Command::Command(const std::string &tag_)
+Command::Command(std::string_view tag_)
 	: tag(tag_), connect_members(false), has_camera(false), has_microphone(false), has_demonstration(false)
 {
 }
 
-Command::Command(const std::string &tag_, bool connect_members_, bool has_camera_, bool has_microphone_, bool has_demonstration_)
+Command::Command(std::string_view tag_, bool connect_members_, bool has_camera_, bool has_microphone_, bool has_demonstration_)
 	: tag(tag_), connect_members(connect_members_), has_camera(has_camera_), has_microphone(has_microphone_), has_demonstration(has_demonstration_)
 {
 }

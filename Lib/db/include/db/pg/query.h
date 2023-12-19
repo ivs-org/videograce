@@ -29,11 +29,11 @@ public:
     query(connection &connection_);
     virtual ~query();
 
-    virtual result prepare(const std::string &sql) final;
+    virtual result prepare(std::string_view sql) final;
     virtual result set(size_t position, int32_t value) final;
     virtual result set(size_t position, int64_t value) final;
     virtual result set(size_t position, double value) final;
-    virtual result set(size_t position, const std::string &value) final;
+    virtual result set(size_t position, std::string_view value) final;
     virtual result set_null(size_t position) final;
 
     virtual bool step() final;

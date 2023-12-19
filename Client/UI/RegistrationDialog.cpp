@@ -46,7 +46,7 @@ RegistrationDialog::~RegistrationDialog()
 {
 }
 
-void RegistrationDialog::Run(const std::string &serverAddress)
+void RegistrationDialog::Run(std::string_view serverAddress)
 {
     window->set_transient_for(transientWindow.lock());
     nameText = std::shared_ptr<wui::text>(new wui::text(wui::locale("registration_dialog", "name")));

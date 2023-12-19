@@ -24,7 +24,7 @@ namespace CONNECT_REQUEST
 		std::string password;
 		
 		Command();
-		Command(uint32_t client_version, const std::string &system, const std::string &login, const std::string &password);
+		Command(uint32_t client_version, std::string_view system, std::string_view login, std::string_view password);
 
 		~Command();
 

@@ -23,7 +23,7 @@ namespace WANT_SPEAK
 		bool is_speak;
 
 		Command();
-		Command(int64_t user_id, const std::string &user_name, bool is_speak);
+		Command(int64_t user_id, std::string_view user_name, bool is_speak);
 
 		~Command();
 

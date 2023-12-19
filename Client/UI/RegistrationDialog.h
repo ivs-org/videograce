@@ -36,7 +36,7 @@ public:
     RegistrationDialog(std::weak_ptr<wui::window> transientWindow, std::function<void(RegistrationResult, const std::string&, const std::string&)> readyCallback);
     ~RegistrationDialog();
 
-    void Run(const std::string &serverAddress = "");
+    void Run(std::string_view serverAddress = "");
 
 private:
     static const int32_t WND_WIDTH = 390, WND_HEIGHT = 390;

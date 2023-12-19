@@ -24,11 +24,11 @@ namespace Client
 class IContactListCallback
 {
 public:
-    virtual void ContactSelected(int64_t id, const std::string &name) = 0;
-    virtual void ContactCall(const std::string &name) = 0;
+    virtual void ContactSelected(int64_t id, std::string_view name) = 0;
+    virtual void ContactCall(std::string_view name) = 0;
 
-    virtual void ConferenceSelected(const std::string &tag, const std::string &name) = 0;
-    virtual void ConferenceConnect(const std::string &tag, bool my) = 0;
+    virtual void ConferenceSelected(std::string_view tag, std::string_view name) = 0;
+    virtual void ConferenceConnect(std::string_view tag, bool my) = 0;
     
     virtual void ContactUnselected() = 0;
 
@@ -63,8 +63,8 @@ public:
 
     Selection GetSelection();
 
-    void SelectUser(int64_t id, const std::string &name);
-    void SelectConference(const std::string &tag, const std::string &name);
+    void SelectUser(int64_t id, std::string_view name);
+    void SelectConference(std::string_view tag, std::string_view name);
 
 private:
     static const int32_t XBITMAP = 32;
@@ -121,7 +121,7 @@ private:
         Item()
             : id(0), group_id(-1), type(ItemType::Undefined), name(), number(), tag(), level(0), image(), unreaded_count(0), my(false) {}
 
-        Item(int64_t id_, int64_t group_id_, ItemType type_, const std::string &name_, const std::string &number_, const std::string &tag_, int32_t level_, std::shared_ptr<wui::image> image_, int32_t unreaded_count_, bool my_)
+        Item(int64_t id_, int64_t group_id_, ItemType type_, std::string_view name_, std::string_view number_, std::string_view tag_, int32_t level_, std::shared_ptr<wui::image> image_, int32_t unreaded_count_, bool my_)
             : id(id_), group_id(group_id_), type(type_), name(name_), number(number_), tag(tag_), level(level_), image(image_), unreaded_count(unreaded_count_), my(my_) {}
     };
 
@@ -132,7 +132,7 @@ private:
     void MakeGroups();
     void MakeConferences();
 
-    void SearchChange(const std::string &text);
+    void SearchChange(std::string_view text);
 
     void DrawItem(wui::graphic &gr, int32_t nItem, const wui::rect &pos, wui::list::item_state state);
     void ClickItem(int32_t nItem);
@@ -153,9 +153,9 @@ private:
 
     void AddConference();
 
-    void CopyConferenceLink(const std::string &tag);
+    void CopyConferenceLink(std::string_view tag);
 
-    void ExtractFromConferenceMember(const std::string &str, std::string &tag, int64_t &id);
+    void ExtractFromConferenceMember(std::string_view str, std::string &tag, int64_t &id);
 
     static constexpr const char * CONTACT = "contact:";    
     static constexpr const char * CONFERENCE = "conference:";

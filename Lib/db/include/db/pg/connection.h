@@ -29,7 +29,7 @@ class query;
 class connection : public i_connection
 {
 public:
-    connection(const std::string &conninfo);
+    connection(std::string_view conninfo);
     virtual ~connection();
 
     virtual bool is_ok() const final;

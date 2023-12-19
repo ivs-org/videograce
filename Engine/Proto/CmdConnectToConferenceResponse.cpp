@@ -37,7 +37,7 @@ Command::Command()
 {
 }
 
-Command::Command(Result result_, int64_t id_, uint32_t grants_, int64_t founder_id_, const std::string &tag_, const std::string &name_, bool temp_)
+Command::Command(Result result_, int64_t id_, uint32_t grants_, int64_t founder_id_, std::string_view tag_, std::string_view name_, bool temp_)
 	: result(result_), id(id_), grants(grants_), founder_id(founder_id_), tag(tag_), name(name_), temp(temp_)
 {
 }

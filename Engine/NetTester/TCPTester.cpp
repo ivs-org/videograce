@@ -75,7 +75,7 @@ TCPTester::~TCPTester()
 	Stop();
 }
 
-void TCPTester::SetAddress(const std::string &address_, uint16_t port_)
+void TCPTester::SetAddress(std::string_view address_, uint16_t port_)
 {
 	address = address_;
 	port = port_;

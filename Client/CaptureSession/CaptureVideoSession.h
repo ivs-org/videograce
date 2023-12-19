@@ -36,7 +36,7 @@ namespace CaptureSession
 
 		/// derived from ICaptureVideoSession
 		virtual void SetDeviceType(Proto::DeviceType deviceType);
-		virtual void SetName(const std::string &name);
+		virtual void SetName(std::string_view name);
 		virtual void SetResolution(Video::Resolution resolution);
 		virtual void SetBitrate(int bitrate);
 		virtual void SetFrameRate(uint32_t rate);
@@ -45,13 +45,13 @@ namespace CaptureSession
 		virtual bool IsRCActionsEnabled() const;
 		virtual void ForceKeyFrame();
 		virtual void SetRTPParams(const char* addr, uint16_t rtpPort);
-		virtual const std::string &GetName() const;
+		virtual std::string_view GetName() const;
 		virtual uint32_t GetDeviceId();
 		virtual Proto::DeviceType GetDeviceType();
 		virtual Video::Resolution GetResolution();
 		virtual int GetBitrate();
 		virtual void SetLocalReceiver(Transport::ISocket* receiver);
-		virtual void Start(uint32_t ssrc, Video::ColorSpace colorSpace, uint32_t deviceId, const std::string &secureKey);
+		virtual void Start(uint32_t ssrc, Video::ColorSpace colorSpace, uint32_t deviceId, std::string_view secureKey);
 		virtual bool Started() const;
 		virtual void Stop();
 		virtual void Pause();

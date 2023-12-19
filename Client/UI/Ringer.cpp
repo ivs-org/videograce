@@ -257,7 +257,7 @@ void Ringer::Load(int res)
     FreeResource(hMedia);
 }
 #else
-void Ringer::Load(const std::string &fileName)
+void Ringer::Load(std::string_view fileName)
 {
     std::ifstream file(wui::real_path(fileName), std::ios::in | std::ios::binary | std::ios::ate);
 

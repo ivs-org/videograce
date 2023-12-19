@@ -96,9 +96,9 @@ public:
     virtual void ActionHangup();
 
     virtual void ActionDevices();
-    virtual void ActionTurnCamera(bool my = true, int64_t actorId = -1, const std::string &actorName = "");
+    virtual void ActionTurnCamera(bool my = true, int64_t actorId = -1, std::string_view actorName = "");
 
-    virtual void ActionTurnMicrophone(bool my = true, int64_t actorId = -1, const std::string &actorName = "");
+    virtual void ActionTurnMicrophone(bool my = true, int64_t actorId = -1, std::string_view actorName = "");
     virtual void ActionVolumeMicrophone();
 
     virtual void ActionTurnLoudspeaker();
@@ -106,8 +106,8 @@ public:
 
     virtual void ActionTurnRendererGrid();
     
-    virtual void ActionTurnDemonstration(bool my = true, int64_t actorId = -1, const std::string &actorName = "");
-    virtual void ActionTurnRemoteControl(bool my = true, int64_t actorId = -1, const std::string &actorName = "", bool enable = true);
+    virtual void ActionTurnDemonstration(bool my = true, int64_t actorId = -1, std::string_view actorName = "");
+    virtual void ActionTurnRemoteControl(bool my = true, int64_t actorId = -1, std::string_view actorName = "", bool enable = true);
 
     virtual void ActionHand(bool my);
 
@@ -121,11 +121,11 @@ public:
     virtual void ActionMenu();
 
     /// IContactListCallback impl
-    virtual void ContactSelected(int64_t id, const std::string &name);
-    virtual void ContactCall(const std::string &name);
+    virtual void ContactSelected(int64_t id, std::string_view name);
+    virtual void ContactCall(std::string_view name);
     
-    virtual void ConferenceSelected(const std::string &tag, const std::string &name);
-    virtual void ConferenceConnect(const std::string &tag, bool my);
+    virtual void ConferenceSelected(std::string_view tag, std::string_view name);
+    virtual void ConferenceConnect(std::string_view tag, bool my);
     
     virtual void ContactUnselected();
 
@@ -258,9 +258,9 @@ private:
     void SpeedTestCompleted(uint32_t inputSpeed, uint32_t outputSpeed);
     void TCPTestCompleted();
 
-    void ReceiveDeviceNotify(const std::string &name, DeviceNotifyType notifyType, Proto::DeviceType deviceType, uint32_t deviceId, int32_t iData);
+    void ReceiveDeviceNotify(std::string_view name, DeviceNotifyType notifyType, Proto::DeviceType deviceType, uint32_t deviceId, int32_t iData);
 
-    void AudioRendererErrorCallback(uint32_t code, const std::string &msg);
+    void AudioRendererErrorCallback(uint32_t code, std::string_view msg);
 
     void VolumeBoxChangeCallback(int32_t value, VolumeBoxMode mode, bool enabled);
 
@@ -274,7 +274,7 @@ private:
 
     void MessagesUpdatedCallback(Storage::MessageAction, const Storage::Messages &);
 
-    void AutoRegisterUser(const std::string &name);
+    void AutoRegisterUser(std::string_view name);
 
 private:
     std::shared_ptr<CaptureSession::CaptureVideoSession> GetCaptureVideoSession(Proto::DeviceType deviceType);
@@ -290,16 +290,16 @@ private:
 
     void KillScreenSaver();
 
-    void Call(const std::string &subscriber);
+    void Call(std::string_view subscriber);
     void CancelCall();
     void RestoreAfterCall();
     void QuestionCall(bool yes);
 
     void ConnectToURIConference();
-    void ConnectToConference(const std::string &tag, bool connectMembers);
+    void ConnectToConference(std::string_view tag, bool connectMembers);
     void DisconnectFromConference();
 
-    void ScheduleConnect(const std::string &tag, const std::string &name, bool forceQuestion);
+    void ScheduleConnect(std::string_view tag, std::string_view name, bool forceQuestion);
 
     void StartCamera();
     void StopCamera();
@@ -321,7 +321,7 @@ private:
     void FindCamera();
     void FindMicrophone();
 
-    void ShowAvatar(int64_t clientId, const std::string &name);
+    void ShowAvatar(int64_t clientId, std::string_view name);
     void HideAvatar(int64_t clientId);
 
     void DeleteVideoRenderer(uint32_t deviceId, int64_t clientId, Proto::DeviceType deviceType);

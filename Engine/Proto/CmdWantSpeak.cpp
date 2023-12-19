@@ -30,7 +30,7 @@ Command::Command()
 {
 }
 
-Command::Command(int64_t user_id_, const std::string &user_name_, bool is_speak_)
+Command::Command(int64_t user_id_, std::string_view user_name_, bool is_speak_)
 	: user_id(user_id_), user_name(user_name_), is_speak(is_speak_)
 {
 }

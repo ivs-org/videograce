@@ -29,7 +29,7 @@ Command::Command()
 {
 }
 
-Command::Command(Proto::USER_UPDATE_REQUEST::Action action_, Result result_, int64_t user_id_, const std::string &message_)
+Command::Command(Proto::USER_UPDATE_REQUEST::Action action_, Result result_, int64_t user_id_, std::string_view message_)
 	: action(action_), result(result_), user_id(user_id_), message(message_)
 {
 }

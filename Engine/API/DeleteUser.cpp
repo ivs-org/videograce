@@ -26,7 +26,7 @@ Command::Command()
 {
 }
 
-Command::Command(const std::string &login_)
+Command::Command(std::string_view login_)
 	: login(login_)
 {
 }

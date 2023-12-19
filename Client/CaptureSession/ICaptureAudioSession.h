@@ -21,7 +21,7 @@ namespace CaptureSession
 	class ICaptureAudioSession
 	{
 	public:
-		virtual void SetDeviceName(const std::string &name) = 0;
+		virtual void SetDeviceName(std::string_view name) = 0;
 		virtual void EnableAEC(bool yes) = 0;
 		virtual void EnableNS(bool yes) = 0;
 		virtual void EnableAGC(bool yes) = 0;
@@ -43,14 +43,14 @@ namespace CaptureSession
 
 		virtual void SetRTPParams(const char* addr, uint16_t rtpPort) = 0;
 
-		virtual const std::string &GetName() const = 0;
+		virtual std::string_view GetName() const = 0;
 		virtual uint32_t GetDeviceId() const = 0;
 
 		virtual int32_t GetBitrate() const = 0;
 
 		virtual void SetLocalReceiver(Transport::ISocket* receiver) = 0;
 
-		virtual void Start(uint32_t ssrc, uint32_t devcieId, const std::string &secureKey) = 0;
+		virtual void Start(uint32_t ssrc, uint32_t devcieId, std::string_view secureKey) = 0;
 		virtual bool Started() const = 0;
 		virtual void Stop() = 0;
 	protected:

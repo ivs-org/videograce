@@ -9,7 +9,7 @@
 
 #include <string>
 
-inline std::string quot(const std::string &in)
+inline std::string quot(std::string_view in)
 {
-	return "\"" + in + "\"";
+	return "\"" + std::string(in) + "\"";
 }

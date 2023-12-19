@@ -26,7 +26,7 @@ Command::Command()
 {
 }
 
-Command::Command(const std::string &guid_)
+Command::Command(std::string_view guid_)
 	: guid(guid_)
 {
 }

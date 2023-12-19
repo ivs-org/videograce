@@ -28,7 +28,7 @@ public:
 	void SetReceiver(Transport::ISocket *receiver);
 
 	/// Derived from IEncryptor
-	virtual void Start(const std::string &secureKey);
+	virtual void Start(std::string_view secureKey);
 	virtual void Stop();
 
     virtual bool Started() const;

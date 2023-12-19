@@ -144,7 +144,7 @@ void CameraImpl::Zoom(int value)
 	cameraControl->Set(CameraControl_Zoom, newZoom, CameraControl_Flags_Manual);
 }
 
-void CameraImpl::SetName(const std::string &name_)
+void CameraImpl::SetName(std::string_view name_)
 {
 	name = name_;
 	if (runned)

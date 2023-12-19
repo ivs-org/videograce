@@ -39,7 +39,7 @@ namespace USER_UPDATE_RESPONSE
 		std::string message;
 		
 		Command();
-		Command(Proto::USER_UPDATE_REQUEST::Action action, Result result, int64_t user_id = -1, const std::string &message = "");
+		Command(Proto::USER_UPDATE_REQUEST::Action action, Result result, int64_t user_id = -1, std::string_view message = "");
 
 		~Command();
 

@@ -19,7 +19,7 @@ namespace DELETE_USER
 		std::string login;
 		
 		Command();
-		Command(const std::string &login);
+		Command(std::string_view login);
 
 		~Command();
 

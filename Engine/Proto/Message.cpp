@@ -41,8 +41,8 @@ Message::Message()
 {
 }
 
-Message::Message(const std::string &guid_, time_t dt_, MessageType type_, int64_t author_id_, const std::string &author_name_, int64_t sender_id_, const std::string &sender_name_, int64_t subscriber_id_, const std::string &subscriber_name_,
-	const std::string &conference_tag_, const std::string &conference_name_, MessageStatus status_, const std::string &text_, int32_t call_duration_, CallResult call_result_, const std::string &preview_, const std::string &data_, const std::string &url_)
+Message::Message(std::string_view guid_, time_t dt_, MessageType type_, int64_t author_id_, std::string_view author_name_, int64_t sender_id_, std::string_view sender_name_, int64_t subscriber_id_, std::string_view subscriber_name_,
+	std::string_view conference_tag_, std::string_view conference_name_, MessageStatus status_, std::string_view text_, int32_t call_duration_, CallResult call_result_, std::string_view preview_, std::string_view data_, std::string_view url_)
 	: guid(guid_), dt(dt_), type(type_), author_id(author_id_), author_name(author_name_), sender_id(sender_id_), sender_name(sender_name_), subscriber_id(subscriber_id_), subscriber_name(subscriber_name_),
 	conference_tag(conference_tag_), conference_name(conference_name_), status(status_), text(text_), call_duration(call_duration_), call_result(call_result_), preview(preview_), data(data_), url(url_)
 {

@@ -185,16 +185,16 @@ SettingsDialog::SettingsDialog(std::weak_ptr<wui::window> transientWindow_,
     loudspeaker16SampleRateCheck->turn(wui::config::get_int("AudioRenderer", "SampleFreq", 48000) == 16000);
     loudspeaker48SampleRateCheck->turn(wui::config::get_int("AudioRenderer", "SampleFreq", 48000) == 48000);
 
-    userNameInput->set_change_callback([this](const std::string &v) { userName = v; });
-    userLoginInput->set_change_callback([this](const std::string &v) { userLogin = v; });
-    userPasswordInput->set_change_callback([this](const std::string &v) { userPassword = v; });
-    userPasswordConfirmInput->set_change_callback([this](const std::string &v) { userPasswordConfirm = v; });
+    userNameInput->set_change_callback([this](std::string_view v) { userName = v; });
+    userLoginInput->set_change_callback([this](std::string_view v) { userLogin = v; });
+    userPasswordInput->set_change_callback([this](std::string_view v) { userPassword = v; });
+    userPasswordConfirmInput->set_change_callback([this](std::string_view v) { userPasswordConfirm = v; });
 
-    connectionServerInput->set_change_callback([this](const std::string &v) { connectionServer = v; });
-    connectionLoginInput->set_change_callback([this](const std::string &v) { connectionLogin = v; });
-    connectionPasswordInput->set_change_callback([this](const std::string &v) { connectionPassword = v; });
-    connectionInSpeedInput->set_change_callback([this](const std::string &v) { connectionInSpeed = v; });
-    connectionOutSpeedInput->set_change_callback([this](const std::string &v) { connectionOutSpeed = v; });
+    connectionServerInput->set_change_callback([this](std::string_view v) { connectionServer = v; });
+    connectionLoginInput->set_change_callback([this](std::string_view v) { connectionLogin = v; });
+    connectionPasswordInput->set_change_callback([this](std::string_view v) { connectionPassword = v; });
+    connectionInSpeedInput->set_change_callback([this](std::string_view v) { connectionInSpeed = v; });
+    connectionOutSpeedInput->set_change_callback([this](std::string_view v) { connectionOutSpeed = v; });
     connectionAutoDetermineSpeedCheck->turn(wui::config::get_int("User", "AutoDetermineNetSpeed", 1) != 0);
     connectionSetSpeedManualCheck->turn(wui::config::get_int("User", "AutoDetermineNetSpeed", 1) == 0);
 
@@ -213,7 +213,7 @@ SettingsDialog::SettingsDialog(std::weak_ptr<wui::window> transientWindow_,
     prefAccentuateSpeakerCheck->turn(wui::config::get_int("User", "AccentuateSpeakerRenderer", 1) != 0);
     prefUseDemonstrationWindowCheck->turn(wui::config::get_int("User", "UseDemonstrationWindow", 1) != 0);
 
-    recordPathInput->set_change_callback([this](const std::string &v) { recordPath = v; });
+    recordPathInput->set_change_callback([this](std::string_view v) { recordPath = v; });
     recordMP3Check->turn(wui::config::get_int("Record", "MP3Mode", 0) != 0);
 }
 
@@ -636,7 +636,7 @@ void SettingsDialog::RedrawVideo()
     window->redraw({ pos.left + 210, pos.top + 30, pos.left + WND_WIDTH - 10, pos.top + 280 });
 }
 
-void SettingsDialog::ReceiveDeviceNotify(const std::string &name, DeviceNotifyType notifyType, Proto::DeviceType deviceType, uint32_t deviceId, int32_t iData)
+void SettingsDialog::ReceiveDeviceNotify(std::string_view name, DeviceNotifyType notifyType, Proto::DeviceType deviceType, uint32_t deviceId, int32_t iData)
 {
     if (notifyType == DeviceNotifyType::CameraError)
     {

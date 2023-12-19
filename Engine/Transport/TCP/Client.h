@@ -22,7 +22,7 @@ public:
     TCPClient();
     ~TCPClient();
 
-    void SetServerAddress(const std::string &address_, uint16_t port_);
+    void SetServerAddress(std::string_view address_, uint16_t port_);
 
     uint16_t CreatePipe(uint16_t serverTCPPort); /// Return the local UDP port and start the component if needed
 

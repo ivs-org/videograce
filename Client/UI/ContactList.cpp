@@ -160,7 +160,7 @@ ContactList::Selection ContactList::GetSelection()
     return selection;
 }
 
-void ContactList::SelectUser(int64_t id, const std::string &name)
+void ContactList::SelectUser(int64_t id, std::string_view name)
 {
     int32_t pos = 0;
     {
@@ -181,7 +181,7 @@ void ContactList::SelectUser(int64_t id, const std::string &name)
     callback.ContactSelected(id, name);
 }
 
-void ContactList::SelectConference(const std::string &tag, const std::string &name)
+void ContactList::SelectConference(std::string_view tag, std::string_view name)
 {
     int32_t pos = 0;
     {
@@ -204,7 +204,7 @@ void ContactList::SelectConference(const std::string &tag, const std::string &na
 
 /// Impl
 
-void ContactList::ExtractFromConferenceMember(const std::string &str, std::string &tag, int64_t &id)
+void ContactList::ExtractFromConferenceMember(std::string_view str, std::string &tag, int64_t &id)
 {
     tag = str.substr(strlen(CONFERENCE_MEMBER));
     auto comma_index = tag.find(",");
@@ -212,7 +212,7 @@ void ContactList::ExtractFromConferenceMember(const std::string &str, std::strin
     {
         tag.erase(comma_index);
 
-        std::string id_s = str.substr(strlen(CONFERENCE_MEMBER));
+        std::string id_s(str.substr(strlen(CONFERENCE_MEMBER)));
         id_s.erase(0, comma_index + 1);
 
         try {
@@ -530,7 +530,7 @@ void ContactList::Edit()
         {
             if (c.id == id)
             {
-                conferenceDialog.Run(c, [this](const std::string &tag) {
+                conferenceDialog.Run(c, [this](std::string_view tag) {
                     callback.ConferenceConnect(tag, true);
                 });
                 break;
@@ -613,12 +613,12 @@ void ContactList::AddConference()
             wui::message_button::ok);
     }
 
-    conferenceDialog.Run(Proto::Conference(), [this](const std::string &tag) {
+    conferenceDialog.Run(Proto::Conference(), [this](std::string_view tag) {
         callback.ConferenceConnect(tag, true);
     });
 }
 
-void ContactList::CopyConferenceLink(const std::string &tag)
+void ContactList::CopyConferenceLink(std::string_view tag)
 {
     auto serverAddress = controller.GetServerAddress();
 
@@ -630,7 +630,7 @@ void ContactList::CopyConferenceLink(const std::string &tag)
     }
 
     wui::clipboard_put((controller.IsSecureConnection() ? "https://" : "http://") +
-        serverAddress + "/conferences/" + tag, parentWindow_.lock()->context());
+        serverAddress + "/conferences/" + std::string(tag), parentWindow_.lock()->context());
 
     messageBox->show(wui::locale("message", "conference_link_copied"),
         wui::locale("message", "title_notification"),
@@ -638,7 +638,7 @@ void ContactList::CopyConferenceLink(const std::string &tag)
         wui::message_button::ok);
 }
 
-void ContactList::SearchChange(const std::string &text)
+void ContactList::SearchChange(std::string_view text)
 {
     int pos = 0;
     bool finded = false;
@@ -954,7 +954,7 @@ void ContactList::RightClickItem(int32_t nItem, int32_t x, int32_t y)
                                 {
                                     if (c.id == id)
                                     {
-                                        conferenceDialog.Run(c, [this](const std::string &tag) {
+                                        conferenceDialog.Run(c, [this](std::string_view tag) {
                                             callback.ConferenceConnect(tag, true);
                                         });
                                         break;

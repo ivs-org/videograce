@@ -49,7 +49,7 @@ public:
 	virtual ~AudioRendererWave();
 
 	/// Impl of IAudioRenderer
-	virtual bool SetDeviceName(const std::string &name) final;
+	virtual bool SetDeviceName(std::string_view name) final;
 	virtual void Start(int32_t sampleFreq) final;
 	virtual void Stop() final;
 	virtual std::vector<std::string> GetSoundRenderers();
@@ -60,7 +60,7 @@ public:
 	virtual uint32_t GetLatency() const final;
 
 	virtual void SetAECReceiver(Transport::ISocket *socket) final;
-    virtual void SetErrorHandler(std::function<void(uint32_t code, const std::string &msg)>) final;
+    virtual void SetErrorHandler(std::function<void(uint32_t code, std::string_view msg)>) final;
 
 	/// Impl of Transport::ISocket
 	virtual void Send(const Transport::IPacket &packet, const Transport::Address *) final;
@@ -90,7 +90,7 @@ private:
 
 	Transport::ISocket* aecReceiver;
 
-    std::function<void(uint32_t code, const std::string &msg)> errorHandler;
+    std::function<void(uint32_t code, std::string_view msg)> errorHandler;
 
 	void Flush();
 	void Wait();

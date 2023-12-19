@@ -14,7 +14,7 @@ namespace Crypto
 	class IDecryptor
 	{
 	public:
-		virtual void Start(const std::string &secureKey) = 0;
+		virtual void Start(std::string_view secureKey) = 0;
 		virtual void Stop() = 0;
 
         virtual bool Started() const = 0;

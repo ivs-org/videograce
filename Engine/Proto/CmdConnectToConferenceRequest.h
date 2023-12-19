@@ -23,8 +23,8 @@ namespace CONNECT_TO_CONFERENCE_REQUEST
 		bool has_camera, has_microphone, has_demonstration;
 		
 		Command();
-		Command(const std::string &tag);
-		Command(const std::string &tag, bool connect_members, bool has_camera, bool has_microphone, bool has_demonstration);
+		Command(std::string_view tag);
+		Command(std::string_view tag, bool connect_members, bool has_camera, bool has_microphone, bool has_demonstration);
 
 		~Command();
 

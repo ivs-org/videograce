@@ -21,7 +21,7 @@ namespace RESULT
 		std::string opt;
 		
 		Command();
-		Command(uint32_t code, const std::string &message, const std::string &opt = "");
+		Command(uint32_t code, std::string_view message, std::string_view opt = "");
 
 		~Command();
 

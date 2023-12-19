@@ -30,7 +30,7 @@ public:
 	virtual ~CameraImpl();
 
 	/// Impl of ICamera
-	virtual void SetName(const std::string &name) final;
+	virtual void SetName(std::string_view name) final;
 	virtual void SetDeviceId(uint32_t id) final;
 	virtual void Start(Video::ColorSpace colorSpace) final;
 	virtual void Stop() final;

@@ -88,8 +88,8 @@ namespace Proto
 		std::string url;
 
 		Message();
-		Message(const std::string &guid, time_t dt, MessageType type, int64_t author_id, const std::string &author_name, int64_t sender_id, const std::string &sender_name, int64_t subscriber_id, const std::string &subscriber_name,
-			const std::string &conference_tag, const std::string &conference_name, MessageStatus status, const std::string &text, int32_t call_duration, CallResult call_result, const std::string &preview, const std::string &data, const std::string &url);
+		Message(std::string_view guid, time_t dt, MessageType type, int64_t author_id, std::string_view author_name, int64_t sender_id, std::string_view sender_name, int64_t subscriber_id, std::string_view subscriber_name,
+			std::string_view conference_tag, std::string_view conference_name, MessageStatus status, std::string_view text, int32_t call_duration, CallResult call_result, std::string_view preview, std::string_view data, std::string_view url);
 
 		~Message();
 
@@ -98,7 +98,7 @@ namespace Proto
 
         void Clear();
 
-		inline bool operator==(const std::string &guid_)
+		inline bool operator==(std::string_view guid_)
 		{
 			return guid == guid_;
 		}

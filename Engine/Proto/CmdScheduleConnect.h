@@ -23,7 +23,7 @@ namespace SCHEDULE_CONNECT
 		uint64_t time_limit;
 
 		Command();
-		Command(const std::string &conference, const std::string &conference_name, uint64_t time_limit);
+		Command(std::string_view conference, std::string_view conference_name, uint64_t time_limit);
 
 		~Command();
 

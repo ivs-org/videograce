@@ -88,7 +88,7 @@ ConferenceDialog::~ConferenceDialog()
 {
 }
 
-void ConferenceDialog::Run(const Proto::Conference &editedConf_, std::function<void(const std::string &)> readyCallback_)
+void ConferenceDialog::Run(const Proto::Conference &editedConf_, std::function<void(std::string_view )> readyCallback_)
 {
     window->set_transient_for(parentWindow_.lock());
     baseSheet = std::shared_ptr<wui::button>(new wui::button(wui::locale("conference_dialog", "base_sheet"), std::bind(&ConferenceDialog::ShowBase, this), wui::button_view::sheet));
@@ -382,7 +382,7 @@ void ConferenceDialog::ShowOptions()
     window->add_control(autoConnectCheck, pos);
 }
 
-void ConferenceDialog::MakeURL(const std::string &tag)
+void ConferenceDialog::MakeURL(std::string_view tag)
 {
     if (!tag.empty())
     {
@@ -396,7 +396,7 @@ void ConferenceDialog::MakeURL(const std::string &tag)
         }
 
         linkInput->set_text((controller.IsSecureConnection() ? "https://" : "http://") +
-            serverAddress + "/conferences/" + tag);
+            serverAddress + "/conferences/" + std::string(tag));
     }
     else
     {

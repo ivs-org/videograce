@@ -29,7 +29,7 @@ class ICaptureVideoSession
 {
 public:
 	virtual void SetDeviceType(Proto::DeviceType deviceType) = 0;
-	virtual void SetName(const std::string &name) = 0;
+	virtual void SetName(std::string_view name) = 0;
 	virtual void SetResolution(Video::Resolution resolution) = 0;
 	virtual void SetBitrate(int bitrate) = 0;
 	virtual void SetFrameRate(uint32_t rate) = 0;
@@ -43,7 +43,7 @@ public:
 
 	virtual void SetRTPParams(const char* addr, uint16_t rtpPort) = 0;
 
-	virtual const std::string &GetName() const = 0;
+	virtual std::string_view GetName() const = 0;
 	virtual uint32_t GetDeviceId() = 0;
 	virtual Proto::DeviceType GetDeviceType() = 0;
 
@@ -53,7 +53,7 @@ public:
 
 	virtual void SetLocalReceiver(Transport::ISocket* receiver) = 0;
 
-	virtual void Start(uint32_t ssrc, Video::ColorSpace colorSpace, uint32_t deviceId, const std::string &secureKey) = 0;
+	virtual void Start(uint32_t ssrc, Video::ColorSpace colorSpace, uint32_t deviceId, std::string_view secureKey) = 0;
 	virtual bool Started() const = 0;
 	virtual void Stop() = 0;
 

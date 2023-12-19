@@ -18,7 +18,7 @@ void hexchar(unsigned char c, unsigned char &hex1, unsigned char &hex2)
 	hex2 += hex2 <= 9 ? '0' : 'a' - 10;
 }
 
-std::string URLEncode(const std::string &input) noexcept
+std::string URLEncode(std::string_view input) noexcept
 {
 	const std::string ILLEGAL = "%<>{}|\\\"^`!*'()$,[]";
 

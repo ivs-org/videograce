@@ -24,10 +24,11 @@ extern const IID IID_ISampleGrabberCam = { 0x50e1b8a6, 0x90b4, 0x4866, { 0xa2, 0
 
 static const CLSID CLSID_NullRendererCam = { 0xC1F400A4, 0x3F08, 0x11d3, { 0x9F, 0x0B, 0x00, 0x60, 0x08, 0x03, 0x9E, 0x37 } };
 
-std::string GetVendorName(const std::string &devName)
+std::string GetVendorName(std::string_view devName)
 {
-	size_t pos = devName.find_first_of(" ");
-	std::string out = devName;
+	std::string out(devName);
+
+	auto pos = out.find_first_of(" ");
 	if (pos != std::string::npos)
 	{
 		out.erase(pos, std::string::npos);
@@ -36,7 +37,7 @@ std::string GetVendorName(const std::string &devName)
 }
 
 HRESULT BuildGraph(IFilterGraph2 *pGraph,
-    const std::string &cameraName,
+    std::string_view cameraName,
 	Video::Resolution resolution,
 	Video::ColorSpace colorSpace,
 	void *inst,

@@ -111,7 +111,7 @@ AudioRendererWave::~AudioRendererWave()
 	Stop();
 }
 
-bool AudioRendererWave::SetDeviceName(const std::string &name)
+bool AudioRendererWave::SetDeviceName(std::string_view name)
 {
 	if (deviceName == name)
 	{
@@ -372,7 +372,7 @@ void AudioRendererWave::SetAECReceiver(Transport::ISocket *socket)
 	aecReceiver = socket;
 }
 
-void AudioRendererWave::SetErrorHandler(std::function<void(uint32_t code, const std::string &msg)> errorHandler_)
+void AudioRendererWave::SetErrorHandler(std::function<void(uint32_t code, std::string_view msg)> errorHandler_)
 {
     errorHandler = errorHandler_;
 }

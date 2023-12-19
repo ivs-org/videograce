@@ -40,7 +40,7 @@ void Encryptor::SetReceiver(Transport::ISocket *receiver_)
 	receiver = receiver_;
 }
 
-void Encryptor::Start(const std::string &secureKey)
+void Encryptor::Start(std::string_view secureKey)
 {
 	if (!runned)
 	{

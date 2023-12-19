@@ -282,10 +282,10 @@ void Processor::StopMicrophone()
 	controller.DeleteCapturer(player.microphoneId);
 }
 
-void Processor::SetParams(const std::string &address_,
-	const std::string &login_,
-	const std::string &password_,
-	const std::string &conference_)
+void Processor::SetParams(std::string_view address_,
+	std::string_view login_,
+	std::string_view password_,
+	std::string_view conference_)
 {
 	address = address_;
 	login = login_;

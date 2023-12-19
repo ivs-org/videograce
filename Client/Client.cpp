@@ -212,7 +212,7 @@ bool IsAlreadyRunning(bool waitForCloseOnRestarting)
     return false;
 }
 
-void ConnectToConference(const std::string &cmdLine)
+void ConnectToConference(std::string_view cmdLine)
 {
     std::vector<std::string> strs;
     boost::split(strs, cmdLine, boost::is_any_of("/"));

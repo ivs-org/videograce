@@ -52,7 +52,7 @@ Command::Command()
 {
 }
 
-Command::Command(ConnectType connect_type_, DeviceType device_type_, uint32_t device_id_, int64_t client_id_, const std::string &metadata_, uint32_t receiver_ssrc_, uint32_t author_ssrc_, const std::string &address_, uint32_t port_, const std::string &name_, uint32_t resolution_, Video::ColorSpace color_space_, bool my_, const std::string &secure_key_)
+Command::Command(ConnectType connect_type_, DeviceType device_type_, uint32_t device_id_, int64_t client_id_, std::string_view metadata_, uint32_t receiver_ssrc_, uint32_t author_ssrc_, std::string_view address_, uint32_t port_, std::string_view name_, uint32_t resolution_, Video::ColorSpace color_space_, bool my_, std::string_view secure_key_)
 	: connect_type(connect_type_), device_type(device_type_), device_id(device_id_), client_id(client_id_), metadata(metadata_), receiver_ssrc(receiver_ssrc_), author_ssrc(author_ssrc_), address(address_), port(port_), name(name_), resolution(resolution_), color_space(color_space_), my(my_), secure_key(secure_key_)
 {
 }

@@ -38,7 +38,7 @@ namespace CALL_RESPONSE
 		uint64_t time_limit;
 		
 		Command();
-		Command(int64_t id, uint32_t connection_id, const std::string &name, Type type, uint64_t time_limit);
+		Command(int64_t id, uint32_t connection_id, std::string_view name, Type type, uint64_t time_limit);
 
 		~Command();
 

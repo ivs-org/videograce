@@ -60,7 +60,7 @@ DemonstrationWindow::DemonstrationWindow(RendererSession::RendererVideoSession &
     int32_t wndWidth = rv.width < screenSize.width() ? rv.width : screenSize.width(),
         wndHeight = rv.height < screenSize.height() ? rv.height : screenSize.height();
 
-    window->init(rvs.GetName() + " - " + wui::locale("device", "screen_capturer"), { -1, -1, wndWidth, wndHeight },
+    window->init(std::string(rvs.GetName()) + " - " + wui::locale("device", "screen_capturer"), { -1, -1, wndWidth, wndHeight },
         full_style,
         [this]() {
         timer_.stop();

@@ -182,7 +182,7 @@ private:
     void ChangeResouliton(int32_t nItem, int64_t id);
     void FillResolutions(const Device &device);
     void RedrawVideo();
-    void ReceiveDeviceNotify(const std::string &name, DeviceNotifyType notifyType, Proto::DeviceType deviceType, uint32_t deviceId, int32_t iData);
+    void ReceiveDeviceNotify(std::string_view name, DeviceNotifyType notifyType, Proto::DeviceType deviceType, uint32_t deviceId, int32_t iData);
     bool UpdateCamera();
 
     void ShowMicrophone();

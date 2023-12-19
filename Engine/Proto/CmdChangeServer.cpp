@@ -26,7 +26,7 @@ Command::Command()
 {
 }
 
-Command::Command(const std::string &url_)
+Command::Command(std::string_view url_)
 	: url(url_)
 {
 }

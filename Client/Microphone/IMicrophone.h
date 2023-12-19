@@ -15,7 +15,7 @@ namespace MicrophoneNS
 	class IMicrophone
 	{
 	public:
-		virtual void SetDeviceName(const std::string &name) = 0;
+		virtual void SetDeviceName(std::string_view name) = 0;
 		virtual void SetDeviceId(uint32_t id) = 0;
 		
 		virtual void Start() = 0;

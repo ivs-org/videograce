@@ -25,7 +25,7 @@ public:
     QuestionDialog(std::weak_ptr<wui::window> transientWindow, std::function<void(bool)> callback);
     ~QuestionDialog();
 
-    void Run(const std::string &question);
+    void Run(std::string_view question);
     void End(bool yes);
 
     bool IsInQuestion();

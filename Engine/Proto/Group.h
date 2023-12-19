@@ -37,10 +37,10 @@ namespace Proto
 		Group(int64_t id, bool deleted = false);
 		Group(int64_t id,
 			int64_t parent_id,
-			const std::string &tag,
-			const std::string &name,
+			std::string_view tag,
+			std::string_view name,
 			int64_t owner_id,
-			const std::string &password,
+			std::string_view password,
 			uint32_t grants,
 			int32_t level,
 			bool deleted = false);

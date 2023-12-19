@@ -20,7 +20,7 @@ namespace REDIRECT_USER
 		std::string url;
 		
 		Command();
-		Command(const std::string &login, const std::string &url);
+		Command(std::string_view login, std::string_view url);
 
 		~Command();
 

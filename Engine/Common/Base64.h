@@ -12,8 +12,8 @@
 namespace Common
 {
 
-std::string toBase64(const std::string &source);
+std::string toBase64(std::string_view source);
 
-std::string fromBase64(const std::string &source);
+std::string fromBase64(std::string_view source);
 
 }

@@ -74,7 +74,7 @@ public:
 
     uint32_t cameraId, microphoneId;
 
-    void SetFileName(const std::string &fileName);
+    void SetFileName(std::string_view fileName);
 
 	Video::Resolution GetResolution();
 
@@ -84,10 +84,10 @@ public:
 	void Start();
 	void Stop();
 
-	void StartCamera(uint32_t ssrc, const std::string &secureKey);
+	void StartCamera(uint32_t ssrc, std::string_view secureKey);
 	void StopCamera();
 
-	void StartMicrophone(uint32_t ssrc, const std::string &secureKey);
+	void StartMicrophone(uint32_t ssrc, std::string_view secureKey);
 	void StopMicrophone();
 
 	bool IsCameraStarted();

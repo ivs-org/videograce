@@ -43,7 +43,7 @@ Member::Member(int64_t id_)
 {
 }
 
-Member::Member(int64_t id_, const std::string &name_)
+Member::Member(int64_t id_, std::string_view name_)
     : id(id_), state(MemberState::Undefined), login(), name(name_), number(), groups(), icon(), avatar(), max_input_bitrate(0), order(0), has_camera(false), has_microphone(false), has_demonstration(false), grants(0), deleted(false), unreaded_count(0)
 {
 }
@@ -58,17 +58,17 @@ Member::Member(int64_t id_, MemberState state_)
 {
 }
 
-Member::Member(int64_t id_, MemberState state_, const std::string &login_, const std::string &name_, const std::string &number_, const std::vector<Group> &groups_)
+Member::Member(int64_t id_, MemberState state_, std::string_view login_, std::string_view name_, std::string_view number_, const std::vector<Group> &groups_)
 	: id(id_), state(state_), login(login_), name(name_), number(number_), groups(groups_), icon(), avatar(), max_input_bitrate(0), order(0), has_camera(false), has_microphone(false), has_demonstration(false), grants(0), deleted(false), unreaded_count(0)
 {
 }
 
-Member::Member(int64_t id_, MemberState state_, const std::string &login_, const std::string &name_, const std::string &number_, const std::vector<Group> &groups_, uint32_t grants_)
+Member::Member(int64_t id_, MemberState state_, std::string_view login_, std::string_view name_, std::string_view number_, const std::vector<Group> &groups_, uint32_t grants_)
 	: id(id_), state(state_), login(login_), name(name_), number(number_), groups(groups_), icon(), avatar(), max_input_bitrate(0), order(0), has_camera(false), has_microphone(false), has_demonstration(false), grants(grants_), deleted(false), unreaded_count(0)
 {
 }
 
-Member::Member(int64_t id_, MemberState state_, const std::string &login_, const std::string &name_, const std::string &number_, const std::vector<Group> &groups_, const std::string &icon_, const std::string &avatar_, uint32_t max_input_bitrate_, uint32_t order_, bool has_camera_, bool has_microphone_, bool has_demonstration_, uint32_t grants_, bool deleted_)
+Member::Member(int64_t id_, MemberState state_, std::string_view login_, std::string_view name_, std::string_view number_, const std::vector<Group> &groups_, std::string_view icon_, std::string_view avatar_, uint32_t max_input_bitrate_, uint32_t order_, bool has_camera_, bool has_microphone_, bool has_demonstration_, uint32_t grants_, bool deleted_)
 	: id(id_), state(state_), login(login_), name(name_), number(number_), groups(groups_), icon(icon_), avatar(avatar_), max_input_bitrate(max_input_bitrate_), order(order_), has_camera(has_camera_), has_demonstration(has_demonstration_), has_microphone(has_microphone_), grants(grants_), deleted(deleted_), unreaded_count(0)
 {
 }

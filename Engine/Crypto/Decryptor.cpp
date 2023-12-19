@@ -40,7 +40,7 @@ void Decryptor::SetReceiver(Transport::ISocket *receiver_)
 	receiver = receiver_;
 }
 
-void Decryptor::Start(const std::string &secureKey)
+void Decryptor::Start(std::string_view secureKey)
 {
 	if (!runned)
 	{
