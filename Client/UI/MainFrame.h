@@ -221,7 +221,7 @@ private:
 
     bool actionQuested;
 
-    bool online;
+    bool online, working;
 
     bool userForceClose;
 

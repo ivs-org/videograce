@@ -231,7 +231,7 @@ MainFrame::MainFrame()
     showConnectivityResult(false),
     useTCPMedia(false),
     actionQuested(false),
-    online(false),
+    online(false), working(true),
     userForceClose(false),
 
     callParams(),
@@ -325,9 +325,11 @@ void MainFrame::Run(bool minimized)
 
         trayIcon.reset();
 
-        speedTester.Stop();
+        working = false;
 
-        sysLog->info("The application ended");
+        //speedTester.Stop();
+
+        sysLog->info("The application perform ending");
 
 #ifdef _WIN32
         ::CoUninitialize();
@@ -1222,7 +1224,10 @@ void MainFrame::ProcessControllerEvent()
 
                 UpdateTitle();
 
-                controller.Connect(wui::config::get_string("Connection", "Address", ""), wui::config::get_int("Connection", "Secure", 0) != 0);
+                if (working)
+                {
+                    controller.Connect(wui::config::get_string("Connection", "Address", ""), wui::config::get_int("Connection", "Secure", 0) != 0);
+                }
             break;
             case Controller::Event::Type::ServerChanged:
                 errLog->error("Server changed to {0}, secure: {0:d}", e.data, e.iData);
@@ -2516,8 +2521,8 @@ void MainFrame::DetermineNetSpeed(bool force)
             UpdateTitle(wui::locale("common", "determine_network_speed"));
         }
 
-        speedTester.SetParams(wui::config::get_string("Connection", "Address", ""), wui::config::get_int("Connection", "Secure", 1) != 0);
-        speedTester.DoTheTest();
+        //speedTester.SetParams(wui::config::get_string("Connection", "Address", ""), wui::config::get_int("Connection", "Secure", 1) != 0);
+        //speedTester.DoTheTest();
     }
     else
     {

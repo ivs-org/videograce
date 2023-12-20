@@ -360,6 +360,8 @@ int main(int argc, char *argv[])
         UnregisterDeviceNotification(hDeviceNotify);
     }
 
+    spdlog::get("System")->info("Application was ended");
+
     spdlog::drop_all(); // Under VisualStudio, this must be called before main finishes to workaround a known VS issue
 
     if (oneRunMutex)
