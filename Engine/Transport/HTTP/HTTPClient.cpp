@@ -224,7 +224,7 @@ public:
 
 				struct timeval tv;
 				tv.tv_sec = 3;  // 3 Secs Timeout
-				if (setsockopt(stream.next_layer().native_handle(), SOL_SOCKET, SO_RCVTIMEO, (struct timeval *)&tv, sizeof(struct timeval)) != 0)
+				if (setsockopt(stream.next_layer().native_handle(), SOL_SOCKET, SO_RCVTIMEO, (const char*)&tv, sizeof(struct timeval)) != 0)
 				{
 					errLog->error("HttpsImpl::HttpsImpl :: setsockopt SO_RCVTIMEO error");
 					if (errorCallback) errorCallback(-1, "setsockopt SO_RCVTIMEO error");
