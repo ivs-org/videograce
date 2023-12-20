@@ -1472,7 +1472,7 @@ void Controller::OnWebSocket(Transport::WSMethod method, std::string_view messag
             
             eventHandler(Event(Event::Type::NetworkError));
 
-            std::this_thread::yield();
+            std::this_thread::sleep_for(std::chrono::milliseconds(500));
         break;
     }
 }
