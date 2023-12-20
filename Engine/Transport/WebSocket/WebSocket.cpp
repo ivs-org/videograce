@@ -308,10 +308,10 @@ public:
 	{
 		sysLog->trace("WebSocket::session :: close :: Perform closing");
 
-		while (writing_) /// wait ending of writing
+		/*while (writing_) /// wait ending of writing
 		{
 			std::this_thread::sleep_for(std::chrono::milliseconds(100));
-		}
+		}*/
 
 		sysLog->trace("WebSocket::session :: close :: Perform async_close");
 
