@@ -1469,10 +1469,9 @@ void Controller::OnWebSocket(Transport::WSMethod method, std::string_view messag
         break;
         case Transport::WSMethod::Error:
             errLog->critical("Controller :: WebSocket error (message: \"{0}\")", message);
-            
-            eventHandler(Event(Event::Type::NetworkError));
 
             std::this_thread::sleep_for(std::chrono::milliseconds(500));
+            eventHandler(Event(Event::Type::NetworkError));
         break;
     }
 }
