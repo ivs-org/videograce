@@ -166,7 +166,7 @@ public:
 
 		ws_timeout opt;
 		opt.handshake_timeout = std::chrono::seconds(3);
-		opt.idle_timeout = std::chrono::seconds(5); //boost::beast::websocket::stream_base::none();
+		opt.idle_timeout = boost::beast::websocket::stream_base::none();
 		opt.keep_alive_pings = false;
 		ssl_ws_.set_option(opt);
 
