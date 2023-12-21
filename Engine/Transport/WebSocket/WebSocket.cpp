@@ -45,6 +45,10 @@ class session : public std::enable_shared_from_this<session>
 	boost::beast::multi_buffer buffer_;
 	std::string host_;
 
+	std::mutex write_mutex_;
+	std::queue<std::string> write_queue_;
+	std::atomic<bool> writing_;
+
 	ws_callback callback_;
 
 	bool secure;
@@ -61,6 +65,9 @@ public:
 		ssl_ws_(ioc, ctx),
 		buffer_(),
 		host_(),
+		write_mutex_(),
+		write_queue_(),
+		writing_(false),
 		callback_(callback),
 		secure(secure_),
 		sysLog(spdlog::get("System")), errLog(spdlog::get("Error"))
@@ -232,6 +239,28 @@ public:
 
 	void write(std::string_view message)
 	{
+		sysLog->trace("WebSocket::write :: perform writing: {0}", message);
+
+		if (ioc_.stopped())
+		{
+			errLog->warn("WebSocket::write to stopped io context");
+			return;
+		}
+		
+		std::lock_guard<std::mutex> lock(write_mutex_);
+		write_queue_.push(std::string(message));
+		if (!writing_)
+		{
+			writing_ = true;
+			do_write();
+		}
+	}
+
+	void do_write()
+	{
+		std::string message = write_queue_.front();
+		write_queue_.pop();
+
 		if (secure)
 		{
 			ssl_ws_.text(true);
@@ -255,7 +284,7 @@ public:
 					std::placeholders::_2));
 		}
 
-		sysLog->trace("WebSocket::write :: sended: {0}", message);
+		sysLog->trace("WebSocket::do_write :: sended: {0}", message);
 	}
 
 	void on_write(boost::system::error_code ec,
@@ -270,12 +299,29 @@ public:
 			return;
 		}
 
+		sysLog->trace("WebSocket::on_write :: Perform writing");
+
+		std::lock_guard<std::mutex> lock(write_mutex_);
+		if (!ioc_.stopped() && !write_queue_.empty())
+			do_write();
+		else
+			writing_ = false;
+
 		sysLog->trace("WebSocket::on_write :: writed");
 	}
 
 	void close()
 	{
 		sysLog->trace("WebSocket::session :: close :: Perform closing");
+
+		/*while (writing_) /// wait ending of writing
+		{
+			std::this_thread::sleep_for(std::chrono::milliseconds(100));
+		}*/
+
+		writing_ = false;
+
+		sysLog->trace("WebSocket::session :: close :: Perform async_close");
 
 		if (secure)
 		{
