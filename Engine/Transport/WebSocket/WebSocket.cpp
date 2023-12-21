@@ -90,7 +90,7 @@ public:
 				std::placeholders::_1,
 				std::placeholders::_2));
 
-		sysLog->trace("WebSocket::session :: run (host: {0}, post: {1})", host, port);
+		sysLog->trace("WebSocket::session :: run (host: {0}, port: {1})", host, port);
 	}
 	
 	void on_resolve(boost::system::error_code ec, tcp::resolver::results_type results)
