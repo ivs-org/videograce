@@ -312,13 +312,6 @@ public:
 
 	void close()
 	{
-		sysLog->trace("WebSocket::session :: close :: Perform closing");
-
-		/*while (writing_) /// wait ending of writing
-		{
-			std::this_thread::sleep_for(std::chrono::milliseconds(100));
-		}*/
-
 		writing_ = false;
 
 		sysLog->trace("WebSocket::session :: close :: Perform async_close");
