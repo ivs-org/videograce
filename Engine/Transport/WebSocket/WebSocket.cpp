@@ -302,12 +302,16 @@ public:
 		sysLog->trace("WebSocket::on_write :: Perform writing");
 
 		std::lock_guard<std::mutex> lock(write_mutex_);
-		if (!ioc_.stopped() && !write_queue_.empty())
+		if (writing_ && !ioc_.stopped() && !write_queue_.empty())
+		{
+			sysLog->trace("WebSocket::on_write :: perform write from queue");
 			do_write();
+		}
 		else
+		{
 			writing_ = false;
-
-		sysLog->trace("WebSocket::on_write :: writed");
+			sysLog->trace("WebSocket::on_write :: writing end");
+		}
 	}
 
 	void close()
