@@ -2,17 +2,17 @@
  * CmdContactsUpdate.cpp - Contains protocol command CONTACTS_UPDATE impl
  *
  * Author: Anton (ud) Golovkov, udattsk@gmail.com
- * Copyright (C), Infinity Video Soft LLC, 2022
+ * Copyright (C), Infinity Video Soft LLC, 2022, 2023
  */
-
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/json_parser.hpp>
 
 #include <Proto/CmdContactsUpdate.h>
 
-#include <Common/Common.h>
 #include <Common/JSONSymbolsScreener.h>
 #include <Common/Quoter.h>
+
+#include <nlohmann/json.hpp>
+
+#include <spdlog/spdlog.h>
 
 namespace Proto
 {
@@ -40,24 +40,21 @@ Command::~Command()
 
 bool Command::Parse(std::string_view message)
 {
-	using boost::property_tree::ptree;
-
-	std::stringstream ss;
-	ss << message;
-
 	try
 	{
-		ptree pt;
-		read_json(ss, pt);
+		spdlog::get("System")->trace("proto::{0} :: perform parsing", NAME);
 
-		action = static_cast<Action>(pt.get<uint32_t>(NAME + "." + ACTION));
-        client_id = pt.get<int64_t>(NAME + "." + CLIENT_ID);
+		auto j = nlohmann::json::parse(message);
+		auto obj = j.get<nlohmann::json::object_t>().at(NAME);
+
+		action = static_cast<Action>(obj.at(ACTION).get<uint32_t>());
+		client_id = obj.at(CLIENT_ID).get<uint32_t>();
 
 		return true;
 	}
-	catch (std::exception const& e)
+	catch (nlohmann::json::parse_error& ex)
 	{
-		DBGTRACE("Error parsing %s, %s\n", NAME.c_str(), e.what());
+		spdlog::get("Error")->critical("proto::{0} :: error parse json (byte: {1}, what: {2})", NAME, ex.byte, ex.what());
 	}
 	return false;
 }

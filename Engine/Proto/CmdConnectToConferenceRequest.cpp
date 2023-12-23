@@ -2,17 +2,17 @@
  * CmdConnectToConferenceRequest.cpp - Contains protocol command CONNECT_TO_CONFERENCE_REQUEST impl
  *
  * Author: Anton (ud) Golovkov, udattsk@gmail.com
- * Copyright (C), Infinity Video Soft LLC, 2018
+ * Copyright (C), Infinity Video Soft LLC, 2018, 2023
  */
-
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/json_parser.hpp>
 
 #include <Proto/CmdConnectToConferenceRequest.h>
 
-#include <Common/Common.h>
 #include <Common/Quoter.h>
 #include <Common/JSONSymbolsScreener.h>
+
+#include <nlohmann/json.hpp>
+
+#include <spdlog/spdlog.h>
 
 namespace Proto
 {
@@ -46,35 +46,25 @@ Command::~Command()
 
 bool Command::Parse(std::string_view message)
 {
-	using boost::property_tree::ptree;
-
-	std::stringstream ss;
-	ss << message;
-
 	try
 	{
-		ptree pt;
-		read_json(ss, pt);
+		spdlog::get("System")->trace("proto::{0} :: perform parsing", NAME);
 
-		tag = pt.get<std::string>(NAME + "." + TAG);
+		auto j = nlohmann::json::parse(message);
+		auto obj = j.get<nlohmann::json::object_t>().at(NAME);
 
-		auto connect_members_opt = pt.get_optional<uint8_t>(NAME + "." + CONNECT_MEMBERS);
-		if (connect_members_opt) connect_members = connect_members_opt.get() != 0;
+		tag = obj.at(TAG).get<std::string>();
 
-		auto has_camera_opt = pt.get_optional<uint8_t>(NAME + "." + HAS_CAMERA);
-		if (has_camera_opt) has_camera = has_camera_opt.get() != 0;
-
-		auto has_microphone_opt = pt.get_optional<uint8_t>(NAME + "." + HAS_MICROPHONE);
-		if (has_microphone_opt) has_microphone = has_microphone_opt.get() != 0;
-
-        auto has_demonstration_opt = pt.get_optional<uint8_t>(NAME + "." + HAS_DEMONSTRATION);
-        if (has_demonstration_opt) has_demonstration = has_demonstration_opt.get() != 0;
-				
+		if (obj.count(CONNECT_MEMBERS) != 0) connect_members = obj.at(CONNECT_MEMBERS).get<uint8_t>() != 0;
+		if (obj.count(HAS_CAMERA) != 0) has_camera = obj.at(HAS_CAMERA).get<uint8_t>() != 0;
+		if (obj.count(HAS_MICROPHONE) != 0) has_microphone = obj.at(HAS_MICROPHONE).get<uint8_t>() != 0;
+		if (obj.count(HAS_DEMONSTRATION) != 0) has_demonstration = obj.at(HAS_DEMONSTRATION).get<uint8_t>() != 0;
+		
 		return true;
 	}
-	catch (std::exception const& e)
+	catch (nlohmann::json::parse_error& ex)
 	{
-		DBGTRACE("Error parsing %s, %s\n", NAME.c_str(), e.what());
+		spdlog::get("Error")->critical("proto::{0} :: error parse json (byte: {1}, what: {2})", NAME, ex.byte, ex.what());
 	}
 	return false;
 }

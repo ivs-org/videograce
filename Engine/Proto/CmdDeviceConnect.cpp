@@ -2,17 +2,17 @@
  * CmdDeviceConnect.cpp - Contains protocol command DEVICE_CONNECT impl
  *
  * Author: Anton (ud) Golovkov, udattsk@gmail.com
- * Copyright (C), Infinity Video Soft LLC, 2016
+ * Copyright (C), Infinity Video Soft LLC, 2016, 2023
  */
-
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/json_parser.hpp>
 
 #include <Proto/CmdDeviceConnect.h>
 
-#include <Common/Common.h>
 #include <Common/Quoter.h>
 #include <Common/JSONSymbolsScreener.h>
+
+#include <nlohmann/json.hpp>
+
+#include <spdlog/spdlog.h>
 
 namespace Proto
 {
@@ -63,36 +63,33 @@ Command::~Command()
 
 bool Command::Parse(std::string_view message)
 {
-	using boost::property_tree::ptree;
-
-	std::stringstream ss;
-	ss << message;
-
 	try
 	{
-		ptree pt;
-		read_json(ss, pt);
+		spdlog::get("System")->trace("proto::{0} :: perform parsing", NAME);
 
-		connect_type = static_cast<ConnectType>(pt.get<uint32_t>(NAME + "." + CONNECT_TYPE));
-		device_type = static_cast<DeviceType>(pt.get<uint32_t>(NAME + "." + DEVICE_TYPE));
-		device_id = pt.get<uint32_t>(NAME + "." + DEVICE_ID);
-		client_id = pt.get<int64_t>(NAME + "." + CLIENT_ID);
-		metadata = pt.get<std::string>(NAME + "." + METADATA);
-		receiver_ssrc = pt.get<uint32_t>(NAME + "." + RECEIVER_SSRC);
-		author_ssrc = pt.get<uint32_t>(NAME + "." + AUTHOR_SSRC);
-		address = pt.get<std::string>(NAME + "." + ADDRESS);
-		port = pt.get<uint16_t>(NAME + "." + PORT);
-		name = pt.get<std::string>(NAME + "." + NAME_);
-		resolution = pt.get<uint32_t>(NAME + "." + RESOLUTION);
-		color_space = static_cast<Video::ColorSpace>(pt.get<int32_t>(NAME + "." + COLOR_SPACE));
-		my = pt.get<uint32_t>(NAME + "." + MY) != 0;
-		secure_key = pt.get<std::string>(NAME + "." + SECURE_KEY);
+		auto j = nlohmann::json::parse(message);
+		auto obj = j.get<nlohmann::json::object_t>().at(NAME);
+
+		connect_type = static_cast<ConnectType>(obj.at(CONNECT_TYPE).get<uint32_t>());
+		device_type = static_cast<DeviceType>(obj.at(DEVICE_TYPE).get<uint32_t>());
+		device_id = obj.at(DEVICE_ID).get<uint32_t>();
+		client_id = obj.at(CLIENT_ID).get<int64_t>();
+		metadata = obj.at(METADATA).get<std::string>();
+		receiver_ssrc = obj.at(RECEIVER_SSRC).get<uint32_t>();
+		author_ssrc = obj.at(AUTHOR_SSRC).get<uint32_t>();
+		address = obj.at(ADDRESS).get<std::string>();
+		port = obj.at(PORT).get<uint16_t>();
+		name = obj.at(NAME_).get<std::string>();
+		resolution = obj.at(RESOLUTION).get<uint32_t>();
+		color_space = static_cast<Video::ColorSpace>(obj.at(COLOR_SPACE).get<uint32_t>());
+		my = obj.at(MY).get<uint32_t>() != 0;
+		secure_key = obj.at(SECURE_KEY).get<std::string>();
 		
 		return true;
 	}
-	catch (std::exception const& e)
+	catch (nlohmann::json::parse_error& ex)
 	{
-		DBGTRACE("Error parsing %s, %s\n", NAME.c_str(), e.what());
+		spdlog::get("Error")->critical("proto::{0} :: error parse json (byte: {1}, what: {2})", NAME, ex.byte, ex.what());
 	}
 	return false;
 }

@@ -2,17 +2,17 @@
  * CmdCredentialsResponse.cpp - Contains protocol command CREDENTIALS_RESPONSE impl
  *
  * Author: Anton (ud) Golovkov, udattsk@gmail.com
- * Copyright (C), Infinity Video Soft LLC, 2021
+ * Copyright (C), Infinity Video Soft LLC, 2023
  */
-
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/json_parser.hpp>
 
 #include <Proto/CmdCredentialsResponse.h>
 
-#include <Common/Common.h>
 #include <Common/JSONSymbolsScreener.h>
 #include <Common/Quoter.h>
+
+#include <nlohmann/json.hpp>
+
+#include <spdlog/spdlog.h>
 
 namespace Proto
 {
@@ -39,29 +39,23 @@ Command::~Command()
 
 bool Command::Parse(std::string_view message)
 {
-	using boost::property_tree::ptree;
-
-	std::stringstream ss;
-	ss << message;
-
 	try
 	{
-		ptree pt;
-		read_json(ss, pt);
+		spdlog::get("System")->trace("proto::{0} :: perform parsing", NAME);
 
-		result = static_cast<Result>(pt.get<uint32_t>(NAME + "." + RESULT));
+		auto j = nlohmann::json::parse(message);
+		auto obj = j.get<nlohmann::json::object_t>().at(NAME);
+
+		result = static_cast<Result>(obj.at(RESULT).get<uint32_t>());
+
+		if (obj.count(LOGIN) != 0) login = obj.at(LOGIN).get<std::string>();
+		if (obj.count(PASSWORD) != 0) password = obj.at(PASSWORD).get<std::string>();
 		
-		auto login_opt = pt.get_optional<std::string>(NAME + "." + LOGIN);
-		if (login_opt) login = login_opt.get();
-
-		auto password_opt = pt.get_optional<std::string>(NAME + "." + PASSWORD);
-		if (password_opt) password = password_opt.get();
-
 		return true;
 	}
-	catch (std::exception const& e)
+	catch (nlohmann::json::parse_error& ex)
 	{
-		DBGTRACE("Error parsing %s, %s\n", NAME.c_str(), e.what());
+		spdlog::get("Error")->critical("proto::{0} :: error parse json (byte: {1}, what: {2})", NAME, ex.byte, ex.what());
 	}
 	return false;
 }

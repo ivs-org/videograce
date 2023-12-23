@@ -5,14 +5,14 @@
  * Copyright (C), Infinity Video Soft LLC, 2018
  */
 
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/json_parser.hpp>
-
 #include <Proto/CmdConnectToConferenceResponse.h>
 
-#include <Common/Common.h>
 #include <Common/Quoter.h>
 #include <Common/JSONSymbolsScreener.h>
+
+#include <nlohmann/json.hpp>
+
+#include <spdlog/spdlog.h>
 
 namespace Proto
 {
@@ -53,41 +53,27 @@ Command::~Command()
 
 bool Command::Parse(std::string_view message)
 {
-	using boost::property_tree::ptree;
-
-	std::stringstream ss;
-	ss << message;
-
 	try
 	{
-		ptree pt;
-		read_json(ss, pt);
+		spdlog::get("System")->trace("proto::{0} :: perform parsing", NAME);
 
-		result = static_cast<Result>(pt.get<uint32_t>(NAME + "." + RESULT));
+		auto j = nlohmann::json::parse(message);
+		auto obj = j.get<nlohmann::json::object_t>().at(NAME);
 
-		auto grants_opt = pt.get_optional<uint32_t>(NAME + "." + GRANTS);
-		if (grants_opt) grants = grants_opt.get();
+		result = static_cast<Result>(obj.at(RESULT).get<uint32_t>());
 
-		auto id_opt = pt.get_optional<int64_t>(NAME + "." + ID);
-		if (id_opt) id = id_opt.get();
+		if (obj.count(GRANTS) != 0) grants = obj.at(GRANTS).get<uint32_t>();
+		if (obj.count(ID) != 0) id = obj.at(ID).get<int64_t>();
+		if (obj.count(FOUNDER_ID) != 0) founder_id = obj.at(FOUNDER_ID).get<int64_t>();
+		if (obj.count(TAG) != 0) tag = obj.at(TAG).get<std::string>();
+		if (obj.count(NAME_) != 0) name = obj.at(NAME_).get<std::string>();
+		if (obj.count(TEMP) != 0) temp = obj.at(TEMP).get<int8_t>() != 0;
 
-		auto founder_id_opt = pt.get_optional<int64_t>(NAME + "." + FOUNDER_ID);
-		if (founder_id_opt) founder_id = founder_id_opt.get();
-
-		auto tag_opt = pt.get_optional<std::string>(NAME + "." + TAG);
-		if (tag_opt) tag = tag_opt.get();
-
-		auto name_opt = pt.get_optional<std::string>(NAME + "." + NAME_);
-		if (name_opt) name = name_opt.get();
-
-		auto temp_opt = pt.get_optional<uint32_t>(NAME + "." + TEMP);
-		if (temp_opt) temp = temp_opt.get() != 0;
-		
 		return true;
 	}
-	catch (std::exception const& e)
+	catch (nlohmann::json::parse_error& ex)
 	{
-		DBGTRACE("Error parsing %s, %s\n", NAME.c_str(), e.what());
+		spdlog::get("Error")->critical("proto::{0} :: error parse json (byte: {1}, what: {2})", NAME, ex.byte, ex.what());
 	}
 	return false;
 }

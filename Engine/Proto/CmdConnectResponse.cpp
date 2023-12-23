@@ -2,12 +2,11 @@
  * CmdConnectResponse.cpp - Contains protocol command CONNECT_RESPONSE impl
  *
  * Author: Anton (ud) Golovkov, udattsk@gmail.com
- * Copyright (C), Infinity Video Soft LLC, 2018
+ * Copyright (C), Infinity Video Soft LLC, 2018, 2023
  */
 
 #include <Proto/CmdConnectResponse.h>
 
-#include <Common/Common.h>
 #include <Common/JSONSymbolsScreener.h>
 #include <Common/Quoter.h>
 

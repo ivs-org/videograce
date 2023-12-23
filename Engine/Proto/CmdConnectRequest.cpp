@@ -2,17 +2,17 @@
  * CmdConnectRequest.cpp - Contains protocol command CONNECT_REQUIEST impl
  *
  * Author: Anton (ud) Golovkov, udattsk@gmail.com
- * Copyright (C), Infinity Video Soft LLC, 2018
+ * Copyright (C), Infinity Video Soft LLC, 2018, 2023
  */
-
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/json_parser.hpp>
 
 #include <Proto/CmdConnectRequest.h>
 
-#include <Common/Common.h>
 #include <Common/JSONSymbolsScreener.h>
 #include <Common/Quoter.h>
+
+#include <nlohmann/json.hpp>
+
+#include <spdlog/spdlog.h>
 
 namespace Proto
 {
@@ -40,26 +40,23 @@ Command::~Command()
 
 bool Command::Parse(std::string_view message)
 {
-	using boost::property_tree::ptree;
-
-	std::stringstream ss;
-	ss << message;
-
 	try
 	{
-		ptree pt;
-		read_json(ss, pt);
+		spdlog::get("System")->trace("proto::{0} :: perform parsing", NAME);
 
-		client_version = pt.get<uint32_t>(NAME + "." + CLIENT_VERSION);
-		system = pt.get<std::string>(NAME + "." + SYSTEM);
-		login = pt.get<std::string>(NAME + "." + LOGIN);
-		password = pt.get<std::string>(NAME + "." + PASSWORD);
+		auto j = nlohmann::json::parse(message);
+		auto obj = j.get<nlohmann::json::object_t>().at(NAME);
+
+		client_version = obj.at(CLIENT_VERSION).get<uint32_t>();
+		system = obj.at(SYSTEM).get<std::string>();
+		login = obj.at(LOGIN).get<std::string>();
+		password = obj.at(PASSWORD).get<std::string>();
 
 		return true;
 	}
-	catch (std::exception const& e)
+	catch (nlohmann::json::parse_error& ex)
 	{
-		DBGTRACE("Error parsing %s, %s\n", NAME.c_str(), e.what());
+		spdlog::get("Error")->critical("proto::{0} :: error parse json (byte: {1}, what: {2})", NAME, ex.byte, ex.what());
 	}
 	return false;
 }
