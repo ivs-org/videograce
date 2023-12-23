@@ -2,17 +2,17 @@
  * Result.cpp - Contains API result json impl
  *
  * Author: Anton (ud) Golovkov, udattsk@gmail.com
- * Copyright (C), Infinity Video Soft LLC, 2020
+ * Copyright (C), Infinity Video Soft LLC, 2020, 2023
  */
-
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/json_parser.hpp>
 
 #include <API/Result.h>
 
-#include <Common/Common.h>
 #include <Common/Quoter.h>
 #include <Common/JSONSymbolsScreener.h>
+
+#include <nlohmann/json.hpp>
+
+#include <spdlog/spdlog.h>
 
 namespace API
 {
@@ -38,27 +38,20 @@ Command::~Command()
 
 bool Command::Parse(std::string_view message_)
 {
-	using boost::property_tree::ptree;
-
-	std::stringstream ss;
-	ss << message_;
-
 	try
 	{
-		ptree pt;
-		read_json(ss, pt);
+		spdlog::get("System")->trace("api::redirect_user :: perform parsing");
 
-		auto code_opt = pt.get_optional<uint32_t>(CODE);
-		if (code_opt) code = code_opt.get();
+		auto j = nlohmann::json::parse(message_);
 
-		auto message_opt = pt.get_optional<std::string>(MESSAGE);
-		if (message_opt) message = message_opt.get();
-						
+		if (j.count(CODE) != 0) code = j.at(CODE).get<std::string>();
+		if (j.count(MESSAGE) != 0) message = j.at(MESSAGE).get<std::string>();
+
 		return true;
 	}
-	catch (std::exception const& e)
+	catch (nlohmann::json::parse_error& ex)
 	{
-		DBGTRACE("Error parsing Result %s\n", e.what());
+		spdlog::get("Error")->critical("api::redirect_user :: error parse json (byte: {0}, what: {1})", ex.byte, ex.what());
 	}
 	return false;
 }

@@ -2,15 +2,11 @@
  * ServerInfo.cpp - Contains API server info json impl
  *
  * Author: Anton (ud) Golovkov, udattsk@gmail.com
- * Copyright (C), Infinity Video Soft LLC, 2020
+ * Copyright (C), Infinity Video Soft LLC, 2020, 2023
  */
-
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/json_parser.hpp>
 
 #include <API/ServerInfo.h>
 
-#include <Common/Common.h>
 #include <Common/Quoter.h>
 #include <Common/JSONSymbolsScreener.h>
 

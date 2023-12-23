@@ -2,7 +2,7 @@
  * EditUser.cpp - Contains API edit user json impl
  *
  * Author: Anton (ud) Golovkov, udattsk@gmail.com
- * Copyright (C), Infinity Video Soft LLC, 2021
+ * Copyright (C), Infinity Video Soft LLC, 2021, 2023
  */
 
 #include <API/EditUser.h>
@@ -51,15 +51,14 @@ bool Command::Parse(std::string_view message_)
 		spdlog::get("System")->trace("api::edit_user :: perform parsing");
 
 		auto j = nlohmann::json::parse(message_);
-		auto obj = j.get<nlohmann::json::object_t>();
 
-		if (obj.count(ID) != 0) id = obj.at(ID).get<int64_t>();
-		if (obj.count(NAME) != 0) name = obj.at(NAME).get<std::string>();
-		if (obj.count(LOGIN) != 0) login = obj.at(LOGIN).get<std::string>();
-		if (obj.count(PASSWORD) != 0) password = obj.at(PASSWORD).get<std::string>();
-		if (obj.count(NUMBER) != 0) number = obj.at(NUMBER).get<uint32_t>();
+		if (j.count(ID) != 0) id = j.at(ID).get<int64_t>();
+		if (j.count(NAME) != 0) name = j.at(NAME).get<std::string>();
+		if (j.count(LOGIN) != 0) login = j.at(LOGIN).get<std::string>();
+		if (j.count(PASSWORD) != 0) password = j.at(PASSWORD).get<std::string>();
+		if (j.count(NUMBER) != 0) number = j.at(NUMBER).get<uint32_t>();
 		
-		if (obj.count(GROUPS) != 0)
+		if (j.count(GROUPS) != 0)
 		{
 			auto groups_ = j.get<nlohmann::json::object_t>().at(GROUPS);
 			for (auto &g : groups_)
@@ -72,10 +71,10 @@ bool Command::Parse(std::string_view message_)
 			}
 		}
 
-		if (obj.count(TIME_LIMIT) != 0) time_limit = obj.at(TIME_LIMIT).get<uint64_t>();
-		if (obj.count(ALLOW_CREATE_CONFERENCE) != 0) allow_create_conference = obj.at(ALLOW_CREATE_CONFERENCE).get<uint8_t>();
-		if (obj.count(USE_ONLY_TCP) != 0) use_only_tcp = obj.at(USE_ONLY_TCP).get<uint8_t>();
-		if (obj.count(GUID) != 0) guid = obj.at(GUID).get<std::string>();
+		if (j.count(TIME_LIMIT) != 0) time_limit = j.at(TIME_LIMIT).get<uint64_t>();
+		if (j.count(ALLOW_CREATE_CONFERENCE) != 0) allow_create_conference = j.at(ALLOW_CREATE_CONFERENCE).get<uint8_t>();
+		if (j.count(USE_ONLY_TCP) != 0) use_only_tcp = j.at(USE_ONLY_TCP).get<uint8_t>();
+		if (j.count(GUID) != 0) guid = j.at(GUID).get<std::string>();
 
 		return true;
 	}

@@ -2,17 +2,17 @@
  * DeleteUser.cpp - Contains API delete user json impl
  *
  * Author: Anton (ud) Golovkov, udattsk@gmail.com
- * Copyright (C), Infinity Video Soft LLC, 2020
+ * Copyright (C), Infinity Video Soft LLC, 2020, 2023
  */
-
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/json_parser.hpp>
 
 #include <API/DeleteUser.h>
 
-#include <Common/Common.h>
 #include <Common/Quoter.h>
 #include <Common/JSONSymbolsScreener.h>
+
+#include <nlohmann/json.hpp>
+
+#include <spdlog/spdlog.h>
 
 namespace API
 {
@@ -37,25 +37,21 @@ Command::~Command()
 
 bool Command::Parse(std::string_view message_)
 {
-	using boost::property_tree::ptree;
-
-	std::stringstream ss;
-	ss << message_;
-
 	try
 	{
-		ptree pt;
-		read_json(ss, pt);
+		spdlog::get("System")->trace("api::delete_user :: perform parsing");
 
-		auto login_opt = pt.get_optional<std::string>(LOGIN);
-		if (login_opt) login = login_opt.get();
-						
+		auto j = nlohmann::json::parse(message_);
+
+		if (j.count(LOGIN) != 0) login = j.at(LOGIN).get<std::string>();
+
 		return true;
 	}
-	catch (std::exception const& e)
+	catch (nlohmann::json::parse_error& ex)
 	{
-		DBGTRACE("Error parsing DeleteUser %s\n", e.what());
+		spdlog::get("Error")->critical("api::delete_user :: error parse json (byte: {0}, what: {1})", ex.byte, ex.what());
 	}
+
 	return false;
 }
 

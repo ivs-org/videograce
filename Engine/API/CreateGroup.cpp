@@ -2,17 +2,17 @@
  * CreateGroup.cpp - Contains API create group json impl
  *
  * Author: Anton (ud) Golovkov, udattsk@gmail.com
- * Copyright (C), Infinity Video Soft LLC, 2021
+ * Copyright (C), Infinity Video Soft LLC, 2021, 2023
  */
-
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/json_parser.hpp>
 
 #include <API/CreateGroup.h>
 
-#include <Common/Common.h>
 #include <Common/Quoter.h>
 #include <Common/JSONSymbolsScreener.h>
+
+#include <nlohmann/json.hpp>
+
+#include <spdlog/spdlog.h>
 
 namespace API
 {
@@ -43,42 +43,25 @@ Command::~Command()
 
 bool Command::Parse(std::string_view message_)
 {
-	using boost::property_tree::ptree;
-
-	std::stringstream ss;
-	ss << message_;
-
 	try
 	{
-		ptree pt;
-		read_json(ss, pt);
+		spdlog::get("System")->trace("api::create_group :: perform parsing");
 
-		auto parent_id_opt = pt.get_optional<int64_t>(PARENT_ID);
-		if (parent_id_opt) parent_id = parent_id_opt.get();
-
-		auto name_opt = pt.get_optional<std::string>(NAME);
-		if (name_opt) name = name_opt.get();
+		auto j = nlohmann::json::parse(message_);
 		
-		auto tag_opt = pt.get_optional<std::string>(TAG);
-		if (tag_opt) tag = tag_opt.get();
-
-		auto password_opt = pt.get_optional<std::string>(PASSWORD);
-		if (password_opt) password = password_opt.get();
-
-		auto limited_opt = pt.get_optional<uint8_t>(LIMITED);
-		if (limited_opt) limited = limited_opt.get() != 0;
-
-		auto guid_opt = pt.get_optional<std::string>(GUID);
-		if (guid_opt) guid = guid_opt.get();
-
-		auto owner_id_opt = pt.get_optional<int64_t>(OWNER_ID);
-		if (owner_id_opt) owner_id = owner_id_opt.get();
+		if (j.count(PARENT_ID) != 0) parent_id = j.at(PARENT_ID).get<int64_t>();
+		if (j.count(NAME) != 0) name = j.at(NAME).get<std::string>();
+		if (j.count(TAG) != 0) tag = j.at(TAG).get<std::string>();
+		if (j.count(PASSWORD) != 0) password = j.at(PASSWORD).get<std::string>();
+		if (j.count(LIMITED) != 0) limited = j.at(LIMITED).get<uint8_t>() != 0;
+		if (j.count(GUID) != 0) guid = j.at(GUID).get<std::string>();
+		if (j.count(OWNER_ID) != 0) owner_id = j.at(OWNER_ID).get<int64_t>();
 
 		return true;
 	}
-	catch (std::exception const& e)
+	catch (nlohmann::json::parse_error& ex)
 	{
-		DBGTRACE("Error parsing CreateGroup %s\n", e.what());
+		spdlog::get("Error")->critical("api::create_group :: error parse json (byte: {0}, what: {1})", ex.byte, ex.what());
 	}
 	return false;
 }

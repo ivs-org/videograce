@@ -2,17 +2,17 @@
  * CreateUser.cpp - Contains API create user json impl
  *
  * Author: Anton (ud) Golovkov, udattsk@gmail.com
- * Copyright (C), Infinity Video Soft LLC, 2020
+ * Copyright (C), Infinity Video Soft LLC, 2020, 2023
  */
-
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/json_parser.hpp>
 
 #include <API/CreateUser.h>
 
-#include <Common/Common.h>
 #include <Common/Quoter.h>
 #include <Common/JSONSymbolsScreener.h>
+
+#include <nlohmann/json.hpp>
+
+#include <spdlog/spdlog.h>
 
 namespace API
 {
@@ -45,48 +45,27 @@ Command::~Command()
 
 bool Command::Parse(std::string_view message_)
 {
-	using boost::property_tree::ptree;
-
-	std::stringstream ss;
-	ss << message_;
-
 	try
 	{
-		ptree pt;
-		read_json(ss, pt);
+		spdlog::get("System")->trace("api::create_user :: perform parsing");
 
-		auto group_id_opt = pt.get_optional<int64_t>(GROUP_ID);
-		if (group_id_opt) group_id = group_id_opt.get();
+		auto j = nlohmann::json::parse(message_);
 
-		auto name_opt = pt.get_optional<std::string>(NAME);
-		if (name_opt) name = name_opt.get();
-		
-		auto login_opt = pt.get_optional<std::string>(LOGIN);
-		if (login_opt) login = login_opt.get();
-
-		auto password_opt = pt.get_optional<std::string>(PASSWORD);
-		if (password_opt) password = password_opt.get();
-
-		auto number_opt = pt.get_optional<uint32_t>(NUMBER);
-		if (number_opt) number = number_opt.get();
-
-		auto time_limit_opt = pt.get_optional<uint64_t>(TIME_LIMIT);
-		if (time_limit_opt) time_limit = time_limit_opt.get();
-
-		auto allow_create_conference_opt = pt.get_optional<uint8_t>(ALLOW_CREATE_CONFERENCE);
-		if (allow_create_conference_opt) allow_create_conference = allow_create_conference_opt.get() != 0;
-
-        auto use_only_tcp_opt = pt.get_optional<uint8_t>(USE_ONLY_TCP);
-        if (use_only_tcp_opt) use_only_tcp = use_only_tcp_opt.get() != 0;
-
-		auto guid_opt = pt.get_optional<std::string>(GUID);
-		if (guid_opt) guid = guid_opt.get();
+		if (j.count(GROUP_ID) != 0) group_id = j.at(GROUP_ID).get<int64_t>();
+		if (j.count(NAME) != 0) name = j.at(NAME).get<std::string>();
+		if (j.count(LOGIN) != 0) login = j.at(LOGIN).get<std::string>();
+		if (j.count(PASSWORD) != 0) password = j.at(PASSWORD).get<std::string>();
+		if (j.count(NUMBER) != 0) number = j.at(NUMBER).get<uint32_t>();
+		if (j.count(TIME_LIMIT) != 0) time_limit = j.at(TIME_LIMIT).get<uint64_t>();
+		if (j.count(ALLOW_CREATE_CONFERENCE) != 0) allow_create_conference = j.at(ALLOW_CREATE_CONFERENCE).get<uint8_t>() != 0;
+		if (j.count(USE_ONLY_TCP) != 0) use_only_tcp = j.at(USE_ONLY_TCP).get<uint8_t>() != 0;
+		if (j.count(GUID) != 0) guid = j.at(GUID).get<std::string>();
 
 		return true;
 	}
-	catch (std::exception const& e)
+	catch (nlohmann::json::parse_error& ex)
 	{
-		DBGTRACE("Error parsing CreateUser %s\n", e.what());
+		spdlog::get("Error")->critical("api::create_user :: error parse json (byte: {0}, what: {1})", ex.byte, ex.what());
 	}
 	return false;
 }

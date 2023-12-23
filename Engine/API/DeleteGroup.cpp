@@ -5,14 +5,14 @@
  * Copyright (C), Infinity Video Soft LLC, 2021
  */
 
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/json_parser.hpp>
-
 #include <API/DeleteGroup.h>
 
-#include <Common/Common.h>
 #include <Common/Quoter.h>
 #include <Common/JSONSymbolsScreener.h>
+
+#include <nlohmann/json.hpp>
+
+#include <spdlog/spdlog.h>
 
 namespace API
 {
@@ -37,25 +37,21 @@ Command::~Command()
 
 bool Command::Parse(std::string_view message_)
 {
-	using boost::property_tree::ptree;
-
-	std::stringstream ss;
-	ss << message_;
-
 	try
 	{
-		ptree pt;
-		read_json(ss, pt);
+		spdlog::get("System")->trace("api::delete_group :: perform parsing");
 
-		auto id_opt = pt.get_optional<int64_t>(ID);
-		if (id_opt) id = id_opt.get();
-						
+		auto j = nlohmann::json::parse(message_);
+
+		if (j.count(ID) != 0) id = j.at(ID).get<int64_t>();
+
 		return true;
 	}
-	catch (std::exception const& e)
+	catch (nlohmann::json::parse_error& ex)
 	{
-		DBGTRACE("Error parsing DeleteGroup %s\n", e.what());
+		spdlog::get("Error")->critical("api::delete_group :: error parse json (byte: {0}, what: {1})", ex.byte, ex.what());
 	}
+
 	return false;
 }
 
