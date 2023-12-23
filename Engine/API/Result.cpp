@@ -44,7 +44,7 @@ bool Command::Parse(std::string_view message_)
 
 		auto j = nlohmann::json::parse(message_);
 
-		if (j.count(CODE) != 0) code = j.at(CODE).get<std::string>();
+		if (j.count(CODE) != 0) code = j.at(CODE).get<uint32_t>();
 		if (j.count(MESSAGE) != 0) message = j.at(MESSAGE).get<std::string>();
 
 		return true;

@@ -10,6 +10,10 @@
 #include <Common/Quoter.h>
 #include <Common/JSONSymbolsScreener.h>
 
+#include <nlohmann/json.hpp>
+
+#include <spdlog/spdlog.h>
+
 namespace API
 {
 namespace SERVER_INFO
