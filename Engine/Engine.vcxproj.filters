@@ -1190,6 +1190,12 @@
     <ClInclude Include="spdlog\sinks\wincolor_sink-inl.h">
       <Filter>Header Files\spdlog\sinks</Filter>
     </ClInclude>
+    <ClInclude Include="Proto\CmdDeliveryBlobs.h">
+      <Filter>Header Files\Proto</Filter>
+    </ClInclude>
+    <ClInclude Include="Proto\Blob.h">
+      <Filter>Header Files\Proto</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Video\Resolution.cpp">
@@ -1716,6 +1722,12 @@
     </ClCompile>
     <ClCompile Include="Transport\UDPSocket.cpp">
       <Filter>Source Files\Transport</Filter>
+    </ClCompile>
+    <ClCompile Include="Proto\CmdDeliveryBlobs.cpp">
+      <Filter>Source Files\Proto</Filter>
+    </ClCompile>
+    <ClCompile Include="Proto\Blob.cpp">
+      <Filter>Source Files\Proto</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
