@@ -2,17 +2,17 @@
  * CmdUserUpdateRequest.cpp - Contains protocol command USER_UPDATE_REQUEST impl
  *
  * Author: Anton (ud) Golovkov, udattsk@gmail.com
- * Copyright (C), Infinity Video Soft LLC, 2021
+ * Copyright (C), Infinity Video Soft LLC, 2021, 2023
  */
-
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/json_parser.hpp>
 
 #include <Proto/CmdUserUpdateRequest.h>
 
-#include <Common/Common.h>
 #include <Common/JSONSymbolsScreener.h>
 #include <Common/Quoter.h>
+
+#include <nlohmann/json.hpp>
+
+#include <spdlog/spdlog.h>
 
 namespace Proto
 {
@@ -52,38 +52,26 @@ Command::~Command()
 
 bool Command::Parse(std::string_view message)
 {
-	using boost::property_tree::ptree;
-
-	std::stringstream ss;
-	ss << message;
-
 	try
 	{
-		ptree pt;
-		read_json(ss, pt);
+		spdlog::get("System")->trace("proto::{0} :: perform parsing", NAME);
 
-		action = static_cast<Action>(pt.get<uint32_t>(NAME + "." + ACTION));
+		auto j = nlohmann::json::parse(message);
+		auto obj = j.get<nlohmann::json::object_t>().at(NAME);
 
-		auto id_opt = pt.get_optional<int64_t>(NAME + "." + ID);
-		if (id_opt) id = id_opt.get();
+		action = static_cast<Action>(obj.at(ACTION).get<uint32_t>());
 
-		auto name_opt = pt.get_optional<std::string>(NAME + "." + NAME_);
-		if (name_opt) name = name_opt.get();
-
-		auto avatar_opt = pt.get_optional<std::string>(NAME + "." + AVATAR);
-		if (avatar_opt) avatar = avatar_opt.get();
-
-		auto login_opt = pt.get_optional<std::string>(NAME + "." + LOGIN);
-		if (login_opt) login = login_opt.get();
-
-		auto password_opt = pt.get_optional<std::string>(NAME + "." + PASSWORD);
-		if (password_opt) password = password_opt.get();
+		if (obj.count(ID) != 0) id = obj.at(ID).get<int64_t>();
+		if (obj.count(NAME_) != 0) name = obj.at(NAME_).get<std::string>();
+		if (obj.count(AVATAR) != 0) avatar = obj.at(AVATAR).get<std::string>();
+		if (obj.count(LOGIN) != 0) login = obj.at(LOGIN).get<std::string>();
+		if (obj.count(PASSWORD) != 0) password = obj.at(PASSWORD).get<std::string>();
 
 		return true;
 	}
-	catch (std::exception const& e)
+	catch (nlohmann::json::parse_error& ex)
 	{
-		DBGTRACE("Error parsing %s, %s\n", NAME.c_str(), e.what());
+		spdlog::get("Error")->critical("proto::{0} :: error parse json (byte: {1}, what: {2})", NAME, ex.byte, ex.what());
 	}
 	return false;
 }

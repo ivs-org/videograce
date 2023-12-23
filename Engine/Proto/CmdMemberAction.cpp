@@ -2,17 +2,17 @@
  * CmdMemberAction.cpp - Contains protocol command MEMBER_ACTION impl
  *
  * Author: Anton (ud) Golovkov, udattsk@gmail.com
- * Copyright (C), Infinity Video Soft LLC, 2016
+ * Copyright (C), Infinity Video Soft LLC, 2016, 2023
  */
-
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/json_parser.hpp>
 
 #include <Proto/CmdMemberAction.h>
 
-#include <Common/Common.h>
 #include <Common/Quoter.h>
 #include <Common/JSONSymbolsScreener.h>
+
+#include <nlohmann/json.hpp>
+
+#include <spdlog/spdlog.h>
 
 namespace Proto
 {
@@ -58,42 +58,30 @@ Command::~Command()
 
 bool Command::Parse(std::string_view message)
 {
-	using boost::property_tree::ptree;
-
-	std::stringstream ss;
-	ss << message;
-
 	try
 	{
-		ptree pt;
-		read_json(ss, pt);
+		spdlog::get("System")->trace("proto::{0} :: perform parsing", NAME);
+
+		auto j = nlohmann::json::parse(message);
+		auto obj = j.get<nlohmann::json::object_t>().at(NAME);
 		
-		auto &is = pt.get_child(NAME + "." + IDS);
+		auto is = j.get<nlohmann::json::object_t>().at(IDS);
 		for (auto &i : is)
 		{
-			ids.emplace_back(i.second.get_value<uint32_t>());
+			ids.emplace_back(i.get<uint32_t>());
 		}
 		
-		auto action_opt = pt.get_optional<uint32_t>(NAME + "." + ACTION);
-		if (action_opt) action = static_cast<Action>(action_opt.get());
-
-		auto result_opt = pt.get_optional<uint32_t>(NAME + "." + RESULT);
-		if (result_opt) result = static_cast<Result>(result_opt.get());
-
-		auto actor_id_opt = pt.get_optional<int64_t>(NAME + "." + ACTOR_ID);
-		if (actor_id_opt) actor_id = actor_id_opt.get();
-
-		auto actor_name_opt = pt.get_optional<std::string>(NAME + "." + ACTOR_NAME);
-		if (actor_name_opt) actor_name = actor_name_opt.get();
-
-        auto grants_opt = pt.get_optional<uint32_t>(NAME + "." + GRANTS);
-        if (grants_opt) grants = grants_opt.get();
+		if (obj.count(ACTION) != 0) action = static_cast<Action>(obj.at(ACTION).get<uint32_t>());
+		if (obj.count(RESULT) != 0) result = static_cast<Result>(obj.at(RESULT).get<uint32_t>());
+		if (obj.count(ACTOR_ID) != 0) actor_id = obj.at(ACTOR_ID).get<int64_t>();
+		if (obj.count(ACTOR_NAME) != 0) actor_name = obj.at(ACTOR_NAME).get<std::string>();
+		if (obj.count(GRANTS) != 0) grants = obj.at(GRANTS).get<uint32_t>();
 
 		return true;
 	}
-	catch (std::exception const& e)
+	catch (nlohmann::json::parse_error& ex)
 	{
-		DBGTRACE("Error parsing %s, %s\n", NAME.c_str(), e.what());
+		spdlog::get("Error")->critical("proto::{0} :: error parse json (byte: {1}, what: {2})", NAME, ex.byte, ex.what());
 	}
 	return false;
 }

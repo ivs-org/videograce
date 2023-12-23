@@ -2,17 +2,16 @@
  * CmdMicrophoneActive.cpp - Contains protocol command MICROPHONE_ACTIVE impl
  *
  * Author: Anton (ud) Golovkov, udattsk@gmail.com
- * Copyright (C), Infinity Video Soft LLC, 2021
+ * Copyright (C), Infinity Video Soft LLC, 2021, 2023
  */
-
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/json_parser.hpp>
 
 #include <Proto/CmdMicrophoneActive.h>
 
-#include <Common/Common.h>
 #include <Common/Quoter.h>
-#include <Common/JSONSymbolsScreener.h>
+
+#include <nlohmann/json.hpp>
+
+#include <spdlog/spdlog.h>
 
 namespace Proto
 {
@@ -41,25 +40,22 @@ Command::~Command()
 
 bool Command::Parse(std::string_view message)
 {
-	using boost::property_tree::ptree;
-
-	std::stringstream ss;
-	ss << message;
-
 	try
 	{
-		ptree pt;
-		read_json(ss, pt);
+		spdlog::get("System")->trace("proto::{0} :: perform parsing", NAME);
 
-		active_type = static_cast<ActiveType>(pt.get<uint32_t>(NAME + "." + ACTIVE_TYPE));
-		device_id = pt.get<uint32_t>(NAME + "." + DEVICE_ID);
-		client_id = pt.get<int64_t>(NAME + "." + CLIENT_ID);
+		auto j = nlohmann::json::parse(message);
+		auto obj = j.get<nlohmann::json::object_t>().at(NAME);
+
+		active_type = static_cast<ActiveType>(obj.at(ACTIVE_TYPE).get<uint32_t>());
+		device_id = obj.at(DEVICE_ID).get<uint32_t>();
+		client_id = obj.at(CLIENT_ID).get<int64_t>();
 		
 		return true;
 	}
-	catch (std::exception const& e)
+	catch (nlohmann::json::parse_error& ex)
 	{
-		DBGTRACE("Error parsing %s, %s\n", NAME.c_str(), e.what());
+		spdlog::get("Error")->critical("proto::{0} :: error parse json (byte: {1}, what: {2})", NAME, ex.byte, ex.what());
 	}
 	return false;
 }

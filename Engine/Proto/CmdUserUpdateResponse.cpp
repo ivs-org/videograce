@@ -2,17 +2,17 @@
  * CmdUserUpdateResponse.cpp - Contains protocol command USER_UPDATE_RESPONSE impl
  *
  * Author: Anton (ud) Golovkov, udattsk@gmail.com
- * Copyright (C), Infinity Video Soft LLC, 2021
+ * Copyright (C), Infinity Video Soft LLC, 2021, 2023
  */
-
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/json_parser.hpp>
 
 #include <Proto/CmdUserUpdateResponse.h>
 
-#include <Common/Common.h>
 #include <Common/JSONSymbolsScreener.h>
 #include <Common/Quoter.h>
+
+#include <nlohmann/json.hpp>
+
+#include <spdlog/spdlog.h>
 
 namespace Proto
 {
@@ -40,30 +40,24 @@ Command::~Command()
 
 bool Command::Parse(std::string_view msg)
 {
-	using boost::property_tree::ptree;
-
-	std::stringstream ss;
-	ss << msg;
-
 	try
 	{
-		ptree pt;
-		read_json(ss, pt);
+		spdlog::get("System")->trace("proto::{0} :: perform parsing", NAME);
 
-		action = static_cast<Proto::USER_UPDATE_REQUEST::Action>(pt.get<uint32_t>(NAME + "." + ACTION));
-		result = static_cast<Result>(pt.get<uint32_t>(NAME + "." + RESULT));
+		auto j = nlohmann::json::parse(message);
+		auto obj = j.get<nlohmann::json::object_t>().at(NAME);
 
-		auto user_id_opt = pt.get_optional<int64_t>(NAME + "." + USER_ID);
-		if (user_id_opt) user_id = user_id_opt.get();
+		action = static_cast<Proto::USER_UPDATE_REQUEST::Action>(obj.at(ACTION).get<uint32_t>());
+		result = static_cast<Result>(obj.at(RESULT).get<uint32_t>());
 
-		auto message_opt = pt.get_optional<std::string>(NAME + "." + MESSAGE);
-		if (message_opt) message = message_opt.get();
-		
+		if (obj.count(USER_ID) != 0) user_id = obj.at(USER_ID).get<int64_t>();
+		if (obj.count(MESSAGE) != 0) message = obj.at(MESSAGE).get<std::string>();
+
 		return true;
 	}
-	catch (std::exception const& e)
+	catch (nlohmann::json::parse_error& ex)
 	{
-		DBGTRACE("Error parsing %s, %s\n", NAME.c_str(), e.what());
+		spdlog::get("Error")->critical("proto::{0} :: error parse json (byte: {1}, what: {2})", NAME, ex.byte, ex.what());
 	}
 	return false;
 }

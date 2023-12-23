@@ -2,17 +2,16 @@
  * CmdMemberAction.cpp - Contains protocol command WANT_SPEAK impl
  *
  * Author: Anton (ud) Golovkov, udattsk@gmail.com
- * Copyright (C), Infinity Video Soft LLC, 2018
+ * Copyright (C), Infinity Video Soft LLC, 2018, 2023
  */
-
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/json_parser.hpp>
 
 #include <Proto/CmdWantSpeak.h>
 
-#include <Common/Common.h>
 #include <Common/Quoter.h>
-#include <Common/JSONSymbolsScreener.h>
+
+#include <nlohmann/json.hpp>
+
+#include <spdlog/spdlog.h>
 
 namespace Proto
 {
@@ -41,25 +40,22 @@ Command::~Command()
 
 bool Command::Parse(std::string_view message)
 {
-	using boost::property_tree::ptree;
-
-	std::stringstream ss;
-	ss << message;
-
 	try
 	{
-		ptree pt;
-		read_json(ss, pt);
+		spdlog::get("System")->trace("proto::{0} :: perform parsing", NAME);
 
-		user_id = pt.get<int64_t>(NAME + "." + USER_ID);
-		user_name = pt.get<std::string>(NAME + "." + USER_NAME);
-		is_speak = pt.get<uint8_t>(NAME + "." + IS_SPEAK) != 0;
+		auto j = nlohmann::json::parse(message);
+		auto obj = j.get<nlohmann::json::object_t>().at(NAME);
+
+		user_id = obj.at(USER_ID).get<int64_t>();
+		user_name = obj.at(USER_NAME).get<std::string>();
+		is_speak = obj.at(IS_SPEAK).get<int8_t>() != 0;
 
 		return true;
 	}
-	catch (std::exception const& e)
+	catch (nlohmann::json::parse_error& ex)
 	{
-		DBGTRACE("Error parsing %s, %s\n", NAME.c_str(), e.what());
+		spdlog::get("Error")->critical("proto::{0} :: error parse json (byte: {1}, what: {2})", NAME, ex.byte, ex.what());
 	}
 	return false;
 }

@@ -2,17 +2,17 @@
  * CmdSetMaxBitrate.cpp - Contains protocol command SET_MAX_BITRATE impl
  *
  * Author: Anton (ud) Golovkov, udattsk@gmail.com
- * Copyright (C), Infinity Video Soft LLC, 2018
+ * Copyright (C), Infinity Video Soft LLC, 2018, 2023
  */
-
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/json_parser.hpp>
 
 #include <Proto/CmdSetMaxBitrate.h>
 
-#include <Common/Common.h>
 #include <Common/Quoter.h>
 #include <Common/JSONSymbolsScreener.h>
+
+#include <nlohmann/json.hpp>
+
+#include <spdlog/spdlog.h>
 
 namespace Proto
 {
@@ -20,9 +20,6 @@ namespace SET_MAX_BITRATE
 {
 
 static const std::string BITRATE = "bitrate";
-static const std::string STATE = "state";
-static const std::string NAME_ = "name";
-static const std::string NUMBER = "number";
 
 Command::Command()
 	: bitrate(0)
@@ -40,23 +37,20 @@ Command::~Command()
 
 bool Command::Parse(std::string_view message)
 {
-	using boost::property_tree::ptree;
-
-	std::stringstream ss;
-	ss << message;
-
 	try
 	{
-		ptree pt;
-		read_json(ss, pt);
+		spdlog::get("System")->trace("proto::{0} :: perform parsing", NAME);
 
-		bitrate = pt.get<uint32_t>(NAME + "." + BITRATE);
-		
+		auto j = nlohmann::json::parse(message);
+		auto obj = j.get<nlohmann::json::object_t>().at(NAME);
+
+		bitrate = obj.at(BITRATE).get<uint32_t>();
+
 		return true;
 	}
-	catch (std::exception const& e)
+	catch (nlohmann::json::parse_error& ex)
 	{
-		DBGTRACE("Error parsing %s, %s\n", NAME.c_str(), e.what());
+		spdlog::get("Error")->critical("proto::{0} :: error parse json (byte: {1}, what: {2})", NAME, ex.byte, ex.what());
 	}
 	return false;
 }

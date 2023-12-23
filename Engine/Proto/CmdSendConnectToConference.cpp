@@ -2,17 +2,17 @@
  * CmdSendConnectToConference.cpp - Contains protocol command SEND_CONNECT_TO_CONFERENCE impl
  *
  * Author: Anton (ud) Golovkov, udattsk@gmail.com
- * Copyright (C), Infinity Video Soft LLC, 2018
+ * Copyright (C), Infinity Video Soft LLC, 2018, 2023
  */
-
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/json_parser.hpp>
 
 #include <Proto/CmdSendConnectToConference.h>
 
-#include <Common/Common.h>
 #include <Common/Quoter.h>
 #include <Common/JSONSymbolsScreener.h>
+
+#include <nlohmann/json.hpp>
+
+#include <spdlog/spdlog.h>
 
 namespace Proto
 {
@@ -43,28 +43,24 @@ Command::~Command()
 
 bool Command::Parse(std::string_view message)
 {
-	using boost::property_tree::ptree;
-
-	std::stringstream ss;
-	ss << message;
-
 	try
 	{
-		ptree pt;
-		read_json(ss, pt);
+		spdlog::get("System")->trace("proto::{0} :: perform parsing", NAME);
 
-		tag = pt.get<std::string>(NAME + "." + TAG);
-		connecter_id = pt.get<int64_t>(NAME + "." + CONNECTER_ID);
-		connecter_connection_id = pt.get<uint32_t>(NAME + "." + CONNECTER_CONNECTION_ID);
+		auto j = nlohmann::json::parse(message);
+		auto obj = j.get<nlohmann::json::object_t>().at(NAME);
 
-        auto flags_opt = pt.get_optional<uint32_t>(NAME + "." + FLAGS);
-        if (flags_opt) flags = flags_opt.get();
+		tag = obj.at(TAG).get<std::string>();
+		connecter_id = obj.at(CONNECTER_ID).get<int64_t>();
+		connecter_connection_id = obj.at(CONNECTER_CONNECTION_ID).get<uint32_t>();
 		
+		if (obj.count(FLAGS) != 0) flags = obj.at(FLAGS).get<uint32_t>();
+
 		return true;
 	}
-	catch (std::exception const& e)
+	catch (nlohmann::json::parse_error& ex)
 	{
-		DBGTRACE("Error parsing %s, %s\n", NAME.c_str(), e.what());
+		spdlog::get("Error")->critical("proto::{0} :: error parse json (byte: {1}, what: {2})", NAME, ex.byte, ex.what());
 	}
 	return false;
 }

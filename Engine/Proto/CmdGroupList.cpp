@@ -2,12 +2,11 @@
  * CmdGroupList.cpp - Contains protocol command GROUP_LIST impl
  *
  * Author: Anton (ud) Golovkov, udattsk@gmail.com
- * Copyright (C), Infinity Video Soft LLC, 2021
+ * Copyright (C), Infinity Video Soft LLC, 2021, 2023
  */
 
 #include <Proto/CmdGroupList.h>
 
-#include <Common/Common.h>
 #include <Common/Quoter.h>
 #include <Common/JSONSymbolsScreener.h>
 
