@@ -65,7 +65,7 @@ bool Command::Parse(std::string_view message)
 		auto j = nlohmann::json::parse(message);
 		auto obj = j.get<nlohmann::json::object_t>().at(NAME);
 		
-		auto is = j.get<nlohmann::json::object_t>().at(IDS);
+		auto is = obj.get<nlohmann::json::object_t>().at(IDS);
 		for (auto &i : is)
 		{
 			ids.emplace_back(i.get<uint32_t>());
