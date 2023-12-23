@@ -5,8 +5,6 @@
  * Copyright (C), Infinity Video Soft LLC, 2022
  */
 
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/json_parser.hpp>
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/uuid_generators.hpp>
 #include <boost/uuid/uuid_io.hpp>
@@ -17,6 +15,9 @@
 #include <wui/config/config_impl_reg.hpp>
 #include <wui/common/flag_helpers.hpp>
 
+#include <nlohmann/json.hpp>
+#include <spdlog/spdlog.h>
+
 #include <MainDialog.h>
 
 #include <Version.h>
@@ -24,6 +25,8 @@
 #include <Shlobj.h>
 #include <Shlwapi.h>
 #include <tchar.h>
+
+#include <fstream>
 
 namespace Installer
 {
@@ -297,7 +300,7 @@ void MainDialog::SetParams(std::string_view address,
     std::string_view user_name,
     uint16_t secure, uint16_t port)
 {
-    auto server = address + (port != 0 ? ":" + std::to_string(port) : "");
+    auto server = std::string(address) + (port != 0 ? ":" + std::to_string(port) : "");
 
     if (!login.empty() || server != wui::config::get_string("Connection", "Address", ""))
     {
@@ -353,36 +356,28 @@ bool MainDialog::GetServerAddress()
     const std::string b64 = moduleFileName.substr(b64Pos + 1, exePos - (b64Pos + 1));
     const std::string json = Common::fromBase64(b64);
 
-    using boost::property_tree::ptree;
-
-    std::stringstream ss;
-    ss << json;
-
     std::string address, login, password, conf_tag, user_name;
     uint16_t secure = 0, port = 0;
     try
     {
-        ptree pt;
-        read_json(ss, pt);
+        //spdlog::get("System")->trace("api::redirect_user :: perform parsing");
 
-        auto address_opt = pt.get_optional<std::string>("a");
-        if (address_opt) address = address_opt.get();
-        auto secure_opt = pt.get_optional<uint16_t>("s");
-        if (secure_opt) secure = secure_opt.get();
-        auto port_opt = pt.get_optional<uint16_t>("p");
-        if (port_opt) port = port_opt.get();
-        auto login_opt = pt.get_optional<std::string>("l");
-        if (login_opt) login = login_opt.get();
-        auto password_opt = pt.get_optional<std::string>("w");
-        if (password_opt) password = password_opt.get();
-        auto conf_tag_opt = pt.get_optional<std::string>("c");
-        if (conf_tag_opt) conf_tag = conf_tag_opt.get();
-        auto user_name_opt = pt.get_optional<std::string>("n");
-        if (user_name_opt) user_name = user_name_opt.get();
+        auto j = nlohmann::json::parse(json);
+
+        if (j.count("a") != 0) address = j.at("a").get<std::string>();
+        if (j.count("s") != 0) secure = j.at("s").get<uint16_t>();
+        if (j.count("p") != 0) port = j.at("p").get<uint16_t>();
+        if (j.count("l") != 0) login = j.at("l").get<std::string>();
+        if (j.count("w") != 0) password = j.at("w").get<std::string>();
+        if (j.count("c") != 0) conf_tag = j.at("c").get<std::string>();
+        if (j.count("n") != 0) user_name = j.at("n").get<std::string>();
     }
-    catch (std::exception const&)
+    catch (nlohmann::json::parse_error& ex)
     {
+        //spdlog::get("Error")->critical("api::redirect_user :: error parse json (byte: {0}, what: {1})", ex.byte, ex.what());
+
         ShowError(wui::locale("installer_error", "parse_error"));
+        
         return false;
     }
 
