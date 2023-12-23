@@ -10,7 +10,7 @@
 #include <string>
 #include <cstdint>
 
-#include <boost/property_tree/ptree.hpp>
+#include <nlohmann/json.hpp>
 
 namespace Proto
 {
@@ -93,7 +93,7 @@ namespace Proto
 
 		~Message();
 
-		bool Parse(const boost::property_tree::ptree &pt);
+		bool Parse(const nlohmann::json::object_t& obj);
 		std::string Serialize();
 
         void Clear();

@@ -5,14 +5,12 @@
  * Copyright (C), Infinity Video Soft LLC, 2018
  */
 
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/json_parser.hpp>
-
 #include <Proto/Conference.h>
 
-#include <Common/Common.h>
 #include <Common/Quoter.h>
 #include <Common/JSONSymbolsScreener.h>
+
+#include <spdlog/spdlog.h>
 
 namespace Proto
 {
@@ -88,50 +86,31 @@ Conference::~Conference()
 {
 }
 
-bool Conference::Parse(const boost::property_tree::ptree &pt)
+bool Conference::Parse(const nlohmann::json::object_t& obj)
 {
 	try
 	{
-		id = pt.get<int64_t>(ID);
+		spdlog::get("System")->trace("proto::conference :: perform parsing");
 
-		auto tag_opt = pt.get_optional<std::string>(TAG);
-		if (tag_opt) tag = tag_opt.get();
+		id = obj.at(ID).get<int64_t>();
 
-		auto name_opt = pt.get_optional<std::string>(NAME_);
-		if (name_opt) name = name_opt.get();
+		if (obj.count(TAG) != 0) tag = obj.at(TAG).get<std::string>();
+		if (obj.count(NAME_) != 0) name = obj.at(NAME_).get<std::string>();
+		if (obj.count(DESCR) != 0) descr = obj.at(DESCR).get<std::string>();
+		if (obj.count(FOUNDER) != 0) founder = obj.at(FOUNDER).get<std::string>();
+		if (obj.count(FOUNDER_ID) != 0) founder_id = obj.at(FOUNDER_ID).get<uint64_t>();
+		if (obj.count(TYPE) != 0) type = static_cast<ConferenceType>(obj.at(TYPE).get<uint32_t>());
+		if (obj.count(GRANTS) != 0) grants = obj.at(GRANTS).get<uint32_t>();
+		if (obj.count(DURATION) != 0) duration = obj.at(DURATION).get<uint32_t>();
+		if (obj.count(CONNECT_MEMBERS) != 0) connect_members = obj.at(CONNECT_MEMBERS).get<uint32_t>();
+		if (obj.count(TEMP) != 0) temp = obj.at(TEMP).get<uint32_t>();
+		if (obj.count(DELETED) != 0) deleted = obj.at(DELETED).get<uint32_t>();
 
-		auto descr_opt = pt.get_optional<std::string>(DESCR);
-		if (descr_opt) descr = descr_opt.get();
-
-		auto founder_opt = pt.get_optional<std::string>(FOUNDER);
-		if (founder_opt) founder = founder_opt.get();
-		
-		auto founder_id_opt = pt.get_optional<int64_t>(FOUNDER_ID);
-		if (founder_id_opt) founder_id = founder_id_opt.get();
-
-		auto type_opt = pt.get_optional<uint32_t>(TYPE);
-		if (type_opt) type = static_cast<ConferenceType>(type_opt.get());
-
-		auto grants_opt = pt.get_optional<uint32_t>(GRANTS);
-		if (grants_opt) grants = grants_opt.get();
-
-		auto duration_opt = pt.get_optional<uint32_t>(DURATION);
-		if (duration_opt) duration = duration_opt.get();
-		
-		auto connect_members_opt = pt.get_optional<uint32_t>(CONNECT_MEMBERS);
-		if (connect_members_opt) connect_members = connect_members_opt.get() != 0;
-
-		auto temp_opt = pt.get_optional<uint32_t>(TEMP);
-		if (temp_opt) temp = temp_opt.get() != 0;
-
-		auto deleted_opt = pt.get_optional<uint32_t>(DELETED);
-		if (deleted_opt) deleted = deleted_opt.get() != 0;
-
-		auto &users = pt.get_child(MEMBERS);
+		auto users = obj.at(MEMBERS);
 		for (auto &u : users)
 		{
 			Member member;
-			if (member.Parse(u.second))
+			if (member.Parse(u))
 			{
 				members.emplace_back(member);
 			}
@@ -139,9 +118,9 @@ bool Conference::Parse(const boost::property_tree::ptree &pt)
 		
 		return true;
 	}
-	catch (std::exception const& e)
+	catch (nlohmann::json::parse_error& ex)
 	{
-		DBGTRACE("Error parsing conference, %s\n", e.what());
+		spdlog::get("Error")->critical("proto::conference :: error parse json (byte: {0}, what: {1})", ex.byte, ex.what());
 	}
 	return false;
 }

@@ -5,14 +5,14 @@
  * Copyright (C), Infinity Video Soft LLC, 2021
  */
 
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/json_parser.hpp>
-
 #include <API/EditUser.h>
 
-#include <Common/Common.h>
 #include <Common/Quoter.h>
 #include <Common/JSONSymbolsScreener.h>
+
+#include <nlohmann/json.hpp>
+
+#include <spdlog/spdlog.h>
 
 namespace API
 {
@@ -46,62 +46,42 @@ Command::~Command()
 
 bool Command::Parse(std::string_view message_)
 {
-	using boost::property_tree::ptree;
-
-	std::stringstream ss;
-	ss << message_;
-
 	try
 	{
-		ptree pt;
-		read_json(ss, pt);
+		spdlog::get("System")->trace("api::edit_user :: perform parsing");
 
-		auto id_opt = pt.get_optional<int64_t>(ID);
-		if (id_opt) id = id_opt.get();
+		auto j = nlohmann::json::parse(message_);
+		auto obj = j.get<nlohmann::json::object_t>();
 
-		auto name_opt = pt.get_optional<std::string>(NAME);
-		if (name_opt) name = name_opt.get();
+		if (obj.count(ID) != 0) id = obj.at(ID).get<int64_t>();
+		if (obj.count(NAME) != 0) name = obj.at(NAME).get<std::string>();
+		if (obj.count(LOGIN) != 0) login = obj.at(LOGIN).get<std::string>();
+		if (obj.count(PASSWORD) != 0) password = obj.at(PASSWORD).get<std::string>();
+		if (obj.count(NUMBER) != 0) number = obj.at(NUMBER).get<uint32_t>();
 		
-		auto login_opt = pt.get_optional<std::string>(LOGIN);
-		if (login_opt) login = login_opt.get();
-
-		auto password_opt = pt.get_optional<std::string>(PASSWORD);
-		if (password_opt) password = password_opt.get();
-
-		auto number_opt = pt.get_optional<uint32_t>(NUMBER);
-		if (number_opt) number = number_opt.get();
-
-		auto groups_opt = pt.get_child_optional(GROUPS);
-		if (groups_opt)
+		if (obj.count(GROUPS) != 0)
 		{
-			auto &groups_ = groups_opt.get();
+			auto groups_ = j.get<nlohmann::json::object_t>().at(GROUPS);
 			for (auto &g : groups_)
 			{
 				Proto::Group group;
-				if (group.Parse(g.second))
+				if (group.Parse(g))
 				{
 					groups.emplace_back(group);
 				}
 			}
 		}
 
-		auto time_limit_opt = pt.get_optional<uint64_t>(TIME_LIMIT);
-		if (time_limit_opt) time_limit = time_limit_opt.get();
-
-		auto allow_create_conference_opt = pt.get_optional<uint8_t>(ALLOW_CREATE_CONFERENCE);
-		if (allow_create_conference_opt) allow_create_conference = allow_create_conference_opt.get() != 0;
-
-		auto use_only_tcp_opt = pt.get_optional<uint8_t>(USE_ONLY_TCP);
-		if (use_only_tcp_opt) use_only_tcp = use_only_tcp_opt.get() != 0;
-
-		auto guid_opt = pt.get_optional<std::string>(GUID);
-		if (guid_opt) guid = guid_opt.get();
+		if (obj.count(TIME_LIMIT) != 0) time_limit = obj.at(TIME_LIMIT).get<uint64_t>();
+		if (obj.count(ALLOW_CREATE_CONFERENCE) != 0) allow_create_conference = obj.at(ALLOW_CREATE_CONFERENCE).get<uint8_t>();
+		if (obj.count(USE_ONLY_TCP) != 0) use_only_tcp = obj.at(USE_ONLY_TCP).get<uint8_t>();
+		if (obj.count(GUID) != 0) guid = obj.at(GUID).get<std::string>();
 
 		return true;
 	}
-	catch (std::exception const& e)
+	catch (nlohmann::json::parse_error& ex)
 	{
-		DBGTRACE("Error parsing EditUser %s\n", e.what());
+		spdlog::get("Error")->critical("api::edit_user :: error parse json (byte: {0}, what: {1})", ex.byte, ex.what());
 	}
 	return false;
 }

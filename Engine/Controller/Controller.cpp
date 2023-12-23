@@ -1555,7 +1555,7 @@ void Controller::Update(std::string_view fileName, std::string_view appFolder)
             {
                 updatedExe = httpClient.Request("/update/" + std::string(fileName), "GET");
             }
-            std::this_thread::yield;
+            std::this_thread::yield();
         }
 
         const std::string path = get_path();
@@ -1601,7 +1601,7 @@ void Controller::Update(std::string_view fileName, std::string_view appFolder)
             {
                 updatedExe = httpClient.Request("/update/" + std::string(fileName), "GET");
             }
-            std::this_thread::yield;
+            std::this_thread::yield();
         }
 
         wchar_t moduleFileName_[MAX_PATH] = { 0 };

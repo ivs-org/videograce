@@ -2,17 +2,15 @@
  * Group.cpp - Contains group structure impl
  *
  * Author: Anton (ud) Golovkov, udattsk@gmail.com
- * Copyright (C), Infinity Video Soft LLC, 2021
+ * Copyright (C), Infinity Video Soft LLC, 2021, 2023
  */
-
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/json_parser.hpp>
 
 #include <Proto/Group.h>
 
-#include <Common/Common.h>
 #include <Common/Quoter.h>
 #include <Common/JSONSymbolsScreener.h>
+
+#include <spdlog/spdlog.h>
 
 namespace Proto
 {
@@ -47,41 +45,28 @@ Group::~Group()
 {
 }
 
-bool Group::Parse(const boost::property_tree::ptree &pt)
+bool Group::Parse(const nlohmann::json::object_t &obj)
 {
 	try
 	{
-		id = pt.get<int64_t>(ID);
+		spdlog::get("System")->trace("proto::group :: perform parsing");
 
-		auto parent_id_opt = pt.get_optional<int64_t>(PARENT_ID);
-		if (parent_id_opt) parent_id = parent_id_opt.get();
+		id = obj.at(ID).get<int64_t>();
 
-		auto tag_opt = pt.get_optional<std::string>(TAG);
-		if (tag_opt) tag = tag_opt.get();
+		if (obj.count(PARENT_ID) != 0) parent_id = obj.at(PARENT_ID).get<int64_t>();
+		if (obj.count(TAG) != 0) tag = obj.at(TAG).get<std::string>();
+		if (obj.count(NAME_) != 0) name = obj.at(NAME_).get<std::string>();
+		if (obj.count(OWNER_ID) != 0) owner_id = obj.at(OWNER_ID).get<int64_t>();
+		if (obj.count(PASSWORD) != 0) password = obj.at(PASSWORD).get<std::string>();
+		if (obj.count(GRANTS) != 0) grants = obj.at(GRANTS).get<uint32_t>();
+		if (obj.count(LEVEL) != 0) level = obj.at(LEVEL).get<int32_t>();
+		if (obj.count(DELETED) != 0) deleted = obj.at(DELETED).get<uint8_t>();
 
-		auto name_opt = pt.get_optional<std::string>(NAME_);
-		if (name_opt) name = name_opt.get();
-
-		auto owner_id_opt = pt.get_optional<int64_t>(OWNER_ID);
-		if (owner_id_opt) owner_id = owner_id_opt.get();
-
-		auto password_opt = pt.get_optional<std::string>(PASSWORD);
-		if (password_opt) password = password_opt.get();
-
-		auto grants_opt = pt.get_optional<uint32_t>(GRANTS);
-		if (grants_opt) grants = grants_opt.get();
-
-		auto level_opt = pt.get_optional<int32_t>(LEVEL);
-		if (level_opt) level = level_opt.get();
-
-		auto is_deleted_opt = pt.get_optional<uint8_t>(DELETED);
-		if (is_deleted_opt) deleted = is_deleted_opt.get() != 0;
-		
 		return true;
 	}
-	catch (std::exception const& e)
+	catch (nlohmann::json::parse_error& ex)
 	{
-		DBGTRACE("Error parsing group, %s\n", e.what());
+		spdlog::get("Error")->critical("proto::group :: error parse json (byte: {0}, what: {1})", ex.byte, ex.what());
 	}
 	return false;
 }

@@ -5,14 +5,12 @@
  * Copyright (C), Infinity Video Soft LLC, 2018
  */
 
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/json_parser.hpp>
-
 #include <Proto/Member.h>
 
-#include <Common/Common.h>
 #include <Common/Quoter.h>
 #include <Common/JSONSymbolsScreener.h>
+
+#include <spdlog/spdlog.h>
 
 namespace Proto
 {
@@ -77,70 +75,47 @@ Member::~Member()
 {
 }
 
-bool Member::Parse(const boost::property_tree::ptree &pt)
+bool Member::Parse(const nlohmann::json::object_t &obj)
 {
 	try
 	{
-		id = pt.get<int64_t>(ID);
+		spdlog::get("System")->trace("proto::member :: perform parsing");
 
-		auto state_opt = pt.get_optional<uint32_t>(STATE);
-		if (state_opt) state = static_cast<MemberState>(state_opt.get());
+		id = obj.at(ID).get<int64_t>();
 
-		auto login_opt = pt.get_optional<std::string>(LOGIN);
-		if (login_opt) login = login_opt.get();
+		if (obj.count(STATE) != 0) state = static_cast<MemberState>(obj.at(STATE).get<uint32_t>());
+		if (obj.count(LOGIN) != 0) login = obj.at(LOGIN).get<std::string>();
+		if (obj.count(NAME_) != 0) name = obj.at(NAME_).get<std::string>();
+		if (obj.count(NUMBER) != 0) number = obj.at(NUMBER).get<std::string>();
 
-		auto name_opt = pt.get_optional<std::string>(NAME_);
-		if (name_opt) name = name_opt.get();
-
-		auto number_opt = pt.get_optional<std::string>(NUMBER);
-		if (number_opt) number = number_opt.get();
-
-		auto groups_opt = pt.get_child_optional(GROUPS);
-		if (groups_opt)
+		if (obj.count(GROUPS) != 0)
 		{
-			auto &groups_ = groups_opt.get();
+			auto groups_ = obj.at(GROUPS);
 			for (auto &g : groups_)
 			{
 				Group group;
-				if (group.Parse(g.second))
+				if (group.Parse(g))
 				{
 					groups.emplace_back(group);
 				}
 			}
 		}
 
-		auto icon_opt = pt.get_optional<std::string>(ICON);
-		if (icon_opt) icon = icon_opt.get();
+		if (obj.count(ICON) != 0) icon = obj.at(ICON).get<std::string>();
+		if (obj.count(AVATAR) != 0) avatar = obj.at(AVATAR).get<std::string>();
+		if (obj.count(MAX_INPUT_BITRATE) != 0) max_input_bitrate = obj.at(MAX_INPUT_BITRATE).get<uint32_t>();
+		if (obj.count(ORDER) != 0) order = obj.at(ORDER).get<uint32_t>();
+		if (obj.count(HAS_CAMERA) != 0) has_camera = obj.at(HAS_CAMERA).get<uint8_t>();
+		if (obj.count(HAS_MICROPHONE) != 0) has_microphone = obj.at(HAS_MICROPHONE).get<uint8_t>();
+		if (obj.count(HAS_DEMONSTRATION) != 0) has_demonstration = obj.at(HAS_DEMONSTRATION).get<uint8_t>();
+		if (obj.count(GRANTS) != 0) grants = obj.at(GRANTS).get<uint32_t>();
+		if (obj.count(DELETED) != 0) deleted = obj.at(DELETED).get<uint8_t>();
 
-		auto avatar_opt = pt.get_optional<std::string>(AVATAR);
-		if (avatar_opt) avatar = avatar_opt.get();
-
-		auto max_input_bitrate_opt = pt.get_optional<uint32_t>(MAX_INPUT_BITRATE);
-		if (max_input_bitrate_opt) max_input_bitrate = max_input_bitrate_opt.get();
-
-		auto order_opt = pt.get_optional<uint32_t>(ORDER);
-		if (order_opt) order = order_opt.get();
-
-		auto has_camera_opt = pt.get_optional<uint8_t>(HAS_CAMERA);
-		if (has_camera_opt) has_camera = has_camera_opt.get() != 0;
-		
-		auto has_microphone_opt = pt.get_optional<uint8_t>(HAS_MICROPHONE);
-		if (has_microphone_opt) has_microphone = has_microphone_opt.get() != 0;
-
-        auto has_demonstration_opt = pt.get_optional<uint8_t>(HAS_DEMONSTRATION);
-        if (has_demonstration_opt) has_demonstration = has_demonstration_opt.get() != 0;
-		
-		auto grants_opt = pt.get_optional<uint32_t>(GRANTS);
-		if (grants_opt) grants = grants_opt.get();
-
-		auto is_deleted_opt = pt.get_optional<uint8_t>(DELETED);
-		if (is_deleted_opt) deleted = is_deleted_opt.get() != 0;
-		
 		return true;
 	}
-	catch (std::exception const& e)
+	catch (nlohmann::json::parse_error& ex)
 	{
-		DBGTRACE("Error parsing member, %s\n", e.what());
+		spdlog::get("Error")->critical("proto::member :: error parse json (byte: {0}, what: {1})", ex.byte, ex.what());
 	}
 	return false;
 }

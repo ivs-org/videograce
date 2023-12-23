@@ -65,7 +65,7 @@ namespace Proto
 
 		~Conference();
 
-		bool Parse(const boost::property_tree::ptree &pt);
+		bool Parse(const nlohmann::json::object_t& obj);
 		std::string Serialize();
 
 		void Clear();

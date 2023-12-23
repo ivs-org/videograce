@@ -5,16 +5,14 @@
  * Copyright (C), Infinity Video Soft LLC, 2016
  */
 
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/json_parser.hpp>
-
 #include <Proto/CmdCallRequest.h>
 
-#include <Common/Common.h>
 #include <Common/Quoter.h>
 #include <Common/JSONSymbolsScreener.h>
 
-#include <map>
+#include <nlohmann/json.hpp>
+
+#include <spdlog/spdlog.h>
 
 namespace Proto
 {
@@ -28,16 +26,16 @@ static const std::string TYPE = "type";
 static const std::string TIME_LIMIT = "time_limit";
 
 Command::Command()
-	: name(),
-	id(0),
-	connection_id(0),
-	type(Type::Undefined),
-	time_limit()
+    : name(),
+    id(0),
+    connection_id(0),
+    type(Type::Undefined),
+    time_limit()
 {
 }
 
 Command::Command(std::string_view name_, int64_t id_, uint32_t connection_id_, Type type_, uint64_t time_limit_)
-	: name(name_), id(id_), connection_id(connection_id_), type(type_), time_limit(time_limit_)
+    : name(name_), id(id_), connection_id(connection_id_), type(type_), time_limit(time_limit_)
 {
 }
 
@@ -47,28 +45,26 @@ Command::~Command()
 
 bool Command::Parse(std::string_view message)
 {
-	using boost::property_tree::ptree;
+    try
+    {
+        spdlog::get("System")->trace("proto::{0} :: perform parsing", NAME);
 
-	std::stringstream ss;
-	ss << message;
+        auto j = nlohmann::json::parse(message);
+        auto obj = j.get<nlohmann::json::object_t>().at(NAME);
 
-	try
-	{
-		ptree pt;
-		read_json(ss, pt);
-		
-		name = pt.get<std::string>(NAME + "." + NAME_);
-		id = pt.get<int64_t>(NAME + "." + ID);
-		connection_id = pt.get<uint32_t>(NAME + "." + CONNECTION_ID);
-		type = static_cast<Type>(pt.get<uint32_t>(NAME + "." + TYPE));
-		time_limit = pt.get<uint64_t>(NAME + "." + TIME_LIMIT);
+        name = obj.at(NAME_).get<std::string>();
+        id = obj.at(ID).get<int64_t>();
+        connection_id = obj.at(CONNECTION_ID).get<uint32_t>();
+        type = static_cast<Type>(obj.at(TYPE).get<uint32_t>());
+        time_limit = obj.at(TIME_LIMIT).get<int64_t>();
 
-		return true;
-	}
-	catch (std::exception const& e)
-	{
-		DBGTRACE("Error parsing %s, %s\n", NAME.c_str(), e.what());
-	}
+        return true;
+    }
+    catch (nlohmann::json::parse_error& ex)
+    {
+        spdlog::get("Error")->critical("proto::{0} :: error parse json (byte: {1}, what: {2})", NAME, ex.byte, ex.what());
+    }
+	
 	return false;
 }
 

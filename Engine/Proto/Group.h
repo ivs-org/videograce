@@ -10,7 +10,7 @@
 #include <string>
 #include <cstdint>
 
-#include <boost/property_tree/ptree.hpp>
+#include <nlohmann/json.hpp>
 
 namespace Proto
 {
@@ -47,7 +47,7 @@ namespace Proto
 
 		~Group();
 
-		bool Parse(const boost::property_tree::ptree &pt);
+		bool Parse(const nlohmann::json::object_t &pt);
 		std::string Serialize();
 
 		inline bool operator==(int64_t id_) const

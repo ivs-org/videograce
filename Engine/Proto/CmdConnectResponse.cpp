@@ -5,14 +5,15 @@
  * Copyright (C), Infinity Video Soft LLC, 2018
  */
 
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/json_parser.hpp>
-
 #include <Proto/CmdConnectResponse.h>
 
 #include <Common/Common.h>
 #include <Common/JSONSymbolsScreener.h>
 #include <Common/Quoter.h>
+
+#include <nlohmann/json.hpp>
+
+#include <spdlog/spdlog.h>
 
 namespace Proto
 {
@@ -53,43 +54,34 @@ Command::~Command()
 
 bool Command::Parse(std::string_view message)
 {
-	using boost::property_tree::ptree;
-
-	std::stringstream ss;
-	ss << message;
-
 	try
 	{
-		ptree pt;
-		read_json(ss, pt);
+		spdlog::get("System")->trace("proto::{0} :: perform parsing", NAME);
 
-		result = static_cast<Result>(pt.get<uint32_t>(NAME + "." + RESULT));
-		server_version = pt.get<uint32_t>(NAME + "." + SERVER_VERSION);
-		id = pt.get<int64_t>(NAME + "." + ID);
-		connection_id = pt.get<uint32_t>(NAME + "." + CONNECTION_ID);
-		name = pt.get<std::string>(NAME + "." + NAME_);
+		auto j = nlohmann::json::parse(message);
+		auto obj = j.get<nlohmann::json::object_t>().at(NAME);
 
-		auto redirect_url_opt = pt.get_optional<std::string>(NAME + "." + REDIRECT_URL);
-		if (redirect_url_opt) redirect_url = redirect_url_opt.get();
+		result = static_cast<Result>(obj.at(RESULT).get<uint32_t>());
+		server_version = obj.at(SERVER_VERSION).get<uint32_t>();
+		id = obj.at(ID).get<uint64_t>();
+		connection_id = obj.at(CONNECTION_ID).get<uint32_t>();
+		name = obj.at(NAME_).get<std::string>();
 
-		auto secure_key_opt = pt.get_optional<std::string>(NAME + "." + SECURE_KEY);
-		if (secure_key_opt) secure_key = secure_key_opt.get();
-
-		auto server_name_opt = pt.get_optional<std::string>(NAME + "." + SERVER_NAME);
-		if (server_name_opt) server_name = server_name_opt.get();
-				
-		options = pt.get<uint32_t>(NAME + "." + OPTIONS);
-		grants = pt.get<uint32_t>(NAME + "." + GRANTS);
-		max_output_bitrate = pt.get<uint32_t>(NAME + "." + MAX_OUTPUT_BITRATE);
+		if (obj.count(REDIRECT_URL) != 0) redirect_url = obj.at(REDIRECT_URL).get<std::string>();
+		if (obj.count(SECURE_KEY) != 0) secure_key = obj.at(SECURE_KEY).get<std::string>();
+		if (obj.count(SERVER_NAME) != 0) server_name = obj.at(SERVER_NAME).get<std::string>();
 		
-		auto reduced_frame_rate_opt = pt.get_optional<uint16_t>(NAME + "." + REDUCED_FRAME_RATE);
-		if (reduced_frame_rate_opt) reduced_frame_rate = reduced_frame_rate_opt.get();
+		options = obj.at(OPTIONS).get<uint32_t>();
+		grants = obj.at(GRANTS).get<uint32_t>();
+		max_output_bitrate = obj.at(MAX_OUTPUT_BITRATE).get<uint32_t>();
 
+		if (obj.count(REDUCED_FRAME_RATE) != 0) reduced_frame_rate = obj.at(REDUCED_FRAME_RATE).get<uint16_t>();
+		
 		return true;
 	}
-	catch (std::exception const& e)
+	catch (nlohmann::json::parse_error& ex)
 	{
-		DBGTRACE("Error parsing %s, %s\n", NAME.c_str(), e.what());
+		spdlog::get("Error")->critical("proto::{0} :: error parse json (byte: {1}, what: {2})", NAME, ex.byte, ex.what());
 	}
 	return false;
 }

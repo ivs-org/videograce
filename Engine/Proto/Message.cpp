@@ -2,17 +2,15 @@
  * Message.cpp - Contains member structure impl
  *
  * Author: Anton (ud) Golovkov, udattsk@gmail.com
- * Copyright (C), Infinity Video Soft LLC, 2019
+ * Copyright (C), Infinity Video Soft LLC, 2019, 2023
  */
-
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/json_parser.hpp>
 
 #include <Proto/Message.h>
 
-#include <Common/Common.h>
 #include <Common/Quoter.h>
 #include <Common/JSONSymbolsScreener.h>
+
+#include <spdlog/spdlog.h>
 
 namespace Proto
 {
@@ -52,68 +50,37 @@ Message::~Message()
 {
 }
 
-bool Message::Parse(const boost::property_tree::ptree &pt)
+bool Message::Parse(const nlohmann::json::object_t& obj)
 {
 	try
 	{
-		guid = pt.get<std::string>(GUID);
-		
-		auto dt_opt = pt.get_optional<uint64_t>(DT);
-		if (dt_opt) dt = dt_opt.get();
-		
-		auto type_opt = pt.get_optional<uint32_t>(TYPE);
-		if (type_opt) type = static_cast<MessageType>(type_opt.get());
-		
-		auto author_id_opt = pt.get_optional<int64_t>(AUTHOR_ID);
-		if (author_id_opt) author_id = author_id_opt.get();
-		
-		auto author_name_opt = pt.get_optional<std::string>(AUTHOR_NAME);
-		if (author_name_opt) author_name = author_name_opt.get();
-		
-		auto sender_id_opt = pt.get_optional<int64_t>(SENDER_ID);
-		if (sender_id_opt) sender_id = sender_id_opt.get();
-		
-		auto sender_name_opt = pt.get_optional<std::string>(SENDER_NAME);
-		if (sender_name_opt) sender_name = sender_name_opt.get();
-		
-		auto subscriber_id_opt = pt.get_optional<int64_t>(SUBSCRIBER_ID);
-		if (subscriber_id_opt) subscriber_id = subscriber_id_opt.get();
-		
-		auto subscriber_name_opt = pt.get_optional<std::string>(SUBSCRIBER_NAME);
-		if (subscriber_name_opt) subscriber_name = subscriber_name_opt.get();
-		
-		auto conference_tag_opt = pt.get_optional<std::string>(CONFERENCE_TAG);
-		if (conference_tag_opt) conference_tag = conference_tag_opt.get();
-		
-		auto conference_name_opt = pt.get_optional<std::string>(CONFERENCE_NAME);
-		if (conference_name_opt) conference_name = conference_name_opt.get();
-		
-		auto status_opt = pt.get_optional<uint32_t>(STATUS);
-		if (status_opt) status = static_cast<MessageStatus>(status_opt.get());
-		
-		auto text_opt = pt.get_optional<std::string>(TEXT);
-		if (text_opt) text = text_opt.get();
-		
-		auto call_result_opt = pt.get_optional<uint32_t>(CALL_RESULT);
-		if (call_result_opt) call_result = static_cast<CallResult>(call_result_opt.get());
-		
-		auto call_duration_opt = pt.get_optional<uint32_t>(CALL_DURATION);
-		if (call_duration_opt) call_duration = call_duration_opt.get();
-		
-		auto preview_opt = pt.get_optional<std::string>(PREVIEW);
-		if (preview_opt) preview = preview_opt.get();
-		
-		auto data_opt = pt.get_optional<std::string>(DATA);
-		if (data_opt) data = data_opt.get();
-		
-		auto url_opt = pt.get_optional<std::string>(URL);
-		if (url_opt) url = url_opt.get();
+		spdlog::get("System")->trace("proto::conference :: perform parsing");
+
+		guid = obj.at(GUID).get<std::string>();
+
+		if (obj.count(DT) != 0) dt = obj.at(DT).get<uint64_t>();
+		if (obj.count(TYPE) != 0) type = static_cast<MessageType>(obj.at(TYPE).get<uint32_t>());
+		if (obj.count(AUTHOR_ID) != 0) author_id = obj.at(AUTHOR_ID).get<int64_t>();
+		if (obj.count(AUTHOR_NAME) != 0) author_name = obj.at(AUTHOR_NAME).get<std::string>();
+		if (obj.count(SENDER_ID) != 0) sender_id = obj.at(SENDER_ID).get<int64_t>();
+		if (obj.count(SENDER_NAME) != 0) sender_name = obj.at(SENDER_NAME).get<std::string>();
+		if (obj.count(SUBSCRIBER_ID) != 0) subscriber_id = obj.at(SUBSCRIBER_ID).get<int64_t>();
+		if (obj.count(SUBSCRIBER_NAME) != 0) subscriber_name = obj.at(SUBSCRIBER_NAME).get<std::string>();
+		if (obj.count(CONFERENCE_TAG) != 0) conference_tag = obj.at(CONFERENCE_TAG).get<std::string>();
+		if (obj.count(CONFERENCE_NAME) != 0) conference_name = obj.at(CONFERENCE_NAME).get<std::string>();
+		if (obj.count(STATUS) != 0) status = static_cast<MessageStatus>(obj.at(STATUS).get<uint32_t>());
+		if (obj.count(TEXT) != 0) text = obj.at(TEXT).get<std::string>();
+		if (obj.count(CALL_RESULT) != 0) call_result = static_cast<CallResult>(obj.at(CALL_RESULT).get<uint32_t>());
+		if (obj.count(CALL_DURATION) != 0) call_duration = obj.at(CALL_DURATION).get<int32_t>();
+		if (obj.count(PREVIEW) != 0) preview = obj.at(PREVIEW).get<std::string>();
+		if (obj.count(DATA) != 0) data = obj.at(DATA).get<std::string>();
+		if (obj.count(URL) != 0) url = obj.at(URL).get<std::string>();
 		
 		return true;
 	}
-	catch (std::exception const& e)
+	catch (nlohmann::json::parse_error& ex)
 	{
-		DBGTRACE("Error parsing message, %s\n", e.what());
+		spdlog::get("Error")->critical("proto::message :: error parse json (byte: {0}, what: {1})", ex.byte, ex.what());
 	}
 	return false;
 }

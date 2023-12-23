@@ -2,17 +2,17 @@
  * CmdContactList.cpp - Contains protocol command CONTACT_LIST impl
  *
  * Author: Anton (ud) Golovkov, udattsk@gmail.com
- * Copyright (C), Infinity Video Soft LLC, 2018
+ * Copyright (C), Infinity Video Soft LLC, 2018, 2023
  */
-
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/json_parser.hpp>
 
 #include <Proto/CmdContactList.h>
 
-#include <Common/Common.h>
 #include <Common/Quoter.h>
 #include <Common/JSONSymbolsScreener.h>
+
+#include <nlohmann/json.hpp>
+
+#include <spdlog/spdlog.h>
 
 namespace Proto
 {
@@ -44,27 +44,21 @@ Command::~Command()
 
 bool Command::Parse(std::string_view message)
 {
-	using boost::property_tree::ptree;
-
-	std::stringstream ss;
-	ss << message;
-
 	try
 	{
-		ptree pt;
-		read_json(ss, pt);
+		spdlog::get("System")->trace("proto::{0} :: perform parsing", NAME);
 
-        auto sort_type_opt = pt.get_optional<int32_t>(NAME + "." + SORT_TYPE);
-        if (sort_type_opt) sort_type = static_cast<SortType>(sort_type_opt.get());
+		auto j = nlohmann::json::parse(message);
+		auto obj = j.get<nlohmann::json::object_t>().at(NAME);
 
-        auto show_numbers_opt = pt.get_optional<int32_t>(NAME + "." + SHOW_NUMBERS);
-        if (show_numbers_opt) show_numbers = show_numbers_opt.get() != 0;
+		if (obj.count(SORT_TYPE) != 0) sort_type = static_cast<SortType>(obj.at(SORT_TYPE).get<int32_t>());
+		if (obj.count(SHOW_NUMBERS) != 0) show_numbers = obj.at(SHOW_NUMBERS).get<int32_t>();
 
-		auto &users = pt.get_child(NAME + "." + MEMBERS);
+		auto users = obj.at(MEMBERS);
 		for (auto &u : users)
 		{
 			Member member;
-			if (member.Parse(u.second))
+			if (member.Parse(u))
 			{
 				members.emplace_back(member);
 			}
@@ -72,9 +66,9 @@ bool Command::Parse(std::string_view message)
 				
 		return true;
 	}
-	catch (std::exception const& e)
+	catch (nlohmann::json::parse_error& ex)
 	{
-		DBGTRACE("Error parsing %s, %s\n", NAME.c_str(), e.what());
+		spdlog::get("Error")->critical("proto::{0} :: error parse json (byte: {1}, what: {2})", NAME, ex.byte, ex.what());
 	}
 	return false;
 }

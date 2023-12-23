@@ -20,6 +20,7 @@
 
 #include <boost/algorithm/string.hpp>
 
+#include <sstream>
 #include <nlohmann/json.hpp>
 
 #include <resource.h>
