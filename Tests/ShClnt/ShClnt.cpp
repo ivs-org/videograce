@@ -33,7 +33,7 @@ void CreateLogger(std::string_view login)
 #else
 	wchar_t moduleFileName[MAX_PATH] = { 0 };
 	GetModuleFileName(NULL, moduleFileName, MAX_PATH);
-	const std::string fileName = Common::DirNameOf(boost::nowide::narrow(moduleFileName)) + "\\ShClnt-" + login + ".log";
+	const std::string fileName = Common::DirNameOf(boost::nowide::narrow(moduleFileName)) + "\\ShClnt-" + std::string(login) + ".log";
 #endif
 
     try
