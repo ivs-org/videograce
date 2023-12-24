@@ -45,7 +45,6 @@ class session : public std::enable_shared_from_this<session>
 	boost::beast::multi_buffer buffer_;
 	std::string host_;
 
-	std::mutex write_mutex_;
 	std::queue<std::string> write_queue_;
 	std::atomic<bool> writing_;
 
@@ -65,7 +64,6 @@ public:
 		ssl_ws_(ioc, ctx),
 		buffer_(),
 		host_(),
-		write_mutex_(),
 		write_queue_(),
 		writing_(false),
 		callback_(callback),
@@ -247,7 +245,6 @@ public:
 			return;
 		}
 		
-		std::lock_guard<std::mutex> lock(write_mutex_);
 		write_queue_.push(std::string(message));
 		if (!writing_)
 		{
@@ -301,7 +298,6 @@ public:
 
 		sysLog->trace("WebSocket::on_write :: Perform writing");
 
-		std::lock_guard<std::mutex> lock(write_mutex_);
 		if (writing_ && !ioc_.stopped() && !write_queue_.empty())
 		{
 			sysLog->trace("WebSocket::on_write :: perform write from queue");
