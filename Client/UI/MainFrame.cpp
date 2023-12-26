@@ -848,9 +848,8 @@ void MainFrame::ActionFullScreen()
     }
     else
     {
-        window->normal();
-
         window->set_style(wui::flags_map<wui::window_style>(2, wui::window_style::frame, wui::window_style::switch_theme_button));
+        window->normal();
     }
 }
 
@@ -952,6 +951,7 @@ void MainFrame::ReceiveEvents(const wui::event &ev)
                     Init();
                 break;
                 case wui::internal_event_type::size_changed:
+                {
                     if (window->state() == wui::window_state::normal &&
                         ev.internal_event_.x > 0 && ev.internal_event_.y > 0)
                     {
@@ -968,6 +968,7 @@ void MainFrame::ReceiveEvents(const wui::event &ev)
                     
                     renderersBox.SetPosition({ listPanel.Right(), mainToolBar.Bottom(), contentPanel.Left(), ev.internal_event_.y });
                     timerBar.UpdatePosition(listPanel.Right(), mainToolBar.Bottom());
+                }
                 break;
                 case wui::internal_event_type::window_expanded:
                     mainToolBar.UpdateWidth(ev.internal_event_.x);
@@ -991,8 +992,6 @@ void MainFrame::ReceiveEvents(const wui::event &ev)
                     }
                 break;
                 case wui::internal_event_type::window_normalized:
-                    window->set_style(wui::flags_map<wui::window_style>(2, wui::window_style::frame, wui::window_style::switch_theme_button));
-                    
                     mainToolBar.Normalize();
 
                     listPanel.UpdateTop(mainToolBar.Bottom());
