@@ -253,6 +253,39 @@ public:
 		}
 	}
 
+	void write_bin(const uint8_t* data, size_t size)
+	{
+		sysLog->trace("WebSocket::write_bin :: perform writing bin data, size: {0}", size);
+
+		if (ioc_.stopped())
+		{
+			return errLog->warn("WebSocket::write_bin to stopped io context");
+		}
+
+		if (secure)
+		{
+			ssl_ws_.binary(true);
+			ssl_ws_.async_write(
+				boost::asio::buffer(data, size),
+				std::bind(
+					&session::on_write,
+					shared_from_this(),
+					std::placeholders::_1,
+					std::placeholders::_2));
+		}
+		else
+		{
+			plain_ws_.binary(true);
+			plain_ws_.async_write(
+				boost::asio::buffer(data, size),
+				std::bind(
+					&session::on_write,
+					shared_from_this(),
+					std::placeholders::_1,
+					std::placeholders::_2));
+		}
+	}
+
 	void do_write()
 	{
 		std::string message = write_queue_.front();
@@ -287,8 +320,6 @@ public:
 	void on_write(boost::system::error_code ec,
 		std::size_t bytes_transferred)
 	{
-		boost::ignore_unused(bytes_transferred);
-
 		if (ec && !ioc_.stopped())
 		{
 			errLog->error("WebSocket::session :: on_write :: error: {0}", ec.message());
@@ -296,17 +327,17 @@ public:
 			return;
 		}
 
-		sysLog->trace("WebSocket::on_write :: Perform writing");
+		sysLog->trace("WebSocket::on_write :: Perform writing, size; {0}", bytes_transferred);
 
 		if (writing_ && !ioc_.stopped() && !write_queue_.empty())
 		{
-			sysLog->trace("WebSocket::on_write :: perform write from queue");
+			sysLog->trace("WebSocket::on_write :: perform write from queue, size: {0}", bytes_transferred);
 			do_write();
 		}
 		else
 		{
 			writing_ = false;
-			sysLog->trace("WebSocket::on_write :: writing end");
+			sysLog->trace("WebSocket::on_write :: writing end, size: {0}", bytes_transferred);
 		}
 	}
 
@@ -421,6 +452,14 @@ public:
 		}
 	}
 
+	void SendBinary(const uint8_t* data, size_t size)
+	{
+		if (session_)
+		{
+			session_->write_bin(data, size);
+		}
+	}
+
 	~WebSocketImpl()
 	{
 		if (session_ && session_->is_connected())
@@ -470,6 +509,14 @@ void WebSocket::Send(std::string_view message)
 	if (impl)
 	{
 		impl->Send(message);
+	}
+}
+
+void WebSocket::SendBinary(const uint8_t* data, size_t size)
+{
+	if (impl)
+	{
+		impl->SendBinary(data, size);
 	}
 }
 

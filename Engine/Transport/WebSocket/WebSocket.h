@@ -34,6 +34,7 @@ public:
 
     void Connect(std::string_view url);
     void Send(std::string_view message);
+    void SendBinary(const uint8_t *data, size_t size);
     void Disconnect();
 
     bool IsConnected();

@@ -1196,6 +1196,9 @@
     <ClInclude Include="Proto\Blob.h">
       <Filter>Header Files\Proto</Filter>
     </ClInclude>
+    <ClInclude Include="Proto\CmdLoadBlobs.h">
+      <Filter>Header Files\Proto</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Video\Resolution.cpp">
@@ -1727,6 +1730,9 @@
       <Filter>Source Files\Proto</Filter>
     </ClCompile>
     <ClCompile Include="Proto\Blob.cpp">
+      <Filter>Source Files\Proto</Filter>
+    </ClCompile>
+    <ClCompile Include="Proto\CmdLoadBlobs.cpp">
       <Filter>Source Files\Proto</Filter>
     </ClCompile>
   </ItemGroup>

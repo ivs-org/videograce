@@ -53,6 +53,8 @@
 #include <Proto/CmdScheduleConnect.h>
 #include <Proto/CmdDeliveryMessages.h>
 #include <Proto/CmdLoadMessages.h>
+#include <Proto/CmdDeliveryBlobs.h>
+#include <Proto/CmdLoadBlobs.h>
 #include <Proto/CmdRequestMediaAddresses.h>
 #include <Proto/CmdMediaAddressesList.h>
 
@@ -235,6 +237,14 @@ CommandType GetCommandType(std::string_view message)
 	{
 		return CommandType::LoadMessages;
 	}
+	else if (command == quot(Proto::DELIVERY_BLOBS::NAME))
+	{
+		return CommandType::DeliveryBlobs;
+		}
+	else if (command == quot(Proto::LOAD_BLOBS::NAME))
+	{
+		return CommandType::LoadBlobs;
+		}
 	else if (command == quot(Proto::REQUEST_MEDIA_ADDRESSES::NAME))
 	{
 		return CommandType::RequestMediaAddresses;

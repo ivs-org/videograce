@@ -16,6 +16,9 @@
 
 #include <wui/locale/i_locale.hpp>
 
+#include <Common/TimeMeter.h>
+#include <Transport/WebSocket/WebSocket.h>
+
 #include <spdlog/spdlog.h>
 
 namespace NetTester
@@ -42,18 +45,35 @@ private:
     std::function<void(uint32_t, uint32_t)> readyCallback;
 	std::function<void(std::string_view, int32_t)> progressCallback;
 
+	Common::TimeMeter timeMeter;
+
+	Transport::WebSocket webSocket;
+
 	std::thread thread;
 
 	std::string serverAddress;
 	bool useHTTPS;
-	uint32_t inputSpeed, outputSpeed;
+	
+	double inputSpeed, outputSpeed;
 
-	std::atomic<bool> runned;
+	enum class mode
+	{
+		input, output
+	} mode_;
+	
+	const int32_t ITERATIONS_COUNT = 5;
+	int32_t iteration;
+
+	std::atomic_bool runned;
 
 	std::shared_ptr<spdlog::logger> sysLog, errLog;
 	
 	void TakeInputSpeed();
 	void TakeOutputSpeed();
+
+	void Connect();
+
+	void OnWebSocket(Transport::WSMethod method, std::string_view message);
 };
 
 }

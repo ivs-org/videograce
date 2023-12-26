@@ -263,6 +263,7 @@
     <ClInclude Include="Proto\CmdDeliveryMessages.h" />
     <ClInclude Include="Proto\CmdGroupList.h" />
     <ClInclude Include="Proto\CmdContactsUpdate.h" />
+    <ClInclude Include="Proto\CmdLoadBlobs.h" />
     <ClInclude Include="Proto\CmdLoadMessages.h" />
     <ClInclude Include="Proto\CmdMicrophoneActive.h" />
     <ClInclude Include="Proto\CmdCredentialsRequest.h" />
@@ -560,6 +561,7 @@
     <ClCompile Include="Proto\CmdDeliveryMessages.cpp" />
     <ClCompile Include="Proto\CmdGroupList.cpp" />
     <ClCompile Include="Proto\CmdContactsUpdate.cpp" />
+    <ClCompile Include="Proto\CmdLoadBlobs.cpp" />
     <ClCompile Include="Proto\CmdLoadMessages.cpp" />
     <ClCompile Include="Proto\CmdMicrophoneActive.cpp" />
     <ClCompile Include="Proto\CmdCredentialsRequest.cpp" />

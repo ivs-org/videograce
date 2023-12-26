@@ -80,6 +80,9 @@ namespace Proto
 		DeliveryMessages,
 		LoadMessages,
 
+		DeliveryBlobs,
+		LoadBlobs,
+
 		RequestMediaAddresses,
 		MediaAddressesList
 	};

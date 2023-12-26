@@ -2,14 +2,13 @@
  * SpeedTester.xpp - Contains network speed tester impl
  *
  * Author: Anton (ud) Golovkov, udattsk@gmail.com
- * Copyright (C), Infinity Video Soft LLC, 2016
+ * Copyright (C), Infinity Video Soft LLC, 2016, 2023
  */
 
-#include <Transport/HTTP/HttpClient.h>
-#include <Common/Common.h>
-#include <Common/TimeMeter.h>
-
 #include <NetTester/SpeedTester.h>
+
+#include <Proto/CmdLoadBlobs.h>
+#include <Proto/CmdDeliveryBlobs.h>
 
 namespace NetTester
 {
@@ -20,9 +19,13 @@ SpeedTester::SpeedTester(std::shared_ptr<wui::i_locale> locale_,
 	: locale(locale_),
 	readyCallback(readyCallback_),
 	progressCallback(progressCallback_),
+	timeMeter(),
+	webSocket(std::bind(&SpeedTester::OnWebSocket, this, std::placeholders::_1, std::placeholders::_2)),
 	thread(),
 	serverAddress(), useHTTPS(false),
 	inputSpeed(0), outputSpeed(0),
+	mode_(mode::input),
+	iteration(0),
 	runned(false),
 	sysLog(spdlog::get("System")), errLog(spdlog::get("Error"))
 {
@@ -48,6 +51,8 @@ void SpeedTester::DoTheTest()
 		runned = true;
 
 		thread = std::thread([this]() {
+			Connect();
+
 			if (runned)	TakeInputSpeed();
 			if (runned) TakeOutputSpeed();
 
@@ -78,7 +83,7 @@ uint32_t SpeedTester::GetOutputSpeed() const
 
 void SpeedTester::TakeOutputSpeed()
 {
-	auto baseURL = (useHTTPS ? std::string("https://") : std::string("http://")) + serverAddress;
+	/*auto baseURL = (useHTTPS ? std::string("https://") : std::string("http://")) + serverAddress;
 
 	progressCallback(locale->get("net_test", "connecting"), 0);
 	std::this_thread::yield();
@@ -138,44 +143,20 @@ void SpeedTester::TakeOutputSpeed()
 
 	httpClient.Disconnect();
 
-	sysLog->trace("SpeedTester :: TakeOutputSpeed :: ended");
+	sysLog->trace("SpeedTester :: TakeOutputSpeed :: ended");*/
 }
 
 void SpeedTester::TakeInputSpeed()
 {
-	auto baseURL = (useHTTPS ? std::string("https://") : std::string("http://")) + serverAddress;
-
-	sysLog->trace("SpeedTester :: TakeInputSpeed :: Perform connecting to url: {0}", baseURL);
-
-	progressCallback(locale->get("net_test", "connecting"), 0);
-	std::this_thread::yield();
-
-	Transport::HTTPClient httpClient([&](int32_t c, const char *m){
-		errLog->error("SpeedTester :: TakeInputSpeed ERROR(code: {0}, msg: {1})", c, m);
-	});
-	httpClient.Connect(baseURL);
-
-	sysLog->trace("SpeedTester :: TakeInputSpeed :: Connection established");
-
-	progressCallback(locale->get("net_test", "connected"), 0);
-	std::this_thread::yield();
-
-	const auto COUNT = 5;
-
-	std::string dummy;
+	mode_ = mode::input;
 	
-	double avgSpeed = 0;
-
-	Common::TimeMeter timeMeter;
-	for (auto i = 1; i != COUNT + 1; ++i)
+	if (webSocket.IsConnected())
 	{
-		sysLog->trace("SpeedTester :: TakeInputSpeed :: Perform iteration {0}", i);
+		//Proto::LOAD_BLOBS::Command command({"432423"});
+		//webSocket.Send(command.Serialize());
+	}
 
-		timeMeter.Reset();
-
-		dummy = httpClient.Request("/nettest/input", "GET");
-
-		avgSpeed += static_cast<double>((dummy.size() * 8) / (static_cast<double>(timeMeter.Measure()) / 1000));
+	/*	avgSpeed += static_cast<double>((dummy.size() * 8) / (static_cast<double>(timeMeter.Measure()) / 1000));
 
 		auto currentSpeed = static_cast<uint32_t>(avgSpeed / i);
 
@@ -201,7 +182,39 @@ void SpeedTester::TakeInputSpeed()
 
 	httpClient.Disconnect();
 
-	sysLog->trace("SpeedTester :: TakeInputSpeed :: ended");
+	sysLog->trace("SpeedTester :: TakeInputSpeed :: ended");*/
+}
+
+void SpeedTester::Connect()
+{
+	progressCallback(locale->get("net_test", "connecting"), 0);
+	webSocket.Connect((useHTTPS ? std::string("https://") : std::string("http://")) + serverAddress);
+}
+
+void SpeedTester::OnWebSocket(Transport::WSMethod method, std::string_view message)
+{
+	switch (method)
+    {
+        case Transport::WSMethod::Open:
+            sysLog->info("SpeedTester :: Connection to server established");
+			
+			progressCallback(locale->get("net_test", "connected"), 0);
+			std::this_thread::yield();
+			
+			timeMeter.Reset();
+			TakeInputSpeed();
+        break;
+        case Transport::WSMethod::Message:
+		{
+		}
+		break;
+		case Transport::WSMethod::Close:
+			sysLog->info("SpeedTester :: WebSocket closed (message: \"{0}\")", message);
+		break;
+		case Transport::WSMethod::Error:
+			errLog->critical("SpeedTester :: WebSocket error (message: \"{0}\")", message);
+		break;
+	}
 }
 
 }

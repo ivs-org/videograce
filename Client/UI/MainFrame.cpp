@@ -327,7 +327,7 @@ void MainFrame::Run(bool minimized)
 
         working = false;
 
-        //speedTester.Stop();
+        speedTester.Stop();
 
         sysLog->info("The application perform ending");
 
@@ -2520,8 +2520,8 @@ void MainFrame::DetermineNetSpeed(bool force)
             UpdateTitle(wui::locale("common", "determine_network_speed"));
         }
 
-        //speedTester.SetParams(wui::config::get_string("Connection", "Address", ""), wui::config::get_int("Connection", "Secure", 1) != 0);
-        //speedTester.DoTheTest();
+        speedTester.SetParams(wui::config::get_string("Connection", "Address", ""), wui::config::get_int("Connection", "Secure", 1) != 0);
+        speedTester.DoTheTest();
     }
     else
     {
