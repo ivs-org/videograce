@@ -2520,7 +2520,10 @@ void MainFrame::DetermineNetSpeed(bool force)
             UpdateTitle(wui::locale("common", "determine_network_speed"));
         }
 
-        speedTester.SetParams(wui::config::get_string("Connection", "Address", ""), wui::config::get_int("Connection", "Secure", 1) != 0);
+        speedTester.SetParams(wui::config::get_string("Connection", "Address", ""),
+            wui::config::get_int("Connection", "Secure", 1) != 0,
+            wui::config::get_string("Credentials", "Login", ""),
+            wui::config::get_string("Credentials", "Password", ""));
         speedTester.DoTheTest();
     }
     else

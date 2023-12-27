@@ -160,12 +160,6 @@ private:
     const char* toString(DisconnectReason reason);
     const char* toString(State state);
 
-    bool pinging;
-    std::thread pinger;
-    uint64_t lastPingTime;
-
-    Common::TimeMeter pingTimeMeter;
-
     std::thread updater;
 
     enum class ContactListReceiving
@@ -179,9 +173,6 @@ private:
 
     std::shared_ptr<spdlog::logger> sysLog, errLog;
 
-    void PingerStart();
-    void PingerStop();
-    
     void OnWebSocket(Transport::WSMethod method, std::string_view message);
 
     void Logon();

@@ -135,10 +135,6 @@ Controller::Controller(Storage::Storage &storage_, IMemberList &memberList_)
     secureKey(),
     serverName(),
     disconnectReason(DisconnectReason::NetworkError),
-    pinging(false),
-    pinger(),
-    lastPingTime(0),
-    pingTimeMeter(),
     updater(),
     contactListReceving(ContactListReceiving::Update),
     sysLog(spdlog::get("System")), errLog(spdlog::get("Error"))
@@ -149,7 +145,6 @@ Controller::~Controller()
 {
     Disconnect();
 
-    if (pinger.joinable()) pinger.join();
     if (updater.joinable()) updater.join();
 }
 
@@ -201,7 +196,6 @@ void Controller::Disconnect(DisconnectReason disconnectReason_)
         if (webSocket.IsConnected()) {
             webSocket.Send(Proto::DISCONNECT::Command().Serialize());
         }
-        PingerStop();
         webSocket.Disconnect();
     }).detach();
 }
@@ -230,52 +224,6 @@ void Controller::SetCredentials(std::string_view login_, std::string_view passwo
 {
     login = login_;
     password = password_;
-}
-
-void Controller::PingerStart()
-{
-    sysLog->trace("Controller::PingerStart :: Perform starting");
-
-    if (!pinging)
-    {
-        pinging = true;
-
-        pinger = std::thread([this]() {
-            sysLog->trace("Controller::PingerStart :: Started");
-
-            uint16_t cnt = 0;
-            
-            pingTimeMeter.Reset();
-            lastPingTime = pingTimeMeter.Measure();
-
-            while (pinging)
-            {
-                if (++cnt > 8)
-                {
-                    SendCommand(Proto::PING::Command().Serialize());
-                    cnt = 0;
-                }
-
-                /*if (lastPingTime + 5000000 < pingTimeMeter.Measure())
-                {
-                    errLog->error("Controller :: Connection to server ping timeouted last ping: {0}, now {1}", lastPingTime, pingTimeMeter.Measure());
-                    return Disconnect(DisconnectReason::NetworkError);
-                }*/
-
-                std::this_thread::sleep_for(std::chrono::milliseconds(250));
-            }
-        });
-    }
-}
-
-void Controller::PingerStop()
-{
-    sysLog->trace("Controller::PingerStop :: Perform stoping");
-
-    pinging = false;
-    if (pinger.joinable()) pinger.join();
-
-    sysLog->trace("Controller::PingerStop :: Stoped");
 }
 
 std::string GetDefaultAddress(std::string_view serverAddress)
@@ -745,8 +693,6 @@ void Controller::OnWebSocket(Transport::WSMethod method, std::string_view messag
                             
                             ChangeState(State::Ready);
 
-                            PingerStart();
-                            
                             eventHandler(Event(Event::Type::LogonSuccess));
                         break;
                         case Proto::CONNECT_RESPONSE::Result::InvalidCredentials:
@@ -1419,7 +1365,7 @@ void Controller::OnWebSocket(Transport::WSMethod method, std::string_view messag
                 case Proto::CommandType::Undefined:
                 break;
                 case Proto::CommandType::Ping:
-                    lastPingTime = pingTimeMeter.Measure();
+                    
                 break;
                 default: break;
             }
@@ -1512,7 +1458,6 @@ void Controller::Logout()
     sysLog->info("Controller :: Logout");
 
     ChangeState(State::Ended);
-    PingerStop();
 
     if (webSocket.IsConnected())
     {
