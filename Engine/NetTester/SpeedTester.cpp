@@ -7,8 +7,15 @@
 
 #include <NetTester/SpeedTester.h>
 
+#include <Proto/CommandType.h>
+#include <Proto/CmdConnectRequest.h>
+#include <Proto/CmdConnectResponse.h>
 #include <Proto/CmdLoadBlobs.h>
 #include <Proto/CmdDeliveryBlobs.h>
+#include <Proto/CmdPing.h>
+#include <Proto/CmdDisconnect.h>
+
+#include <Version.h>
 
 namespace NetTester
 {
@@ -23,6 +30,7 @@ SpeedTester::SpeedTester(std::shared_ptr<wui::i_locale> locale_,
 	webSocket(std::bind(&SpeedTester::OnWebSocket, this, std::placeholders::_1, std::placeholders::_2)),
 	thread(),
 	serverAddress(), useHTTPS(false),
+	login(), passwd(),
 	inputSpeed(0), outputSpeed(0),
 	mode_(mode::input),
 	iteration(0),
@@ -36,10 +44,12 @@ SpeedTester::~SpeedTester()
 	Stop();
 }
 
-void SpeedTester::SetParams(std::string_view serverAddress_, bool useHTTPS_)
+void SpeedTester::SetParams(std::string_view serverAddress_, bool useHTTPS_, std::string_view login_, std::string_view passwd_)
 {
 	serverAddress = serverAddress_;
 	useHTTPS = useHTTPS_;
+	login = login_;
+	passwd = passwd_;
 }
 
 void SpeedTester::DoTheTest()
@@ -152,8 +162,8 @@ void SpeedTester::TakeInputSpeed()
 	
 	if (webSocket.IsConnected())
 	{
-		//Proto::LOAD_BLOBS::Command command({"432423"});
-		//webSocket.Send(command.Serialize());
+		webSocket.Send(Proto::LOAD_BLOBS::Command(std::vector<std::string_view>{ 
+			"00000000-0000-0000-0000-000000000001" }).Serialize()); /// Service speed test blob guid
 	}
 
 	/*	avgSpeed += static_cast<double>((dummy.size() * 8) / (static_cast<double>(timeMeter.Measure()) / 1000));
@@ -191,6 +201,28 @@ void SpeedTester::Connect()
 	webSocket.Connect((useHTTPS ? std::string("https://") : std::string("http://")) + serverAddress);
 }
 
+void SpeedTester::Logon()
+{
+	if (webSocket.IsConnected())
+	{
+		Proto::CONNECT_REQUEST::Command cmd;
+		cmd.client_version = CLIENT_VERSION;
+#ifdef WIN32
+		cmd.system = "Windows";
+#else
+#ifdef __APPLE__
+		cmd.system = "MacOS";
+#else
+		cmd.system = "Linux";
+#endif
+#endif
+		cmd.login = login;
+		cmd.password = passwd;
+
+		webSocket.Send(cmd.Serialize());
+	}
+}
+
 void SpeedTester::OnWebSocket(Transport::WSMethod method, std::string_view message)
 {
 	switch (method)
@@ -200,12 +232,30 @@ void SpeedTester::OnWebSocket(Transport::WSMethod method, std::string_view messa
 			
 			progressCallback(locale->get("net_test", "connected"), 0);
 			std::this_thread::yield();
-			
-			timeMeter.Reset();
-			TakeInputSpeed();
+
+			Logon();
         break;
         case Transport::WSMethod::Message:
 		{
+			auto commandType = Proto::GetCommandType(message);
+            switch (commandType)
+            {
+                case Proto::CommandType::ConnectResponse:
+                {
+                    Proto::CONNECT_RESPONSE::Command cmd;
+                    cmd.Parse(message);
+
+                    if (cmd.result == Proto::CONNECT_RESPONSE::Result::OK)
+                    {
+						timeMeter.Reset();
+						webSocket.Send(Proto::LOAD_BLOBS::Command(std::vector<std::string_view>{
+							"00000000-0000-0000-0000-000000000001" }).Serialize()); /// Service speed test blob guid
+                    }
+                }
+                break;
+				case Proto::CommandType::DeliveryBlobs:
+				break;
+			}
 		}
 		break;
 		case Transport::WSMethod::Close:

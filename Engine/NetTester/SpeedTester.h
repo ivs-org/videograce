@@ -32,7 +32,10 @@ public:
 		std::function<void(std::string_view, int32_t) > progressCallback);
 	~SpeedTester();
 
-	void SetParams(std::string_view serverAddress, bool useHTTPS);
+	void SetParams(std::string_view serverAddress,
+		bool useHTTPS,
+		std::string_view login,
+		std::string_view passwd);
 
 	void DoTheTest();
 	void Stop();
@@ -53,6 +56,7 @@ private:
 
 	std::string serverAddress;
 	bool useHTTPS;
+	std::string login, passwd;
 	
 	double inputSpeed, outputSpeed;
 
@@ -72,6 +76,7 @@ private:
 	void TakeOutputSpeed();
 
 	void Connect();
+	void Logon();
 
 	void OnWebSocket(Transport::WSMethod method, std::string_view message);
 };
