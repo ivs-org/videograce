@@ -162,8 +162,8 @@ void SpeedTester::TakeInputSpeed()
 	
 	if (webSocket.IsConnected())
 	{
-		webSocket.Send(Proto::LOAD_BLOBS::Command(std::vector<std::string_view>{ 
-			"00000000-0000-0000-0000-000000000001" }).Serialize()); /// Service speed test blob guid
+		//webSocket.Send(Proto::LOAD_BLOBS::Command(std::vector<std::string_view>{ 
+			//"00000000-0000-0000-0000-000000000001" }).Serialize()); /// Service speed test blob guid
 	}
 
 	/*	avgSpeed += static_cast<double>((dummy.size() * 8) / (static_cast<double>(timeMeter.Measure()) / 1000));
@@ -248,8 +248,8 @@ void SpeedTester::OnWebSocket(Transport::WSMethod method, std::string_view messa
                     if (cmd.result == Proto::CONNECT_RESPONSE::Result::OK)
                     {
 						timeMeter.Reset();
-						webSocket.Send(Proto::LOAD_BLOBS::Command(std::vector<std::string_view>{
-							"00000000-0000-0000-0000-000000000001" }).Serialize()); /// Service speed test blob guid
+						//webSocket.Send(Proto::LOAD_BLOBS::Command(std::vector<std::string_view>{
+							//"00000000-0000-0000-0000-000000000001" }).Serialize()); /// Service speed test blob guid
                     }
                 }
                 break;
