@@ -19,10 +19,10 @@ namespace LOAD_BLOBS
 
 	struct Command
 	{
-		std::vector<std::string_view> guids;
+		std::vector<std::string> guids;
 
 		Command();
-		Command(std::vector<std::string_view> &guids);
+		Command(std::vector<std::string> &guids);
 
 		~Command();
 
