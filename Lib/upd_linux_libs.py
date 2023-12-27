@@ -6,7 +6,7 @@ import tarfile
 
 boost = "1Gmtj8Q0Wwz66aNxieyrN0ESoFK_eX5i4"
 
-db = "1ZbwxsH3z2BvwhIEGQf1izmWPCxZIh24r"
+db = "1rnQHwFwclj37z-dbnhXbwtFL4VhciDzr"
 
 ipp = "1pERT7jJj19xm7n2EkHXVHD3ocRvQXP3a"
 
@@ -20,7 +20,7 @@ web_m = "1e1FAoztxQ2r7Y5bl8AYSsEY59R_8XhGH"
 
 open_ssl = "1-BB5E9sW7MYf-kV5XIwr7rES6YEeVWGh"
 
-wui = "1MOL6aLTsFvxJxDh_y-FJKMFahcd_cevL"
+wui = "1w1xGislx5xtYQeBw2fsoOIcoESsSzkvO"
 
 libs = { "boost":    boost,
          "db":       db,
