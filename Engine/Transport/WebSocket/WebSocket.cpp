@@ -253,39 +253,6 @@ public:
 		}
 	}
 
-	void write_bin(const uint8_t* data, size_t size)
-	{
-		sysLog->trace("WebSocket::write_bin :: perform writing bin data, size: {0}", size);
-
-		if (ioc_.stopped())
-		{
-			return errLog->warn("WebSocket::write_bin to stopped io context");
-		}
-
-		if (secure)
-		{
-			ssl_ws_.binary(true);
-			ssl_ws_.async_write(
-				boost::asio::buffer(data, size),
-				std::bind(
-					&session::on_write,
-					shared_from_this(),
-					std::placeholders::_1,
-					std::placeholders::_2));
-		}
-		else
-		{
-			plain_ws_.binary(true);
-			plain_ws_.async_write(
-				boost::asio::buffer(data, size),
-				std::bind(
-					&session::on_write,
-					shared_from_this(),
-					std::placeholders::_1,
-					std::placeholders::_2));
-		}
-	}
-
 	void do_write()
 	{
 		std::string message = write_queue_.front();
@@ -452,14 +419,6 @@ public:
 		}
 	}
 
-	void SendBinary(const uint8_t* data, size_t size)
-	{
-		if (session_)
-		{
-			session_->write_bin(data, size);
-		}
-	}
-
 	~WebSocketImpl()
 	{
 		if (session_ && session_->is_connected())
@@ -509,14 +468,6 @@ void WebSocket::Send(std::string_view message)
 	if (impl)
 	{
 		impl->Send(message);
-	}
-}
-
-void WebSocket::SendBinary(const uint8_t* data, size_t size)
-{
-	if (impl)
-	{
-		impl->SendBinary(data, size);
 	}
 }
 

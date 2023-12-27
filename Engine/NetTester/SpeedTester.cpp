@@ -63,10 +63,10 @@ void SpeedTester::DoTheTest()
 		thread = std::thread([this]() {
 			Connect();
 
-			if (runned)	TakeInputSpeed();
+			/*if (runned)	TakeInputSpeed();
 			if (runned) TakeOutputSpeed();
 
-			if (runned) readyCallback(inputSpeed, outputSpeed);
+			if (runned) readyCallback(inputSpeed, outputSpeed);*/
 		});
 	}
 }
