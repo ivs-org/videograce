@@ -24,7 +24,7 @@ Command::Command()
 {
 }
 
-Command::Command(std::vector<std::string_view>& guids_)
+Command::Command(std::vector<std::string>& guids_)
 	: guids(std::move(guids_))
 {
 }
