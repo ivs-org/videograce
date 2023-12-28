@@ -147,8 +147,9 @@ void SpeedTester::SendOutputBlob()
 		Proto::Blob(-1,
 			-1,
 			"00000000-0000-0000-0000-000000000001",
-			Proto::BlobAction::SpeedTest,
+			Proto::BlobType::Undefined,
 			Proto::BlobStatus::Undefined,
+			Proto::BlobAction::SpeedTest,
 			dummy,
 			"",
 			"") }).Serialize());
