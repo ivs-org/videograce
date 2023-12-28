@@ -14,24 +14,38 @@
 
 namespace Proto
 {
-	enum class BlobAction
+	enum class BlobType
 	{
-		Undefined,
+		Undefined = 0,
 
-		SpeedTest,
+		Image,
+		Document,
+		Voice,
+		CircleVideo
 
-		FileToStorage,
-		P2PTransfer
 	};
 
 	enum class BlobStatus
 	{
 		Undefined = 0,
+
+		NotFound,
+
 		Created,
-		Sended,
-		Delivered,
+		Received,
 		Modified,
+
 		Deleted
+	};
+
+	enum class BlobAction
+	{
+		Undefined = 0,
+
+		SpeedTest,
+
+		Storage,
+		P2P
 	};
 
 	struct Blob
@@ -40,10 +54,12 @@ namespace Proto
 		int64_t owner_id;
 		std::string guid;
 
-		BlobAction action;
+		BlobType type;
 		BlobStatus status;
-		
+		BlobAction action;
+
 		std::string data;
+		std::string preview;
 		std::string name;
 		std::string description;
 
@@ -53,8 +69,9 @@ namespace Proto
 		Blob(int64_t id,
 			int64_t owner_id,
 			std::string_view guid,
-			BlobAction action,
+			BlobType type,
 			BlobStatus status,
+			BlobAction action,
 			std::string_view data,
 			std::string_view name,
 			std::string_view description,
