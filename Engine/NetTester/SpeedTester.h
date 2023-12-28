@@ -72,11 +72,11 @@ private:
 
 	std::shared_ptr<spdlog::logger> sysLog, errLog;
 	
-	void TakeInputSpeed();
-	void TakeOutputSpeed();
-
 	void Connect();
 	void Logon();
+
+	void RequestInputBlob();
+	void SendOutputBlob();
 
 	void OnWebSocket(Transport::WSMethod method, std::string_view message);
 };
