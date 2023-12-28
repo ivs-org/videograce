@@ -15,6 +15,8 @@
 #include <Proto/CmdPing.h>
 #include <Proto/CmdDisconnect.h>
 
+#include <Common/Base64.h>
+
 #include <Version.h>
 
 namespace NetTester
@@ -141,6 +143,15 @@ void SpeedTester::SendOutputBlob()
 	const auto SIZE = 1024 * 100;
 	std::string dummy;
 	dummy.resize(SIZE);
+	int i = 0;
+	while (i != SIZE - 1)
+	{
+		char ch = rand() % 127;
+		if (isalnum(ch))
+		{
+			dummy[i++] = ch;
+		}
+	}
 
 	timeMeter.Reset();
 	webSocket.Send(Proto::DELIVERY_BLOBS::Command(std::vector<Proto::Blob>{
@@ -150,7 +161,7 @@ void SpeedTester::SendOutputBlob()
 			Proto::BlobType::Undefined,
 			Proto::BlobStatus::Undefined,
 			Proto::BlobAction::SpeedTest,
-			dummy,
+			Common::toBase64(dummy),
 			"",
 			"") }).Serialize());
 }
