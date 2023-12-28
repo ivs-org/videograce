@@ -74,6 +74,7 @@ private:
 	
 	void Connect();
 	void Logon();
+	void Logout();
 
 	void RequestInputBlob();
 	void SendOutputBlob();

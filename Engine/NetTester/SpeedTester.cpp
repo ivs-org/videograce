@@ -114,6 +114,20 @@ void SpeedTester::Logon()
 	}
 }
 
+void SpeedTester::Logout()
+{
+	sysLog->info("SpeedTester :: Logout");
+
+	if (webSocket.IsConnected())
+	{
+		webSocket.Send(Proto::DISCONNECT::Command().Serialize());
+	}
+
+	webSocket.Disconnect();
+
+	sysLog->info("SpeedTester :: Logout finisned");
+}
+
 void SpeedTester::RequestInputBlob()
 {
 	timeMeter.Reset();
@@ -164,6 +178,8 @@ void SpeedTester::OnWebSocket(Transport::WSMethod method, std::string_view messa
 
                     if (cmd.result == Proto::CONNECT_RESPONSE::Result::OK)
                     {
+						sysLog->trace("SpeedTester :: Connected");
+
 						mode_ = mode::input;
 						inputSpeed = 0;
 						outputSpeed = 0;
@@ -229,6 +245,8 @@ void SpeedTester::OnWebSocket(Transport::WSMethod method, std::string_view messa
 							else
 							{
 								sysLog->trace("SpeedTester :: TakeOutputSpeed :: result: {0} kbps", outputSpeed);
+								
+								std::thread([this]() { Logout(); }).detach();
 							}
 						}
 						break;
