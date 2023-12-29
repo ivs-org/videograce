@@ -23,7 +23,7 @@ namespace DELIVERY_BLOBS
 		std::vector<Blob> blobs;
 
 		Command();
-		Command(std::vector<Blob> &blobs);
+		Command(const std::vector<Blob> &blobs);
 
 		~Command();
 

@@ -22,7 +22,7 @@ namespace LOAD_BLOBS
 		std::vector<std::string> guids;
 
 		Command();
-		Command(std::vector<std::string> &guids);
+		Command(const std::vector<std::string> &guids);
 
 		~Command();
 

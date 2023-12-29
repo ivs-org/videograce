@@ -24,8 +24,8 @@ Command::Command()
 {
 }
 
-Command::Command(std::vector<std::string>& guids_)
-	: guids(std::move(guids_))
+Command::Command(const std::vector<std::string>& guids_)
+	: guids(guids_)
 {
 }
 

@@ -24,8 +24,8 @@ Command::Command()
 {
 }
 
-Command::Command(std::vector<Blob> &blobs_)
-	: blobs(std::move(blobs_))
+Command::Command(const std::vector<Blob> &blobs_)
+	: blobs(blobs_)
 {
 }
 
