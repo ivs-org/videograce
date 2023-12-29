@@ -142,6 +142,8 @@ public:
 			opt.keep_alive_pings = true;
 			plain_ws_.set_option(opt);
 
+			plain_ws_.write_buffer_bytes(1024 * 1024);
+
 			// Perform the websocket handshake
 			plain_ws_.async_handshake(host_, "/",
 				std::bind(
@@ -167,6 +169,8 @@ public:
 		opt.idle_timeout = std::chrono::seconds(5); //boost::beast::websocket::stream_base::none();
 		opt.keep_alive_pings = true;
 		ssl_ws_.set_option(opt);
+
+		ssl_ws_.write_buffer_bytes(1024 * 1024);
 
 		// Perform the websocket handshake
 		ssl_ws_.async_handshake(host_, "/",

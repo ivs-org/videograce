@@ -66,6 +66,7 @@ private:
 	} mode_;
 	
 	const int32_t ITERATIONS_COUNT = 5;
+	const size_t OUTPUT_SIZE = 1024 * 100;
 	int32_t iteration;
 
 	std::atomic_bool runned;

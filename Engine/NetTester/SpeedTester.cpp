@@ -140,11 +140,10 @@ void SpeedTester::RequestInputBlob()
 
 void SpeedTester::SendOutputBlob()
 {
-	const auto SIZE = 1024 * 100;
 	std::string dummy;
-	dummy.resize(SIZE);
+	dummy.resize(OUTPUT_SIZE);
 	int i = 0;
-	while (i != SIZE - 1)
+	while (i != OUTPUT_SIZE - 1)
 	{
 		char ch = rand() % 127;
 		if (isalnum(ch))
@@ -180,6 +179,8 @@ void SpeedTester::OnWebSocket(Transport::WSMethod method, std::string_view messa
         break;
         case Transport::WSMethod::Message:
 		{
+			sysLog->trace("SpeedTester :: OnWebSocket :: recv {0}", message);
+
 			auto commandType = Proto::GetCommandType(message);
             switch (commandType)
             {
@@ -202,67 +203,75 @@ void SpeedTester::OnWebSocket(Transport::WSMethod method, std::string_view messa
                 }
                 break;
 				case Proto::CommandType::DeliveryBlobs:
-					switch (mode_)
+				{
+					Proto::DELIVERY_BLOBS::Command cmd;
+					if (cmd.Parse(message))
 					{
-						case mode::input:
+						switch (mode_)
 						{
-							inputSpeed += (static_cast<double>(message.size() * 8) / (static_cast<double>(timeMeter.Measure()) / 1000));
-
-							++iteration;
-
-							auto currentSpeed = static_cast<uint32_t>(inputSpeed / iteration);
-
-							sysLog->trace("SpeedTester :: TakeInputSpeed :: iteration {0} result : {1} kbps", iteration, currentSpeed);
-
-							progressCallback(locale->get("net_test", "in_speed_testing") + ": " +
-								std::to_string(currentSpeed) + " " +
-								locale->get("net_test", "kbps"),
-								iteration * (100 / ITERATIONS_COUNT));
-
-							if (iteration != ITERATIONS_COUNT)
+							case mode::input:
 							{
-								RequestInputBlob();
+								inputSpeed += (static_cast<double>(cmd.blobs[0].data.size() * 8) / (static_cast<double>(timeMeter.Measure()) / 1000));
+
+								++iteration;
+
+								auto currentSpeed = static_cast<uint32_t>(inputSpeed / iteration);
+
+								sysLog->trace("SpeedTester :: TakeInputSpeed :: iteration {0} result : {1} kbps", iteration, currentSpeed);
+
+								progressCallback(locale->get("net_test", "in_speed_testing") + ": " +
+									std::to_string(currentSpeed) + " " +
+									locale->get("net_test", "kbps"),
+									iteration * (100 / ITERATIONS_COUNT));
+
+								if (iteration != ITERATIONS_COUNT)
+								{
+									RequestInputBlob();
+								}
+								else
+								{
+									sysLog->trace("SpeedTester :: TakeInputSpeed :: result: {0} kbps", inputSpeed);
+
+									mode_ = mode::output;
+									outputSpeed = 0;
+									iteration = 0;
+
+									SendOutputBlob();
+								}
 							}
-							else
+							break;
+							case mode::output:
 							{
-								sysLog->trace("SpeedTester :: TakeInputSpeed :: result: {0} kbps", inputSpeed);
+								outputSpeed += (static_cast<double>(OUTPUT_SIZE * 8) / (static_cast<double>(timeMeter.Measure()) / 1000));
 
-								mode_ = mode::output;
-								outputSpeed = 0;
-								iteration = 0;
+								++iteration;
 
-								SendOutputBlob();
+								auto currentSpeed = static_cast<uint32_t>(outputSpeed / iteration);
+
+								sysLog->trace("SpeedTester :: TakeOutputSpeed :: iteration {0} result : {1} kbps", iteration, currentSpeed);
+
+								progressCallback(locale->get("net_test", "out_speed_testing") + ": " +
+									std::to_string(currentSpeed) + " " +
+									locale->get("net_test", "kbps"),
+									iteration * (100 / ITERATIONS_COUNT));
+
+								if (iteration != ITERATIONS_COUNT)
+								{
+									SendOutputBlob();
+								}
+								else
+								{
+									readyCallback(static_cast<uint32_t>(inputSpeed), static_cast<uint32_t>(outputSpeed));
+
+									sysLog->trace("SpeedTester :: TakeOutputSpeed :: result: {0} kbps", outputSpeed);
+
+									std::thread([this]() { Logout(); }).detach();
+								}
 							}
+							break;
 						}
-						break;
-						case mode::output:
-						{
-							outputSpeed += (static_cast<double>(message.size() * 8) / (static_cast<double>(timeMeter.Measure()) / 1000));
-
-							++iteration;
-
-							auto currentSpeed = static_cast<uint32_t>(outputSpeed / iteration);
-
-							sysLog->trace("SpeedTester :: TakeOutputSpeed :: iteration {0} result : {1} kbps", iteration, currentSpeed);
-
-							progressCallback(locale->get("net_test", "out_speed_testing") + ": " +
-								std::to_string(currentSpeed) + " " +
-								locale->get("net_test", "kbps"),
-								iteration * (100 / ITERATIONS_COUNT));
-
-							if (iteration != ITERATIONS_COUNT)
-							{
-								SendOutputBlob();
-							}
-							else
-							{
-								sysLog->trace("SpeedTester :: TakeOutputSpeed :: result: {0} kbps", outputSpeed);
-								
-								std::thread([this]() { Logout(); }).detach();
-							}
-						}
-						break;
 					}
+				}
 				break;
 				case Proto::CommandType::Ping:
 					webSocket.Send(Proto::PING::Command().Serialize());
