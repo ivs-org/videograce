@@ -23,7 +23,6 @@
 #include <Storage/Storage.h>
 
 #include <NetTester/SpeedTester.h>
-#include <NetTester/TCPTester.h>
 #include <NetTester/UDPTester.h>
 
 #include <Transport/TCP/Client.h>
@@ -171,7 +170,6 @@ private:
 
     NetTester::SpeedTester speedTester;
     NetTester::UDPTester udpTester;
-    NetTester::TCPTester tcpTester;
 
     std::vector<Device> cameraDevices;
     std::vector<Device> microphoneDevices;
@@ -217,7 +215,7 @@ private:
     DummyGraph dummyGraph;
 #endif
 
-    bool showConnectivityResult, useTCPMedia;
+    bool showConnectivityResult, useWSMedia;
 
     bool actionQuested;
 

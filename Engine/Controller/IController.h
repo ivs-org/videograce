@@ -193,8 +193,7 @@ namespace Controller
 
 			WantSpeak,
 
-			AddRTPAddress,
-			ReceiveTCPMediaAddress,
+			UpdateRTPAddress,
 			ReadyToMakeMediaTest,
 
 			UpdateMembers

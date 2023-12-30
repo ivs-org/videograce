@@ -1317,7 +1317,7 @@ void Controller::OnWebSocket(Transport::WSMethod method, std::string_view messag
                         }
 
                         Event event_;
-                        event_.type = proto == "rtp" ? Event::Type::AddRTPAddress : Event::Type::ReceiveTCPMediaAddress;
+                        event_.type = proto == "rtp" ? Event::Type::UpdateRTPAddress;
                         event_.iData = atoi(port.c_str());
                         event_.data = host;
                         eventHandler(event_);

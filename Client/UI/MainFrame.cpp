@@ -179,7 +179,6 @@ MainFrame::MainFrame()
         std::bind(&MainFrame::SpeedTestCompleted, this, std::placeholders::_1, std::placeholders::_2),
         std::bind(&MainFrame::SetMainProgess, this, std::placeholders::_1, std::placeholders::_2)),
     udpTester(wui::get_locale()),
-    tcpTester(wui::get_locale(), std::bind(&MainFrame::TCPTestCompleted, this)),
 
     cameraDevices(),
     microphoneDevices(),
@@ -229,8 +228,7 @@ MainFrame::MainFrame()
         std::bind(&MainFrame::SettingsReadyCallback, this)),
 
     showConnectivityResult(false),
-    useTCPMedia(false),
-    actionQuested(false),
+    actionQuested(false), useWSMedia(false),
     online(false), working(true),
     userForceClose(false),
 
@@ -1050,7 +1048,7 @@ void MainFrame::ReceiveEvents(const wui::event &ev)
                             UpdateTitle();
                         break;
                         case MyEvent::ConnectivityTestCompleted:
-                            if (showConnectivityResult && ev.internal_event_.y != 0 && ev.internal_event_.y != 1)
+                            if (showConnectivityResult)
                             {
                                 if (udpTester.TestPassed())
                                 {
@@ -1067,25 +1065,7 @@ void MainFrame::ReceiveEvents(const wui::event &ev)
                                         wui::message_button::ok);
                                 }
                             }
-                            switch (ev.internal_event_.y)
-                            {
-                                case 0:
-                                    messageBox->show(tcpTester.GetErrorMessage() + "\n" +
-                                            wui::locale("net_test", "sockets_access_required"),
-                                        wui::locale("message", "title_notification"),
-                                        wui::message_icon::alert,
-                                        wui::message_button::ok);
-                                break;
-                                case 1:
-                                    messageBox->show(tcpTester.GetErrorMessage() + "\n" +
-                                        udpTester.GetErrorMessage() + "\n" +
-                                            wui::locale("net_test", "sockets_access_required"),
-                                        wui::locale("message", "title_notification"),
-                                        wui::message_icon::alert,
-                                        wui::message_button::ok);
-                                break;
-                            }
-
+                            
                             UpdateTitle();
                         break;
                         case MyEvent::RingerEnd:
@@ -1165,7 +1145,7 @@ void MainFrame::ProcessControllerEvent()
 
                 SetStanbyMode();
 
-                useTCPMedia = false;
+                useWSMedia = false;
 
                 DetermineNetSpeed();
                 CheckConnectivity();
@@ -1218,7 +1198,7 @@ void MainFrame::ProcessControllerEvent()
                     storage.SetMyClientId(0);
 
                     online = false;
-                    useTCPMedia = false;
+                    useWSMedia = false;
 
                     DisconnectFromConference();
                     renderersBox.Update();
@@ -1273,20 +1253,11 @@ void MainFrame::ProcessControllerEvent()
                 }
             }
             break;
-            case Controller::Event::Type::AddRTPAddress:
-            {
+            case Controller::Event::Type::UpdateRTPAddress:
                 udpTester.AddAddress(e.data.c_str(), static_cast<int16_t>(e.iData));
-            }
-            break;
-            case Controller::Event::Type::ReceiveTCPMediaAddress:
-            {
-                tcpTester.SetAddress(e.data, static_cast<int16_t>(e.iData));
-                tcpClient.SetServerAddress(e.data, static_cast<int16_t>(e.iData));
-            }
             break;
             case Controller::Event::Type::ReadyToMakeMediaTest:
                 udpTester.DoTheTest();
-                tcpTester.DoTheTest();
             break;
 
             /// Updating
@@ -1428,7 +1399,7 @@ void MainFrame::ProcessControllerEvent()
                 {
                     const auto &device = e.deviceValues;
 
-                    cvs->SetRTPParams(!useTCPMedia ? device.addr.c_str() : "127.0.0.1", !useTCPMedia ? device.port : tcpClient.CreatePipe(device.port));
+                    cvs->SetRTPParams(!useWSMedia ? device.addr.c_str() : "127.0.0.1", !useWSMedia ? device.port : tcpClient.CreatePipe(device.port));
                     cvs->Start(device.authorSSRC, device.colorSpace, device.deviceId, device.secureKey);
                 }
             }
@@ -1479,7 +1450,7 @@ void MainFrame::ProcessControllerEvent()
                 if (captureAudioSession)
                 {
                     auto &device = e.deviceValues;
-                    captureAudioSession->SetRTPParams(!useTCPMedia ? device.addr.c_str() : "127.0.0.1", !useTCPMedia ? device.port : tcpClient.CreatePipe(device.port));
+                    captureAudioSession->SetRTPParams(!useWSMedia ? device.addr.c_str() : "127.0.0.1", !useWSMedia ? device.port : tcpClient.CreatePipe(device.port));
                     captureAudioSession->Start(device.authorSSRC, device.deviceId, device.secureKey);
                 }
             }
@@ -2047,7 +2018,7 @@ void MainFrame::ProcessControllerEvent()
                             rvs->SetClientId(renderer.clientId);
                             rvs->SetDeviceType(renderer.type);
                             rvs->SetMy(renderer.mySource);
-                            rvs->SetRTPParams(!useTCPMedia ? renderer.addr.c_str() : "127.0.0.1", !useTCPMedia ? renderer.port : tcpClient.CreatePipe(renderer.port));
+                            rvs->SetRTPParams(!useWSMedia ? renderer.addr.c_str() : "127.0.0.1", !useWSMedia ? renderer.port : tcpClient.CreatePipe(renderer.port));
                             rvs->SetMirrorVideo(wui::config::get_int("VideoRendererMirrors", renderer.name, -1) == 1);
                             rvs->SetDeviceNotifyCallback(std::bind(&MainFrame::ReceiveDeviceNotify, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4, std::placeholders::_5));
                             rvs->SetRecorder(&recorder);
@@ -2089,7 +2060,7 @@ void MainFrame::ProcessControllerEvent()
                             ras->SetClientId(renderer.clientId);
                             ras->SetMetadata(renderer.metadata);
                             ras->SetMy(renderer.mySource);
-                            ras->SetRTPParams(!useTCPMedia ? renderer.addr.c_str() : "127.0.0.1", !useTCPMedia ? renderer.port : tcpClient.CreatePipe(renderer.port));
+                            ras->SetRTPParams(!useWSMedia ? renderer.addr.c_str() : "127.0.0.1", !useWSMedia ? renderer.port : tcpClient.CreatePipe(renderer.port));
                             ras->SetDeviceNotifyCallback(std::bind(&MainFrame::ReceiveDeviceNotify, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4, std::placeholders::_5));
                             ras->SetRecorder(&recorder);
 
@@ -2289,7 +2260,7 @@ void MainFrame::UpdateTitle(std::string_view text, int32_t progress)
         title += " :: " + std::string(text);
     }
 
-    if (useTCPMedia)
+    if (useWSMedia)
     {
         title += " {" + wui::locale("common", "tcp_media") + "}";
     }
@@ -2594,22 +2565,9 @@ void MainFrame::TCPTestCompleted()
         return;
     }
 
-    bool udpOK = udpTester.TestPassed();
-    bool tcpOK = tcpTester.TestPassed();
+    useWSMedia = !udpTester.TestPassed();
 
-    useTCPMedia = License::Parse(controller.GetGrants()).denyUDP || (!udpOK && tcpOK);
-    
-    if (useTCPMedia && !tcpOK)
-    {
-        return window->emit_event(static_cast<int32_t>(MyEvent::ConnectivityTestCompleted), 0);
-    }
-
-    if (!udpOK && !tcpOK)
-    {
-        return window->emit_event(static_cast<int32_t>(MyEvent::ConnectivityTestCompleted), 1);
-    }
-
-    window->emit_event(static_cast<int32_t>(MyEvent::ConnectivityTestCompleted), 2);
+    window->emit_event(static_cast<int32_t>(MyEvent::ConnectivityTestCompleted), 0);
 }
 
 void MainFrame::ReceiveDeviceNotify(std::string_view name, DeviceNotifyType notifyType, Proto::DeviceType deviceType, uint32_t deviceId, int32_t iData)
