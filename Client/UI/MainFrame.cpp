@@ -2301,7 +2301,7 @@ void MainFrame::UpdateTitle(std::string_view text, int32_t progress)
     mainProgress->set_value(progress);
     if (progress > 0)
     {
-        if (prevSize != title.size())
+        if (!mainProgress->showed() || prevSize != title.size())
         {
 #ifdef _WIN32
             auto memGr = std::unique_ptr<wui::graphic>(new wui::graphic(wui::system_context{ window->context().hwnd }));
