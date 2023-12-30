@@ -33,7 +33,7 @@ SpeedTester::SpeedTester(std::shared_ptr<wui::i_locale> locale_,
 	thread(),
 	serverAddress(), useHTTPS(false),
 	login(), passwd(),
-	inputSpeed(0), outputSpeed(0),
+	summSpeed(0.), inputSpeed(0.), outputSpeed(0.),
 	mode_(mode::input),
 	iteration(0),
 	runned(false),
@@ -179,8 +179,6 @@ void SpeedTester::OnWebSocket(Transport::WSMethod method, std::string_view messa
         break;
         case Transport::WSMethod::Message:
 		{
-			sysLog->trace("SpeedTester :: OnWebSocket :: recv {0}", message);
-
 			auto commandType = Proto::GetCommandType(message);
             switch (commandType)
             {
@@ -194,8 +192,9 @@ void SpeedTester::OnWebSocket(Transport::WSMethod method, std::string_view messa
 						sysLog->trace("SpeedTester :: Connected");
 
 						mode_ = mode::input;
-						inputSpeed = 0;
-						outputSpeed = 0;
+						summSpeed = 0.;
+						inputSpeed = 0.;
+						outputSpeed = 0.;
 						iteration = 0;
 
 						RequestInputBlob();
@@ -211,11 +210,11 @@ void SpeedTester::OnWebSocket(Transport::WSMethod method, std::string_view messa
 						{
 							case mode::input:
 							{
-								inputSpeed += (static_cast<double>(cmd.blobs[0].data.size() * 8) / (static_cast<double>(timeMeter.Measure()) / 1000));
+								summSpeed += (static_cast<double>(cmd.blobs[0].data.size() * 8) / (static_cast<double>(timeMeter.Measure()) / 1000));
 
 								++iteration;
 
-								auto currentSpeed = static_cast<uint32_t>(inputSpeed / iteration);
+								auto currentSpeed = static_cast<uint32_t>(summSpeed / iteration);
 
 								sysLog->trace("SpeedTester :: TakeInputSpeed :: iteration {0} result : {1} kbps", iteration, currentSpeed);
 
@@ -230,10 +229,13 @@ void SpeedTester::OnWebSocket(Transport::WSMethod method, std::string_view messa
 								}
 								else
 								{
+									inputSpeed = summSpeed / iteration;
+
 									sysLog->trace("SpeedTester :: TakeInputSpeed :: result: {0} kbps", inputSpeed);
 
 									mode_ = mode::output;
-									outputSpeed = 0;
+									summSpeed = 0.;
+									outputSpeed = 0.;
 									iteration = 0;
 
 									SendOutputBlob();
@@ -242,11 +244,11 @@ void SpeedTester::OnWebSocket(Transport::WSMethod method, std::string_view messa
 							break;
 							case mode::output:
 							{
-								outputSpeed += (static_cast<double>(OUTPUT_SIZE * 8) / (static_cast<double>(timeMeter.Measure()) / 1000));
+								summSpeed += (static_cast<double>(OUTPUT_SIZE * 8) / (static_cast<double>(timeMeter.Measure()) / 1000));
 
 								++iteration;
 
-								auto currentSpeed = static_cast<uint32_t>(outputSpeed / iteration);
+								auto currentSpeed = static_cast<uint32_t>(summSpeed / iteration);
 
 								sysLog->trace("SpeedTester :: TakeOutputSpeed :: iteration {0} result : {1} kbps", iteration, currentSpeed);
 
@@ -261,7 +263,7 @@ void SpeedTester::OnWebSocket(Transport::WSMethod method, std::string_view messa
 								}
 								else
 								{
-									readyCallback(static_cast<uint32_t>(inputSpeed), static_cast<uint32_t>(outputSpeed));
+									outputSpeed = summSpeed / iteration;
 
 									sysLog->trace("SpeedTester :: TakeOutputSpeed :: result: {0} kbps", outputSpeed);
 
@@ -281,9 +283,11 @@ void SpeedTester::OnWebSocket(Transport::WSMethod method, std::string_view messa
 		break;
 		case Transport::WSMethod::Close:
 			sysLog->info("SpeedTester :: WebSocket closed (message: \"{0}\")", message);
+			readyCallback(static_cast<uint32_t>(inputSpeed), static_cast<uint32_t>(outputSpeed));
 		break;
 		case Transport::WSMethod::Error:
 			errLog->critical("SpeedTester :: WebSocket error (message: \"{0}\")", message);
+			readyCallback(static_cast<uint32_t>(inputSpeed), static_cast<uint32_t>(outputSpeed));
 		break;
 	}
 }

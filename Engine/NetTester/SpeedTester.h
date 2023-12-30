@@ -58,7 +58,7 @@ private:
 	bool useHTTPS;
 	std::string login, passwd;
 	
-	double inputSpeed, outputSpeed;
+	double summSpeed, inputSpeed, outputSpeed;
 
 	enum class mode
 	{
