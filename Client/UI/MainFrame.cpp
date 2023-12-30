@@ -1165,6 +1165,8 @@ void MainFrame::ProcessControllerEvent()
 
                 SetStanbyMode();
 
+                useTCPMedia = false;
+
                 DetermineNetSpeed();
                 CheckConnectivity();
 
@@ -1216,6 +1218,7 @@ void MainFrame::ProcessControllerEvent()
                     storage.SetMyClientId(0);
 
                     online = false;
+                    useTCPMedia = false;
 
                     DisconnectFromConference();
                     renderersBox.Update();
@@ -2293,10 +2296,12 @@ void MainFrame::UpdateTitle(std::string_view text, int32_t progress)
 
     window->set_caption(title);
 
+    static size_t prevSize = 0;
+
     mainProgress->set_value(progress);
     if (progress > 0)
     {
-        if (!mainProgress->showed())
+        if (prevSize != title.size())
         {
 #ifdef _WIN32
             auto memGr = std::unique_ptr<wui::graphic>(new wui::graphic(wui::system_context{ window->context().hwnd }));
@@ -2310,6 +2315,8 @@ void MainFrame::UpdateTitle(std::string_view text, int32_t progress)
             mainProgress->set_position({ titleWidth + 10, 8, titleWidth + 110, 22 });
 
             mainProgress->show();
+
+            prevSize = title.size();
         }
     }
     else
