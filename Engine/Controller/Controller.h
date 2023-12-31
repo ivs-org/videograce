@@ -95,6 +95,8 @@ public:
     virtual std::string GetLogin() const;
     virtual std::string GetPassword() const;
 
+    virtual std::string GetAccessToken() const;
+
     virtual uint32_t GetGrants() const;
     virtual uint32_t GetMaxOutputBitrate() const;
 
@@ -103,8 +105,6 @@ public:
     virtual std::string GetServerName() const;
 
     virtual Proto::Conference &GetCurrentConference();
-
-    virtual uint16_t GetReducedFrameRate();
 
 private:
     std::function<void(const Event&)> eventHandler;
@@ -118,7 +118,6 @@ private:
 
     uint32_t grants;
     uint32_t maxOutputBitrate;
-    uint16_t reducedFrameRate;
 
     time_t callStart;
 
@@ -132,6 +131,7 @@ private:
     bool secureConnection;
     std::string login, password;
 
+    std::string accessToken;
     int64_t clientId;
     uint32_t connectionId;
     std::string clientName;

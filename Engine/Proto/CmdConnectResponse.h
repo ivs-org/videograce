@@ -31,20 +31,37 @@ namespace CONNECT_RESPONSE
 	struct Command
 	{
 		Result result;
+
 		uint32_t server_version;
 		int64_t id;
-		uint32_t connection_id;
+		uint32_t connection_id;	
+		std::string access_token;
+
 		std::string redirect_url;
 		std::string name;
 		std::string secure_key;
 		std::string server_name;
+		
 		uint32_t options;
 		uint32_t grants;
 		uint32_t max_output_bitrate;
-		uint16_t reduced_frame_rate;
 
 		Command();
-		Command(Result result, uint32_t server_version, int64_t id, uint32_t connection_id, std::string_view name, std::string_view redirect_url, std::string_view secure_key, std::string_view server_name, uint32_t options, uint32_t grants, uint32_t max_output_bitrate, uint16_t reduced_frame_rate);
+		Command(Result result,
+
+			uint32_t server_version,
+			int64_t id,
+			uint32_t connection_id,
+			std::string_view access_token,
+
+			std::string_view name,
+			std::string_view redirect_url,
+			std::string_view secure_key,
+			std::string_view server_name,
+			
+			uint32_t options,
+			uint32_t grants,
+			uint32_t max_output_bitrate);
 		Command(Result result);
 
 		~Command();

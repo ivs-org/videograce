@@ -344,6 +344,9 @@ namespace Controller
 		/// Get the current password
 		virtual std::string GetPassword() const = 0;
 
+		/// Return access token to establish session in another connections (speed test, ws media, blob channel)
+		virtual std::string GetAccessToken() const = 0;
+
 		/// Return the currect user's grants
 		virtual uint32_t GetGrants() const = 0;
 
@@ -358,9 +361,6 @@ namespace Controller
 
 		/// Return the current conference values
 		virtual Proto::Conference &GetCurrentConference() = 0;
-
-		/// Return reduced frame rate when user is listening
-		virtual uint16_t GetReducedFrameRate() = 0;
 
 	protected:
 		~IController() {}

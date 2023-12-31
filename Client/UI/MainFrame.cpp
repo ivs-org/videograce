@@ -2500,8 +2500,7 @@ void MainFrame::DetermineNetSpeed(bool force)
 
         speedTester.SetParams(wui::config::get_string("Connection", "Address", ""),
             wui::config::get_int("Connection", "Secure", 1) != 0,
-            wui::config::get_string("Credentials", "Login", ""),
-            wui::config::get_string("Credentials", "Password", ""));
+            controller.GetAccessToken());
         speedTester.DoTheTest();
     }
     else

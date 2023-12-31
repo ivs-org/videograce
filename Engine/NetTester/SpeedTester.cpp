@@ -32,7 +32,7 @@ SpeedTester::SpeedTester(std::shared_ptr<wui::i_locale> locale_,
 	webSocket(std::bind(&SpeedTester::OnWebSocket, this, std::placeholders::_1, std::placeholders::_2)),
 	thread(),
 	serverAddress(), useHTTPS(false),
-	login(), passwd(),
+	accessToken(),
 	summSpeed(0.), inputSpeed(0.), outputSpeed(0.),
 	mode_(mode::input),
 	iteration(0),
@@ -46,12 +46,11 @@ SpeedTester::~SpeedTester()
 	Stop();
 }
 
-void SpeedTester::SetParams(std::string_view serverAddress_, bool useHTTPS_, std::string_view login_, std::string_view passwd_)
+void SpeedTester::SetParams(std::string_view serverAddress_, bool useHTTPS_, std::string_view accessToken_)
 {
 	serverAddress = serverAddress_;
 	useHTTPS = useHTTPS_;
-	login = login_;
-	passwd = passwd_;
+	accessToken = accessToken_;
 }
 
 void SpeedTester::DoTheTest()
@@ -99,18 +98,9 @@ void SpeedTester::Logon()
 	if (webSocket.IsConnected())
 	{
 		Proto::CONNECT_REQUEST::Command cmd;
-		cmd.client_version = CLIENT_VERSION;
-#ifdef WIN32
-		cmd.system = "Windows";
-#else
-#ifdef __APPLE__
-		cmd.system = "MacOS";
-#else
-		cmd.system = "Linux";
-#endif
-#endif
-		cmd.login = login;
-		cmd.password = passwd;
+
+		cmd.type = Proto::CONNECT_REQUEST::Type::BlobChannel;
+		cmd.access_token = accessToken;
 
 		webSocket.Send(cmd.Serialize());
 	}

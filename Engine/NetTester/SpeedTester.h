@@ -34,8 +34,7 @@ public:
 
 	void SetParams(std::string_view serverAddress,
 		bool useHTTPS,
-		std::string_view login,
-		std::string_view passwd);
+		std::string_view accessToken);
 
 	void DoTheTest();
 	void Stop();
@@ -56,7 +55,7 @@ private:
 
 	std::string serverAddress;
 	bool useHTTPS;
-	std::string login, passwd;
+	std::string accessToken;
 	
 	double summSpeed, inputSpeed, outputSpeed;
 

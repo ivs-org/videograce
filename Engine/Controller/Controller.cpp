@@ -122,7 +122,6 @@ Controller::Controller(Storage::Storage &storage_, IMemberList &memberList_)
     state(State::Initial),
     grants(0),
     maxOutputBitrate(0),
-    reducedFrameRate(5),
     callStart(0),
     currentConference(),
     subscriberId(0),
@@ -130,6 +129,7 @@ Controller::Controller(Storage::Storage &storage_, IMemberList &memberList_)
     webSocket(std::bind(&Controller::OnWebSocket, this, std::placeholders::_1, std::placeholders::_2)),
     serverAddress(), secureConnection(false),
     login(), password(),
+    accessToken(),
     clientId(0), connectionId(0),
     clientName(),
     secureKey(),
@@ -589,6 +589,11 @@ std::string Controller::GetPassword() const
     return password;
 }
 
+std::string Controller::GetAccessToken() const
+{
+    return accessToken;
+}
+
 uint32_t Controller::GetGrants() const
 {
     return grants;
@@ -617,11 +622,6 @@ std::string Controller::GetServerName() const
 Proto::Conference &Controller::GetCurrentConference()
 {
     return currentConference;
-}
-
-uint16_t Controller::GetReducedFrameRate()
-{
-    return reducedFrameRate;
 }
 
 void Controller::OnWebSocket(Transport::WSMethod method, std::string_view message)
@@ -684,12 +684,12 @@ void Controller::OnWebSocket(Transport::WSMethod method, std::string_view messag
 
                             clientId = cmd.id;
                             connectionId = cmd.connection_id;
+                            accessToken = cmd.access_token;
                             clientName = cmd.name;
                             secureKey = cmd.secure_key;
                             serverName = cmd.server_name;
                             grants = cmd.grants;
                             maxOutputBitrate = cmd.max_output_bitrate;
-                            reducedFrameRate = cmd.reduced_frame_rate;
                             
                             ChangeState(State::Ready);
 
@@ -1433,16 +1433,18 @@ void Controller::Logon()
     sysLog->info("Controller :: Logon");
 
     Proto::CONNECT_REQUEST::Command cmd;
+
+    cmd.type = Proto::CONNECT_REQUEST::Type::CommandLoop;
     cmd.client_version = CLIENT_VERSION;
+
 #ifdef WIN32
     cmd.system = "Windows";
-#else
-#ifdef __APPLE__
+#elif __APPLE__
     cmd.system = "MacOS";
-#else
+#elif
     cmd.system = "Linux";
 #endif
-#endif
+
     cmd.login = login;
     cmd.password = password;
 
