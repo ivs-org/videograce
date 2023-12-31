@@ -42,7 +42,7 @@
     <Filter Include="Source Files\Crypto">
       <UniqueIdentifier>{2bad9c03-01c9-4baf-99a0-f08599b2b0c7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Transport\WebSocket">
+    <Filter Include="Source Files\Transport\WS">
       <UniqueIdentifier>{e9cedd6f-f63d-4aeb-9d74-9ca523746483}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\Transport\HTTP">
@@ -195,7 +195,7 @@
     <Filter Include="Header Files\Transport\RTP">
       <UniqueIdentifier>{9eb6c0a5-60d5-492f-a50f-75858d77b326}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Transport\WebSocket">
+    <Filter Include="Header Files\Transport\WS">
       <UniqueIdentifier>{ebc824bc-6695-4d2a-83f0-bbb3f7e5c1ca}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\Transport\HTTP">
@@ -242,6 +242,12 @@
     </Filter>
     <Filter Include="Header Files\spdlog\fmt\bundled">
       <UniqueIdentifier>{135a2f20-7633-430a-b14a-a650053cafe4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Transport\WSM">
+      <UniqueIdentifier>{2fcc1a35-50ff-4c0e-b526-5d3a4ec9cc8c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Transport\WSM">
+      <UniqueIdentifier>{32048e45-7788-478c-a7f6-c7280f139872}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -362,8 +368,8 @@
     <ClInclude Include="Video\ColorSpace.h">
       <Filter>Header Files\Video</Filter>
     </ClInclude>
-    <ClInclude Include="Transport\WebSocket\WebSocket.h">
-      <Filter>Header Files\Transport\WebSocket</Filter>
+    <ClInclude Include="Transport\WS\WebSocket.h">
+      <Filter>Header Files\Transport\WS</Filter>
     </ClInclude>
     <ClInclude Include="Transport\HTTP\HttpClient.h">
       <Filter>Header Files\Transport\HTTP</Filter>
@@ -1199,6 +1205,9 @@
     <ClInclude Include="Proto\CmdLoadBlobs.h">
       <Filter>Header Files\Proto</Filter>
     </ClInclude>
+    <ClInclude Include="Transport\WSM\Client.h">
+      <Filter>Header Files\Transport\WSM</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Video\Resolution.cpp">
@@ -1255,8 +1264,8 @@
     <ClCompile Include="Crypto\Decryptor.cpp">
       <Filter>Source Files\Crypto</Filter>
     </ClCompile>
-    <ClCompile Include="Transport\WebSocket\WebSocket.cpp">
-      <Filter>Source Files\Transport\WebSocket</Filter>
+    <ClCompile Include="Transport\WS\WebSocket.cpp">
+      <Filter>Source Files\Transport\WS</Filter>
     </ClCompile>
     <ClCompile Include="Transport\HTTP\HTTPClient.cpp">
       <Filter>Source Files\Transport\HTTP</Filter>
@@ -1734,6 +1743,9 @@
     </ClCompile>
     <ClCompile Include="Proto\CmdLoadBlobs.cpp">
       <Filter>Source Files\Proto</Filter>
+    </ClCompile>
+    <ClCompile Include="Transport\WSM\Client.cpp">
+      <Filter>Source Files\Transport\WSM</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

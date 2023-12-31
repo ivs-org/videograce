@@ -17,7 +17,7 @@
 #include <wui/locale/i_locale.hpp>
 
 #include <Common/TimeMeter.h>
-#include <Transport/WebSocket/WebSocket.h>
+#include <Transport/WS/WebSocket.h>
 
 #include <spdlog/spdlog.h>
 

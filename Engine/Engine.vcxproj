@@ -434,7 +434,8 @@
     <ClInclude Include="Transport\TCP\Server.h" />
     <ClInclude Include="Transport\UDPSocket.h" />
     <ClInclude Include="Transport\URI\URI.h" />
-    <ClInclude Include="Transport\WebSocket\WebSocket.h" />
+    <ClInclude Include="Transport\WSM\Client.h" />
+    <ClInclude Include="Transport\WS\WebSocket.h" />
     <ClInclude Include="Version.h" />
     <ClInclude Include="Video\CodecType.h" />
     <ClInclude Include="Video\ColorSpace.h" />
@@ -616,7 +617,8 @@
     <ClCompile Include="Transport\TCP\Server.cpp" />
     <ClCompile Include="Transport\UDPSocket.cpp" />
     <ClCompile Include="Transport\URI\URI.cpp" />
-    <ClCompile Include="Transport\WebSocket\WebSocket.cpp" />
+    <ClCompile Include="Transport\WSM\Client.cpp" />
+    <ClCompile Include="Transport\WS\WebSocket.cpp" />
     <ClCompile Include="Video\Resolution.cpp" />
     <ClCompile Include="Video\VideoDecoder.cpp" />
     <ClCompile Include="Video\VideoEncoder.cpp" />

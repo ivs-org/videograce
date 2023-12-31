@@ -1316,11 +1316,14 @@ void Controller::OnWebSocket(Transport::WSMethod method, std::string_view messag
                             host = GetDefaultAddress(serverAddress);
                         }
 
-                        Event event_;
-                        event_.type = proto == "rtp" ? Event::Type::UpdateRTPAddress;
-                        event_.iData = atoi(port.c_str());
-                        event_.data = host;
-                        eventHandler(event_);
+                        if (proto == "rtp")
+                        {
+                            Event event_;
+                            event_.type = Event::Type::UpdateRTPAddress;
+                            event_.iData = atoi(port.c_str());
+                            event_.data = host;
+                            eventHandler(event_);
+                        }
                     }
 
                     eventHandler(Event(Event::Type::ReadyToMakeMediaTest));

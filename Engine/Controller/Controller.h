@@ -13,7 +13,7 @@
 #include "IController.h"
 #include "IMemberList.h"
 
-#include <Transport/WebSocket/WebSocket.h>
+#include <Transport/WS/WebSocket.h>
 
 #include <Common/TimeMeter.h>
 
