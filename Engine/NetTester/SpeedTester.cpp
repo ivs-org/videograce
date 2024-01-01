@@ -213,6 +213,8 @@ void SpeedTester::OnWebSocket(Transport::WSMethod method, std::string_view messa
 									locale->get("net_test", "kbps"),
 									iteration * (100 / ITERATIONS_COUNT));
 
+								std::this_thread::yield();
+
 								if (iteration != ITERATIONS_COUNT)
 								{
 									RequestInputBlob();
@@ -246,6 +248,8 @@ void SpeedTester::OnWebSocket(Transport::WSMethod method, std::string_view messa
 									std::to_string(currentSpeed) + " " +
 									locale->get("net_test", "kbps"),
 									iteration * (100 / ITERATIONS_COUNT));
+
+								std::this_thread::yield();
 
 								if (iteration != ITERATIONS_COUNT)
 								{
