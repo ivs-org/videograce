@@ -37,7 +37,7 @@ Command::Command()
 {
 }
 
-Command::Command(Result result_, uint32_t server_version_, int64_t id_, uint32_t connection_id_, std::string_view access_token_, std::string_view name_, std::string_view redirect_url_, std::string_view secure_key_, std::string_view server_name_, uint32_t options_, uint32_t grants_, uint32_t max_output_bitrate_)
+Command::Command(Result result_, uint32_t server_version_, int64_t id_, int64_t connection_id_, std::string_view access_token_, std::string_view name_, std::string_view redirect_url_, std::string_view secure_key_, std::string_view server_name_, uint32_t options_, uint32_t grants_, uint32_t max_output_bitrate_)
 	: result(result_), server_version(server_version_), id(id_), connection_id(connection_id_), access_token(access_token_), name(name_), redirect_url(redirect_url_), secure_key(secure_key_), server_name(server_name_), options(options_), grants(grants_), max_output_bitrate(max_output_bitrate_)
 {
 }
@@ -64,7 +64,7 @@ bool Command::Parse(std::string_view message)
 		
 		if (obj.count(SERVER_VERSION) != 0) server_version = obj.at(SERVER_VERSION).get<uint32_t>();
 		if (obj.count(ID) != 0) id = obj.at(ID).get<uint64_t>();
-		if (obj.count(CONNECTION_ID) != 0) connection_id = obj.at(CONNECTION_ID).get<uint32_t>();
+		if (obj.count(CONNECTION_ID) != 0) connection_id = obj.at(CONNECTION_ID).get<int64_t>();
 		if (obj.count(ACCESS_TOKEN) != 0) access_token = obj.at(ACCESS_TOKEN).get<std::string>();
 
 		if (obj.count(NAME_) != 0) name = obj.at(NAME_).get<std::string>();

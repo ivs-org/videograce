@@ -1744,7 +1744,7 @@
     <ClCompile Include="Proto\CmdLoadBlobs.cpp">
       <Filter>Source Files\Proto</Filter>
     </ClCompile>
-    <ClCompile Include="Transport\WSM\Client.cpp">
+    <ClCompile Include="Transport\WSM\WSMClient.cpp">
       <Filter>Source Files\Transport\WSM</Filter>
     </ClCompile>
   </ItemGroup>

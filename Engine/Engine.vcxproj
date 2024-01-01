@@ -617,7 +617,7 @@
     <ClCompile Include="Transport\TCP\Server.cpp" />
     <ClCompile Include="Transport\UDPSocket.cpp" />
     <ClCompile Include="Transport\URI\URI.cpp" />
-    <ClCompile Include="Transport\WSM\Client.cpp" />
+    <ClCompile Include="Transport\WSM\WSMClient.cpp" />
     <ClCompile Include="Transport\WS\WebSocket.cpp" />
     <ClCompile Include="Video\Resolution.cpp" />
     <ClCompile Include="Video\VideoDecoder.cpp" />

@@ -34,7 +34,7 @@ namespace CONNECT_RESPONSE
 
 		uint32_t server_version;
 		int64_t id;
-		uint32_t connection_id;	
+		int64_t connection_id;	
 		std::string access_token;
 
 		std::string redirect_url;
@@ -51,7 +51,7 @@ namespace CONNECT_RESPONSE
 
 			uint32_t server_version,
 			int64_t id,
-			uint32_t connection_id,
+			int64_t connection_id,
 			std::string_view access_token,
 
 			std::string_view name,
