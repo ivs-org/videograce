@@ -14,10 +14,13 @@
 #include <Transport/UDPSocket.h>
 
 #include <Proto/CommandType.h>
+#include <Proto/CmdMedia.h>
 #include <Proto/CmdConnectRequest.h>
 #include <Proto/CmdConnectResponse.h>
 #include <Proto/CmdPing.h>
 #include <Proto/CmdDisconnect.h>
+
+#include <Common/Base64.h>
 
 #include <spdlog/spdlog.h>
 
@@ -112,8 +115,6 @@ public:
 			case Transport::WSMethod::Open:
 				sysLog->info("WSMClient :: Connection to server established");
 
-				std::this_thread::yield();
-
 				Logon();
 			break;
 			case Transport::WSMethod::Message:
@@ -136,6 +137,25 @@ public:
                         }
 				    }
                     break;
+                    case Proto::CommandType::Media:
+                    {
+                        Proto::MEDIA::Command cmd;
+                        cmd.Parse(message);
+
+                        auto it = udp_sockets_.find(cmd.src_port);
+                        if (it != udp_sockets_.end())
+                        {
+                            auto rtp = Common::fromBase64(cmd.rtp);
+                            it->second->Send((const uint8_t*)rtp.data(), rtp.size(), Address("127.0.0.1", cmd.dst_port), 0);
+
+                            if (WSMClient::WITH_TRACES)
+                            {
+                                sysLog->trace("WSMClient receive and send to UDP, len: {0}, src port: {1}, dst port {2}",
+                                    cmd.rtp.size(), cmd.src_port, cmd.dst_port);
+                            }
+                        }
+                    }
+                    break;
 			        case Proto::CommandType::Ping:
 				        webSocket.Send(Proto::PING::Command().Serialize());
 				    break;
@@ -155,15 +175,9 @@ public:
 
     void ReceiveUDP(const uint8_t* data, uint16_t size, const Address& address, uint16_t socketPort)
     {
-        /// Send from local UDP to WS media channel on json with base64
-        /*message msg;
-        msg.body_length(size);
-        msg.dest_port(address.type == Address::Type::IPv4 ? ntohs(address.v4addr.sin_port) : ntohs(address.v6addr.sin6_port));
-        msg.src_port(ports[socketPort]);
-        msg.write(data, size);
-        msg.encode_header();
-
-        io_service_.post(boost::bind(&tcp_client::do_write, this, msg));*/
+        webSocket.Send(Proto::MEDIA::Command(ports[socketPort],
+            (address.type == Address::Type::IPv4 ? ntohs(address.v4addr.sin_port) : ntohs(address.v6addr.sin6_port)),
+            Common::toBase64(std::string(reinterpret_cast<const char*>(data), size))).Serialize());
     }
 };
 

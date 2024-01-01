@@ -1208,6 +1208,9 @@
     <ClInclude Include="Transport\WSM\Client.h">
       <Filter>Header Files\Transport\WSM</Filter>
     </ClInclude>
+    <ClInclude Include="Proto\CmdMedia.h">
+      <Filter>Header Files\Proto</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Video\Resolution.cpp">
@@ -1746,6 +1749,9 @@
     </ClCompile>
     <ClCompile Include="Transport\WSM\WSMClient.cpp">
       <Filter>Source Files\Transport\WSM</Filter>
+    </ClCompile>
+    <ClCompile Include="Proto\CmdMedia.cpp">
+      <Filter>Source Files\Proto</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

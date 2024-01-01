@@ -57,6 +57,7 @@
 #include <Proto/CmdLoadBlobs.h>
 #include <Proto/CmdRequestMediaAddresses.h>
 #include <Proto/CmdMediaAddressesList.h>
+#include <Proto/CmdMedia.h>
 
 namespace Proto
 {
@@ -253,6 +254,10 @@ CommandType GetCommandType(std::string_view message)
 	{
 		return CommandType::MediaAddressesList;
 	}
+	else if (command == quot(Proto::MEDIA::NAME))
+	{
+		return CommandType::Media;
+		}
 
 	return CommandType::Undefined;
 }

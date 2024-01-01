@@ -84,7 +84,9 @@ namespace Proto
 		LoadBlobs,
 
 		RequestMediaAddresses,
-		MediaAddressesList
+		MediaAddressesList,
+
+		Media
 	};
 
 	CommandType GetCommandType(std::string_view message);

@@ -2561,14 +2561,12 @@ void MainFrame::SpeedTestCompleted(uint32_t inputSpeed, uint32_t outputSpeed)
 
 void MainFrame::UDPTestCompleted()
 {
-    if (!window)
+    useWSMedia = License::Parse(controller.GetGrants()).denyUDP || !udpTester.TestPassed();
+
+    if (window)
     {
-        return;
+        window->emit_event(static_cast<int32_t>(MyEvent::ConnectivityTestCompleted), 0);
     }
-
-    useWSMedia = !udpTester.TestPassed();
-
-    window->emit_event(static_cast<int32_t>(MyEvent::ConnectivityTestCompleted), 0);
 }
 
 void MainFrame::ReceiveDeviceNotify(std::string_view name, DeviceNotifyType notifyType, Proto::DeviceType deviceType, uint32_t deviceId, int32_t iData)
