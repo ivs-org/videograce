@@ -278,10 +278,12 @@ void SpeedTester::OnWebSocket(Transport::WSMethod method, std::string_view messa
 		case Transport::WSMethod::Close:
 			sysLog->info("SpeedTester :: WebSocket closed (message: \"{0}\")", message);
 			readyCallback(static_cast<uint32_t>(inputSpeed), static_cast<uint32_t>(outputSpeed));
+			std::this_thread::yield();
 		break;
 		case Transport::WSMethod::Error:
 			errLog->critical("SpeedTester :: WebSocket error (message: \"{0}\")", message);
 			readyCallback(static_cast<uint32_t>(inputSpeed), static_cast<uint32_t>(outputSpeed));
+			std::this_thread::yield();
 		break;
 	}
 }
