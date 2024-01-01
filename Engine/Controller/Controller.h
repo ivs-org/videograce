@@ -131,11 +131,10 @@ private:
     bool secureConnection;
     std::string login, password;
 
-    std::string accessToken;
-    int64_t clientId;
-    uint32_t connectionId;
+    int64_t clientId, connectionId;
     std::string clientName;
     std::string secureKey;
+    std::string accessToken;
 
     std::string serverName;
 
