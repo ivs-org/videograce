@@ -25,7 +25,7 @@
 #include <NetTester/SpeedTester.h>
 #include <NetTester/UDPTester.h>
 
-#include <Transport/TCP/Client.h>
+#include <Transport/WSM/Client.h>
 
 #include <UI/IControlActions.h>
 #include <UI/ContactList.h>
@@ -166,7 +166,7 @@ private:
 
     Common::TimeMeter timeMeter;
 
-    Transport::TCPClient tcpClient;
+    Transport::WSMClient wsmClient;
 
     NetTester::SpeedTester speedTester;
     NetTester::UDPTester udpTester;
@@ -254,7 +254,7 @@ private:
     void SetConferencingMode();
 
     void SpeedTestCompleted(uint32_t inputSpeed, uint32_t outputSpeed);
-    void TCPTestCompleted();
+    void UDPTestCompleted();
 
     void ReceiveDeviceNotify(std::string_view name, DeviceNotifyType notifyType, Proto::DeviceType deviceType, uint32_t deviceId, int32_t iData);
 

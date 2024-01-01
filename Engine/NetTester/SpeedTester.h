@@ -33,7 +33,6 @@ public:
 	~SpeedTester();
 
 	void SetParams(std::string_view serverAddress,
-		bool useHTTPS,
 		std::string_view accessToken);
 
 	void DoTheTest();
@@ -54,7 +53,6 @@ private:
 	std::thread thread;
 
 	std::string serverAddress;
-	bool useHTTPS;
 	std::string accessToken;
 	
 	double summSpeed, inputSpeed, outputSpeed;

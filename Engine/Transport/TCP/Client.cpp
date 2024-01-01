@@ -82,7 +82,7 @@ public:
         auto it = udp_sockets_.find(server_port);
         if (it != udp_sockets_.end())
         {
-            sysLog->info("TCPClient return exist pipe UDP[{0}] -> TCP[{1}]", it->second->GetBindedPort(), server_port);
+            sysLog->info("TCPClient return exist pipe (local: {0}, remote: {1})", it->second->GetBindedPort(), server_port);
             return it->second->GetBindedPort();
         }
 
@@ -93,7 +93,7 @@ public:
 
         ports[s->GetBindedPort()] = server_port;
 
-        sysLog->info("TCPClient created pipe UDP[{0}] -> TCP[{1}]", s->GetBindedPort(), server_port);
+        sysLog->info("TCPClient created pipe (local: {0}, remote: {1})", s->GetBindedPort(), server_port);
 
         return s->GetBindedPort();
     }

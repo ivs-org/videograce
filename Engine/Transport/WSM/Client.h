@@ -22,9 +22,9 @@ public:
     WSMClient();
     ~WSMClient();
 
-    void SetServer(std::string_view address, uint16_t port, std::string_view access_token);
+    void SetServer(std::string_view address, std::string_view access_token);
 
-    uint16_t CreatePipe(); /// Return the local UDP port and start the component if needed
+    uint16_t CreatePipe(uint16_t serverUDPPort); /// Return the local UDP port and start the component if needed
 
     void EndSession(); /// On end conference flush the work
 

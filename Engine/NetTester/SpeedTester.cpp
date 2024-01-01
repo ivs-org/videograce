@@ -31,7 +31,7 @@ SpeedTester::SpeedTester(std::shared_ptr<wui::i_locale> locale_,
 	timeMeter(),
 	webSocket(std::bind(&SpeedTester::OnWebSocket, this, std::placeholders::_1, std::placeholders::_2)),
 	thread(),
-	serverAddress(), useHTTPS(false),
+	serverAddress(),
 	accessToken(),
 	summSpeed(0.), inputSpeed(0.), outputSpeed(0.),
 	mode_(mode::input),
@@ -46,10 +46,9 @@ SpeedTester::~SpeedTester()
 	Stop();
 }
 
-void SpeedTester::SetParams(std::string_view serverAddress_, bool useHTTPS_, std::string_view accessToken_)
+void SpeedTester::SetParams(std::string_view serverAddress_, std::string_view accessToken_)
 {
 	serverAddress = serverAddress_;
-	useHTTPS = useHTTPS_;
 	accessToken = accessToken_;
 }
 
@@ -90,7 +89,7 @@ uint32_t SpeedTester::GetOutputSpeed() const
 void SpeedTester::Connect()
 {
 	progressCallback(locale->get("net_test", "connecting"), 0);
-	webSocket.Connect((useHTTPS ? std::string("https://") : std::string("http://")) + serverAddress);
+	webSocket.Connect(std::string("http://") + serverAddress); /// We don't need https for speed testing
 }
 
 void SpeedTester::Logon()

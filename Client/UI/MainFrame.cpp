@@ -178,7 +178,7 @@ MainFrame::MainFrame()
     speedTester(wui::get_locale(),
         std::bind(&MainFrame::SpeedTestCompleted, this, std::placeholders::_1, std::placeholders::_2),
         std::bind(&MainFrame::SetMainProgess, this, std::placeholders::_1, std::placeholders::_2)),
-    udpTester(wui::get_locale()),
+    udpTester(wui::get_locale(), std::bind(&MainFrame::UDPTestCompleted, this)),
 
     cameraDevices(),
     microphoneDevices(),
@@ -1147,6 +1147,9 @@ void MainFrame::ProcessControllerEvent()
 
                 useWSMedia = false;
 
+                wsmClient.SetServer(wui::config::get_string("Connection", "Address", ""),
+                    controller.GetAccessToken());
+
                 DetermineNetSpeed();
                 CheckConnectivity();
 
@@ -1399,7 +1402,7 @@ void MainFrame::ProcessControllerEvent()
                 {
                     const auto &device = e.deviceValues;
 
-                    cvs->SetRTPParams(!useWSMedia ? device.addr.c_str() : "127.0.0.1", !useWSMedia ? device.port : tcpClient.CreatePipe(device.port));
+                    cvs->SetRTPParams(!useWSMedia ? device.addr.c_str() : "127.0.0.1", !useWSMedia ? device.port : wsmClient.CreatePipe(device.port));
                     cvs->Start(device.authorSSRC, device.colorSpace, device.deviceId, device.secureKey);
                 }
             }
@@ -1450,7 +1453,7 @@ void MainFrame::ProcessControllerEvent()
                 if (captureAudioSession)
                 {
                     auto &device = e.deviceValues;
-                    captureAudioSession->SetRTPParams(!useWSMedia ? device.addr.c_str() : "127.0.0.1", !useWSMedia ? device.port : tcpClient.CreatePipe(device.port));
+                    captureAudioSession->SetRTPParams(!useWSMedia ? device.addr.c_str() : "127.0.0.1", !useWSMedia ? device.port : wsmClient.CreatePipe(device.port));
                     captureAudioSession->Start(device.authorSSRC, device.deviceId, device.secureKey);
                 }
             }
@@ -1747,7 +1750,7 @@ void MainFrame::ProcessControllerEvent()
 
                 memberList.ClearItems();
 
-                tcpClient.EndSession();
+                wsmClient.EndSession();
 
                 mainToolBar.EnableScreenCapturer(false);
 
@@ -2018,7 +2021,7 @@ void MainFrame::ProcessControllerEvent()
                             rvs->SetClientId(renderer.clientId);
                             rvs->SetDeviceType(renderer.type);
                             rvs->SetMy(renderer.mySource);
-                            rvs->SetRTPParams(!useWSMedia ? renderer.addr.c_str() : "127.0.0.1", !useWSMedia ? renderer.port : tcpClient.CreatePipe(renderer.port));
+                            rvs->SetRTPParams(!useWSMedia ? renderer.addr.c_str() : "127.0.0.1", !useWSMedia ? renderer.port : wsmClient.CreatePipe(renderer.port));
                             rvs->SetMirrorVideo(wui::config::get_int("VideoRendererMirrors", renderer.name, -1) == 1);
                             rvs->SetDeviceNotifyCallback(std::bind(&MainFrame::ReceiveDeviceNotify, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4, std::placeholders::_5));
                             rvs->SetRecorder(&recorder);
@@ -2060,7 +2063,7 @@ void MainFrame::ProcessControllerEvent()
                             ras->SetClientId(renderer.clientId);
                             ras->SetMetadata(renderer.metadata);
                             ras->SetMy(renderer.mySource);
-                            ras->SetRTPParams(!useWSMedia ? renderer.addr.c_str() : "127.0.0.1", !useWSMedia ? renderer.port : tcpClient.CreatePipe(renderer.port));
+                            ras->SetRTPParams(!useWSMedia ? renderer.addr.c_str() : "127.0.0.1", !useWSMedia ? renderer.port : wsmClient.CreatePipe(renderer.port));
                             ras->SetDeviceNotifyCallback(std::bind(&MainFrame::ReceiveDeviceNotify, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4, std::placeholders::_5));
                             ras->SetRecorder(&recorder);
 
@@ -2499,7 +2502,6 @@ void MainFrame::DetermineNetSpeed(bool force)
         }
 
         speedTester.SetParams(wui::config::get_string("Connection", "Address", ""),
-            wui::config::get_int("Connection", "Secure", 1) != 0,
             controller.GetAccessToken());
         speedTester.DoTheTest();
     }
@@ -2557,7 +2559,7 @@ void MainFrame::SpeedTestCompleted(uint32_t inputSpeed, uint32_t outputSpeed)
     }
 }
 
-void MainFrame::TCPTestCompleted()
+void MainFrame::UDPTestCompleted()
 {
     if (!window)
     {
