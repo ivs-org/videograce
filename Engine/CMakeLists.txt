@@ -21,7 +21,8 @@ file(GLOB SOURCES
 	Transport/HTTP/*.cpp
 	Transport/RTP/*.cpp
 	Transport/TCP/*.cpp
-	Transport/WebSocket/*.cpp
+	Transport/WS/*.cpp
+	Transport/WSM/*.cpp
 	Video/*.cpp
 	webrtc/base/*.cc
 	webrtc/common_audio/*.c
