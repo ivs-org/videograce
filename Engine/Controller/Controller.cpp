@@ -1441,7 +1441,7 @@ void Controller::Logon()
     cmd.system = "Windows";
 #elif __APPLE__
     cmd.system = "MacOS";
-#elif
+#else
     cmd.system = "Linux";
 #endif
 
