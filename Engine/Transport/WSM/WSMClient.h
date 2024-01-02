@@ -1,5 +1,5 @@
 /**
- * Client.h - Contains WebSocket Media client impl
+ * WSMClient.h - Contains WebSocket Media client impl
  *
  * Author: Anton (ud) Golovkov, udattsk@gmail.com
  * Copyright (C), Infinity Video Soft LLC, 2023
@@ -22,11 +22,11 @@ public:
     WSMClient();
     ~WSMClient();
 
-    void SetServer(std::string_view address, std::string_view access_token);
+    void Start(std::string_view address, std::string_view access_token);
 
-    uint16_t CreatePipe(uint16_t serverUDPPort); /// Return the local UDP port and start the component if needed
+    uint16_t CreatePipe(uint16_t serverUDPPort); /// Return the local UDP port who receives rtp packets and send it to web socket
 
-    void EndSession(); /// On end conference flush the work
+    void Stop();
 
     static constexpr bool WITH_TRACES = false;
 

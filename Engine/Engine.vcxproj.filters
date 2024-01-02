@@ -1205,7 +1205,7 @@
     <ClInclude Include="Proto\CmdLoadBlobs.h">
       <Filter>Header Files\Proto</Filter>
     </ClInclude>
-    <ClInclude Include="Transport\WSM\Client.h">
+    <ClInclude Include="Transport\WSM\WSMClient.h">
       <Filter>Header Files\Transport\WSM</Filter>
     </ClInclude>
     <ClInclude Include="Proto\CmdMedia.h">

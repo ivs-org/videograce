@@ -435,7 +435,7 @@
     <ClInclude Include="Transport\TCP\Server.h" />
     <ClInclude Include="Transport\UDPSocket.h" />
     <ClInclude Include="Transport\URI\URI.h" />
-    <ClInclude Include="Transport\WSM\Client.h" />
+    <ClInclude Include="Transport\WSM\WSMClient.h" />
     <ClInclude Include="Transport\WS\WebSocket.h" />
     <ClInclude Include="Version.h" />
     <ClInclude Include="Video\CodecType.h" />

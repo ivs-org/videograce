@@ -5,7 +5,7 @@
  * Copyright (C), Infinity Video Soft LLC, 2023
  */
 
-#include <Transport/WSM/Client.h>
+#include <Transport/WSM/WSMClient.h>
 
 #include <map>
 
@@ -49,13 +49,18 @@ public:
     
     ~WSMClientImpl()
     {
-        EndSession();
+        Stop();
     }
 
-    void SetServer(std::string_view address_, std::string_view access_token_)
+    void Start(std::string_view address_, std::string_view access_token_)
     {
         address = address_;
         accessToken = access_token_;
+
+        if (!webSocket.IsConnected())
+        {
+            webSocket.Connect("http://" + address); /// We don't need https, because media payload is already encrypted
+        }
 
         spdlog::get("System")->trace("WSMClient :: Server address {0}, access token: {1}", address_, access_token_);
     }
@@ -75,11 +80,6 @@ public:
 
     uint16_t CreatePipe(uint16_t serverUDPPort)
     {
-        if (!webSocket.IsConnected())
-        {
-            webSocket.Connect("http://" + address); /// We don't need https, because media payload is already encrypted
-        }
-
         auto it = udp_sockets_.find(serverUDPPort);
         if (it != udp_sockets_.end())
         {
@@ -99,7 +99,7 @@ public:
         return s->GetBindedPort();
     }
 
-    void EndSession()
+    void Stop()
     {
         if (webSocket.IsConnected())
         {
@@ -129,7 +129,7 @@ public:
 
 					    if (cmd.result == Proto::CONNECT_RESPONSE::Result::OK)
 					    {
-						    sysLog->trace("WSMClient :: Connected");
+						    sysLog->trace("WSMClient :: Logon success, connection id: {0}", cmd.connection_id);
 					    }
                         else
                         {
@@ -190,14 +190,14 @@ WSMClient::~WSMClient()
     impl.reset();
 }
 
-void WSMClient::SetServer(std::string_view address_, std::string_view account_token_)
+void WSMClient::Start(std::string_view address_, std::string_view account_token_)
 {
-    impl->SetServer(address_, account_token_);
+    impl->Start(address_, account_token_);
 }
 
-void WSMClient::EndSession()
+void WSMClient::Stop()
 {
-    impl->EndSession();
+    impl->Stop();
 }
 
 uint16_t WSMClient::CreatePipe(uint16_t serverUDPPort)

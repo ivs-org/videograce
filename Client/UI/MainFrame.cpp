@@ -1147,9 +1147,6 @@ void MainFrame::ProcessControllerEvent()
 
                 useWSMedia = false;
 
-                wsmClient.SetServer(wui::config::get_string("Connection", "Address", ""),
-                    controller.GetAccessToken());
-
                 DetermineNetSpeed();
                 CheckConnectivity();
 
@@ -1669,6 +1666,12 @@ void MainFrame::ProcessControllerEvent()
                     recorder.Start(GetRecordName().c_str(), wui::config::get_int("Record", "MP3Mode", 0) != 0);
                 }
 
+                if (useWSMedia)
+                {
+                    wsmClient.Start(wui::config::get_string("Connection", "Address", ""),
+                        controller.GetAccessToken());
+                }
+
                 timeMeter.Reset();
 
                 if (CheckInputBitrateTooSmall())
@@ -1750,7 +1753,7 @@ void MainFrame::ProcessControllerEvent()
 
                 memberList.ClearItems();
 
-                wsmClient.EndSession();
+                wsmClient.Stop();
 
                 mainToolBar.EnableScreenCapturer(false);
 

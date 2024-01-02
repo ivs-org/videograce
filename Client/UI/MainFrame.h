@@ -25,7 +25,7 @@
 #include <NetTester/SpeedTester.h>
 #include <NetTester/UDPTester.h>
 
-#include <Transport/WSM/Client.h>
+#include <Transport/WSM/WSMClient.h>
 
 #include <UI/IControlActions.h>
 #include <UI/ContactList.h>
