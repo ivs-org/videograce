@@ -229,6 +229,9 @@ void SpeedTester::OnWebSocket(Transport::WSMethod method, std::string_view messa
 									outputSpeed = 0.;
 									iteration = 0;
 
+									progressCallback(locale->get("net_test", "out_speed_testing"), 0);
+									std::this_thread::yield();
+
 									SendOutputBlob();
 								}
 							}
