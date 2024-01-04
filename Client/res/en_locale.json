@@ -309,7 +309,7 @@
       "allow_enable_screen_capturing": "requests the inclusion of your desktop display. Allow it?",
       "allow_enable_remote_control": "requests permission to manage your computer. Allow it?",
       "demonstration_only_on_conference": "Screen demo can be turned on during a call or conference call",
-      "no_camera_in_system": "Your computer has no cameras available",
+      "no_camera_in_system": "Your computer has no available cameras",
       "no_microphone_in_system": "Your computer has no available microphones",
       "application_hided": "The application is minimized",
       "need_select_conference_or_contact": "Select a conference or contact",

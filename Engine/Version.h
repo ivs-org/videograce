@@ -2,14 +2,14 @@
 * Version.h - Defines the VideoGrace version constants
 *
 * Author: Anton (ud) Golovkov, udattsk@gmail.com
-* Copyright (C), Infinity Video Soft LLC, 2018
+* Copyright (C), Infinity Video Soft LLC, 2018 - 2024
 */
 
 #pragma once
 
 #define SYSTEM_NAME "VideoGrace"
 #define COMPANY_NAME "Infinity Video Soft LLC"
-#define PRODUCT_COPYRIGHT "Copyright (c) 2014 - 2023, IVS LLC"
+#define PRODUCT_COPYRIGHT "Copyright (c) 2014 - 2024, IVS LLC"
 
 #define CLOUD_ADDRESS "https://cloud.videograce.com:8778"
 #define BROWSER_PROTO "vg"
@@ -20,10 +20,10 @@
 
 #define MAJOR_VERSION 2
 #define MINOR_VERSION 0
-#define RELEASE 231229
+#define RELEASE 240104
 
-#define CLIENT_VERSION 522
-#define SERVER_VERSION 316
+#define CLIENT_VERSION 523
+#define SERVER_VERSION 317
 
 #define STR_HELPER(x) #x
 #define STR(x) STR_HELPER(x)
