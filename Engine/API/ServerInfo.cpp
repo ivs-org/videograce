@@ -34,7 +34,6 @@ static const std::string ENABLED_CRYPT = "enabled_crypt";
 
 static const std::string COMMAND_PORT = "command_port";
 static const std::string FIRST_AV_PORT = "first_av_port";
-static const std::string TCP_PORT = "tcp_port";
 static const std::string TRANSLATORS_COUNT = "translators_count";
 
 static const std::string SERVER_VERSION = "server_version";
@@ -52,7 +51,6 @@ Command::Command()
 	enabled_crypt(-1),
 	command_port(0),
 	first_av_port(0),
-	tcp_port(0),
 	translators_count(0),
 	server_version(),
 	system()
@@ -74,7 +72,6 @@ Command::Command(std::string_view company_,
 
 	uint16_t command_port_,
 	uint16_t first_av_port_,
-	uint16_t tcp_port_,
 	uint16_t translators_count_,
 
 	std::string_view server_version_,
@@ -90,7 +87,6 @@ Command::Command(std::string_view company_,
 	enabled_crypt(enabled_crypt_ ? 1 : 0),
 	command_port(command_port_),
 	first_av_port(first_av_port_),
-	tcp_port(tcp_port_),
 	translators_count(translators_count_),
 	server_version(server_version_),
 	system(system_)
@@ -116,7 +112,6 @@ Command::Command(std::string_view company_,
 	enabled_crypt(-1),
 	command_port(0),
 	first_av_port(0),
-	tcp_port(0),
 	translators_count(0),
 	server_version(server_version_),
 	system(system_)
@@ -152,7 +147,6 @@ std::string Command::Serialize()
 
 		(command_port != 0 ? quot(COMMAND_PORT) + ":" + std::to_string(command_port) + "," : "") +
 		(first_av_port != 0 ? quot(FIRST_AV_PORT) + ":" + std::to_string(first_av_port) + "," : "") +
-		(tcp_port != 0 ? quot(TCP_PORT) + ":" + std::to_string(tcp_port) + "," : "") +
 		(translators_count != 0 ? quot(TRANSLATORS_COUNT) + ":" + std::to_string(translators_count) + "," : "") +
 
 		(quot(SERVER_VERSION) + ":" + quot(Common::JSON::Screen(server_version))) + "," +

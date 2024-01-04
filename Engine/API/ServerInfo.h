@@ -30,8 +30,7 @@ namespace SERVER_INFO
 
 		int8_t enabled_crypt;
 
-		uint16_t command_port, first_av_port, tcp_port;
-		uint16_t translators_count;
+		uint16_t command_port, first_av_port, translators_count;
 		
 		std::string server_version;
 		std::string system;
@@ -52,7 +51,6 @@ namespace SERVER_INFO
 
 			uint16_t command_port,
 			uint16_t first_av_port,
-			uint16_t tcp_port,
 			uint16_t translators_count,
 			
 			std::string_view server_version,
