@@ -88,14 +88,6 @@ public:
                 errorCallback(ec.value(), ec.message().c_str());
 			}
 
-			socket.set_option(boost::asio::detail::socket_option::integer<SOL_SOCKET, SO_RCVTIMEO>{ 3000 }, ec);
-			if (ec)
-			{
-				errLog->error("HttpImpl::HttpImpl :: set_option error: (v: {0:d}, m:{1})", ec.value(), ec.message());
-				if (errorCallback) errorCallback(ec.value(), ec.message().c_str());
-				return;
-			}
-
 			sysLog->trace("HttpImpl::HttpImpl :: Connected to: {0}", url);
 		}
 	}
@@ -219,15 +211,6 @@ public:
 				{
 					errLog->error("HttpsImpl::HttpsImpl :: handshake error: (v: {0:d}, m:{1})", ec.value(), ec.message());
 					if (errorCallback) errorCallback(ec.value(), ec.message().c_str());
-					return;
-				}
-
-				struct timeval tv;
-				tv.tv_sec = 3;  // 3 Secs Timeout
-				if (setsockopt(stream.next_layer().native_handle(), SOL_SOCKET, SO_RCVTIMEO, (const char*)&tv, sizeof(struct timeval)) != 0)
-				{
-					errLog->error("HttpsImpl::HttpsImpl :: setsockopt SO_RCVTIMEO error");
-					if (errorCallback) errorCallback(-1, "setsockopt SO_RCVTIMEO error");
 					return;
 				}
 
