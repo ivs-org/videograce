@@ -36,3 +36,6 @@ Tests/ShClnt/ShClnt
 /Engine/Debug
 /Installer/Debug
 Lib/history.json
+/Debug
+/Installer/x64/Debug
+/Tests/ShClnt/Debug
