@@ -404,7 +404,7 @@ void MainDialog::DownloadApp()
     std::thread ([this]() {
     start:
         {
-            Transport::HTTPClient httpClient([this](int32_t code, const char*) {
+            Transport::HTTPClient httpClient([this](int32_t code, std::string_view) {
                 if (code != 10057)
                 {
                     window->emit_event(static_cast<int32_t>(my_event::connect_error), 0);
