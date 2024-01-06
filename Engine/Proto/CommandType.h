@@ -18,9 +18,6 @@ namespace Proto
 		UserUpdateRequest,
 		UserUpdateResponse,
 
-		CredentialsRequest,
-		CredentialsResponse,
-
 		ConnectRequest,
 		ConnectResponse,
 		Disconnect,

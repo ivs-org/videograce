@@ -7,20 +7,11 @@
 
 #include <Registrator/Registrator.h>
 
-#include <Proto/CommandType.h>
-#include <Proto/CmdGroupList.h>
-#include <Proto/CmdUserUpdateRequest.h>
-#include <Proto/CmdCredentialsRequest.h>
-#include <Proto/CmdPing.h>
-
 namespace Registrator
 {
 
 Registrator::Registrator()
-    : webSocket(std::bind(&Registrator::OnWebSocket, this, std::placeholders::_1, std::placeholders::_2)),
-    readySem(),
-    registerResult(Proto::USER_UPDATE_RESPONSE::Result::Undefined),
-    credentialsResponse(),
+    : httpClient(std::bind(&Registrator::OnHTTPError, this, std::placeholders::_1, std::placeholders::_2)),
     sysLog(spdlog::get("System")), errLog(spdlog::get("Error"))
 {
 }
@@ -32,25 +23,24 @@ Registrator::~Registrator()
 
 void Registrator::Connect(std::string_view url)
 {
-    webSocket.Connect(url);
-    readySem.wait_for(2000);
+    httpClient.Connect(url);
 }
 
 void Registrator::Disconnect()
 {
-    webSocket.Disconnect();
+    httpClient.Disconnect();
 }
 
 bool Registrator::Connected()
 {
-    return webSocket.IsConnected();
+    return httpClient.IsConnected();
 }
 
 Proto::USER_UPDATE_RESPONSE::Result Registrator::Register(std::string_view name, std::string_view avatar, std::string_view login, std::string_view password)
 {
-    registerResult = Proto::USER_UPDATE_RESPONSE::Result::Undefined;
+    auto registerResult = Proto::USER_UPDATE_RESPONSE::Result::Undefined;
 
-    if (webSocket.IsConnected())
+    /*if (webSocket.IsConnected())
     {
         webSocket.Send(Proto::USER_UPDATE_REQUEST::Command(Proto::USER_UPDATE_REQUEST::Action::Register,
             0,
@@ -60,28 +50,14 @@ Proto::USER_UPDATE_RESPONSE::Result Registrator::Register(std::string_view name,
             password).Serialize());
 
         readySem.wait_for(2000);
-    }
+    }*/
 
     return registerResult;
 }
 
-void Registrator::GetCredentials(std::string_view guid, bool &ok, std::string &login, std::string &password)
+void Registrator::OnHTTPError(int32_t code, std::string_view)
 {
-    if (webSocket.IsConnected())
-    {
-        webSocket.Send(Proto::CREDENTIALS_REQUEST::Command(guid).Serialize());
-
-        readySem.wait_for(2000);
-
-        ok = credentialsResponse.result == Proto::CREDENTIALS_RESPONSE::Result::OK;
-        login = credentialsResponse.login;
-        password = credentialsResponse.password;
-    }
-}
-
-void Registrator::OnWebSocket(Transport::WSMethod method, std::string_view message)
-{
-    switch (method)
+    /*switch (method)
     {
         case Transport::WSMethod::Open:
             sysLog->info("Registrator's connection to server established");
@@ -112,9 +88,7 @@ void Registrator::OnWebSocket(Transport::WSMethod method, std::string_view messa
         case Transport::WSMethod::Error:
             errLog->critical("Registrator's WebSocket error {0}", message);
         break;
-    }
-
-    readySem.notify();
+    }*/
 }
 
 }

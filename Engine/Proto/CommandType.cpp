@@ -15,8 +15,6 @@
 
 #include <Proto/CmdUserUpdateRequest.h>
 #include <Proto/CmdUserUpdateResponse.h>
-#include <Proto/CmdCredentialsRequest.h>
-#include <Proto/CmdCredentialsResponse.h>
 #include <Proto/CmdConnectRequest.h>
 #include <Proto/CmdConnectResponse.h>
 #include <Proto/CmdDisconnect.h>
@@ -85,14 +83,6 @@ CommandType GetCommandType(std::string_view message)
 	else if (command == quot(Proto::USER_UPDATE_RESPONSE::NAME))
 	{
 		return CommandType::UserUpdateResponse;
-	}
-	else if (command == quot(Proto::CREDENTIALS_REQUEST::NAME))
-	{
-		return CommandType::CredentialsRequest;
-	}
-	else if (command == quot(Proto::CREDENTIALS_RESPONSE::NAME))
-	{
-		return CommandType::CredentialsResponse;
 	}
 	else if (command == quot(Proto::CONNECT_REQUEST::NAME))
 	{

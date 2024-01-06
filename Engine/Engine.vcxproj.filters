@@ -797,12 +797,6 @@
     <ClInclude Include="Proto\GroupGrants.h">
       <Filter>Header Files\Proto</Filter>
     </ClInclude>
-    <ClInclude Include="Proto\CmdCredentialsRequest.h">
-      <Filter>Header Files\Proto</Filter>
-    </ClInclude>
-    <ClInclude Include="Proto\CmdCredentialsResponse.h">
-      <Filter>Header Files\Proto</Filter>
-    </ClInclude>
     <ClInclude Include="API\CreateGroup.h">
       <Filter>Header Files\API</Filter>
     </ClInclude>
@@ -1661,12 +1655,6 @@
       <Filter>Source Files\Proto</Filter>
     </ClCompile>
     <ClCompile Include="Proto\CmdGroupList.cpp">
-      <Filter>Source Files\Proto</Filter>
-    </ClCompile>
-    <ClCompile Include="Proto\CmdCredentialsRequest.cpp">
-      <Filter>Source Files\Proto</Filter>
-    </ClCompile>
-    <ClCompile Include="Proto\CmdCredentialsResponse.cpp">
       <Filter>Source Files\Proto</Filter>
     </ClCompile>
     <ClCompile Include="API\CreateGroup.cpp">

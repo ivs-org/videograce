@@ -268,8 +268,6 @@
     <ClInclude Include="Proto\CmdLoadMessages.h" />
     <ClInclude Include="Proto\CmdMedia.h" />
     <ClInclude Include="Proto\CmdMicrophoneActive.h" />
-    <ClInclude Include="Proto\CmdCredentialsRequest.h" />
-    <ClInclude Include="Proto\CmdCredentialsResponse.h" />
     <ClInclude Include="Proto\CmdRequestMediaAddresses.h" />
     <ClInclude Include="Proto\CmdMediaAddressesList.h" />
     <ClInclude Include="Proto\CmdDeliveryBlobs.h" />
@@ -567,8 +565,6 @@
     <ClCompile Include="Proto\CmdLoadMessages.cpp" />
     <ClCompile Include="Proto\CmdMedia.cpp" />
     <ClCompile Include="Proto\CmdMicrophoneActive.cpp" />
-    <ClCompile Include="Proto\CmdCredentialsRequest.cpp" />
-    <ClCompile Include="Proto\CmdCredentialsResponse.cpp" />
     <ClCompile Include="Proto\CmdRequestMediaAddress.cpp" />
     <ClCompile Include="Proto\CmdMediaAddressesList.cpp" />
     <ClCompile Include="Proto\CmdDeliveryBlobs.cpp" />
