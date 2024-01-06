@@ -201,6 +201,7 @@
     <ClInclude Include="API\EditGroup.h" />
     <ClInclude Include="API\EditUser.h" />
     <ClInclude Include="API\RedirectUser.h" />
+    <ClInclude Include="API\RegisterUser.h" />
     <ClInclude Include="API\Result.h" />
     <ClInclude Include="API\ServerInfo.h" />
     <ClInclude Include="Audio\AudioDecoder.h" />
@@ -312,7 +313,6 @@
     <ClInclude Include="Record\IRecorder.h" />
     <ClInclude Include="Record\MP3Writer.h" />
     <ClInclude Include="Record\Recorder.h" />
-    <ClInclude Include="Registrator\Registrator.h" />
     <ClInclude Include="spdlog\async.h" />
     <ClInclude Include="spdlog\async_logger-inl.h" />
     <ClInclude Include="spdlog\async_logger.h" />
@@ -522,6 +522,7 @@
     <ClCompile Include="API\EditGroup.cpp" />
     <ClCompile Include="API\EditUser.cpp" />
     <ClCompile Include="API\RedirectUser.cpp" />
+    <ClCompile Include="API\RegisterUser.cpp" />
     <ClCompile Include="API\Result.cpp" />
     <ClCompile Include="API\ServerInfo.cpp" />
     <ClCompile Include="Audio\AudioDecoder.cpp" />
@@ -606,7 +607,6 @@
     <ClCompile Include="Proto\Message.cpp" />
     <ClCompile Include="Record\MP3Writer.cpp" />
     <ClCompile Include="Record\Recorder.cpp" />
-    <ClCompile Include="Registrator\Registrator.cpp" />
     <ClCompile Include="Storage\Storage.cpp" />
     <ClCompile Include="Transport\Address.cpp" />
     <ClCompile Include="Transport\RTPSocket.cpp" />

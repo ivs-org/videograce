@@ -216,12 +216,6 @@
     <Filter Include="Source Files\Controller">
       <UniqueIdentifier>{e3f657d5-b08d-497d-9e16-758669fca861}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Registrator">
-      <UniqueIdentifier>{49b0fa18-3e92-43c9-81a7-d230eefcbb4d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Registrator">
-      <UniqueIdentifier>{6cc50c19-edb6-44d2-9e37-3fc0afdb88c1}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\API">
       <UniqueIdentifier>{9b601bb7-fac9-4341-8d10-d40a18001a74}</UniqueIdentifier>
     </Filter>
@@ -812,9 +806,6 @@
     <ClInclude Include="Proto\CmdCredentialsResponse.h">
       <Filter>Header Files\Proto</Filter>
     </ClInclude>
-    <ClInclude Include="Registrator\Registrator.h">
-      <Filter>Header Files\Registrator</Filter>
-    </ClInclude>
     <ClInclude Include="API\CreateGroup.h">
       <Filter>Header Files\API</Filter>
     </ClInclude>
@@ -1210,6 +1201,9 @@
     </ClInclude>
     <ClInclude Include="Proto\CmdMedia.h">
       <Filter>Header Files\Proto</Filter>
+    </ClInclude>
+    <ClInclude Include="API\RegisterUser.h">
+      <Filter>Header Files\API</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1678,9 +1672,6 @@
     <ClCompile Include="Proto\CmdCredentialsResponse.cpp">
       <Filter>Source Files\Proto</Filter>
     </ClCompile>
-    <ClCompile Include="Registrator\Registrator.cpp">
-      <Filter>Source Files\Registrator</Filter>
-    </ClCompile>
     <ClCompile Include="API\CreateGroup.cpp">
       <Filter>Source Files\API</Filter>
     </ClCompile>
@@ -1752,6 +1743,9 @@
     </ClCompile>
     <ClCompile Include="Proto\CmdMedia.cpp">
       <Filter>Source Files\Proto</Filter>
+    </ClCompile>
+    <ClCompile Include="API\RegisterUser.cpp">
+      <Filter>Source Files\API</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

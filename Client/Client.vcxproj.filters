@@ -85,6 +85,12 @@
     <Filter Include="Source Files\AudioRenderer\win">
       <UniqueIdentifier>{c36c3f3b-73ea-4b74-afab-3924715c30f9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Registrator">
+      <UniqueIdentifier>{b3978fc1-dd32-4fc2-9e24-df1ad7421510}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Registrator">
+      <UniqueIdentifier>{5c599dee-e167-4f94-b5fb-449dc1d638cd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera\Camera.h">
@@ -285,6 +291,9 @@
     <ClInclude Include="Microphone\win\MediaBuf.h">
       <Filter>Header Files\Microphone\win</Filter>
     </ClInclude>
+    <ClInclude Include="Registrator\Registrator.h">
+      <Filter>Header Files\Registrator</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera\Camera.cpp">
@@ -439,6 +448,9 @@
     </ClCompile>
     <ClCompile Include="Microphone\win\AecKsBinder.cpp">
       <Filter>Source Files\Microphone\win</Filter>
+    </ClCompile>
+    <ClCompile Include="Registrator\Registrator.cpp">
+      <Filter>Source Files\Registrator</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
