@@ -6,6 +6,7 @@
  */
 
 #include <Registrator/Registrator.h>
+#include <API/RegisterUser.h>
 
 namespace Registrator
 {
@@ -38,57 +39,35 @@ bool Registrator::Connected()
 
 Proto::USER_UPDATE_RESPONSE::Result Registrator::Register(std::string_view name, std::string_view avatar, std::string_view login, std::string_view password)
 {
-    auto registerResult = Proto::USER_UPDATE_RESPONSE::Result::Undefined;
-
-    /*if (webSocket.IsConnected())
+    if (httpClient.IsConnected())
     {
-        webSocket.Send(Proto::USER_UPDATE_REQUEST::Command(Proto::USER_UPDATE_REQUEST::Action::Register,
-            0,
-            name,
-            avatar,
+        auto result = httpClient.Request("/api/v1.0/register_user", "POST", API::REGISTER_USER::Command(name,
             login,
-            password).Serialize());
+            password,
+            "").Serialize());
 
-        readySem.wait_for(2000);
-    }*/
+        sysLog->trace("Registrator::Register (result: {0})", result);
 
-    return registerResult;
+        if (result.find("OK") != std::string::npos)
+        {
+            return Proto::USER_UPDATE_RESPONSE::Result::OK;
+        }
+        else if (result.find("duplicated") != std::string::npos)
+        {
+            return Proto::USER_UPDATE_RESPONSE::Result::DuplicateLogin;
+        }
+        else if (result.find("Forbidden") != std::string::npos)
+        {
+            return Proto::USER_UPDATE_RESPONSE::Result::RegistrationDenied;
+        }
+    }
+
+    return Proto::USER_UPDATE_RESPONSE::Result::Undefined;
 }
 
-void Registrator::OnHTTPError(int32_t code, std::string_view)
+void Registrator::OnHTTPError(int32_t code, std::string_view message)
 {
-    /*switch (method)
-    {
-        case Transport::WSMethod::Open:
-            sysLog->info("Registrator's connection to server established");
-        break;
-        case Transport::WSMethod::Message:
-        {
-            Proto::CommandType commandType = Proto::GetCommandType(message);
-
-            switch (commandType)
-            {
-                case Proto::CommandType::UserUpdateResponse:
-                {
-                    Proto::USER_UPDATE_RESPONSE::Command cmd;
-                    cmd.Parse(message);
-
-                    registerResult = cmd.result;
-                }
-                break;
-                case Proto::CommandType::CredentialsResponse:
-                    credentialsResponse.Parse(message);
-                break;
-            }
-        }
-        break;
-        case Transport::WSMethod::Close:
-            sysLog->info("Registrator's connection to server closed");
-        break;
-        case Transport::WSMethod::Error:
-            errLog->critical("Registrator's WebSocket error {0}", message);
-        break;
-    }*/
+    errLog->critical("Registrator :: HTTP Error (code: {0}, msg: {1})", code, message);
 }
 
 }

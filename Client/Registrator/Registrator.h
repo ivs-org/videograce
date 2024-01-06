@@ -12,7 +12,6 @@
 
 #include <Proto/Group.h>
 #include <Proto/CmdUserUpdateResponse.h>
-#include <Proto/CmdCredentialsResponse.h>
 
 #include <Transport/HTTP/HttpClient.h>
 
