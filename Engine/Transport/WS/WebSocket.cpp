@@ -227,9 +227,14 @@ public:
 		boost::ignore_unused(bytes_transferred);
 		if (ec && !ioc_.stopped())
 		{
-			errLog->error("WebSocket::session :: on_read :: error: {0}", ec.message());
+			errLog->error("WebSocket::session::on_read :: error: {0}", ec.message());
 			callback_(WSMethod::Error, "on_read " + ec.message());
 			return;
+		}
+
+		if (ioc_.stopped())
+		{
+			return errLog->warn("WebSocket::session::on_read :: Stopped io context, ignore");
 		}
 		
 		auto readed(buffers_to_string(buffer_.data()));
@@ -245,8 +250,7 @@ public:
 
 		if (ioc_.stopped())
 		{
-			errLog->warn("WebSocket::write to stopped io context");
-			return;
+			return errLog->warn("WebSocket::write to stopped io context");
 		}
 		
 		write_queue_.push(std::string(message));
