@@ -39,8 +39,6 @@ bool Command::Parse(std::string_view message_)
 {
 	try
 	{
-		spdlog::get("System")->trace("api::delete_user :: perform parsing");
-
 		auto j = nlohmann::json::parse(message_);
 
 		if (j.count(LOGIN) != 0) login = j.at(LOGIN).get<std::string>();

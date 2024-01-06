@@ -54,8 +54,6 @@ bool Message::Parse(const nlohmann::json::object_t& obj)
 {
 	try
 	{
-		spdlog::get("System")->trace("proto::conference :: perform parsing");
-
 		guid = obj.at(GUID).get<std::string>();
 
 		if (obj.count(DT) != 0) dt = obj.at(DT).get<uint64_t>();

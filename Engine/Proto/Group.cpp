@@ -49,8 +49,6 @@ bool Group::Parse(const nlohmann::json::object_t &obj)
 {
 	try
 	{
-		spdlog::get("System")->trace("proto::group :: perform parsing");
-
 		id = obj.at(ID).get<int64_t>();
 
 		if (obj.count(PARENT_ID) != 0) parent_id = obj.at(PARENT_ID).get<int64_t>();

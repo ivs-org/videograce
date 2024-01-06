@@ -79,8 +79,6 @@ bool Member::Parse(const nlohmann::json::object_t &obj)
 {
 	try
 	{
-		spdlog::get("System")->trace("proto::member :: perform parsing");
-
 		id = obj.at(ID).get<int64_t>();
 
 		if (obj.count(STATE) != 0) state = static_cast<MemberState>(obj.at(STATE).get<uint32_t>());

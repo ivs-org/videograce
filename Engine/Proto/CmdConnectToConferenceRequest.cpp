@@ -48,8 +48,6 @@ bool Command::Parse(std::string_view message)
 {
 	try
 	{
-		spdlog::get("System")->trace("proto::{0} :: perform parsing", NAME);
-
 		auto j = nlohmann::json::parse(message);
 		auto obj = j.get<nlohmann::json::object_t>().at(NAME);
 

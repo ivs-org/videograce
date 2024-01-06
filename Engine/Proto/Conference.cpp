@@ -90,8 +90,6 @@ bool Conference::Parse(const nlohmann::json::object_t& obj)
 {
 	try
 	{
-		spdlog::get("System")->trace("proto::conference :: perform parsing");
-
 		id = obj.at(ID).get<int64_t>();
 
 		if (obj.count(TAG) != 0) tag = obj.at(TAG).get<std::string>();

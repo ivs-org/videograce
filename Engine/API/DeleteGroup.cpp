@@ -39,8 +39,6 @@ bool Command::Parse(std::string_view message_)
 {
 	try
 	{
-		spdlog::get("System")->trace("api::delete_group :: perform parsing");
-
 		auto j = nlohmann::json::parse(message_);
 
 		if (j.count(ID) != 0) id = j.at(ID).get<int64_t>();

@@ -44,8 +44,6 @@ bool Blob::Parse(const nlohmann::json::object_t &obj)
 {
 	try
 	{
-		spdlog::get("System")->trace("proto::blob :: perform parsing");
-
 		id = obj.at(ID).get<int64_t>();
 
 		if (obj.count(OWNER_ID) != 0) owner_id = obj.at(OWNER_ID).get<int64_t>();

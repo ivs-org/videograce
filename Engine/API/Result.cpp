@@ -40,8 +40,6 @@ bool Command::Parse(std::string_view message_)
 {
 	try
 	{
-		spdlog::get("System")->trace("api::redirect_user :: perform parsing");
-
 		auto j = nlohmann::json::parse(message_);
 
 		if (j.count(CODE) != 0) code = j.at(CODE).get<uint32_t>();

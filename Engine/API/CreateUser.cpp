@@ -47,8 +47,6 @@ bool Command::Parse(std::string_view message_)
 {
 	try
 	{
-		spdlog::get("System")->trace("api::create_user :: perform parsing");
-
 		auto j = nlohmann::json::parse(message_);
 
 		if (j.count(GROUP_ID) != 0) group_id = j.at(GROUP_ID).get<int64_t>();
