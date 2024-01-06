@@ -15,7 +15,6 @@ file(GLOB SOURCES
 	NetTester/*.cpp
 	Proto/*.cpp
 	Record/*.cpp
-	Registrator/*.cpp
 	Transport/*.cpp
 	Transport/URI/*.cpp
 	Transport/HTTP/*.cpp

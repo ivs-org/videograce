@@ -10,6 +10,7 @@ file(GLOB SOURCES
 	RendererSession/*.cpp
 	UI/*.cpp
 	VideoRenderer/*.cpp
+	Registrator/*.cpp
 	*.cpp)
 
 include_directories(.)
