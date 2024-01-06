@@ -50,11 +50,11 @@ public:
 	boost::asio::io_context ioc;
 	tcp::socket socket;
 
-    std::function<void(int32_t, const char*)> errorCallback;
+    std::function<void(int32_t, std::string_view)> errorCallback;
 
 	std::shared_ptr<spdlog::logger> sysLog, errLog;
 	
-	HttpImpl(std::string_view url, std::function<void(int32_t, const char*)> errorCallback_)
+	HttpImpl(std::string_view url, std::function<void(int32_t, std::string_view)> errorCallback_)
 		: host(), port(),
 		ioc(),
 		socket(ioc),
@@ -154,11 +154,11 @@ public:
 	ssl::context ctx;
 	ssl::stream<tcp::socket> stream;
 
-    std::function<void(int32_t, const char*)> errorCallback;
+    std::function<void(int32_t, std::string_view)> errorCallback;
 
 	std::shared_ptr<spdlog::logger> sysLog, errLog;
 
-	HttpsImpl(std::string_view url, std::function<void(int32_t, const char*)> errorCallback_)
+	HttpsImpl(std::string_view url, std::function<void(int32_t, std::string_view)> errorCallback_)
 		: host(), port(),
 		ioc(),
 		ctx{ ssl::context::sslv23_client },
@@ -271,7 +271,7 @@ public:
 	}
 };
 
-HTTPClient::HTTPClient(std::function<void(int32_t, const char*)> errorCallback_)
+HTTPClient::HTTPClient(std::function<void(int32_t, std::string_view)> errorCallback_)
 	: impl(), errorCallback(errorCallback_)
 {
 }

@@ -420,7 +420,6 @@
     <ClInclude Include="Transport\Address.h" />
     <ClInclude Include="Transport\RTPSocket.h" />
     <ClInclude Include="Transport\HTTP\HttpClient.h" />
-    <ClInclude Include="Transport\HTTP\IHttpClient.h" />
     <ClInclude Include="Transport\IPacket.h" />
     <ClInclude Include="Transport\ISocket.h" />
     <ClInclude Include="Transport\NetworkInit.h" />

@@ -16,7 +16,7 @@
 
 #include <mt/semaphore.h>
 
-#include <Transport/WS/WebSocket.h>
+#include <Transport/HTTP/HttpClient.h>
 
 #include <spdlog/spdlog.h>
 
@@ -38,16 +38,13 @@ public:
     void GetCredentials(std::string_view guid, bool &ok, std::string &login, std::string &password);
 
 private:
-    Transport::WebSocket webSocket;
-    mt::semaphore readySem;
-
-    Proto::USER_UPDATE_RESPONSE::Result registerResult;
+    Transport::HTTPClient httpClient;
 
     Proto::CREDENTIALS_RESPONSE::Command credentialsResponse;
 
     std::shared_ptr<spdlog::logger> sysLog, errLog;
 
-    void OnWebSocket(Transport::WSMethod method, std::string_view message);
+    void OnHTTPError(int32_t code, const char* msg);
 };
 
 }

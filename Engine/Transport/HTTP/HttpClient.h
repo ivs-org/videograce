@@ -10,27 +10,25 @@
 #include <memory>
 #include <functional>
 
-#include "IHttpClient.h"
-
 namespace Transport
 {
 
 class IImpl;
 
-class HTTPClient : public IHTTPClient
+class HTTPClient
 {
 public:
-    HTTPClient(std::function<void(int32_t, const char*)> errorCallback = [](int32_t, const char*) {});
-	virtual ~HTTPClient();
+    HTTPClient(std::function<void(int32_t, std::string_view)> errorCallback = [](int32_t, std::string_view) {});
+	~HTTPClient();
 
-	virtual void Connect(std::string_view url);
-	virtual std::string Request(std::string_view target, std::string_view method, std::string_view body = "");
-	virtual void Disconnect();
+	void Connect(std::string_view url);
+	std::string Request(std::string_view target, std::string_view method, std::string_view body = "");
+	void Disconnect();
 
-	virtual bool IsConnected();
+	bool IsConnected();
 private:
 	std::unique_ptr<IImpl> impl;
-    std::function<void(int32_t, const char*)> errorCallback;
+    std::function<void(int32_t, std::string_view)> errorCallback;
 };
 
 }

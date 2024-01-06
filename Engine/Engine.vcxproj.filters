@@ -368,9 +368,6 @@
     <ClInclude Include="Transport\HTTP\HttpClient.h">
       <Filter>Header Files\Transport\HTTP</Filter>
     </ClInclude>
-    <ClInclude Include="Transport\HTTP\IHttpClient.h">
-      <Filter>Header Files\Transport\HTTP</Filter>
-    </ClInclude>
     <ClInclude Include="Proto\CommandType.h">
       <Filter>Header Files\Proto</Filter>
     </ClInclude>
