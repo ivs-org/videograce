@@ -47,6 +47,7 @@ MainDialog::MainDialog()
     pathButton(new wui::button(wui::locale("installer", "path_button"), std::bind(&MainDialog::SelectPath, this))),
     messageBox(new wui::message(window)),
     serverAddressDialog(),
+    loadChangeTimer(std::bind(&MainDialog::onLoadChangeTimer, this)),
     state_(state::preamble),
     baseURL(),
     downloadedExe(),
@@ -159,13 +160,13 @@ void MainDialog::ReceiveMyEvents(const wui::event &ev)
                 DownloadApp();
             break;
             case my_event::download_completed:
-                SetProgress(40);
+                SetProgress(90);
                 CloseRunnedApp();
             break;
             case my_event::runned_app_closed:
                 if (!IsUninstaller())
                 {
-                    SetProgress(60);
+                    SetProgress(92);
                     InstallApp();
                 }
                 else
@@ -175,12 +176,16 @@ void MainDialog::ReceiveMyEvents(const wui::event &ev)
                 }
             break;
             case my_event::app_installed:
-                SetProgress(80);
+                SetProgress(97);
                 InstallUninstaller();
             break;
             case my_event::completed:
                 SetProgress(100);
                 Completed();
+            break;
+
+            case my_event::load_changed:
+                SetProgress(ev.internal_event_.y);
             break;
         }
     }
@@ -236,7 +241,7 @@ void MainDialog::ActionClick()
 
                 if (GetServerAddress() && state_ == state::working)
                 {
-                    SetProgress(20);
+                    SetProgress(80);
                     CheckExists();
                 }
             }
@@ -404,6 +409,8 @@ void MainDialog::DownloadApp()
     std::thread ([this]() {
     start:
         {
+            loadChangeTimer.start();
+
             Transport::HTTPClient httpClient([this](int32_t code, std::string_view) {
                 if (code != 10057)
                 {
@@ -419,6 +426,8 @@ void MainDialog::DownloadApp()
             {
                 downloadedExe = httpClient.Request("/update/" SYSTEM_NAME "Client.exe", "GET");
             }
+
+            loadChangeTimer.stop();
 
             if (downloadedExe.empty())
             {
@@ -656,6 +665,14 @@ void MainDialog::Uninstall()
     cir2.delete_key("");
 
     window->emit_event(static_cast<int32_t>(my_event::completed), 0);
+}
+
+void MainDialog::onLoadChangeTimer()
+{
+    static int value = 0;
+    window->emit_event(static_cast<int32_t>(my_event::load_changed), value);
+    ++value;
+    if (value >= 100) value = 75;
 }
 
 }

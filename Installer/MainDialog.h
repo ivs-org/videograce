@@ -29,6 +29,8 @@
 #include <Transport/HTTP/HttpClient.h>
 #include <Transport/URI/URI.h>
 
+#include <mt/timer.h>
+
 #include <memory>
 #include <thread>
 #include <locale>
@@ -71,6 +73,8 @@ private:
     std::shared_ptr<wui::message> messageBox;
     ServerAddressDialog serverAddressDialog;
 
+    mt::timer loadChangeTimer;
+
     enum class state
     {
         preamble,
@@ -84,6 +88,7 @@ private:
     {
         connect_error,
         download_needed,
+        load_changed,
         download_completed,
         runned_app_closed,
         app_installed,
@@ -134,6 +139,8 @@ private:
     void RunInstalled();
 
     void Uninstall();
+
+    void onLoadChangeTimer();
 };
 
 }
