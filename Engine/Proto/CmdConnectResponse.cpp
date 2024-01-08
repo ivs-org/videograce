@@ -85,7 +85,7 @@ bool Command::Parse(std::string_view message)
 
 std::string Command::Serialize()
 {
-	return "{" + quot(NAME) + ":{" + 
+	/*return "{" + quot(NAME) + ":{" +
 		quot(RESULT) + ":" + std::to_string(static_cast<int32_t>(result)) + 
 		(server_version != 0 ? "," + quot(SERVER_VERSION) + ":" + std::to_string(server_version) : "") +
 		(id != 0 ? "," + quot(ID) + ":" + std::to_string(id) : "") +
@@ -96,7 +96,22 @@ std::string Command::Serialize()
 		(!secure_key.empty() ? "," + quot(SECURE_KEY) + ":" + quot(Common::JSON::Screen(secure_key)) : "") +
 		(!server_name.empty() ? "," + quot(SERVER_NAME) + ":" + quot(Common::JSON::Screen(server_name)) : "") +
 		(options != 0 ? "," + quot(OPTIONS) + ":" + std::to_string(options) : "") +
-		(grants != 0 ? "," + quot(GRANTS) + ":" + std::to_string(grants) : "") + "}}";
+		(grants != 0 ? "," + quot(GRANTS) + ":" + std::to_string(grants) : "") + "}}";*/
+
+	/// This need to make old clients work
+	return "{" + quot(NAME) + ":{" +
+		quot(RESULT) + ":" + std::to_string(static_cast<int32_t>(result)) + "," +
+		quot(SERVER_VERSION) + ":" + std::to_string(server_version) + "," +
+		quot(ID) + ":" + std::to_string(id) + "," +
+		quot(CONNECTION_ID) + ":" + std::to_string(connection_id) + "," +
+		(!access_token.empty() ? "," + quot(ACCESS_TOKEN) + ":" + quot(Common::JSON::Screen(access_token)) + "," : "") +
+		quot(NAME_) + ":" + quot(Common::JSON::Screen(name)) + "," +
+		(!redirect_url.empty() ? quot(REDIRECT_URL) + ":" + quot(Common::JSON::Screen(redirect_url)) + "," : "") +
+		(!secure_key.empty() ? quot(SECURE_KEY) + ":" + quot(Common::JSON::Screen(secure_key)) + "," : "") +
+		(!server_name.empty() ? quot(SERVER_NAME) + ":" + quot(Common::JSON::Screen(server_name)) + "," : "") +
+		quot(OPTIONS) + ":" + std::to_string(options) + "," +
+		quot(GRANTS) + ":" + std::to_string(grants) + "," +
+		quot(MAX_OUTPUT_BITRATE) + ":" + std::to_string(max_output_bitrate) + "}}";
 }
 
 }
