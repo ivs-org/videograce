@@ -104,7 +104,7 @@ std::string Command::Serialize()
 		quot(SERVER_VERSION) + ":" + std::to_string(server_version) + "," +
 		quot(ID) + ":" + std::to_string(id) + "," +
 		quot(CONNECTION_ID) + ":" + std::to_string(connection_id) + "," +
-		(!access_token.empty() ? "," + quot(ACCESS_TOKEN) + ":" + quot(Common::JSON::Screen(access_token)) + "," : "") +
+		(!access_token.empty() ? quot(ACCESS_TOKEN) + ":" + quot(Common::JSON::Screen(access_token)) + "," : "") +
 		quot(NAME_) + ":" + quot(Common::JSON::Screen(name)) + "," +
 		(!redirect_url.empty() ? quot(REDIRECT_URL) + ":" + quot(Common::JSON::Screen(redirect_url)) + "," : "") +
 		(!secure_key.empty() ? quot(SECURE_KEY) + ":" + quot(Common::JSON::Screen(secure_key)) + "," : "") +
