@@ -26,6 +26,7 @@
 #include <Shlwapi.h>
 #include <tchar.h>
 
+#include <algorithm>
 #include <fstream>
 
 namespace Installer
@@ -393,7 +394,7 @@ bool MainDialog::GetServerAddress()
 void MainDialog::CheckExists()
 {
     auto checkPath = std::wstring(boost::nowide::widen(pathInput->text())) + L"\\" _T(SYSTEM_NAME) L"Client.exe";
-    if (!PathFileExistsW(checkPath.c_str()))
+    if (!PathFileExistsW(checkPath.c_str()) || IsWrongVersion())
     {
         window->emit_event(static_cast<int32_t>(my_event::download_needed), 0);
     }
@@ -402,6 +403,44 @@ void MainDialog::CheckExists()
         appPath = pathInput->text() + "\\" + SYSTEM_NAME "Client.exe";
         window->emit_event(static_cast<int32_t>(my_event::completed), 0);
     }
+}
+
+bool MainDialog::IsWrongVersion()
+{
+    std::vector<int32_t> wrong_vers = { { 522 } };
+
+    auto szVersionFile = std::wstring(boost::nowide::widen(pathInput->text())) + L"\\" _T(SYSTEM_NAME) L"Client.exe";
+
+    DWORD  verHandle = 0;
+    UINT   size = 0;
+    LPBYTE lpBuffer = NULL;
+    DWORD  verSize = GetFileVersionInfoSize(szVersionFile.c_str(), &verHandle);
+
+    if (verSize != NULL)
+    {
+        LPSTR verData = new char[verSize];
+
+        if (GetFileVersionInfo(szVersionFile.c_str(), verHandle, verSize, verData))
+        {
+            if (VerQueryValue(verData, L"\\", (VOID FAR * FAR*) & lpBuffer, &size))
+            {
+                if (size)
+                {
+                    VS_FIXEDFILEINFO* verInfo = (VS_FIXEDFILEINFO*)lpBuffer;
+                    if (verInfo->dwSignature == 0xfeef04bd)
+                    {
+                        if (std::find(wrong_vers.begin(), wrong_vers.end(), ((verInfo->dwFileVersionLS >> 0) & 0xffff)) != wrong_vers.end())
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        delete[] verData;
+    }
+
+    return false;
 }
 
 void MainDialog::DownloadApp()

@@ -150,7 +150,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>false</GenerateDebugInformation>
-      <AdditionalDependencies>wui.lib;engine.lib;uuid.lib;amstrmid.lib;wmcodecdspuuid.lib;Avrt.lib;ws2_32.lib;Crypt32.lib;libcrypto.lib;libssl.lib;Iphlpapi.lib;gdiplus.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>wui.lib;engine.lib;uuid.lib;amstrmid.lib;wmcodecdspuuid.lib;Avrt.lib;ws2_32.lib;Crypt32.lib;libcrypto.lib;libssl.lib;Iphlpapi.lib;gdiplus.lib;version.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

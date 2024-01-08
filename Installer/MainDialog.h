@@ -129,6 +129,7 @@ private:
     /// Installation flow
     bool IsUninstaller();
     bool GetServerAddress();
+    bool IsWrongVersion();
     void CheckExists();
     void DownloadApp();
     void ServerConnectError();
