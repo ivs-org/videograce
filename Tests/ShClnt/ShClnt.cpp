@@ -46,7 +46,7 @@ int main(int argc, char* argv[])
 
 #endif
 
-	Common::CreateLogger("ShClnt-" + login);
+	Common::CreateLogger(Common::GetLogFileName("ShClnt-" + login));
 
     Storage::Storage storage;
     Processor::MemberList memberList;

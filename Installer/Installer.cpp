@@ -22,7 +22,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     UNREFERENCED_PARAMETER(hPrevInstance);
     UNREFERENCED_PARAMETER(lpCmdLine);
 
-    Common::CreateLogger("Installer");
+    Common::CreateLogger(Common::GetLogFileName("Installer"));
     
     wui::framework::init();
 

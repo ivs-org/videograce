@@ -12,6 +12,7 @@
 namespace Common
 {
 
-void CreateLogger(std::string_view appName);
+std::string GetLogFileName(std::string_view appName);
+void CreateLogger(std::string_view fileName);
 
 }

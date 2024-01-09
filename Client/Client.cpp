@@ -217,9 +217,9 @@ int main(int argc, char *argv[])
 
     Common::CreateLogger(
 #ifdef _WIN32
-        "Client"
+        Common::GetLogFileName("Client")
 #else
-        "~/." CLIENT_USER_FOLDER "/" CLIENT_USER_FOLDER ".log"
+        Common::GetLogFileName(CLIENT_USER_FOLDER)
 #endif
     );
 

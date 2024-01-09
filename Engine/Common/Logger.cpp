@@ -54,13 +54,12 @@ std::string GetLogFileName(std::string_view appName)
 
 std::string GetLogFileName(std::string_view appName)
 {
-    return wui::real_path("~/." CLIENT_USER_FOLDER "/" CLIENT_USER_FOLDER ".log");
+    return wui::real_path("~/." + std::string(appName) + "/" + std::string(appName) + ".log");
 }
 #endif
 
-void CreateLogger(std::string_view appName)
+void CreateLogger(std::string_view fileName)
 {
-    auto fileName = GetLogFileName(appName);
     if (fileName.empty())
     {
         std::cerr << "Error creating logger, log path is unreachable" << std::endl;
