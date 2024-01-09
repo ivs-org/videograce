@@ -91,7 +91,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <PreprocessorDefinitions>_UNICODE;UNICODE;_SILENCE_ALL_MS_EXT_DEPRECATION_WARNINGS;_WIN32_WINNT=0x0501;BOOST_CONFIG_SUPPRESS_OUTDATED_MESSAGE;BOOST_SYSTEM_DISABLE_THREADS;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;NOMINMAX;WEBRTC_WIN;SQLITE_THREADSAFE=2;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_UNICODE;UNICODE;_SILENCE_ALL_MS_EXT_DEPRECATION_WARNINGS;_WIN32_WINNT=0x0501;BOOST_CONFIG_SUPPRESS_OUTDATED_MESSAGE;BOOST_SYSTEM_DISABLE_THREADS;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;SPDLOG_WCHAR_FILENAMES;NOMINMAX;WEBRTC_WIN;SQLITE_THREADSAFE=2;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ProgramDataBaseFileName />
       <DisableSpecificWarnings>4101;4307;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -111,7 +111,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <PreprocessorDefinitions>_UNICODE;UNICODE;_SILENCE_ALL_MS_EXT_DEPRECATION_WARNINGS;_WIN32_WINNT=0x0501;BOOST_CONFIG_SUPPRESS_OUTDATED_MESSAGE;BOOST_SYSTEM_DISABLE_THREADS;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;NOMINMAX;WEBRTC_WIN;SQLITE_THREADSAFE=2;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_UNICODE;UNICODE;_SILENCE_ALL_MS_EXT_DEPRECATION_WARNINGS;_WIN32_WINNT=0x0501;BOOST_CONFIG_SUPPRESS_OUTDATED_MESSAGE;BOOST_SYSTEM_DISABLE_THREADS;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;SPDLOG_WCHAR_FILENAMES;NOMINMAX;WEBRTC_WIN;SQLITE_THREADSAFE=2;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ProgramDataBaseFileName>
       </ProgramDataBaseFileName>
       <DisableSpecificWarnings>4101;4307;%(DisableSpecificWarnings)</DisableSpecificWarnings>
@@ -135,7 +135,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <PreprocessorDefinitions>NDEBUG;_UNICODE;UNICODE;_WIN32_WINNT=0x0501;BOOST_CONFIG_SUPPRESS_OUTDATED_MESSAGE;BOOST_SYSTEM_DISABLE_THREADS;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;NOMINMAX;WEBRTC_WIN;SQLITE_THREADSAFE=2;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_UNICODE;UNICODE;_WIN32_WINNT=0x0501;BOOST_CONFIG_SUPPRESS_OUTDATED_MESSAGE;BOOST_SYSTEM_DISABLE_THREADS;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;SPDLOG_WCHAR_FILENAMES;NOMINMAX;WEBRTC_WIN;SQLITE_THREADSAFE=2;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalOptions>
       </AdditionalOptions>
       <DebugInformationFormat>None</DebugInformationFormat>
@@ -167,7 +167,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <PreprocessorDefinitions>NDEBUG;_UNICODE;UNICODE;_WIN32_WINNT=0x0501;BOOST_CONFIG_SUPPRESS_OUTDATED_MESSAGE;BOOST_SYSTEM_DISABLE_THREADS;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;NOMINMAX;WEBRTC_WIN;SQLITE_THREADSAFE=2;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_UNICODE;UNICODE;_WIN32_WINNT=0x0501;BOOST_CONFIG_SUPPRESS_OUTDATED_MESSAGE;BOOST_SYSTEM_DISABLE_THREADS;SPDLOG_WCHAR_FILENAMES;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;NOMINMAX;WEBRTC_WIN;SQLITE_THREADSAFE=2;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalOptions>
       </AdditionalOptions>
       <DebugInformationFormat>None</DebugInformationFormat>
@@ -222,6 +222,7 @@
     <ClInclude Include="Common\HTMLSymbolsScreener.h" />
     <ClInclude Include="Common\HumanTime.h" />
     <ClInclude Include="Common\JSONSymbolsScreener.h" />
+    <ClInclude Include="Common\Logger.h" />
     <ClInclude Include="Common\MapContainer.h" />
     <ClInclude Include="Common\CRC32.h" />
     <ClInclude Include="Common\md5.h" />
@@ -535,6 +536,7 @@
     <ClCompile Include="Common\HTMLSymbolsScreener.cpp" />
     <ClCompile Include="Common\HumanTime.cpp" />
     <ClCompile Include="Common\JSONSymbolsScreener.cpp" />
+    <ClCompile Include="Common\Logger.cpp" />
     <ClCompile Include="Common\md5.cpp" />
     <ClCompile Include="Common\MACAddresses.cpp" />
     <ClCompile Include="Common\Process.cpp" />

@@ -5,8 +5,6 @@
  * Copyright (C), Infinity Video Soft LLC, 2020
  */
 
-#include <iostream>
-
 #include <Controller/Controller.h>
 #include <Processor/Processor.h>
 #include <Processor/MemberList.h>
@@ -14,58 +12,16 @@
 
 #include <Storage/Storage.h>
 
-#include <Common/FSHelpers.h>
+#include <Common/Logger.h>
 
 #include <wui/config/config.hpp>
 
 #include <spdlog/spdlog.h>
-#include <spdlog/sinks/stdout_color_sinks.h>
-#include <spdlog/sinks/rotating_file_sink.h>
 
-#include <boost/nowide/convert.hpp>
 #include <boost/asio/signal_set.hpp>
 #include <boost/asio.hpp>
 
-void CreateLogger(std::string_view login)
-{
-#ifndef _WIN32
-	const std::string fileName = "./ShClnt-" + std::string(login) + ".log";
-#else
-	wchar_t moduleFileName[MAX_PATH] = { 0 };
-	GetModuleFileName(NULL, moduleFileName, MAX_PATH);
-	const std::string fileName = Common::DirNameOf(boost::nowide::narrow(moduleFileName)) + "\\ShClnt-" + std::string(login) + ".log";
-#endif
-
-    try
-    {
-        std::vector<spdlog::sink_ptr> sinks;
-
-        sinks.push_back(std::make_shared<spdlog::sinks::rotating_file_sink_mt>(
-#ifdef _WIN32
-            boost::nowide::widen(fileName),
-#else
-            fileName,
-#endif
-            1024 * 1024 * 5, 3));
-        sinks.push_back(std::make_shared<spdlog::sinks::stdout_color_sink_mt>());
-
-        auto sysLog = std::make_shared<spdlog::logger>("System", begin(sinks), end(sinks));
-        auto errLog = std::make_shared<spdlog::logger>("Error", begin(sinks), end(sinks));
-
-        int logLevel = wui::config::get_int("User", "LogLevel", 0);
-
-        sysLog->set_level(static_cast<spdlog::level::level_enum>(logLevel));
-        errLog->set_level(static_cast<spdlog::level::level_enum>(logLevel));
-
-        // globally register the loggers so so the can be accessed using spdlog::get(logger_name)
-        spdlog::register_logger(sysLog);
-        spdlog::register_logger(errLog);
-    }
-    catch (const spdlog::spdlog_ex& ex)
-    {
-        std::cerr << "Log initialization failed: " << ex.what() << std::endl;
-    }
-}
+#include <iostream>
 
 int main(int argc, char* argv[])
 {
@@ -90,7 +46,7 @@ int main(int argc, char* argv[])
 
 #endif
 
-	CreateLogger(login);
+	Common::CreateLogger("ShClnt-" + login);
 
     Storage::Storage storage;
     Processor::MemberList memberList;
@@ -129,6 +85,9 @@ int main(int argc, char* argv[])
 
 	io.stop();
 	t.join();
+
+	spdlog::get("System")->info("Application was ended");
+	spdlog::drop_all(); // Under VisualStudio, this must be called before main finishes to workaround a known VS issue
 	
 	return 0;
 }

@@ -1196,6 +1196,9 @@
     <ClInclude Include="API\RegisterUser.h">
       <Filter>Header Files\API</Filter>
     </ClInclude>
+    <ClInclude Include="Common\Logger.h">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Video\Resolution.cpp">
@@ -1731,6 +1734,9 @@
     </ClCompile>
     <ClCompile Include="API\RegisterUser.cpp">
       <Filter>Source Files\API</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\Logger.cpp">
+      <Filter>Source Files\Common</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

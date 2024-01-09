@@ -308,10 +308,10 @@ void MainDialog::SetParams(std::string_view address,
 {
     auto server = std::string(address) + (port != 0 ? ":" + std::to_string(port) : "");
 
-    if (!login.empty() || server != wui::config::get_string("Connection", "Address", ""))
+    if (server != wui::config::get_string("Connection", "Address", ""))
     {
-        wui::config::set_string("Credentials", "Login", login);
-        wui::config::set_string("Credentials", "Password", password);
+        if (!login.empty()) wui::config::set_string("Credentials", "Login", login);
+        if (!password.empty()) wui::config::set_string("Credentials", "Password", password);
     }
 
     if (!conf_tag.empty())

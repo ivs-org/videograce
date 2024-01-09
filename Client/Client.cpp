@@ -19,7 +19,6 @@
 
 #ifdef _WIN32
 #include <windows.h>
-#include <GdiPlus.h>
 
 #include <dbt.h>
 #include <Shobjidl.h>
@@ -36,96 +35,17 @@
 #include <boost/nowide/convert.hpp>
 
 #include <Transport/NetworkInit.h>
-
-#include <Common/FSHelpers.h>
+#include <Common/Logger.h>
 
 #include <iostream>
 
 #include <spdlog/spdlog.h>
-#include <spdlog/sinks/stdout_color_sinks.h>
-#include <spdlog/sinks/rotating_file_sink.h>
-#include <spdlog/sinks/msvc_sink.h>
 
 #include <UI/MainFrame.h>
 
 #include <Version.h>
 
 #include <resource.h>
-
-#ifdef _WIN32
-std::string GetLogFileName()
-{
-    const char *logFileName = "\\" SYSTEM_NAME "Client.log";
-
-    wchar_t pathBuf[MAX_PATH] = { 0 };
-
-    GetModuleFileName(NULL, pathBuf, MAX_PATH);
-    auto path = Common::DirNameOf(boost::nowide::narrow(pathBuf)) + "\\";
-
-    if (Common::CheckAllowFileWrite(path))
-    {
-        return path + logFileName;
-    }
-    else
-    {
-        GetTempPath(MAX_PATH, pathBuf);
-        if (Common::CheckAllowFileWrite(boost::nowide::narrow(pathBuf)))
-        {
-            return boost::nowide::narrow(pathBuf) + logFileName;
-        }
-    }
-    return "";
-}
-#else
-
-std::string GetLogFileName()
-{
-	return wui::real_path("~/." CLIENT_USER_FOLDER "/" CLIENT_USER_FOLDER ".log");
-}
-#endif
-
-void CreateLogger()
-{
-    auto fileName = GetLogFileName();
-    if (fileName.empty())
-    {
-        std::cerr << "Error creating logger, log path is unreachable" << std::endl;
-        return;
-    }
-
-    try
-    {
-        std::vector<spdlog::sink_ptr> sinks;
-
-        sinks.push_back(std::make_shared<spdlog::sinks::rotating_file_sink_mt>(
-#ifdef _WIN32
-            boost::nowide::widen(fileName),
-#else
-            fileName,
-#endif
-            1024 * 1024 * 5, 3));
-        sinks.push_back(std::make_shared<spdlog::sinks::stdout_color_sink_mt>());
-#ifdef _WIN32
-        sinks.push_back(std::make_shared<spdlog::sinks::msvc_sink_mt>());
-#endif
-
-        auto sysLog = std::make_shared<spdlog::logger>("System", begin(sinks), end(sinks));
-        auto errLog = std::make_shared<spdlog::logger>("Error", begin(sinks), end(sinks));
-
-        int logLevel = wui::config::get_int("User", "LogLevel", 5);
-
-        sysLog->set_level(static_cast<spdlog::level::level_enum>(logLevel));
-        errLog->set_level(static_cast<spdlog::level::level_enum>(logLevel));
-
-        // globally register the loggers so so the can be accessed using spdlog::get(logger_name)
-        spdlog::register_logger(sysLog);
-        spdlog::register_logger(errLog);
-    }
-    catch (const spdlog::spdlog_ex& ex)
-    {
-        std::cerr << "Log initialization failed: " << ex.what() << std::endl;
-    }
-}
 
 #ifdef _WIN32
 
@@ -295,7 +215,13 @@ int main(int argc, char *argv[])
 
     wui::framework::init();
 
-    CreateLogger();
+    Common::CreateLogger(
+#ifdef _WIN32
+        "Client"
+#else
+        "~/." CLIENT_USER_FOLDER "/" CLIENT_USER_FOLDER ".log"
+#endif
+    );
 
     wui::error err;
 
