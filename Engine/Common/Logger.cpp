@@ -74,7 +74,7 @@ void CreateLogger(std::string_view fileName)
 #ifdef _WIN32
             boost::nowide::widen(fileName),
 #else
-            fileName,
+            fileName.data(),
 #endif
             1024 * 1024 * 5, 3));
         sinks.push_back(std::make_shared<spdlog::sinks::stdout_color_sink_mt>());
