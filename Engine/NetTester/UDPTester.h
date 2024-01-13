@@ -11,14 +11,17 @@
 #include <cstdint>
 #include <string>
 #include <vector>
+#include <memory>
+#include <mutex>
 #include <functional>
-#include <thread>
 
 #include <wui/locale/i_locale.hpp>
 
-#include <Transport/ISocket.h>
+#include <Transport/RTPSocket.h>
 
 #include <Transport/Address.h>
+
+#include <mt/timer.h>
 
 #include <spdlog/spdlog.h>
 
@@ -31,7 +34,7 @@ public:
     UDPTester(std::shared_ptr<wui::i_locale> locale, std::function<void()> readyCallback = []() {});
 	~UDPTester();
 
-	void AddAddress(const char* address, uint16_t port);
+	void AddAddress(std::string_view address, uint16_t port);
 	void ClearAddresses();
 
 	void DoTheTest();
@@ -42,36 +45,24 @@ public:
 	std::string GetErrorMessage() const;
 
 private:
-	struct Connection
-	{
-		Transport::Address address;
-
-		bool available;
-
-		Connection()
-			: address(), available(false) {}
-		Connection(Transport::Address address_)
-			: address(address_), available(false) {}
-
-		inline bool operator==(const Connection& lv)
-		{
-			return address == lv.address;
-		}
-	};
-
     std::shared_ptr<wui::i_locale> locale;
 
     std::function<void()> readyCallback;
 
-	std::atomic<bool> runned;
+	std::mutex mutex;
 
-	std::thread thread;
+	uint16_t iteration; /// Recheck after (65565 / 2) seconds
 
-	std::vector<Connection> connections;
+	mt::timer timer;
+	
+	std::vector<Transport::Address> inputAddresses, availAddresses;
+	std::vector<std::shared_ptr<Transport::RTPSocket>> rtpSockets;
 
 	std::shared_ptr<spdlog::logger> sysLog, errLog;
 	
 	virtual void Send(const Transport::IPacket &packet, const Transport::Address *address = nullptr);
+
+	void onTimer();
 };
 
 }

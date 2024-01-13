@@ -20,9 +20,11 @@ namespace NetTester
 UDPTester::UDPTester(std::shared_ptr<wui::i_locale> locale_, std::function<void()> readyCallback_)
 	: locale(locale_),
     readyCallback(readyCallback_),
-	runned(false),
-	thread(),
-	connections(),
+	mutex(),
+	iteration(0),
+	timer(std::bind(&UDPTester::onTimer, this)),
+	inputAddresses(), availAddresses(),
+	rtpSockets(),
 	sysLog(spdlog::get("System")), errLog(spdlog::get("Error"))
 {
 }
@@ -32,14 +34,13 @@ UDPTester::~UDPTester()
 	Stop();
 }
 
-void UDPTester::AddAddress(const char* address, uint16_t port)
+void UDPTester::AddAddress(std::string_view address, uint16_t port)
 {
 	sysLog->trace("UDPTester :: AddAddress :: Perform adding {0}:{1}", address, port);
 
-	if (std::find(connections.begin(), connections.end(), Connection(Transport::Address(address, port))) == connections.end())
+	if (std::find(inputAddresses.begin(), inputAddresses.end(), Transport::Address(address.data(), port)) == inputAddresses.end())
 	{
-		sysLog->trace("UDPTester :: AddAddress :: Added {0}:{1}", address, port);
-		connections.emplace_back(Connection(Transport::Address(address, port)));
+		inputAddresses.emplace_back(Transport::Address(address.data(), port));
 	}
 }
 
@@ -47,84 +48,47 @@ void UDPTester::ClearAddresses()
 {
 	sysLog->trace("UDPTester :: ClearAddresses()");
 
-	connections.clear();
+	inputAddresses.clear();
+	availAddresses.clear();
 }
 
 void UDPTester::DoTheTest()
 {
-	if (!runned && !connections.empty())
+	if (!inputAddresses.empty())
 	{
-		Stop();
+		timer.stop();
 
-		thread = std::thread([this]() {
-			runned = true;
+		{
+			std::lock_guard<std::mutex> lock(mutex);
+			availAddresses.clear();
+			rtpSockets.clear();
+			iteration = 0;
+		}
 
-			Transport::RTCPPacket packet;
-			packet.rtcp_common.pt = Transport::RTCPPacket::RTCP_APP;
-			packet.rtcp_common.length = 1;
-			packet.rtcps[0].r.app.messageType = Transport::RTCPPacket::amtUDPTest;
-			
-			for (auto &connection : connections)
-			{
-				connection.available = false;
+		sysLog->trace("UDPTester :: DoTheTest :: runned");
 
-				if (connection.address.type != Transport::Address::Type::Undefined)
-				{
-					Transport::RTPSocket rtpSocket;
-
-					rtpSocket.SetReceiver(nullptr, this);
-
-					rtpSocket.Start(connection.address.type);
-
-					sysLog->trace("UDPTester :: DoTheTest :: First send to address: {0}", connection.address.toString());
-
-					rtpSocket.Send(packet, &connection.address);
-
-					std::this_thread::sleep_for(std::chrono::milliseconds(2000));
-					rtpSocket.Send(packet, &connection.address);
-
-					rtpSocket.Stop();
-
-					sysLog->trace("UDPTester :: DoTheTest :: Sending end to address: {0}", connection.address.toString());
-				}
-			}
-
-			if (runned)
-			{
-                readyCallback();
-			}
-
-			runned = false;
-		});
+		timer.start(250);
 	}
 }
 
 void UDPTester::Stop()
 {
-	sysLog->trace("UDPTester :: Perform ending");
+	timer.stop();
 
-	runned = false;
-	if (thread.joinable()) thread.join();
-
-	sysLog->trace("UDPTester :: Ended");
+	std::lock_guard<std::mutex> lock(mutex);
+	rtpSockets.clear();
+	
+	sysLog->trace("UDPTester :: Stoped");
 }
 
 bool UDPTester::TestPassed() const
 {
-	for (auto &connection : connections)
-	{
-		if (!connection.available)
-		{
-			return false;
-		}
-		sysLog->trace("UDPTester :: TestPassed :: Result: {0} -> {1}", connection.address.toString(), connection.available ? "PASS" : "FAIL");
-	}
-	return true;
+	return !availAddresses.empty();
 }
 
 std::string UDPTester::GetErrorMessage() const
 {
-    std::string errorMessage = locale->get("net_test", "udp_sockets_unavailable") + "\n";
+    /*std::string errorMessage = locale->get("net_test", "udp_sockets_unavailable") + "\n";
 	for (auto &connection : connections)
 	{
 		if (!connection.available)
@@ -133,16 +97,53 @@ std::string UDPTester::GetErrorMessage() const
 		}
 	}
 
-	return errorMessage;
+	return errorMessage;*/
+	return locale->get("net_test", "udp_sockets_unavailable");
 }
 
 void UDPTester::Send(const Transport::IPacket &packet, const Transport::Address *address)
 {
-	auto it = std::find(connections.begin(), connections.end(), Connection(*address));
-	if (it != connections.end())
+	std::lock_guard<std::mutex> lock(mutex);
+
+	auto it = std::find(inputAddresses.begin(), inputAddresses.end(), *address);
+	if (it != inputAddresses.end())
 	{
-		it->available = true;
+		availAddresses.emplace_back(*address);
+		sysLog->trace("UDPTester :: Added avail {0}", address->toString());
 	}
+}
+
+void UDPTester::onTimer()
+{
+	std::lock_guard<std::mutex> lock(mutex);
+
+	if (iteration < inputAddresses.size())
+	{
+		auto& a = inputAddresses[iteration];
+		if (a.type != Transport::Address::Type::Undefined)
+		{
+			Transport::RTCPPacket packet;
+			packet.rtcp_common.pt = Transport::RTCPPacket::RTCP_APP;
+			packet.rtcp_common.length = 1;
+			packet.rtcps[0].r.app.messageType = Transport::RTCPPacket::amtUDPTest;
+
+			auto rtpSocket = std::make_shared<Transport::RTPSocket>();
+
+			rtpSocket->SetReceiver(nullptr, this);
+			rtpSocket->Start(a.type);
+			rtpSocket->Send(packet, &a);
+
+			rtpSockets.emplace_back(rtpSocket);
+
+			sysLog->trace("UDPTester :: DoTheTest :: Send test to address: {0}", a.toString());
+		}
+	}
+	else if (iteration == inputAddresses.size() * 2) /// Double time to wait responses
+	{
+		readyCallback();
+		rtpSockets.clear();
+	}
+	++iteration;
 }
 
 }
