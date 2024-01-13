@@ -1177,7 +1177,7 @@ void MainFrame::ProcessControllerEvent()
                     //ActionDevices();
                 }
 
-                CheckVGProtocol();
+                //CheckVGProtocol();
 
                 ConnectToURIConference();
             }
