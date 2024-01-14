@@ -19,19 +19,19 @@ namespace Proto
 namespace MEDIA
 {
 
-static const std::string SRC_PORT = "src";
-static const std::string DST_PORT = "dst";
-static const std::string RTP = "rtp";
+static const std::string SSRC = "ssrc";
+static const std::string MEDIA_TYPE = "mt";
+static const std::string DATA = "d";
 
 Command::Command()
-    : src_port(0),
-    dst_port(0),
-    rtp()
+    : ssrc(0),
+    media_type(MediaType::Undefined),
+    data()
 {
 }
 
-Command::Command(uint16_t src_port_, uint16_t dst_port_, std::string_view rtp_)
-    : src_port(src_port_), dst_port(dst_port_), rtp(rtp_)
+Command::Command(MediaType media_type_, uint32_t ssrc_, std::string_view data_)
+    : media_type(media_type_), ssrc(ssrc_), data(data_)
 {
 }
 
@@ -46,9 +46,9 @@ bool Command::Parse(std::string_view message)
         auto j = nlohmann::json::parse(message);
         auto obj = j.get<nlohmann::json::object_t>().at(NAME);
 
-        if (obj.count(SRC_PORT) != 0) src_port = obj.at(SRC_PORT).get<uint16_t>();
-        if (obj.count(DST_PORT) != 0) dst_port = obj.at(DST_PORT).get<uint16_t>();
-        if (obj.count(RTP) != 0) rtp = obj.at(RTP).get<std::string>();
+        if (obj.count(SSRC) != 0) ssrc = obj.at(SSRC).get<uint32_t>();
+        if (obj.count(MEDIA_TYPE) != 0) media_type = static_cast<MediaType>(obj.at(MEDIA_TYPE).get<uint32_t>());
+        if (obj.count(DATA) != 0) data = obj.at(DATA).get<std::string>();
 
         return true;
     }
@@ -63,9 +63,9 @@ bool Command::Parse(std::string_view message)
 std::string Command::Serialize()
 {
     return "{" + quot(NAME) + ":{" +
-        quot(RTP) + ":" + quot(rtp) +
-        (src_port != 0 ? "," + quot(SRC_PORT) + ":" + std::to_string(src_port) : "") +
-        (dst_port != 0 ? "," + quot(DST_PORT) + ":" + std::to_string(dst_port) : "") + "}}";
+        quot(DATA) + ":" + quot(data) +
+        (ssrc != 0 ? "," + quot(SSRC) + ":" + std::to_string(ssrc) : "") +
+        (media_type != MediaType::Undefined ? "," + quot(MEDIA_TYPE) + ":" + std::to_string(static_cast<int>(media_type)) : "") + "}}";
 }
 
 }

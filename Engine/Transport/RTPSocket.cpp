@@ -44,7 +44,7 @@ public:
         Stop();
     }
     
-    void SetDefaultAddress(const char *address, uint16_t port)
+    void SetDefaultAddress(std::string_view address, uint16_t port)
     {
         defaultAddress = Address(address, port);
     }
@@ -159,7 +159,7 @@ RTPSocket::~RTPSocket()
 {
 }
     
-void RTPSocket::SetDefaultAddress(const char *address, uint16_t port)
+void RTPSocket::SetDefaultAddress(std::string_view address, uint16_t port)
 {
     impl->SetDefaultAddress(address, port);
 }

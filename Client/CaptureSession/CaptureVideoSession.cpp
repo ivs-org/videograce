@@ -17,6 +17,7 @@ namespace CaptureSession
 
 CaptureVideoSession::CaptureVideoSession(Common::TimeMeter &timeMeter_)
 	: rtpSocket(),
+	wsmSocket(),
 	localReceiverSplitter(),
 	vp8RTPSplitter(),
 	encryptor(),
@@ -40,6 +41,7 @@ CaptureVideoSession::CaptureVideoSession(Common::TimeMeter &timeMeter_)
 	vp8RTPSplitter.SetReceiver(&encryptor);
 	encryptor.SetReceiver(&rtpSocket);
 	rtpSocket.SetReceiver(nullptr, this);
+	wsmSocket.SetReceiver(nullptr, this);
 }
 
 CaptureVideoSession::~CaptureVideoSession()
@@ -138,9 +140,18 @@ void CaptureVideoSession::ForceKeyFrame()
 	encoder.ForceKeyFrame(0);
 }
 
-void CaptureVideoSession::SetRTPParams(const char* addr, uint16_t port)
+void CaptureVideoSession::SetRTPParams(std::string_view addr, uint16_t port)
 {
+	wsAddr.clear();
+	accessToken.clear();
+
 	rtpSocket.SetDefaultAddress(addr, port);
+}
+
+void CaptureVideoSession::SetWSMParams(std::string_view addr, std::string_view accessToken_)
+{
+	wsAddr = addr;
+	accessToken = accessToken_;
 }
 
 std::string_view CaptureVideoSession::GetName() const
@@ -204,7 +215,17 @@ void CaptureVideoSession::Start(uint32_t ssrc_, Video::ColorSpace colorSpace_, u
 	camera->SetResolution(resolution);
 	camera->SetFrameRate(frameRate);
 
-	rtpSocket.Start();
+	if (wsAddr.empty())
+	{
+		encryptor.SetReceiver(&rtpSocket);
+		rtpSocket.Start();
+	}
+	else
+	{
+		encryptor.SetReceiver(&wsmSocket);
+		wsmSocket.Start(wsAddr, accessToken);
+	}
+
 	vp8RTPSplitter.Reset();
 	
 	if (!secureKey.empty())
@@ -214,7 +235,14 @@ void CaptureVideoSession::Start(uint32_t ssrc_, Video::ColorSpace colorSpace_, u
 	}
 	else
 	{
-		vp8RTPSplitter.SetReceiver(&rtpSocket);
+		if (wsAddr.empty())
+		{
+			vp8RTPSplitter.SetReceiver(&rtpSocket);
+		}
+		else
+		{
+			vp8RTPSplitter.SetReceiver(&wsmSocket);
+		}
 	}
 
 	encoder.Start(encoderType, ssrc);

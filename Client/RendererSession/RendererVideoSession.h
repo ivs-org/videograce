@@ -17,6 +17,8 @@
 #include <Transport/SocketSplitter.h>
 #include <Transport/RTP/RTCPPacket.h>
 
+#include <Transport/WSM/WSMSocket.h>
+
 #include <Video/VideoDecoder.h>
 #include <Video/VP8RTPCollector.h>
 
@@ -65,7 +67,8 @@ public:
 	virtual void SetMirrorVideo(bool yes);
 	virtual bool GetVideoMirrored() const;
 	virtual void SetDecoderType(Video::CodecType dt);
-	virtual void SetRTPParams(const char* recvFromAddr, uint16_t recvFromRTPPort);
+	virtual void SetRTPParams(std::string_view recvFromAddr, uint16_t recvFromRTPPort);
+	virtual void SetWSMParams(std::string_view addr, std::string_view accessToken);
 	virtual void SetRecorder(Recorder::Recorder* recorder);
 	virtual void SetSpeak(bool speak);
 	virtual void SetOrder(uint32_t order);
@@ -112,6 +115,8 @@ private:
 	Video::VP8RTPCollector vp8RTPCollector;
 	Crypto::Decryptor decryptor;
 	Transport::RTPSocket rtpSocket;
+	Transport::WSMSocket wsmSocket;
+	Transport::ISocket *outSocket;
 	std::thread pinger;
 	CaptureSession::CaptureVideoSessionPtr_t localCVS;
     Client::DeviceNotifyCallback deviceNotifyCallback;
@@ -130,9 +135,13 @@ private:
 
 	uint16_t pingCnt;
 
+	std::string wsAddr, accessToken;
+
 	std::shared_ptr<spdlog::logger> sysLog, errLog;
 	
 	void EstablishConnection();
+
+	void SetSocketReceiver(Transport::ISocket* receiver);
  
 	void StartRemote();
 	void StopRemote();

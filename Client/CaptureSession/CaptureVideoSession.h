@@ -14,6 +14,8 @@
 #include <Transport/RTPSocket.h>
 #include <Transport/SocketSplitter.h>
 
+#include <Transport/WSM/WSMSocket.h>
+
 #include <Common/TimeMeter.h>
 
 #include <Camera/ICamera.h>
@@ -44,7 +46,8 @@ namespace CaptureSession
 		virtual void SetRCActions(bool yes);
 		virtual bool IsRCActionsEnabled() const;
 		virtual void ForceKeyFrame();
-		virtual void SetRTPParams(const char* addr, uint16_t rtpPort);
+		virtual void SetRTPParams(std::string_view addr, uint16_t rtpPort);
+		virtual void SetWSMParams(std::string_view addr, std::string_view accessToken);
 		virtual std::string_view GetName() const;
 		virtual uint32_t GetDeviceId();
 		virtual Proto::DeviceType GetDeviceType();
@@ -63,6 +66,7 @@ namespace CaptureSession
 		virtual void Send(const Transport::IPacket &packet, const Transport::Address *address = nullptr);
 	private:
 		Transport::RTPSocket rtpSocket;
+		Transport::WSMSocket wsmSocket;
 		Transport::SocketSplitter localReceiverSplitter;
 		Video::VP8RTPSplitter vp8RTPSplitter;
 		Crypto::Encryptor encryptor;
@@ -84,6 +88,8 @@ namespace CaptureSession
 		Video::ColorSpace colorSpace;
 
 		bool rcActionsEnabled;
+
+		std::string wsAddr, accessToken;
 				
 		std::shared_ptr<spdlog::logger> sysLog, errLog;
 

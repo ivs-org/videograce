@@ -21,6 +21,8 @@ RendererVideoSession::RendererVideoSession(Common::TimeMeter &timeMeter)
 	vp8RTPCollector(),
 	decryptor(),
 	rtpSocket(),
+	outSocket(&rtpSocket),
+	wsmSocket(),
 	pinger(),
 	localCVS(),
 	deviceNotifyCallback(),
@@ -37,6 +39,7 @@ RendererVideoSession::RendererVideoSession(Common::TimeMeter &timeMeter)
 	sysLog(spdlog::get("System")), errLog(spdlog::get("Error"))
 {
 	rtpSocket.SetReceiver(&decryptor, nullptr);
+	wsmSocket.SetReceiver(&decryptor, nullptr);
 	decryptor.SetReceiver(&vp8RTPCollector);
 	vp8RTPCollector.SetReceiver(&recordSplitter);
 	recordSplitter.SetReceiver0(&jitterBuffer);
@@ -149,9 +152,22 @@ void RendererVideoSession::SetDecoderType(Video::CodecType dt)
 	decoderType = dt;
 }
 
-void RendererVideoSession::SetRTPParams(const char* recvFromAddr, uint16_t recvFromRTPPort)
+void RendererVideoSession::SetRTPParams(std::string_view recvFromAddr, uint16_t recvFromRTPPort)
 {
+	wsAddr.clear();
+	accessToken.clear();
+
 	rtpSocket.SetDefaultAddress(recvFromAddr, recvFromRTPPort);
+
+	outSocket = &rtpSocket;
+}
+
+void RendererVideoSession::SetWSMParams(std::string_view addr, std::string_view accessToken_)
+{
+	wsAddr = addr;
+	accessToken = accessToken_;
+
+	outSocket = &wsmSocket;
 }
 
 void RendererVideoSession::SetRecorder(Recorder::Recorder* recorder_)
@@ -207,13 +223,13 @@ void RendererVideoSession::Start(uint32_t receiverSSRC_, uint32_t authorSSRC_, u
 
 	if (!my && !secureKey.empty())
 	{
-		rtpSocket.SetReceiver(&decryptor, nullptr);
+		SetSocketReceiver(&decryptor);
 		decryptor.Start(secureKey);
 	}
 	else
 	{
 		recordSplitter.SetReceiver0(&decoder);
-		rtpSocket.SetReceiver(&vp8RTPCollector, nullptr);
+		SetSocketReceiver(&vp8RTPCollector);
 	}
 
 	if (recorder)
@@ -285,7 +301,14 @@ void RendererVideoSession::Stop()
 
 void RendererVideoSession::StartRemote()
 {
-	rtpSocket.Start();
+	if (wsAddr.empty())
+	{
+		rtpSocket.Start();
+	}
+	else
+	{
+		wsmSocket.Start(wsAddr, accessToken);
+	}
 
 	jitterBuffer.Start(JB::Mode::video);
 	if (!jitterBuffer.IsStarted())
@@ -301,6 +324,7 @@ void RendererVideoSession::StartRemote()
 void RendererVideoSession::StopRemote()
 {
 	rtpSocket.Stop();
+	wsmSocket.Stop();
 	
 	jitterBuffer.Stop();
 }
@@ -404,6 +428,18 @@ void RendererVideoSession::EstablishConnection()
 	}
 }
 
+void RendererVideoSession::SetSocketReceiver(Transport::ISocket* receiver)
+{
+	if (wsAddr.empty())
+	{
+		rtpSocket.SetReceiver(receiver, nullptr);
+	}
+	else
+	{
+		wsmSocket.SetReceiver(receiver, nullptr);
+	}
+}
+
 void RendererVideoSession::SetRemoteFrameRate(uint32_t rate)
 {
 	if (!my)
@@ -416,7 +452,7 @@ void RendererVideoSession::SetRemoteFrameRate(uint32_t rate)
 		fkfPacket.rtcps[0].r.app.messageType = Transport::RTCPPacket::amtSetFrameRate;
 		*reinterpret_cast<uint32_t*>(fkfPacket.rtcps[0].r.app.payload) = htonl(rate);
 
-		rtpSocket.Send(fkfPacket);
+		outSocket->Send(fkfPacket);
 	}
 	else if (localCVS)
 	{
@@ -446,7 +482,7 @@ void RendererVideoSession::SlowRenderingCallback()
 		rtcpPacket.rtcps[0].r.app.ssrc = receiverSSRC;
 		rtcpPacket.rtcps[0].r.app.messageType = Transport::RTCPPacket::amtReduceComplexity;
 		
-		rtpSocket.Send(rtcpPacket);
+		outSocket->Send(rtcpPacket);
 	}
 	else
 	{
@@ -469,7 +505,7 @@ void RendererVideoSession::SendRCAction(Transport::RTCPPacket::RemoteControlActi
 	*reinterpret_cast<uint16_t*>(rtcpPacket.rtcps[0].r.app.payload + 2) = htons(x);
 	*reinterpret_cast<uint16_t*>(rtcpPacket.rtcps[0].r.app.payload + 4) = htons(y);
 
-	rtpSocket.Send(rtcpPacket);
+	outSocket->Send(rtcpPacket);
 }
 
 void RendererVideoSession::SendRCAction(Transport::RTCPPacket::RemoteControlAction rca, uint8_t modifier, const char* key, uint8_t key_size)
@@ -484,7 +520,7 @@ void RendererVideoSession::SendRCAction(Transport::RTCPPacket::RemoteControlActi
 	*reinterpret_cast<uint16_t*>(rtcpPacket.rtcps[0].r.app.payload + 2) = htons(modifier);
 	*reinterpret_cast<uint32_t*>(rtcpPacket.rtcps[0].r.app.payload + 4) = htonl(*reinterpret_cast<const int32_t*>(key));
 
-	rtpSocket.Send(rtcpPacket);
+	outSocket->Send(rtcpPacket);
 }
 
 void RendererVideoSession::MouseMove(int32_t x, int32_t y)

@@ -14,6 +14,8 @@
 #include <Transport/RTPSocket.h>
 #include <Transport/SocketSplitter.h>
 
+#include <Transport/WSM/WSMSocket.h>
+
 #include <Common/TimeMeter.h>
 
 #include <Audio/AudioDecoder.h>
@@ -51,7 +53,8 @@ namespace RendererSession
 		virtual void SetMute(bool yes);
 		virtual bool GetMute();
 		virtual void SetDecoderType(Audio::CodecType dt);
-		virtual void SetRTPParams(const char* recvFromAddr, uint16_t recvFromRTPPort);
+		virtual void SetRTPParams(std::string_view recvFromAddr, uint16_t recvFromRTPPort);
+		virtual void SetWSMParams(std::string_view addr, std::string_view acessToken);
 		virtual void SetClientId(int64_t clientId);
 		virtual int64_t GetClientId() const;
 		virtual uint32_t GetDeviceId() const;
@@ -75,6 +78,7 @@ namespace RendererSession
 		Audio::Decoder decoder;
         JB::JB jitterBuffer;
 		Transport::RTPSocket rtpSocket;
+		Transport::WSMSocket wsmSocket;
 		std::thread pinger;
 
 		bool runned, my, mute;
@@ -93,9 +97,12 @@ namespace RendererSession
 
 		uint16_t pingCnt;
 		uint32_t lastPacketLoss;
+
+		std::string wsAddr, accessToken;
 		
 		std::shared_ptr<spdlog::logger> sysLog, errLog;
 
+		void SetSocketReceiver(Transport::ISocket *receiver);
 		void EstablishConnection();
 	};
 

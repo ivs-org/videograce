@@ -1399,7 +1399,14 @@ void MainFrame::ProcessControllerEvent()
                 {
                     const auto &device = e.deviceValues;
 
-                    cvs->SetRTPParams(!useWSMedia ? device.addr.c_str() : "127.0.0.1", !useWSMedia ? device.port : wsmClient.CreatePipe(device.port));
+                    if (!useWSMedia)
+                    {
+                        cvs->SetRTPParams(device.addr, device.port);
+                    }
+                    else
+                    {
+                        cvs->SetWSMParams(wui::config::get_string("Connection", "Address", ""), controller.GetAccessToken());
+                    }
                     cvs->Start(device.authorSSRC, device.colorSpace, device.deviceId, device.secureKey);
                 }
             }
@@ -1450,7 +1457,14 @@ void MainFrame::ProcessControllerEvent()
                 if (captureAudioSession)
                 {
                     auto &device = e.deviceValues;
-                    captureAudioSession->SetRTPParams(!useWSMedia ? device.addr.c_str() : "127.0.0.1", !useWSMedia ? device.port : wsmClient.CreatePipe(device.port));
+                    if (!useWSMedia)
+                    {
+                        captureAudioSession->SetRTPParams(device.addr, device.port);
+                    }
+                    else
+                    {
+                        captureAudioSession->SetWSMParams(wui::config::get_string("Connection", "Address", ""), controller.GetAccessToken());
+                    }
                     captureAudioSession->Start(device.authorSSRC, device.deviceId, device.secureKey);
                 }
             }
@@ -1666,12 +1680,6 @@ void MainFrame::ProcessControllerEvent()
                     recorder.Start(GetRecordName().c_str(), wui::config::get_int("Record", "MP3Mode", 0) != 0);
                 }
 
-                if (useWSMedia)
-                {
-                    wsmClient.Start(wui::config::get_string("Connection", "Address", ""),
-                        controller.GetAccessToken());
-                }
-
                 timeMeter.Reset();
 
                 if (CheckInputBitrateTooSmall())
@@ -1752,8 +1760,6 @@ void MainFrame::ProcessControllerEvent()
                 callParams.Clear();
 
                 memberList.ClearItems();
-
-                wsmClient.Stop();
 
                 mainToolBar.EnableScreenCapturer(false);
 
@@ -2024,7 +2030,14 @@ void MainFrame::ProcessControllerEvent()
                             rvs->SetClientId(renderer.clientId);
                             rvs->SetDeviceType(renderer.type);
                             rvs->SetMy(renderer.mySource);
-                            rvs->SetRTPParams(!useWSMedia ? renderer.addr.c_str() : "127.0.0.1", !useWSMedia ? renderer.port : wsmClient.CreatePipe(renderer.port));
+                            if (!useWSMedia)
+                            {
+                                rvs->SetRTPParams(renderer.addr, renderer.port);
+                            }
+                            else
+                            {
+                                rvs->SetWSMParams(wui::config::get_string("Connection", "Address", ""), controller.GetAccessToken());
+                            }
                             rvs->SetMirrorVideo(wui::config::get_int("VideoRendererMirrors", renderer.name, -1) == 1);
                             rvs->SetDeviceNotifyCallback(std::bind(&MainFrame::ReceiveDeviceNotify, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4, std::placeholders::_5));
                             rvs->SetRecorder(&recorder);
@@ -2066,7 +2079,14 @@ void MainFrame::ProcessControllerEvent()
                             ras->SetClientId(renderer.clientId);
                             ras->SetMetadata(renderer.metadata);
                             ras->SetMy(renderer.mySource);
-                            ras->SetRTPParams(!useWSMedia ? renderer.addr.c_str() : "127.0.0.1", !useWSMedia ? renderer.port : wsmClient.CreatePipe(renderer.port));
+                            if (!useWSMedia)
+                            {
+                                ras->SetRTPParams(renderer.addr, renderer.port);
+                            }
+                            else
+                            {
+                                ras->SetWSMParams(wui::config::get_string("Connection", "Address", ""), controller.GetAccessToken());
+                            }
                             ras->SetDeviceNotifyCallback(std::bind(&MainFrame::ReceiveDeviceNotify, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4, std::placeholders::_5));
                             ras->SetRecorder(&recorder);
 

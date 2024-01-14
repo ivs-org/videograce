@@ -41,7 +41,8 @@ public:
 
 	virtual void ForceKeyFrame() = 0;
 
-	virtual void SetRTPParams(const char* addr, uint16_t rtpPort) = 0;
+	virtual void SetRTPParams(std::string_view addr, uint16_t rtpPort) = 0;
+	virtual void SetWSMParams(std::string_view addr, std::string_view acessToken) = 0;
 
 	virtual std::string_view GetName() const = 0;
 	virtual uint32_t GetDeviceId() = 0;

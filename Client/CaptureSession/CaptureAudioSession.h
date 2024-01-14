@@ -14,6 +14,8 @@
 #include <Transport/RTPSocket.h>
 #include <Transport/SocketSplitter.h>
 
+#include <Transport/WSM/WSMSocket.h>
+
 #include <Common/TimeMeter.h>
 
 #include <Microphone/Microphone.h>
@@ -53,7 +55,8 @@ namespace CaptureSession
 		virtual void SetMute(bool yes);
 		virtual bool GetMute() const;
 		virtual void SetEncoderType(Audio::CodecType et);
-		virtual void SetRTPParams(const char* addr, uint16_t rtpPort);
+		virtual void SetRTPParams(std::string_view addr, uint16_t rtpPort);
+		virtual void SetWSMParams(std::string_view addr, std::string_view accessToken);
 		virtual std::string_view GetName() const;
 		virtual uint32_t GetDeviceId() const;
 		virtual int32_t GetBitrate() const;
@@ -68,6 +71,7 @@ namespace CaptureSession
         Client::DeviceNotifyCallback deviceNotifyCallback;
 		AudioRenderer::IAudioRenderer *audioRenderer;
 		Transport::RTPSocket rtpSocket;
+		Transport::WSMSocket wsmSocket;
 		Transport::SocketSplitter localReceiverSplitter;
 		Crypto::Encryptor encryptor;
 		Audio::Encoder encoder;
@@ -83,6 +87,8 @@ namespace CaptureSession
 
 		std::string name;
 		Audio::CodecType encoderType;
+
+		std::string wsAddr, accessToken;
 		
 		std::shared_ptr<spdlog::logger> sysLog, errLog;
 

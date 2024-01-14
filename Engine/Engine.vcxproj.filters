@@ -1187,9 +1187,6 @@
     <ClInclude Include="Proto\CmdLoadBlobs.h">
       <Filter>Header Files\Proto</Filter>
     </ClInclude>
-    <ClInclude Include="Transport\WSM\WSMClient.h">
-      <Filter>Header Files\Transport\WSM</Filter>
-    </ClInclude>
     <ClInclude Include="Proto\CmdMedia.h">
       <Filter>Header Files\Proto</Filter>
     </ClInclude>
@@ -1198,6 +1195,9 @@
     </ClInclude>
     <ClInclude Include="Common\Logger.h">
       <Filter>Header Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Transport\WSM\WSMSocket.h">
+      <Filter>Header Files\Transport\WSM</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1726,9 +1726,6 @@
     <ClCompile Include="Proto\CmdLoadBlobs.cpp">
       <Filter>Source Files\Proto</Filter>
     </ClCompile>
-    <ClCompile Include="Transport\WSM\WSMClient.cpp">
-      <Filter>Source Files\Transport\WSM</Filter>
-    </ClCompile>
     <ClCompile Include="Proto\CmdMedia.cpp">
       <Filter>Source Files\Proto</Filter>
     </ClCompile>
@@ -1737,6 +1734,9 @@
     </ClCompile>
     <ClCompile Include="Common\Logger.cpp">
       <Filter>Source Files\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Transport\WSM\WSMSocket.cpp">
+      <Filter>Source Files\Transport\WSM</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -40,7 +40,7 @@ struct Address
 		
 	Address();
 
-	Address(const char* addr, uint16_t port);
+	Address(std::string_view addr, uint16_t port);
 
 	Address(const sockaddr_storage *addr);
 

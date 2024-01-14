@@ -33,7 +33,7 @@ Address::Address()
 {
 }
 
-Address::Address(const char* addr, uint16_t port)
+Address::Address(std::string_view addr, uint16_t port)
     : type(Type::Undefined), v4addr{ 0 }, v6addr{ 0 }
 {
     struct addrinfo hints = { 0 }, *res = nullptr, *p = nullptr;
@@ -42,7 +42,7 @@ Address::Address(const char* addr, uint16_t port)
     
     hints.ai_family = AF_UNSPEC;
     hints.ai_socktype = SOCK_STREAM;
-    if ((status = getaddrinfo(addr, NULL, &hints, &res)) != 0)
+    if ((status = getaddrinfo(addr.data(), NULL, &hints, &res)) != 0)
     {
         DBGTRACE("getaddrinfo error for address: %s\n", addr);
         return;

@@ -433,7 +433,7 @@
     <ClInclude Include="Transport\TCP\Server.h" />
     <ClInclude Include="Transport\UDPSocket.h" />
     <ClInclude Include="Transport\URI\URI.h" />
-    <ClInclude Include="Transport\WSM\WSMClient.h" />
+    <ClInclude Include="Transport\WSM\WSMSocket.h" />
     <ClInclude Include="Transport\WS\WebSocket.h" />
     <ClInclude Include="Version.h" />
     <ClInclude Include="Video\CodecType.h" />
@@ -616,7 +616,7 @@
     <ClCompile Include="Transport\TCP\Server.cpp" />
     <ClCompile Include="Transport\UDPSocket.cpp" />
     <ClCompile Include="Transport\URI\URI.cpp" />
-    <ClCompile Include="Transport\WSM\WSMClient.cpp" />
+    <ClCompile Include="Transport\WSM\WSMSocket.cpp" />
     <ClCompile Include="Transport\WS\WebSocket.cpp" />
     <ClCompile Include="Video\Resolution.cpp" />
     <ClCompile Include="Video\VideoDecoder.cpp" />

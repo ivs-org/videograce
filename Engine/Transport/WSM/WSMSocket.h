@@ -1,8 +1,8 @@
 /**
- * RTPSocket.h - Contains RTP socket interface
+ * WSMSocket.h - Contains WebSocket Media socket interface
  *
  * Author: Anton (ud) Golovkov, udattsk@gmail.com
- * Copyright (C), Infinity Video Soft LLC, 2018, 2023
+ * Copyright (C), Infinity Video Soft LLC, 2024
  */
 
 #pragma once
@@ -14,16 +14,15 @@
 namespace Transport
 {
 
-class RTPSocketImpl;
+class WSMSocketImpl;
 
-class RTPSocket : public ISocket
+class WSMSocket : public ISocket
 {
 public:
-    RTPSocket();
-    ~RTPSocket();
+    WSMSocket();
+    ~WSMSocket();
     
-    void SetDefaultAddress(std::string_view address, uint16_t port);
-    void Start(Address::Type type = Address::Type::Auto, uint16_t bindPort = 0);
+    void Start(std::string_view address_, std::string_view accessToken_);
     void Stop();
     
     void SetReceiver(ISocket *rtpReceiver, ISocket *rtcpReceiver);
@@ -34,7 +33,7 @@ public:
     static constexpr bool WITH_TRACES = false;
 
 private:
-    std::unique_ptr<RTPSocketImpl> impl;
+    std::unique_ptr<WSMSocketImpl> impl;
 };
 
 }

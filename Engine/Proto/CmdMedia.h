@@ -17,13 +17,21 @@ namespace MEDIA
 	
 static const std::string NAME = "media";
 
+enum class MediaType
+{
+	Undefined,
+	RTP,
+	RTCP
+};
+
 struct Command
 {
-	uint16_t src_port, dst_port;
-	std::string rtp; /// RTP packet with header on base 64
+	MediaType media_type;
+	uint32_t ssrc;
+	std::string data; /// RTP/RTCP packet with header on base 64
 		
 	Command();
-	Command(uint16_t src_port, uint16_t dst_port, std::string_view rtp);
+	Command(MediaType media_type, uint32_t ssrc, std::string_view data);
 
 	~Command();
 	

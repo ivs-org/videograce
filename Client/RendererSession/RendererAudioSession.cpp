@@ -24,6 +24,7 @@ RendererAudioSession::RendererAudioSession(Common::TimeMeter &timeMeter_, Audio:
 	decoder(),
 	jitterBuffer(decoder, timeMeter_),
 	rtpSocket(),
+	wsmSocket(),
 	pinger(),
 	runned(false), my(false), mute(false),
 	volume(100),
@@ -39,6 +40,7 @@ RendererAudioSession::RendererAudioSession(Common::TimeMeter &timeMeter_, Audio:
 {
     recordSplitter.SetReceiver0(&audioMixer);
 	rtpSocket.SetReceiver(&decryptor, nullptr);
+	wsmSocket.SetReceiver(&decryptor, nullptr);
 	decryptor.SetReceiver(&jitterBuffer);
 	decoder.SetReceiver(&recordSplitter);
 }
@@ -107,9 +109,18 @@ Transport::ISocket* RendererAudioSession::GetDirectReceiver()
 	return &decoder;
 }
 
-void RendererAudioSession::SetRTPParams(const char* recvFromAddr, uint16_t recvFromRTPPort)
+void RendererAudioSession::SetRTPParams(std::string_view recvFromAddr, uint16_t recvFromRTPPort)
 {
+	wsAddr.clear();
+	accessToken.clear();
+
 	rtpSocket.SetDefaultAddress(recvFromAddr, recvFromRTPPort);
+}
+
+void RendererAudioSession::SetWSMParams(std::string_view addr, std::string_view accessToken_)
+{
+	wsAddr = addr;
+	accessToken = accessToken_;
 }
 
 void RendererAudioSession::SetRecorder(Recorder::Recorder* recorder_)
@@ -148,6 +159,18 @@ std::string RendererAudioSession::GetSecureKey() const
 	return secureKey;
 }
 
+void RendererAudioSession::SetSocketReceiver(Transport::ISocket* receiver)
+{
+	if (wsAddr.empty())
+	{
+		rtpSocket.SetReceiver(receiver, nullptr);
+	}
+	else
+	{
+		wsmSocket.SetReceiver(receiver, nullptr);
+	}
+}
+
 void RendererAudioSession::Start(uint32_t receiverSSRC_, uint32_t authorSSRC_, uint32_t deviceId_, std::string_view secureKey_)
 {
 	if (runned)
@@ -165,12 +188,12 @@ void RendererAudioSession::Start(uint32_t receiverSSRC_, uint32_t authorSSRC_, u
 
 	if (!my && !secureKey.empty())
 	{
-		rtpSocket.SetReceiver(&decryptor, nullptr);
+		SetSocketReceiver(&decryptor);
 		decryptor.Start(secureKey);
 	}
 	else
 	{
-		rtpSocket.SetReceiver(&jitterBuffer, nullptr);
+		SetSocketReceiver(&jitterBuffer);
 	}
 
 	if (recorder)
@@ -191,7 +214,14 @@ void RendererAudioSession::Start(uint32_t receiverSSRC_, uint32_t authorSSRC_, u
 
 	if (!my)
 	{
-		rtpSocket.Start();
+		if (wsAddr.empty())
+		{
+			rtpSocket.Start();
+		}
+		else
+		{
+			wsmSocket.Start(wsAddr, accessToken);
+		}
 		jitterBuffer.Start(JB::Mode::sound);
 		if (!jitterBuffer.IsStarted())
 		{
@@ -227,6 +257,7 @@ void RendererAudioSession::Stop()
 	if (pinger.joinable()) pinger.join();
 
     rtpSocket.Stop();
+	wsmSocket.Stop();
     jitterBuffer.Stop();
     decoder.Stop();
     decryptor.Stop();

@@ -20,6 +20,7 @@ CaptureAudioSession::CaptureAudioSession(Common::TimeMeter &timeMeter_)
 	: deviceNotifyCallback(),
 	audioRenderer(nullptr),
 	rtpSocket(),
+	wsmSocket(),
 	localReceiverSplitter(),
 	encryptor(),
 	encoder(),
@@ -32,6 +33,7 @@ CaptureAudioSession::CaptureAudioSession(Common::TimeMeter &timeMeter_)
 	ssrc(0), deviceId(0),
 	name(),
 	encoderType(Audio::CodecType::Opus),
+	wsAddr(), accessToken(),
 	sysLog(spdlog::get("System")), errLog(spdlog::get("Error"))
 {
     aec.SetReceiver(&silentSplitter);
@@ -41,6 +43,7 @@ CaptureAudioSession::CaptureAudioSession(Common::TimeMeter &timeMeter_)
 	localReceiverSplitter.SetReceiver0(&encryptor);
 	encryptor.SetReceiver(&rtpSocket);
 	rtpSocket.SetReceiver(nullptr, this);
+	wsmSocket.SetReceiver(nullptr, this);
 }
 
 CaptureAudioSession::~CaptureAudioSession()
@@ -142,9 +145,18 @@ void CaptureAudioSession::SetEncoderType(Audio::CodecType et)
 	encoderType = et;
 }
 
-void CaptureAudioSession::SetRTPParams(const char* addr, uint16_t port)
+void CaptureAudioSession::SetRTPParams(std::string_view addr, uint16_t port)
 {
+	wsAddr.clear();
+	accessToken.clear();
+
 	rtpSocket.SetDefaultAddress(addr, port);
+}
+
+void CaptureAudioSession::SetWSMParams(std::string_view addr, std::string_view accessToken_)
+{
+	wsAddr = addr;
+	accessToken = accessToken_;
 }
 
 std::string_view CaptureAudioSession::GetName() const
@@ -185,7 +197,16 @@ void CaptureAudioSession::Start(uint32_t ssrc_, uint32_t deviceId_, std::string_
 		audioRenderer->SetAECReceiver(aec.GetSpeakerReceiver());
 	}
 	
-	rtpSocket.Start();
+	if (wsAddr.empty())
+	{
+		encryptor.SetReceiver(&rtpSocket);
+		rtpSocket.Start();
+	}
+	else
+	{
+		encryptor.SetReceiver(&wsmSocket);
+		wsmSocket.Start(wsAddr, accessToken);
+	}
 	
 	if (!secureKey.empty())
 	{
@@ -194,7 +215,14 @@ void CaptureAudioSession::Start(uint32_t ssrc_, uint32_t deviceId_, std::string_
 	}
 	else
 	{
-		localReceiverSplitter.SetReceiver0(&rtpSocket);
+		if (wsAddr.empty())
+		{
+			localReceiverSplitter.SetReceiver0(&rtpSocket);
+		}
+		else
+		{
+			localReceiverSplitter.SetReceiver0(&wsmSocket);
+		}
 	}
 
 	microphone.SetDeviceId(deviceId);
@@ -239,6 +267,7 @@ void CaptureAudioSession::Stop()
 	encoder.Stop();
 	encryptor.Stop();
 	rtpSocket.Stop();
+	wsmSocket.Stop();
 	
 	sysLog->info("Stoped microphone session, device id: {0:d}, ssrc: {1:d}", deviceId, ssrc);
 }

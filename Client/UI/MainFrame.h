@@ -25,8 +25,6 @@
 #include <NetTester/SpeedTester.h>
 #include <NetTester/UDPTester.h>
 
-#include <Transport/WSM/WSMClient.h>
-
 #include <UI/IControlActions.h>
 #include <UI/ContactList.h>
 #include <UI/MemberList.h>
@@ -165,8 +163,6 @@ private:
     Controller::Controller controller;
 
     Common::TimeMeter timeMeter;
-
-    Transport::WSMClient wsmClient;
 
     NetTester::SpeedTester speedTester;
     NetTester::UDPTester udpTester;
