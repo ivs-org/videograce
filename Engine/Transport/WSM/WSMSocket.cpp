@@ -104,8 +104,7 @@ public:
     {
         if (!webSocket.IsConnected())
         {
-            errLog->trace("Send to disconnected websocket");
-            return;
+            return errLog->error("WSMSocket[{0}] :: Send to disconnected websocket", connectionId);
         }
 
         uint8_t sendBuf[UDPSocket::MAX_DATAGRAM_SIZE] = { 0 };
@@ -122,6 +121,12 @@ public:
                     packet.rtpHeader.ssrc,
                     destAddr,
                     Common::toBase64(std::string((const char*)sendBuf, serializedSize))).Serialize());
+
+                if (WSMSocket::WITH_TRACES)
+                {
+                    sysLog->trace("WSMSocket[{0}] :: Send :: RTP -> WSM (size: {1}, ssrc: {2})",
+                        connectionId, serializedSize, packet.rtpHeader.ssrc);
+                }
             }
             break;
             case PacketType::RTCP:
@@ -136,6 +141,12 @@ public:
                         packet.rtcps[0].r.app.ssrc,
                         destAddr,
                         Common::toBase64(std::string((const char*)sendBuf, serializedSize))).Serialize());
+
+                    if (WSMSocket::WITH_TRACES)
+                    {
+                        sysLog->trace("WSMSocket[{0}] :: Send :: RTCP -> WSM (size: {1}, ssrc: {2})",
+                            connectionId, serializedSize, packet.rtcps[0].r.app.ssrc);
+                    }
                 }
             }
             break;
@@ -192,7 +203,7 @@ private:
                                 {
                                     if (WSMSocket::WITH_TRACES)
                                     {
-                                        sysLog->trace("WSMSocket[{0}] receive RTP packet, size: {1}, ssrc: {2}",
+                                        sysLog->trace("WSMSocket[{0}] :: Receive :: WSM -> RTP (size: {1}, ssrc: {2})",
                                             connectionId, data.size(), cmd.ssrc);
                                     }
 
@@ -207,7 +218,7 @@ private:
                                 {
                                     if (WSMSocket::WITH_TRACES)
                                     {
-                                        sysLog->trace("WSMSocket[{0}] receive RTCP packet, size: {1}, ssrc: {2}",
+                                        sysLog->trace("WSMSocket[{0}] :: Receive :: WSM -> RTCP (size: {1}, ssrc: {2})",
                                             connectionId, data.size(), cmd.ssrc);
                                     }
 
@@ -228,50 +239,9 @@ private:
 			    sysLog->info("WSMSocket :: WebSocket closed (message: \"{0}\")", message);
 			break;
 		    case Transport::WSMethod::Error:
-			    errLog->critical("WSMSocket :: WebSocket error (message: \"{0}\")", message);
+			    errLog->error("WSMSocket :: WebSocket error (message: \"{0}\")", message);
 			break;
 		}
-    }
-
-    void receive(const uint8_t *data, uint16_t size, const Address &address, uint16_t socketPort)
-    {
-        const PacketType packetType = GetPacketType(data, size);
-
-        switch (packetType)
-        {
-            case PacketType::RTP:
-            {
-                Transport::RTPPacket rtpPacket;
-                if (rtpReceiver != nullptr && rtpPacket.Parse(data, size))
-                {
-                    if (WSMSocket::WITH_TRACES)
-                    {
-                        //sysLog->trace("WSMSocket[{0}] receive RTP packet, size: {1}, from: {2}, socket port: {3}",
-                            //socket.GetSocketNumber(), size, address.toString(), socket.GetBindedPort());
-                    }
-                    
-                    rtpReceiver->Send(rtpPacket, &address);
-                }
-            }
-            break;
-            case PacketType::RTCP:
-            {
-                Transport::RTCPPacket rtcpPacket;
-                if (rtcpReceiver != nullptr && rtcpPacket.Parse(data, size))
-                {
-                    if (WSMSocket::WITH_TRACES)
-                    {
-                        //sysLog->trace("WSMSocket[{0}] receive RTCP packet, size: {1}, from: {2}, socket port: {3}",
-                            //socket.GetSocketNumber(), size, address.toString(), socket.GetBindedPort());
-                    }
-
-                    rtcpReceiver->Send(rtcpPacket, &address);
-                }
-            }
-            break;
-            default:
-            break;
-        }
     }
 };
 

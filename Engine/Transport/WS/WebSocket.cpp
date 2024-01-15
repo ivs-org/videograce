@@ -246,7 +246,10 @@ public:
 
 	void write(std::string_view message)
 	{
-		sysLog->trace("WebSocket::write :: perform writing: {0}", message);
+		if (WebSocket::WITH_TRACES)
+		{
+			sysLog->trace("WebSocket::write :: perform writing: {0}", message);
+		}
 
 		if (ioc_.stopped())
 		{
@@ -289,7 +292,10 @@ public:
 					std::placeholders::_2));
 		}
 
-		sysLog->trace("WebSocket::do_write :: sended: {0}", message);
+		if (WebSocket::WITH_TRACES)
+		{
+			sysLog->trace("WebSocket::do_write :: sended: {0}", message);
+		}
 	}
 
 	void on_write(boost::system::error_code ec,
@@ -302,17 +308,26 @@ public:
 			return;
 		}
 
-		sysLog->trace("WebSocket::on_write :: Perform writing, size; {0}", bytes_transferred);
+		if (WebSocket::WITH_TRACES)
+		{
+			sysLog->trace("WebSocket::on_write :: Perform writing, size; {0}", bytes_transferred);
+		}
 
 		if (writing_ && !ioc_.stopped() && !write_queue_.empty())
 		{
-			sysLog->trace("WebSocket::on_write :: perform write from queue, size: {0}", bytes_transferred);
+			if (WebSocket::WITH_TRACES)
+			{
+				sysLog->trace("WebSocket::on_write :: perform write from queue, size: {0}", bytes_transferred);
+			}
 			do_write();
 		}
 		else
 		{
 			writing_ = false;
-			sysLog->trace("WebSocket::on_write :: writing end, size: {0}", bytes_transferred);
+			if (WebSocket::WITH_TRACES)
+			{
+				sysLog->trace("WebSocket::on_write :: writing end, size: {0}", bytes_transferred);
+			}
 		}
 	}
 

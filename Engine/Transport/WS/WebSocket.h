@@ -37,6 +37,8 @@ public:
     void Disconnect();
 
     bool IsConnected();
+
+    static constexpr bool WITH_TRACES = false;
         
 private:
     std::unique_ptr<WebSocketImpl> impl;

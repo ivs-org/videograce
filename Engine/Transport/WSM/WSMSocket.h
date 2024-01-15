@@ -30,7 +30,7 @@ public:
     /// ISocket impl
     virtual void Send(const IPacket &packet, const Address *address = nullptr) final;
 
-    static constexpr bool WITH_TRACES = false;
+    static constexpr bool WITH_TRACES = true;
 
 private:
     std::unique_ptr<WSMSocketImpl> impl;
