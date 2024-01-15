@@ -22,6 +22,8 @@
 #include <Proto/CmdPing.h>
 #include <Proto/CmdDisconnect.h>
 
+#include <queue>
+
 #include <Common/Base64.h>
 
 #include <spdlog/spdlog.h>
@@ -40,6 +42,8 @@ class WSMSocketImpl
     WebSocket webSocket;
 
     ISocket *rtpReceiver, *rtcpReceiver;
+
+    std::queue<std::string> offlineQueue;
     
     std::shared_ptr<spdlog::logger> sysLog, errLog;
 
@@ -49,6 +53,7 @@ public:
         connectionId(-1),
         webSocket(std::bind(&WSMSocketImpl::OnWebSocket, this, std::placeholders::_1, std::placeholders::_2)),
         rtpReceiver(nullptr), rtcpReceiver(nullptr),
+        offlineQueue(),
         sysLog(spdlog::get("System")), errLog(spdlog::get("Error"))
     {
     }
@@ -102,11 +107,6 @@ public:
     
     void Send(const IPacket &packet_, const Address *address)
     {
-        if (!webSocket.IsConnected())
-        {
-            return errLog->error("WSMSocket[{0}] :: Send to disconnected websocket", connectionId);
-        }
-
         uint8_t sendBuf[UDPSocket::MAX_DATAGRAM_SIZE] = { 0 };
         uint32_t serializedSize = UDPSocket::MAX_DATAGRAM_SIZE;
         
@@ -117,10 +117,19 @@ public:
                 const Transport::RTPPacket &packet = *static_cast<const Transport::RTPPacket*>(&packet_);
                 packet.Serialize(sendBuf, &serializedSize);
 
-                webSocket.Send(Proto::MEDIA::Command(Proto::MEDIA::MediaType::RTP,
+                auto cmd = Proto::MEDIA::Command(Proto::MEDIA::MediaType::RTP,
                     packet.rtpHeader.ssrc,
                     destAddr,
-                    Common::toBase64(std::string((const char*)sendBuf, serializedSize))).Serialize());
+                    Common::toBase64(std::string((const char*)sendBuf, serializedSize))).Serialize();
+
+                if (!webSocket.IsConnected())
+                {
+                    webSocket.Send(cmd);
+                }
+                else
+                {
+                    offlineQueue.push(cmd);
+                }
 
                 if (WSMSocket::WITH_TRACES)
                 {
@@ -137,16 +146,29 @@ public:
                 if (packet.rtcp_common.pt == Transport::RTCPPacket::RTCP_APP &&
                     packet.rtcp_common.length == 1)
                 {
-                    webSocket.Send(Proto::MEDIA::Command(Proto::MEDIA::MediaType::RTCP,
+                    auto cmd = Proto::MEDIA::Command(Proto::MEDIA::MediaType::RTCP,
                         packet.rtcps[0].r.app.ssrc,
                         destAddr,
-                        Common::toBase64(std::string((const char*)sendBuf, serializedSize))).Serialize());
+                        Common::toBase64(std::string((const char*)sendBuf, serializedSize))).Serialize();
+
+                    if (!webSocket.IsConnected())
+                    {
+                        webSocket.Send(cmd);
+                    }
+                    else
+                    {
+                        offlineQueue.push(cmd);
+                    }
 
                     if (WSMSocket::WITH_TRACES)
                     {
                         sysLog->trace("WSMSocket[{0}] :: Send :: RTCP -> WSM (size: {1}, ssrc: {2})",
                             connectionId, serializedSize, packet.rtcps[0].r.app.ssrc);
                     }
+                }
+                else
+                {
+                    errLog->debug("WSMSocket[{0}] :: Send :: Unsupported RTCP", connectionId);
                 }
             }
             break;
@@ -180,6 +202,12 @@ private:
 					    if (cmd.result == Proto::CONNECT_RESPONSE::Result::OK)
 					    {
 						    sysLog->trace("WSMSocket :: Logon success, connection id: {0}", cmd.connection_id);
+
+                            while (!offlineQueue.empty())
+                            {
+                                webSocket.Send(offlineQueue.front());
+                                offlineQueue.pop();
+                            }
 					    }
                         else
                         {
