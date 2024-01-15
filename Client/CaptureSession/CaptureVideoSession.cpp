@@ -209,7 +209,7 @@ void CaptureVideoSession::Start(uint32_t ssrc_, Video::ColorSpace colorSpace_, u
 		break;
 	}
 
-	camera->SetName(name.c_str());
+	camera->SetName(name);
 	camera->SetDeviceId(deviceId);
 	camera->SetDeviceNotifyCallback(deviceNotifyCallback);
 	camera->SetResolution(resolution);
@@ -318,7 +318,11 @@ void CaptureVideoSession::Send(const Transport::IPacket &packet_, const Transpor
 		switch (packet.rtcps[0].r.app.messageType)
 		{
 			case Transport::RTCPPacket::amtForceKeyFrame:
-				encoder.ForceKeyFrame(ntohl(*reinterpret_cast<const uint32_t*>(packet.rtcps[0].r.app.payload)));
+			{
+				auto lastRecvSeq = ntohl(*reinterpret_cast<const uint32_t*>(packet.rtcps[0].r.app.payload));
+				sysLog->trace("Camera {0} received force key frame (last_recv_seq: {1})", name, lastRecvSeq);
+				encoder.ForceKeyFrame(lastRecvSeq);
+			}
 			break;
 			case Transport::RTCPPacket::amtReduceComplexity:
 				ReduceComplexity();
