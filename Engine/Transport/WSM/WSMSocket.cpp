@@ -102,6 +102,7 @@ public:
     {
         if (!webSocket.IsConnected())
         {
+            errLog->trace("Send to disconnected websocket");
             return;
         }
 
