@@ -22,7 +22,7 @@ public:
     WSMSocket();
     ~WSMSocket();
     
-    void Start(std::string_view address_, std::string_view accessToken_);
+    void Start(std::string_view address, std::string_view accessToken, std::string_view destAddr);
     void Stop();
     
     void SetReceiver(ISocket *rtpReceiver, ISocket *rtcpReceiver);

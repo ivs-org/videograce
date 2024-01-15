@@ -54,7 +54,7 @@ namespace RendererSession
 		virtual void SetDecoderType(Video::CodecType dt) = 0;
 				
 		virtual void SetRTPParams(std::string_view recvFromAddr, uint16_t recvFromRTPPort) = 0;
-		virtual void SetWSMParams(std::string_view addr, std::string_view acessToken) = 0;
+		virtual void SetWSMParams(std::string_view addr, std::string_view acessToken, std::string_view wsDestAddr) = 0;
 
 		virtual void SetRecorder(Recorder::Recorder* recorder) = 0;
 		

@@ -33,6 +33,7 @@ class WSMSocketImpl
 {
     std::string address;
     std::string accessToken;
+    std::string destAddr;
 
     int64_t connectionId;
 
@@ -44,7 +45,7 @@ class WSMSocketImpl
 
 public:
     WSMSocketImpl()
-        : address(), accessToken(),
+        : address(), accessToken(), destAddr(),
         connectionId(-1),
         webSocket(std::bind(&WSMSocketImpl::OnWebSocket, this, std::placeholders::_1, std::placeholders::_2)),
         rtpReceiver(nullptr), rtcpReceiver(nullptr),
@@ -57,17 +58,18 @@ public:
         Stop();
     }
     
-    void Start(std::string_view address_, std::string_view access_token_)
+    void Start(std::string_view address_, std::string_view accessToken_, std::string_view destAddr_)
     {
         address = address_;
-        accessToken = access_token_;
+        accessToken = accessToken_;
+        destAddr = destAddr_;
 
         if (!webSocket.IsConnected())
         {
             webSocket.Connect("http://" + address); /// We don't need https, because media payload is already encrypted
         }
 
-        spdlog::get("System")->trace("WSMSocket :: Connected, server address {0}, access token: {1}", address_, access_token_);
+        spdlog::get("System")->trace("WSMSocket :: Connected, server address {0}, access token: {1}", address_, accessToken_);
     }
     
     void Stop()
@@ -118,6 +120,7 @@ public:
 
                 webSocket.Send(Proto::MEDIA::Command(Proto::MEDIA::MediaType::RTP,
                     packet.rtpHeader.ssrc,
+                    destAddr,
                     Common::toBase64(std::string((const char*)sendBuf, serializedSize))).Serialize());
             }
             break;
@@ -131,6 +134,7 @@ public:
                 {
                     webSocket.Send(Proto::MEDIA::Command(Proto::MEDIA::MediaType::RTCP,
                         packet.rtcps[0].r.app.ssrc,
+                        destAddr,
                         Common::toBase64(std::string((const char*)sendBuf, serializedSize))).Serialize());
                 }
             }
@@ -280,9 +284,9 @@ WSMSocket::~WSMSocket()
 {
 }
 
-void WSMSocket::Start(std::string_view address_, std::string_view access_token_)
+void WSMSocket::Start(std::string_view address_, std::string_view accessToken_, std::string_view destAddr_)
 {
-    impl->Start(address_, access_token_);
+    impl->Start(address_, accessToken_, destAddr_);
 }
 
 void WSMSocket::Stop()

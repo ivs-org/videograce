@@ -1405,7 +1405,9 @@ void MainFrame::ProcessControllerEvent()
                     }
                     else
                     {
-                        cvs->SetWSMParams(wui::config::get_string("Connection", "Address", ""), controller.GetAccessToken());
+                        cvs->SetWSMParams(wui::config::get_string("Connection", "Address", ""),
+                            controller.GetAccessToken(),
+                            device.addr + ":" + std::to_string(device.port));
                     }
                     cvs->Start(device.authorSSRC, device.colorSpace, device.deviceId, device.secureKey);
                 }
@@ -1463,7 +1465,9 @@ void MainFrame::ProcessControllerEvent()
                     }
                     else
                     {
-                        captureAudioSession->SetWSMParams(wui::config::get_string("Connection", "Address", ""), controller.GetAccessToken());
+                        captureAudioSession->SetWSMParams(wui::config::get_string("Connection", "Address", ""),
+                            controller.GetAccessToken(),
+                            device.addr + ":" + std::to_string(device.port));
                     }
                     captureAudioSession->Start(device.authorSSRC, device.deviceId, device.secureKey);
                 }
@@ -2036,7 +2040,9 @@ void MainFrame::ProcessControllerEvent()
                             }
                             else
                             {
-                                rvs->SetWSMParams(wui::config::get_string("Connection", "Address", ""), controller.GetAccessToken());
+                                rvs->SetWSMParams(wui::config::get_string("Connection", "Address", ""),
+                                    controller.GetAccessToken(),
+                                    renderer.addr + ":" + std::to_string(renderer.port));
                             }
                             rvs->SetMirrorVideo(wui::config::get_int("VideoRendererMirrors", renderer.name, -1) == 1);
                             rvs->SetDeviceNotifyCallback(std::bind(&MainFrame::ReceiveDeviceNotify, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4, std::placeholders::_5));
@@ -2085,7 +2091,9 @@ void MainFrame::ProcessControllerEvent()
                             }
                             else
                             {
-                                ras->SetWSMParams(wui::config::get_string("Connection", "Address", ""), controller.GetAccessToken());
+                                ras->SetWSMParams(wui::config::get_string("Connection", "Address", ""),
+                                    controller.GetAccessToken(),
+                                    renderer.addr + ":" + std::to_string(renderer.port));
                             }
                             ras->SetDeviceNotifyCallback(std::bind(&MainFrame::ReceiveDeviceNotify, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4, std::placeholders::_5));
                             ras->SetRecorder(&recorder);

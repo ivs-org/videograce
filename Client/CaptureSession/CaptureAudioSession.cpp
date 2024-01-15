@@ -33,7 +33,7 @@ CaptureAudioSession::CaptureAudioSession(Common::TimeMeter &timeMeter_)
 	ssrc(0), deviceId(0),
 	name(),
 	encoderType(Audio::CodecType::Opus),
-	wsAddr(), accessToken(),
+	wsAddr(), accessToken(), wsDestAddr(),
 	sysLog(spdlog::get("System")), errLog(spdlog::get("Error"))
 {
     aec.SetReceiver(&silentSplitter);
@@ -149,14 +149,16 @@ void CaptureAudioSession::SetRTPParams(std::string_view addr, uint16_t port)
 {
 	wsAddr.clear();
 	accessToken.clear();
+	wsDestAddr.clear();
 
 	rtpSocket.SetDefaultAddress(addr, port);
 }
 
-void CaptureAudioSession::SetWSMParams(std::string_view addr, std::string_view accessToken_)
+void CaptureAudioSession::SetWSMParams(std::string_view addr, std::string_view accessToken_, std::string_view wsDestAddr_)
 {
 	wsAddr = addr;
 	accessToken = accessToken_;
+	wsDestAddr = wsDestAddr_;
 }
 
 std::string_view CaptureAudioSession::GetName() const
@@ -205,7 +207,7 @@ void CaptureAudioSession::Start(uint32_t ssrc_, uint32_t deviceId_, std::string_
 	else
 	{
 		encryptor.SetReceiver(&wsmSocket);
-		wsmSocket.Start(wsAddr, accessToken);
+		wsmSocket.Start(wsAddr, accessToken, wsDestAddr);
 	}
 	
 	if (!secureKey.empty())

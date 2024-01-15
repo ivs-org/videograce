@@ -54,7 +54,7 @@ namespace RendererSession
 		virtual bool GetMute();
 		virtual void SetDecoderType(Audio::CodecType dt);
 		virtual void SetRTPParams(std::string_view recvFromAddr, uint16_t recvFromRTPPort);
-		virtual void SetWSMParams(std::string_view addr, std::string_view acessToken);
+		virtual void SetWSMParams(std::string_view addr, std::string_view acessToken, std::string_view wsDestAddr);
 		virtual void SetClientId(int64_t clientId);
 		virtual int64_t GetClientId() const;
 		virtual uint32_t GetDeviceId() const;
@@ -99,7 +99,7 @@ namespace RendererSession
 		uint16_t pingCnt;
 		uint32_t lastPacketLoss;
 
-		std::string wsAddr, accessToken;
+		std::string wsAddr, accessToken, wsDestAddr;
 		
 		std::shared_ptr<spdlog::logger> sysLog, errLog;
 

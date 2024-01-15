@@ -43,7 +43,7 @@ namespace RendererSession
 		virtual void SetDecoderType(Audio::CodecType dt) = 0;
 
 		virtual void SetRTPParams(std::string_view recvFromAddr, uint16_t recvFromRTPPort) = 0;
-		virtual void SetWSMParams(std::string_view addr, std::string_view acessToken) = 0;
+		virtual void SetWSMParams(std::string_view addr, std::string_view acessToken, std::string_view wsDestAddr) = 0;
 
 		virtual void SetClientId(int64_t clientId) = 0;
 		virtual int64_t GetClientId() const = 0;

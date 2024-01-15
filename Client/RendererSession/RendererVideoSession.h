@@ -68,7 +68,7 @@ public:
 	virtual bool GetVideoMirrored() const;
 	virtual void SetDecoderType(Video::CodecType dt);
 	virtual void SetRTPParams(std::string_view recvFromAddr, uint16_t recvFromRTPPort);
-	virtual void SetWSMParams(std::string_view addr, std::string_view accessToken);
+	virtual void SetWSMParams(std::string_view addr, std::string_view accessToken, std::string_view wsDestAddr);
 	virtual void SetRecorder(Recorder::Recorder* recorder);
 	virtual void SetSpeak(bool speak);
 	virtual void SetOrder(uint32_t order);
@@ -135,7 +135,7 @@ private:
 
 	uint16_t pingCnt;
 
-	std::string wsAddr, accessToken;
+	std::string wsAddr, accessToken, wsDestAddr;
 
 	std::shared_ptr<spdlog::logger> sysLog, errLog;
 	

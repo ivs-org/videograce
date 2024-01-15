@@ -36,6 +36,7 @@ RendererVideoSession::RendererVideoSession(Common::TimeMeter &timeMeter)
 	order(0),
 	resolution(Video::rVGA),
 	pingCnt(0),
+	wsAddr(), accessToken(), wsDestAddr(),
 	sysLog(spdlog::get("System")), errLog(spdlog::get("Error"))
 {
 	rtpSocket.SetReceiver(&decryptor, nullptr);
@@ -156,16 +157,18 @@ void RendererVideoSession::SetRTPParams(std::string_view recvFromAddr, uint16_t 
 {
 	wsAddr.clear();
 	accessToken.clear();
+	wsDestAddr.clear();
 
 	rtpSocket.SetDefaultAddress(recvFromAddr, recvFromRTPPort);
 
 	outSocket = &rtpSocket;
 }
 
-void RendererVideoSession::SetWSMParams(std::string_view addr, std::string_view accessToken_)
+void RendererVideoSession::SetWSMParams(std::string_view addr, std::string_view accessToken_, std::string_view wsDestAddr_)
 {
 	wsAddr = addr;
 	accessToken = accessToken_;
+	wsDestAddr = wsDestAddr_;
 
 	outSocket = &wsmSocket;
 }
@@ -307,7 +310,7 @@ void RendererVideoSession::StartRemote()
 	}
 	else
 	{
-		wsmSocket.Start(wsAddr, accessToken);
+		wsmSocket.Start(wsAddr, accessToken, wsDestAddr);
 	}
 
 	jitterBuffer.Start(JB::Mode::video);

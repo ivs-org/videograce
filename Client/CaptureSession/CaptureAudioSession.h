@@ -56,7 +56,7 @@ namespace CaptureSession
 		virtual bool GetMute() const;
 		virtual void SetEncoderType(Audio::CodecType et);
 		virtual void SetRTPParams(std::string_view addr, uint16_t rtpPort);
-		virtual void SetWSMParams(std::string_view addr, std::string_view accessToken);
+		virtual void SetWSMParams(std::string_view addr, std::string_view accessToken, std::string_view wsDestAddr);
 		virtual std::string_view GetName() const;
 		virtual uint32_t GetDeviceId() const;
 		virtual int32_t GetBitrate() const;
@@ -88,7 +88,7 @@ namespace CaptureSession
 		std::string name;
 		Audio::CodecType encoderType;
 
-		std::string wsAddr, accessToken;
+		std::string wsAddr, accessToken, wsDestAddr;
 		
 		std::shared_ptr<spdlog::logger> sysLog, errLog;
 

@@ -34,6 +34,7 @@ CaptureVideoSession::CaptureVideoSession(Common::TimeMeter &timeMeter_)
 	resolution(Video::rUndefined),
 	colorSpace(Video::ColorSpace::Unsupported),
 	rcActionsEnabled(false),
+	wsAddr(), accessToken(), wsDestAddr(),
 	sysLog(spdlog::get("System")), errLog(spdlog::get("Error"))
 {
 	encoder.SetReceiver(&localReceiverSplitter);
@@ -144,14 +145,16 @@ void CaptureVideoSession::SetRTPParams(std::string_view addr, uint16_t port)
 {
 	wsAddr.clear();
 	accessToken.clear();
+	wsDestAddr.clear();
 
 	rtpSocket.SetDefaultAddress(addr, port);
 }
 
-void CaptureVideoSession::SetWSMParams(std::string_view addr, std::string_view accessToken_)
+void CaptureVideoSession::SetWSMParams(std::string_view addr, std::string_view accessToken_, std::string_view wsDestAddr_)
 {
 	wsAddr = addr;
 	accessToken = accessToken_;
+	wsDestAddr = wsDestAddr_;
 }
 
 std::string_view CaptureVideoSession::GetName() const
@@ -223,7 +226,7 @@ void CaptureVideoSession::Start(uint32_t ssrc_, Video::ColorSpace colorSpace_, u
 	else
 	{
 		encryptor.SetReceiver(&wsmSocket);
-		wsmSocket.Start(wsAddr, accessToken);
+		wsmSocket.Start(wsAddr, accessToken, wsDestAddr);
 	}
 
 	vp8RTPSplitter.Reset();

@@ -28,10 +28,11 @@ struct Command
 {
 	MediaType media_type;
 	uint32_t ssrc;
+	std::string addr; /// Destination UDP address:port needed to transmit on server side
 	std::string data; /// RTP/RTCP packet with header on base 64
 		
 	Command();
-	Command(MediaType media_type, uint32_t ssrc, std::string_view data);
+	Command(MediaType media_type, uint32_t ssrc, std::string_view addr, std::string_view data);
 
 	~Command();
 	

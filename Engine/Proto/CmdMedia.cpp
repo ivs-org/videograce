@@ -21,17 +21,19 @@ namespace MEDIA
 
 static const std::string SSRC = "ssrc";
 static const std::string MEDIA_TYPE = "mt";
+static const std::string ADDR = "a";
 static const std::string DATA = "d";
 
 Command::Command()
     : ssrc(0),
     media_type(MediaType::Undefined),
+    addr(),
     data()
 {
 }
 
-Command::Command(MediaType media_type_, uint32_t ssrc_, std::string_view data_)
-    : media_type(media_type_), ssrc(ssrc_), data(data_)
+Command::Command(MediaType media_type_, uint32_t ssrc_, std::string_view addr_, std::string_view data_)
+    : media_type(media_type_), ssrc(ssrc_), addr(addr_), data(data_)
 {
 }
 
@@ -48,6 +50,7 @@ bool Command::Parse(std::string_view message)
 
         if (obj.count(SSRC) != 0) ssrc = obj.at(SSRC).get<uint32_t>();
         if (obj.count(MEDIA_TYPE) != 0) media_type = static_cast<MediaType>(obj.at(MEDIA_TYPE).get<uint32_t>());
+        if (obj.count(ADDR) != 0) addr = obj.at(ADDR).get<std::string>();
         if (obj.count(DATA) != 0) data = obj.at(DATA).get<std::string>();
 
         return true;
@@ -65,6 +68,7 @@ std::string Command::Serialize()
     return "{" + quot(NAME) + ":{" +
         quot(DATA) + ":" + quot(data) +
         (ssrc != 0 ? "," + quot(SSRC) + ":" + std::to_string(ssrc) : "") +
+        (!addr.empty() ? "," + quot(ADDR) + ":" + quot(addr) : "") +
         (media_type != MediaType::Undefined ? "," + quot(MEDIA_TYPE) + ":" + std::to_string(static_cast<int>(media_type)) : "") + "}}";
 }
 

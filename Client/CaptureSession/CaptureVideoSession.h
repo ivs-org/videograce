@@ -47,7 +47,7 @@ namespace CaptureSession
 		virtual bool IsRCActionsEnabled() const;
 		virtual void ForceKeyFrame();
 		virtual void SetRTPParams(std::string_view addr, uint16_t rtpPort);
-		virtual void SetWSMParams(std::string_view addr, std::string_view accessToken);
+		virtual void SetWSMParams(std::string_view addr, std::string_view accessToken, std::string_view wsDestAddr);
 		virtual std::string_view GetName() const;
 		virtual uint32_t GetDeviceId();
 		virtual Proto::DeviceType GetDeviceType();
@@ -89,7 +89,7 @@ namespace CaptureSession
 
 		bool rcActionsEnabled;
 
-		std::string wsAddr, accessToken;
+		std::string wsAddr, accessToken, wsDestAddr;
 				
 		std::shared_ptr<spdlog::logger> sysLog, errLog;
 

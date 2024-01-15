@@ -37,6 +37,7 @@ RendererAudioSession::RendererAudioSession(Common::TimeMeter &timeMeter_, Audio:
 	secureKey(),
 	pingCnt(0),
 	lastPacketLoss(0),
+	wsAddr(), accessToken(), wsDestAddr(),
 	sysLog(spdlog::get("System")), errLog(spdlog::get("Error"))
 {
     recordSplitter.SetReceiver0(&audioMixer);
@@ -114,16 +115,18 @@ void RendererAudioSession::SetRTPParams(std::string_view recvFromAddr, uint16_t 
 {
 	wsAddr.clear();
 	accessToken.clear();
+	wsDestAddr.clear();
 
 	rtpSocket.SetDefaultAddress(recvFromAddr, recvFromRTPPort);
 
 	outSocket = &rtpSocket;
 }
 
-void RendererAudioSession::SetWSMParams(std::string_view addr, std::string_view accessToken_)
+void RendererAudioSession::SetWSMParams(std::string_view addr, std::string_view accessToken_, std::string_view wsDestAddr_)
 {
 	wsAddr = addr;
 	accessToken = accessToken_;
+	wsDestAddr = wsDestAddr_;
 
 	outSocket = &wsmSocket;
 }
@@ -225,7 +228,7 @@ void RendererAudioSession::Start(uint32_t receiverSSRC_, uint32_t authorSSRC_, u
 		}
 		else
 		{
-			wsmSocket.Start(wsAddr, accessToken);
+			wsmSocket.Start(wsAddr, accessToken, wsDestAddr);
 		}
 		jitterBuffer.Start(JB::Mode::sound);
 		if (!jitterBuffer.IsStarted())
