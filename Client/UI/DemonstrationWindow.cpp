@@ -132,6 +132,8 @@ int32_t DemonstrationWindow::NormMouseY(int32_t input) const
 
 void DemonstrationWindow::ReceiveEvents(const wui::event &ev)
 {
+    auto rcEnabled = !rcButton->turned();
+    
     switch (ev.type)
     {
         case wui::event_type::internal:
@@ -148,46 +150,52 @@ void DemonstrationWindow::ReceiveEvents(const wui::event &ev)
             }
         }
         case wui::event_type::mouse:
-            switch (ev.mouse_event_.type)
+            if (!rcEnabled)
             {
-                case wui::mouse_event_type::move:
-                    rvs.MouseMove        (NormMouseX(ev.mouse_event_.x), NormMouseY(ev.mouse_event_.y));
-                break;
-                case wui::mouse_event_type::left_down:
-                    rvs.MouseLeftDown    (NormMouseX(ev.mouse_event_.x), NormMouseY(ev.mouse_event_.y));
-                break;
-                case wui::mouse_event_type::left_up:
-                    rvs.MouseLeftUp      (NormMouseX(ev.mouse_event_.x), NormMouseY(ev.mouse_event_.y));
-                break;
-                case wui::mouse_event_type::center_down:
-                    rvs.MouseCenterDown  (NormMouseX(ev.mouse_event_.x), NormMouseY(ev.mouse_event_.y));
-                break;
-                case wui::mouse_event_type::center_up:
-                    rvs.MouseCenterUp    (NormMouseX(ev.mouse_event_.x), NormMouseY(ev.mouse_event_.y));
-                break;
-                case wui::mouse_event_type::right_down:
-                    rvs.MouseRightDown   (NormMouseX(ev.mouse_event_.x), NormMouseY(ev.mouse_event_.y));
-                break;
-                case wui::mouse_event_type::right_up:
-                    rvs.MouseRightUp     (NormMouseX(ev.mouse_event_.x), NormMouseY(ev.mouse_event_.y));
-                break;
-                case wui::mouse_event_type::left_double:
-                    rvs.MouseLeftDblClick(NormMouseX(ev.mouse_event_.x), NormMouseY(ev.mouse_event_.y));
-                break;
-                case wui::mouse_event_type::wheel:
-                    rvs.MouseWheel(ev.mouse_event_.wheel_delta);
-                break;
+                switch (ev.mouse_event_.type)
+                {
+                    case wui::mouse_event_type::move:
+                        rvs.MouseMove(NormMouseX(ev.mouse_event_.x), NormMouseY(ev.mouse_event_.y));
+                    break;
+                    case wui::mouse_event_type::left_down:
+                        rvs.MouseLeftDown(NormMouseX(ev.mouse_event_.x), NormMouseY(ev.mouse_event_.y));
+                    break;
+                    case wui::mouse_event_type::left_up:
+                        rvs.MouseLeftUp(NormMouseX(ev.mouse_event_.x), NormMouseY(ev.mouse_event_.y));
+                    break;
+                    case wui::mouse_event_type::center_down:
+                        rvs.MouseCenterDown(NormMouseX(ev.mouse_event_.x), NormMouseY(ev.mouse_event_.y));
+                    break;
+                    case wui::mouse_event_type::center_up:
+                        rvs.MouseCenterUp(NormMouseX(ev.mouse_event_.x), NormMouseY(ev.mouse_event_.y));
+                    break;
+                    case wui::mouse_event_type::right_down:
+                        rvs.MouseRightDown(NormMouseX(ev.mouse_event_.x), NormMouseY(ev.mouse_event_.y));
+                    break;
+                    case wui::mouse_event_type::right_up:
+                        rvs.MouseRightUp(NormMouseX(ev.mouse_event_.x), NormMouseY(ev.mouse_event_.y));
+                    break;
+                    case wui::mouse_event_type::left_double:
+                        rvs.MouseLeftDblClick(NormMouseX(ev.mouse_event_.x), NormMouseY(ev.mouse_event_.y));
+                    break;
+                    case wui::mouse_event_type::wheel:
+                        rvs.MouseWheel(ev.mouse_event_.wheel_delta);
+                    break;
+                }
             }
         break;
         case wui::event_type::keyboard:
-            switch (ev.keyboard_event_.type)
+            if (!rcEnabled)
             {
-                case wui::keyboard_event_type::down:
-                    rvs.KeyDown(ev.keyboard_event_.modifier, ev.keyboard_event_.key, ev.keyboard_event_.key_size);
-                break;
-                case wui::keyboard_event_type::up:
-                    rvs.KeyUp(ev.keyboard_event_.modifier, ev.keyboard_event_.key, ev.keyboard_event_.key_size);
-                break;
+                switch (ev.keyboard_event_.type)
+                {
+                    case wui::keyboard_event_type::down:
+                        rvs.KeyDown(ev.keyboard_event_.modifier, ev.keyboard_event_.key, ev.keyboard_event_.key_size);
+                    break;
+                    case wui::keyboard_event_type::up:
+                        rvs.KeyUp(ev.keyboard_event_.modifier, ev.keyboard_event_.key, ev.keyboard_event_.key_size);
+                    break;
+                }
             }
         break;
     }
