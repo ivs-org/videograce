@@ -79,6 +79,7 @@ namespace RendererSession
         JB::JB jitterBuffer;
 		Transport::RTPSocket rtpSocket;
 		Transport::WSMSocket wsmSocket;
+		Transport::ISocket* outSocket;
 		std::thread pinger;
 
 		bool runned, my, mute;

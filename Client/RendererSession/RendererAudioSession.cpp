@@ -25,6 +25,7 @@ RendererAudioSession::RendererAudioSession(Common::TimeMeter &timeMeter_, Audio:
 	jitterBuffer(decoder, timeMeter_),
 	rtpSocket(),
 	wsmSocket(),
+	outSocket(&rtpSocket),
 	pinger(),
 	runned(false), my(false), mute(false),
 	volume(100),
@@ -115,12 +116,16 @@ void RendererAudioSession::SetRTPParams(std::string_view recvFromAddr, uint16_t 
 	accessToken.clear();
 
 	rtpSocket.SetDefaultAddress(recvFromAddr, recvFromRTPPort);
+
+	outSocket = &rtpSocket;
 }
 
 void RendererAudioSession::SetWSMParams(std::string_view addr, std::string_view accessToken_)
 {
 	wsAddr = addr;
 	accessToken = accessToken_;
+
+	outSocket = &wsmSocket;
 }
 
 void RendererAudioSession::SetRecorder(Recorder::Recorder* recorder_)
@@ -325,7 +330,7 @@ void RendererAudioSession::EstablishConnection()
 			Transport::RTPPacket packet;
 			packet.rtpHeader.ssrc = receiverSSRC;
 
-			rtpSocket.Send(packet);
+			outSocket->Send(packet);
 
 			pingCnt = 0;
 		}

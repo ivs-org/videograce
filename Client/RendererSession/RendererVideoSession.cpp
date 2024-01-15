@@ -401,7 +401,7 @@ void RendererVideoSession::ForceKeyFrame(uint32_t lastRecvSeq)
 		fkfPacket.rtcps[0].r.app.messageType = Transport::RTCPPacket::amtForceKeyFrame;
 		*reinterpret_cast<uint32_t*>(fkfPacket.rtcps[0].r.app.payload) = htonl(lastRecvSeq);
 		
-		rtpSocket.Send(fkfPacket);
+		outSocket->Send(fkfPacket);
 
 		sysLog->trace("Video renderer (device id: {0:d}) send forcing key frame (seq: {1:d})", deviceId, lastRecvSeq);
 	}
@@ -420,7 +420,7 @@ void RendererVideoSession::EstablishConnection()
 			Transport::RTPPacket packet;
 			packet.rtpHeader.ssrc = receiverSSRC;
 
-			rtpSocket.Send(packet);
+			outSocket->Send(packet);
 
 			pingCnt = 0;
 		}
