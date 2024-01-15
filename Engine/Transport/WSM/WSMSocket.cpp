@@ -122,7 +122,7 @@ public:
                     destAddr,
                     Common::toBase64(std::string((const char*)sendBuf, serializedSize))).Serialize();
 
-                if (!webSocket.IsConnected())
+                if (webSocket.IsConnected())
                 {
                     webSocket.Send(cmd);
                 }
@@ -151,7 +151,7 @@ public:
                         destAddr,
                         Common::toBase64(std::string((const char*)sendBuf, serializedSize))).Serialize();
 
-                    if (!webSocket.IsConnected())
+                    if (webSocket.IsConnected())
                     {
                         webSocket.Send(cmd);
                     }
