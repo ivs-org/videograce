@@ -637,7 +637,7 @@ void Controller::OnWebSocket(Transport::WSMethod method, std::string_view messag
         break;
         case Transport::WSMethod::Message:
         {
-            sysLog->trace("Controller::WebSocket recv message: {0}", message);
+            //sysLog->trace("Controller::WebSocket recv message: {0}", message);
 
             auto commandType = Proto::GetCommandType(message);
             switch (commandType)
