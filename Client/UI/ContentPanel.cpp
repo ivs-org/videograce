@@ -909,7 +909,7 @@ void ContentPanel::ListScrollCallback(wui::scroll_state ss, int32_t)
             list->set_item_count(prevCount + loadedCount);
             list->select_item(loadedCount - 1);
 
-            SendReaded();
+            window->emit_event(static_cast<int32_t>(CPEvent::SendReaded), 0);
         }
     }
 }
