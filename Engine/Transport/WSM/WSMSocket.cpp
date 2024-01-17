@@ -43,8 +43,6 @@ class WSMSocketImpl
 
     ISocket *rtpReceiver, *rtcpReceiver;
 
-    std::queue<std::string> offlineQueue;
-    
     std::shared_ptr<spdlog::logger> sysLog, errLog;
 
 public:
@@ -53,7 +51,6 @@ public:
         connectionId(-1),
         webSocket(std::bind(&WSMSocketImpl::OnWebSocket, this, std::placeholders::_1, std::placeholders::_2)),
         rtpReceiver(nullptr), rtcpReceiver(nullptr),
-        offlineQueue(),
         sysLog(spdlog::get("System")), errLog(spdlog::get("Error"))
     {
     }
@@ -126,10 +123,6 @@ public:
                 {
                     webSocket.Send(cmd);
                 }
-                else
-                {
-                    offlineQueue.push(cmd);
-                }
 
                 if (WSMSocket::WITH_TRACES)
                 {
@@ -154,10 +147,6 @@ public:
                     if (webSocket.IsConnected())
                     {
                         webSocket.Send(cmd);
-                    }
-                    else
-                    {
-                        offlineQueue.push(cmd);
                     }
 
                     if (WSMSocket::WITH_TRACES)
@@ -202,12 +191,6 @@ private:
 					    if (cmd.result == Proto::CONNECT_RESPONSE::Result::OK)
 					    {
 						    sysLog->trace("WSMSocket :: Logon success, connection id: {0}", cmd.connection_id);
-
-                            while (!offlineQueue.empty())
-                            {
-                                webSocket.Send(offlineQueue.front());
-                                offlineQueue.pop();
-                            }
 					    }
                         else
                         {
