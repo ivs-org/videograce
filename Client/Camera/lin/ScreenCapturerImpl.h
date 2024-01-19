@@ -50,7 +50,7 @@ private:
     Transport::ISocket &receiver;
 
     uint32_t frameRate;
-	std::unique_ptr<uint8_t> buffer0, buffer1, buffer2;
+	std::unique_ptr<uint8_t[]> buffer0, buffer1, buffer2;
 
 	Display *dis;
 	Screen *scr;

@@ -8,6 +8,9 @@
 #include <cstdint>
 #include <cmath>
 
+#include <ippcc.h>
+#include <ippi.h>
+
 #include <Common/Common.h>
 
 #include <Transport/RTP/RTPPacket.h>

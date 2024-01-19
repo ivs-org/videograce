@@ -97,6 +97,7 @@ namespace Recorder
 		Audio::AudioMixer audioMixer;
 
 		std::unique_ptr<uint8_t[]> fakeVideoSource;
+		std::unique_ptr<uint8_t[]> buffer0, buffer1, buffer2;
 		Video::Encoder fakeVideoEncoder;
 
 		std::shared_ptr<spdlog::logger> sysLog, errLog;
