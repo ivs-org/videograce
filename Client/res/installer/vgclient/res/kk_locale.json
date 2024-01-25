@@ -79,11 +79,11 @@
       "udp_sockets_unavailable": "Келесі UDP сервер розеткаларына кіру мүмкін емес:",
       "tcp_socket_unavailable": "Сервердің TCP медиа ұясына кіру мүмкіндігі жоқ:",
       "sockets_access_required": "Бейнебайланыс жұмысы мүмкін емес. Көрсетілген розеткаларға қол жеткізуді қамтамасыз ету қажет",
-      "checking_connectivity": "Қол жетімділікті тексеру UDP және TCP av порттары",
+      "checking_connectivity": "Қол жетімділікті тексеру UDP AV порттары",
       "connectivity_ok": "Барлық av порттарына кіру тексерілді,\nбәрі жақсы жұмыс істейді",
       "connectivity_tcp_only": "UDP порттарына кіру мүмкін емес,\nAV трафик TCP арқылы беріледі",
-      "connecting": "Қосылу",
-      "connected": "Байланыс орнатылды",
+      "connecting": "Желі жылдамдығын анықтау",
+      "connected": "Тарату арнасы орнатылды",
       "in_speed_testing": "Кіріс жылдамдығын анықтау",
       "out_speed_testing": "Шығыс жылдамдығын анықтау",
       "kbps": "kbps"
@@ -253,7 +253,7 @@
       "license_commercial": "Коммерциялық лицензия",
       "license_education": "Білім беру лицензиясы",
       "vendor_url": "videograce.com",
-      "copyright": "Copyright © 2014 - 2023, Infinity Video Soft"
+      "copyright": "Copyright © 2014 - 2024, Infinity Video Soft"
     },
     {
       "type": "message",
