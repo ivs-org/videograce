@@ -63,19 +63,16 @@ void MemberList::Run(std::weak_ptr<wui::window> parentWindow__)
     auto parentWindow = parentWindow_.lock();
     if (parentWindow)
     {
-        auto parentPos = parentWindow->position();
-        auto width = parentPos.width(), height = parentPos.height();
-
-        parentWindow->add_control(list, { 10, 45, width - 10, height - 10 - 35 });
+        parentWindow->add_control(list, { 0 });
         
-        parentWindow->add_control(addButton, { 10, height - 5 - 36, 10 + 36, height - 5 });
-        parentWindow->add_control(kickButton, { 20 + 36, height - 5 - 28, 20 + 36 + 28, height - 5 });
-        parentWindow->add_control(separator0, { 20 + 36 + 28 + 2, height - 5 - 28, 20 + 36 + 28 + 8, height - 5 });
-        parentWindow->add_control(toTopButton, { 30 + 36 + 28, height - 5 - 28, 30 + 36 + 28 * 2, height - 5 });
-        parentWindow->add_control(muteAllButton, { 40 + 36 + 28 * 2, height - 5 - 28, 40 + 36 + 28 * 3, height - 5 });
-        parentWindow->add_control(speakButton, { 50 + 36 + 28 * 3, height - 5 - 28, 50 + 36 + 28 * 4, height - 5 });
-        parentWindow->add_control(separator1, { 50 + 36 + 28 * 4 + 2, height - 5 - 28,  50 + 36 + 28 * 4 + 8, height - 5 });
-        parentWindow->add_control(devicesButton, { 60 + 36 + 28 * 4, height - 5 - 28, 60 + 36 + 28 * 5, height - 5 });
+        parentWindow->add_control(addButton, { 0 });
+        parentWindow->add_control(kickButton, { 0 });
+        parentWindow->add_control(separator0, { 0 });
+        parentWindow->add_control(toTopButton, { 0 });
+        parentWindow->add_control(muteAllButton, { 0 });
+        parentWindow->add_control(speakButton, { 0 });
+        parentWindow->add_control(separator1, { 0 });
+        parentWindow->add_control(devicesButton, { 0 });
 
         parentWindow->add_control(devicesMenu, { 0 });
     }

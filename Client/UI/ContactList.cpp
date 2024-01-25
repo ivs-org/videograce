@@ -83,16 +83,13 @@ void ContactList::Run(std::weak_ptr<wui::window> parentWindow__)
     auto parentWindow = parentWindow_.lock();
     if (parentWindow)
     {
-        auto parentPos = parentWindow->position();
-        auto width = parentPos.width(), height = parentPos.height();
-
-        parentWindow->add_control(searchInput, { 10, 45, width - 10, 70 });
-        parentWindow->add_control(list, { 10, 80, width - 10, height - 10 - 35 });
-        parentWindow->add_control(popupMenu, { 0 });
-        parentWindow->add_control(addButton, { 10, height - 5 - 36, 10 + 36, height - 5 });
-        parentWindow->add_control(deleteButton, { 20 + 36, height - 5 - 28, 20 + 36 + 28, height - 5 });
-        parentWindow->add_control(separator, { 20 + 36 + 28 + 2, height - 5 - 28, 20 + 36 + 28 + 8, height - 5 });
-        parentWindow->add_control(editButton, { 30 + 36 + 28 , height - 5 - 28, 30 + 36 + 28 * 2, height - 5 });
+        parentWindow->add_control(searchInput,  { 0 });
+        parentWindow->add_control(list,         { 0 });
+        parentWindow->add_control(popupMenu,    { 0 });
+        parentWindow->add_control(addButton,    { 0 });
+        parentWindow->add_control(deleteButton, { 0 });
+        parentWindow->add_control(separator,    { 0 });
+        parentWindow->add_control(editButton,   { 0 });
     }
 
     searchInput->update_theme();
@@ -121,12 +118,12 @@ void ContactList::End()
 
 void ContactList::UpdateSize(int32_t width, int32_t height)
 {
-    searchInput->set_position({ 10, 45, width - 10, 70 }, false);
-    list->set_position({ 10, 80, width - 10, height - 10 - 35 }, false);
-    addButton->set_position({ 10, height - 5 - 36, 10 + 36, height - 5 }, false);
-    deleteButton->set_position({ 20 + 36, height - 5 - 28, 20 + 36 + 28, height - 5 }, false);
-    separator->set_position({ 20 + 36 + 28 + 2, height - 5 - 28, 20 + 36 + 28 + 8, height - 5 }, false);
-    editButton->set_position({ 30 + 36 + 28, height - 5 - 28, 30 + 36 + 28 * 2, height - 5 }, false);
+    searchInput->set_position( { 10,               45, width - 10,                    70 },               false);
+    list->set_position(        { 10,               80, width - 10,                    height - 10 - 35 }, false);
+    addButton->set_position(   { 10,               height - 5 - 36, 10 + 36,          height - 5 },       false);
+    deleteButton->set_position({ 20 + 36,          height - 5 - 28, 20 + 36 + 28,     height - 5 },       false);
+    separator->set_position(   { 20 + 36 + 28 + 2, height - 5 - 28, 20 + 36 + 28 + 8, height - 5 },       false);
+    editButton->set_position(  { 30 + 36 + 28,     height - 5 - 28, 30 + 36 + 28 * 2, height - 5 },       false);
 }
 
 ContactList::Selection ContactList::GetSelection()

@@ -124,7 +124,7 @@ void ContentPanel::Run()
 
     window->init("",
         { 0 },
-        pinned ? wui::flags_map<wui::window_style>(2, wui::window_style::pinned, wui::window_style::border_left) : wui::window_style::pinned,
+        wui::window_style::pinned,
         [this]() { 
             if (!window->context().valid() || !pinned)
             {
@@ -256,8 +256,6 @@ void ContentPanel::Pin()
     }
 
     pinned = true;
-
-    window->set_style(wui::flags_map<wui::window_style>(2, wui::window_style::pinned, wui::window_style::border_left));
 
     auto parentWindow_ = mainFrame.lock();
     if (parentWindow_)
@@ -643,15 +641,17 @@ void ContentPanel::ReceiveEvents(const wui::event &ev)
                     splitter->set_position({ windowPos.left - 5, windowPos.top, windowPos.left, windowPos.bottom }, false);
                     splitter->set_margins(wui::config::get_int("ListPanel", "Width", 290) + (wui::config::get_int("RenderersBox", "Showed", 0) != 0 ? 200 : 0), windowPos.right - 250);
 
-                    titlePanel->set_position({ 10, 45, ev.internal_event_.x - 10, 70 }, false);
-                    title->set_position({ 15, 50, ev.internal_event_.x - 5, 65 }, false);
-                    list->set_position({ 10, 80, ev.internal_event_.x - 10, ev.internal_event_.y - 20 - 25 - (replyMessage.guid.empty() ? 0 : 40) }, false);
-                    input->set_position({ 10, ev.internal_event_.y - 10 - 25, ev.internal_event_.x - 10 - 25 - 10, ev.internal_event_.y - 10 }, false);
+                    auto controlsLeft = pinned ? 2 : 10;
+
+                    titlePanel->set_position({ controlsLeft, 45, ev.internal_event_.x - 10, 70 }, false);
+                    title->set_position({ controlsLeft + 5, 50, ev.internal_event_.x - 5, 65 }, false);
+                    list->set_position({ controlsLeft, 80, ev.internal_event_.x - 10, ev.internal_event_.y - 20 - 25 - (replyMessage.guid.empty() ? 0 : 40) }, false);
+                    input->set_position({ controlsLeft, ev.internal_event_.y - 10 - 25, ev.internal_event_.x - 10 - 25 - 10, ev.internal_event_.y - 10 }, false);
                     sendButton->set_position({ ev.internal_event_.x - 10 - 25, ev.internal_event_.y - 10 - 25, ev.internal_event_.x - 10, ev.internal_event_.y - 10 }, false);
                     
-                    replyImg->set_position({ 10, ev.internal_event_.y - 10 - 25 - 40, 10 + 25, ev.internal_event_.y - 10 - 40 }, false);
-                    replyAuthor->set_position({ 10 + 35, ev.internal_event_.y - 15 - 25 - 40, ev.internal_event_.x - 10 - 35, ev.internal_event_.y - 15 - 25 - 40 + 15 }, false);
-                    replyText->set_position({ 10 + 35, ev.internal_event_.y - 15 - 25 - 40 + 20, ev.internal_event_.x - 10 - 35, ev.internal_event_.y - 15 - 25 - 40 + 20 + 15 }, false);
+                    replyImg->set_position({ controlsLeft, ev.internal_event_.y - 10 - 25 - 40, 10 + 25, ev.internal_event_.y - 10 - 40 }, false);
+                    replyAuthor->set_position({ controlsLeft + 35, ev.internal_event_.y - 15 - 25 - 40, ev.internal_event_.x - 10 - 35, ev.internal_event_.y - 15 - 25 - 40 + 15 }, false);
+                    replyText->set_position({ controlsLeft + 35, ev.internal_event_.y - 15 - 25 - 40 + 20, ev.internal_event_.x - 10 - 35, ev.internal_event_.y - 15 - 25 - 40 + 20 + 15 }, false);
                     replyCloseButton->set_position({ ev.internal_event_.x - 10 - 24, ev.internal_event_.y - 10 - 24 - 40, ev.internal_event_.x - 10, ev.internal_event_.y - 10 - 40 }, false);
 
                     if (prevWidth != list->position().width())
@@ -820,7 +820,7 @@ void ContentPanel::DrawListItem(wui::graphic &gr, int32_t nItem, const wui::rect
     auto post = std::find(posts.begin(), posts.end(), nItem);
     if (post != posts.end())
     {
-        wui::rect messageRect = { my ? itemRect.width() - post->size.width() - 20 : 10, 
+        wui::rect messageRect = { my ? itemRect.width() - post->size.width() - 30 : 10, 
             itemRect.top,
             my ? itemRect.width() - 10 : post->size.width() + 40,
             itemRect.bottom };

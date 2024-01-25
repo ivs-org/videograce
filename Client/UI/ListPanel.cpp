@@ -71,7 +71,7 @@ void ListPanel::Run()
 
     window->init("",
         { 0 },
-        pinned ? wui::flags_map<wui::window_style>(2, wui::window_style::pinned, wui::window_style::border_right) : wui::window_style::pinned,
+        wui::window_style::pinned,
         [this]() { 
             if (!window->context().valid() || !pinned)
             {
@@ -143,8 +143,6 @@ void ListPanel::Pin()
 
     pinned = true;
 
-    window->set_style(wui::flags_map<wui::window_style>(2, wui::window_style::pinned, wui::window_style::border_right));
-
     auto parentWindow_ = mainFrame.lock();
     if (parentWindow_)
     {
@@ -195,6 +193,10 @@ void ListPanel::ShowContacts()
 
     memberList.End();
     contactList.Run(window);
+
+    auto controlsRight = pinned ? 8 : 0;
+    auto windowPos = window->position();
+    contactList.UpdateSize(windowPos.width() + controlsRight, windowPos.height());
 }
 
 void ListPanel::ShowMembers()
@@ -211,6 +213,10 @@ void ListPanel::ShowMembers()
 
     memberList.Run(window);
     contactList.End();
+
+    auto controlsRight = pinned ? 8 : 0;
+    auto windowPos = window->position();
+    memberList.UpdateSize(windowPos.width() + controlsRight, windowPos.height());
 }
 
 void ListPanel::ActivateMembers()
@@ -266,8 +272,10 @@ void ListPanel::ReceiveEvents(const wui::event &ev)
                         splitter->set_margins(290, mainFrame_->position().width() - (wui::config::get_int("RenderersBox", "Showed", 0) != 0 ? 200 : 0) - wui::config::get_int("ContentPanel", "Width", 290));
                     }
 
-                    contactList.UpdateSize(ev.internal_event_.x, ev.internal_event_.y);
-                    memberList.UpdateSize(ev.internal_event_.x, ev.internal_event_.y);
+                    auto controlsRight = pinned ? 8 : 0;
+
+                    contactList.UpdateSize(ev.internal_event_.x + controlsRight, ev.internal_event_.y);
+                    memberList.UpdateSize(ev.internal_event_.x + controlsRight, ev.internal_event_.y);
                 }
                 break;
             }
