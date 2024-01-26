@@ -357,9 +357,10 @@ void Recorder::Send(const Transport::IPacket &packet_, const Transport::Address 
 
 			std::lock_guard<std::recursive_mutex> lock(writerMutex);
 
-			if (packet.rtpHeader.ssrc != currentVideoChannel.ssrc)
+			if (packet.rtpHeader.ssrc != currentVideoChannel.ssrc) // Drop not current video
 			{
-				return sysLog->debug("Recorder::Send packet.rtpHeader.ssrc({0}) != currentVideoChannel->ssrc({1})", packet.rtpHeader.ssrc, currentVideoChannel.ssrc);
+				//sysLog->debug("Recorder::Send packet.rtpHeader.ssrc({0}) != currentVideoChannel->ssrc({1})", packet.rtpHeader.ssrc, currentVideoChannel.ssrc);
+				return;
 			}
 
 			auto isKey = IsKeyFrame(packet.payload);

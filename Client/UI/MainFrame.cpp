@@ -2001,11 +2001,6 @@ void MainFrame::ProcessControllerEvent()
                     {
                         const auto &renderer = e.deviceValues;
 
-                        if (renderer.type == Proto::DeviceType::Demonstration && renderer.mySource)
-                        {
-                            return; /// not show our screen capture
-                        }
-
                         /*if (cpuMeter.GetAVGUsage() > 80)
                         {
                             return messageBox->show(wui::locale("message", "cpu_too_many_loading") + renderer.name + " " + wui::locale("message", "not_turned_on"),
@@ -2058,8 +2053,7 @@ void MainFrame::ProcessControllerEvent()
                                 {
                                     cvs->SetLocalReceiver(rvs->GetDirectReceiver());
                                     rvs->SetLocalCVS(cvs);
-                                    if (renderer.type == Proto::DeviceType::Camera &&
-                                        (wui::config::get_int("VideoRendererMirrors", renderer.name, -1) == -1 || wui::config::get_int("VideoRendererMirrors", renderer.name, 1) != 0))
+                                    if (renderer.type == Proto::DeviceType::Camera)
                                     {
                                         rvs->SetMirrorVideo(true);
                                     }

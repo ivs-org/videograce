@@ -92,7 +92,8 @@ void RenderersBox::Update()
 
         for (auto &rvs : sourceRenderers)
         {
-            if (rvs->GetDeviceType() != Proto::DeviceType::Demonstration)
+            if (rvs->GetDeviceType() != Proto::DeviceType::Demonstration ||
+                (rvs->GetDeviceType() == Proto::DeviceType::Demonstration && rvs->GetMy()))
             {
                 showedRenderers.emplace_back(rvs);
             }
@@ -102,7 +103,7 @@ void RenderersBox::Update()
                 auto dw = demonstrationWindows.find(deviceId);
                 if (dw == demonstrationWindows.end())
                 {
-                    demonstrationWindows[deviceId] = std::shared_ptr<DemonstrationWindow>(new DemonstrationWindow(*rvs, controller, screenSize));
+                    demonstrationWindows[deviceId] = std::make_shared<DemonstrationWindow>(*rvs, controller, screenSize);
                 }
             }
         }
