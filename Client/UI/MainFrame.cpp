@@ -1681,7 +1681,7 @@ void MainFrame::ProcessControllerEvent()
 
                 if (wui::config::get_int("Record", "Enabled", 0) != 0 && IsRecordAllowed())
                 {
-                    recorder.Start(GetRecordName().c_str(), wui::config::get_int("Record", "MP3Mode", 0) != 0);
+                    recorder.Start(GetRecordName(), wui::config::get_int("Record", "MP3Mode", 0) != 0);
                 }
 
                 timeMeter.Reset();

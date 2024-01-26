@@ -34,7 +34,7 @@ Recorder::Recorder()
 	videosRWLock(), videos(),
 	fakeVideoChannel{ 0, 0, -1, Video::GetResolution(Video::ResolutionValues(1280, 720)), this },
 	hasKeyFrame(false),
-	currentVideoChannel(&fakeVideoChannel),
+	currentVideoChannel(fakeVideoChannel),
 	audioEncoder(), audioMixer(),
 	fakeVideoSource(new uint8_t[static_cast<size_t>(1280 * 720 * 1.5)]),
 	fakeVideoEncoder(),
@@ -52,7 +52,7 @@ Recorder::~Recorder()
 	Stop();
 }
 
-void Recorder::Start(const char *name, bool mp3Mode_)
+void Recorder::Start(std::string_view name, bool mp3Mode_)
 {
 	if (!runned)
 	{
@@ -82,7 +82,7 @@ void Recorder::Start(const char *name, bool mp3Mode_)
 		if (writer == nullptr)
 		{
 			writer = std::unique_ptr<mkvmuxer::MkvWriter>(new mkvmuxer::MkvWriter());
-			ok = writer->Open(name);
+			ok = writer->Open(name.data());
 			if (!ok)
 			{
 				return errLog->error("Recorder start error opening file {0}", name);
@@ -113,11 +113,11 @@ void Recorder::Start(const char *name, bool mp3Mode_)
 		info->set_writing_app(SYSTEM_NAME " Client");
 
 		// Creating video channel
-		auto rv = Video::GetValues(currentVideoChannel->resolution);
+		auto rv = Video::GetValues(currentVideoChannel.resolution);
 		vidTrack = muxerSegment->AddVideoTrack(rv.width, rv.height, 0);
 		if (!vidTrack)
 		{
-			return errLog->error("Recorder start error muxerSegment->AddVideoTrack", name);
+			return errLog->error("Recorder start error muxerSegment->AddVideoTrack :: (name: {0})", name);
 		}
 
 		mkvmuxer::VideoTrack* const video =
@@ -126,7 +126,7 @@ void Recorder::Start(const char *name, bool mp3Mode_)
 
 		if (!video)
 		{
-			return errLog->error("Recorder start error muxerSegment->GetTrackByNumber(vidTrack)", name);
+			return errLog->error("Recorder start error muxerSegment->GetTrackByNumber(vidTrack: {0}, name: {1})", vidTrack, name);
 		}
 		
 		video->set_frame_rate(25); /// 40 ms - 25 frames per second
@@ -206,14 +206,20 @@ void Recorder::AddVideo(uint32_t ssrc, int64_t clientId, int32_t priority, Video
 
 	if (videos.find(ssrc) == videos.end())
 	{
-		videos.insert(std::pair<uint32_t, VideoChannel>(ssrc, VideoChannel{ ssrc, clientId, priority, resolution, packetLossCallback }));
+		auto newChannel = VideoChannel{ ssrc, clientId, priority, resolution, packetLossCallback };
+		videos.insert(std::pair<uint32_t, VideoChannel>(ssrc, newChannel));
+
+		sysLog->info("Recorder::AddVideo :: (ssrc: {0}, client_id: {1}, priority: {2}, resolution: {3})", ssrc, clientId, priority, (int)resolution);
 
 		std::lock_guard<std::recursive_mutex> lock(writerMutex);
-		if (currentVideoChannel->clientId == clientId &&
-			currentVideoChannel->priority < priority)
+		if ((currentVideoChannel.clientId == clientId &&
+			currentVideoChannel.priority < priority) ||
+			currentVideoChannel.ssrc == 0)
 		{
-			currentVideoChannel = &videos.find(ssrc)->second;
+			currentVideoChannel = newChannel;
 			hasKeyFrame = false;
+
+			sysLog->trace("Recorder::AddVideo :: Current video channel :: (ssrc: {0}, client_id: {1}, priority: {2}, resolution: {3})", ssrc, clientId, priority, (int)resolution);
 		}
 	}
 }
@@ -233,9 +239,9 @@ void Recorder::ChangeVideoResolution(uint32_t ssrc, Video::Resolution resolution
 		it->second.resolution = resolution;
 
 		std::lock_guard<std::recursive_mutex> lock(writerMutex);
-		if (&it->second == currentVideoChannel)
+		if (it->second.ssrc == currentVideoChannel.ssrc)
 		{
-			currentVideoChannel->resolution = resolution;
+			currentVideoChannel.resolution = resolution;
 		}
 	}
 }
@@ -256,11 +262,13 @@ void Recorder::DeleteVideo(uint32_t ssrc)
 		if (it != videos.end())
 		{
 			std::lock_guard<std::recursive_mutex> lock(writerMutex);
-			if (&it->second == currentVideoChannel)
+			if (it->second.ssrc == currentVideoChannel.ssrc)
 			{
-				clientId = currentVideoChannel->clientId;
+				clientId = currentVideoChannel.clientId;
 			}
 			videos.erase(it);
+
+			sysLog->info("Recorder::DeleteVideo :: (ssrc: {0}, clientId: {1})", ssrc, clientId);
 		}
 	}
 
@@ -321,7 +329,7 @@ void Recorder::Send(const Transport::IPacket &packet_, const Transport::Address 
 		{
 			std::lock_guard<std::recursive_mutex> lock(writerMutex);
 
-			if (currentVideoChannel == &fakeVideoChannel)
+			if (currentVideoChannel.ssrc == fakeVideoChannel.ssrc)
 			{
 				GenerateFakeVideo();
 			}
@@ -349,15 +357,15 @@ void Recorder::Send(const Transport::IPacket &packet_, const Transport::Address 
 
 			std::lock_guard<std::recursive_mutex> lock(writerMutex);
 
-			if (packet.rtpHeader.ssrc != currentVideoChannel->ssrc)
+			if (packet.rtpHeader.ssrc != currentVideoChannel.ssrc)
 			{
-				return sysLog->debug("Recorder::Send packet.rtpHeader.ssrc({0}) != currentVideoChannel->ssrc({1})", packet.rtpHeader.ssrc, currentVideoChannel->ssrc);
+				return sysLog->debug("Recorder::Send packet.rtpHeader.ssrc({0}) != currentVideoChannel->ssrc({1})", packet.rtpHeader.ssrc, currentVideoChannel.ssrc);
 			}
 
 			auto isKey = IsKeyFrame(packet.payload);
 			if (!hasKeyFrame && !isKey)
 			{
-				currentVideoChannel->packetLossCallback->ForceKeyFrame(packet.rtpHeader.seq);
+				currentVideoChannel.packetLossCallback->ForceKeyFrame(packet.rtpHeader.seq);
 
 				return sysLog->debug("Recorder::Send request the key frame force", vidTrack);
 			}
@@ -388,7 +396,7 @@ void Recorder::SpeakerChanged(int64_t clientId)
 		return;
 	}
 
-	VideoChannel *channel = nullptr;
+	VideoChannel channel = { 0 };
 	{
         mt::scoped_rw_lock lock(&videosRWLock, false);
 		int32_t channelPriority = -1;
@@ -396,18 +404,18 @@ void Recorder::SpeakerChanged(int64_t clientId)
 		{
 			if (video.second.clientId == clientId && video.second.priority > channelPriority)
 			{
-				channel = &video.second;
+				channel = video.second;
 				channelPriority = video.second.priority;
 			}
 		}
 	}
 
-	if (!channel)
+	if (channel.ssrc == 0)
 	{
-		channel = &fakeVideoChannel;
-		channel->clientId = clientId;
+		channel = fakeVideoChannel;
+		channel.clientId = clientId;
 
-		sysLog->debug("Recorder::SpeakerChanged to fake channel", clientId);
+		sysLog->debug("Recorder::SpeakerChanged to fake channel :: (clientId: {0})", clientId);
 	}
 
 	std::lock_guard<std::recursive_mutex> lock(writerMutex);
@@ -423,7 +431,7 @@ void Recorder::SpeakerChanged(int64_t clientId)
 			return errLog->error("Recorder::SpeakerChanged error in muxerSegment->GetTrackByNumber({0})", vidTrack);
 		}
 
-		auto rv = Video::GetValues(channel->resolution);
+		auto rv = Video::GetValues(channel.resolution);
 		video->set_width(rv.width);
 		video->set_height(rv.height);
 	}

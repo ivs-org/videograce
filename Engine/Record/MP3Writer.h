@@ -11,6 +11,8 @@
 
 #include <lame.h>
 
+#include <string_view>
+
 namespace Recorder
 {
 
@@ -20,7 +22,7 @@ public:
 	MP3Writer();
 	~MP3Writer();
 
-	void Start(const char *fileName);
+	void Start(std::string_view fileName);
 	void Stop();
 
 	/// Derived from Transport::ISocket

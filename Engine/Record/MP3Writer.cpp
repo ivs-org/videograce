@@ -25,12 +25,12 @@ MP3Writer::~MP3Writer()
 {
 }
 
-void MP3Writer::Start(const char *fileName)
+void MP3Writer::Start(std::string_view fileName)
 {
 #ifndef _WIN32
-	mp3 = fopen(fileName, "wb");
+	mp3 = fopen(fileName.data(), "wb");
 #else
-	fopen_s(&mp3, fileName, "wb");
+	fopen_s(&mp3, fileName.data(), "wb");
 #endif
 
     if (!mp3)

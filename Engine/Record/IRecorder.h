@@ -2,12 +2,13 @@
  * IRecorder.h - Contains recorder's interface
  *
  * Author: Anton (ud) Golovkov, udattsk@gmail.com
- * Copyright (C), Infinity Video Soft LLC, 2014
+ * Copyright (C), Infinity Video Soft LLC, 2014-2024
  */
 
 #pragma once
 
 #include <Video/Resolution.h>
+#include <string_view>
 
 namespace Video
 {
@@ -19,7 +20,7 @@ namespace Recorder
 	class IRecorder
 	{
 	public:
-		virtual void Start(const char *fileName, bool mp3Mode) = 0;
+		virtual void Start(std::string_view fileName, bool mp3Mode) = 0;
 		virtual void Stop() = 0;
 
 		virtual void AddVideo(uint32_t ssrc, int64_t clientId, int32_t priority, Video::Resolution resolution, Video::IPacketLossCallback *packetLossCallback) = 0;

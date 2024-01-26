@@ -40,7 +40,7 @@ namespace Recorder
 	{
 	public:
 		/// Derived from IRecorder
-		virtual void Start(const char *fileName, bool mp3Mode) final;
+		virtual void Start(std::string_view fileName, bool mp3Mode) final;
 		virtual void Stop() final;
 
 		virtual void AddVideo(uint32_t ssrc, int64_t clientId, int32_t priority, Video::Resolution resolution, Video::IPacketLossCallback *packetLossCallback);
@@ -89,7 +89,7 @@ namespace Recorder
 		VideoChannel fakeVideoChannel;
 
 		bool hasKeyFrame;
-		VideoChannel *currentVideoChannel;
+		VideoChannel currentVideoChannel;
 
 		MP3Writer mp3Writer;
 
