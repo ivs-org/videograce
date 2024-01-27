@@ -23,6 +23,8 @@
 #include <boost/nowide/convert.hpp>
 #include <boost/algorithm/string.hpp>
 
+#include <webrtc/base/stringutils.h>
+
 #include <resource.h>
 
 namespace Client
@@ -185,14 +187,14 @@ SettingsDialog::SettingsDialog(std::weak_ptr<wui::window> transientWindow_,
     loudspeaker16SampleRateCheck->turn(wui::config::get_int("AudioRenderer", "SampleFreq", 48000) == 16000);
     loudspeaker48SampleRateCheck->turn(wui::config::get_int("AudioRenderer", "SampleFreq", 48000) == 48000);
 
-    userNameInput->set_change_callback([this](std::string_view v) { userName = v; });
-    userLoginInput->set_change_callback([this](std::string_view v) { userLogin = v; });
-    userPasswordInput->set_change_callback([this](std::string_view v) { userPassword = v; });
-    userPasswordConfirmInput->set_change_callback([this](std::string_view v) { userPasswordConfirm = v; });
+    userNameInput->set_change_callback([this](std::string_view v) { userName = rtc::string_trim(std::string(v)); });
+    userLoginInput->set_change_callback([this](std::string_view v) { userLogin = rtc::string_trim(std::string(v)); });
+    userPasswordInput->set_change_callback([this](std::string_view v) { userPassword = rtc::string_trim(std::string(v)); });
+    userPasswordConfirmInput->set_change_callback([this](std::string_view v) { userPasswordConfirm = rtc::string_trim(std::string(v)); });
 
-    connectionServerInput->set_change_callback([this](std::string_view v) { connectionServer = v; });
-    connectionLoginInput->set_change_callback([this](std::string_view v) { connectionLogin = v; });
-    connectionPasswordInput->set_change_callback([this](std::string_view v) { connectionPassword = v; });
+    connectionServerInput->set_change_callback([this](std::string_view v) { connectionServer = rtc::string_trim(std::string(v)); });
+    connectionLoginInput->set_change_callback([this](std::string_view v) { connectionLogin = rtc::string_trim(std::string(v)); });
+    connectionPasswordInput->set_change_callback([this](std::string_view v) { connectionPassword = rtc::string_trim(std::string(v)); });
     connectionInSpeedInput->set_change_callback([this](std::string_view v) { connectionInSpeed = v; });
     connectionOutSpeedInput->set_change_callback([this](std::string_view v) { connectionOutSpeed = v; });
     connectionAutoDetermineSpeedCheck->turn(wui::config::get_int("User", "AutoDetermineNetSpeed", 1) != 0);
@@ -298,12 +300,12 @@ void SettingsDialog::Run(SettingsSection section_)
 
 std::string SettingsDialog::GetLogin()
 {
-    return userLoginInput->text();
+    return rtc::string_trim(userLoginInput->text());
 }
 
 std::string SettingsDialog::GetPassword()
 {
-    return userPasswordInput->text();
+    return rtc::string_trim(userPasswordInput->text());
 }
 
 void SettingsDialog::ResetUserName()

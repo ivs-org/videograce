@@ -21,8 +21,9 @@
 #include <License/Grants.h>
 
 #include <boost/algorithm/string/find.hpp>
-#include <boost/algorithm/string/trim.hpp>
 #include <boost/algorithm/string.hpp>
+
+#include <webrtc/base/stringutils.h>
 
 #include <resource.h>
 
@@ -787,8 +788,7 @@ void ContactList::ChangeItem(int32_t nItem)
         {
             case ItemType::GroupUser: case ItemType::Contact:
             {
-                auto name = item->name;
-                boost::trim(name);
+                auto name = rtc::string_trim(item->name);
                 if (!name.empty())
                 {
                     callback.ContactSelected(item->id, name);
@@ -798,8 +798,7 @@ void ContactList::ChangeItem(int32_t nItem)
             break;
             case ItemType::ConferenceUser:
             {
-                auto name = item->name;
-                boost::trim(name);
+                auto name = rtc::string_trim(item->name);
                 if (!name.empty())
                 {
                     callback.ContactSelected(item->id, name);
@@ -833,8 +832,7 @@ void ContactList::ActivateItem(int32_t nItem)
             {
                 case ItemType::GroupUser: case ItemType::Contact:
                 {
-                    auto name = item->name;
-                    boost::trim(name);
+                    auto name = rtc::string_trim(item->name);
                     if (!name.empty())
                     {
                         callback.ContactCall(name);
@@ -874,8 +872,7 @@ void ContactList::RightClickItem(int32_t nItem, int32_t x, int32_t y)
                     {
                         popupMenu->set_items({
                             { 0, wui::menu_item_state::separator, wui::locale("contact_list", controller.GetState() != Controller::State::Conferencing ? "call_user" : "add_user_to_conference"), "", nullptr, {}, [this, item](int32_t) {
-                                auto name = item->name;
-                                boost::trim(name);
+                                auto name = rtc::string_trim(item->name);
                                 if (!name.empty())
                                 {
                                     callback.ContactCall(name);
@@ -903,8 +900,7 @@ void ContactList::RightClickItem(int32_t nItem, int32_t x, int32_t y)
                     {
                         popupMenu->set_items({
                             { 0, wui::menu_item_state::normal, wui::locale("contact_list", controller.GetState() != Controller::State::Conferencing ? "call_user" : "add_user_to_conference"), "", nullptr, {}, [this, item](int32_t) {
-                                auto name = item->name;
-                                boost::trim(name);
+                                auto name = rtc::string_trim(item->name);
                                 if (!name.empty())
                                 {
                                     callback.ContactCall(name);

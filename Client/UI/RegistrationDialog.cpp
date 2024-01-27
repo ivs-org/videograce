@@ -18,6 +18,8 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/nowide/convert.hpp>
 
+#include <webrtc/base/stringutils.h>
+
 #include <resource.h>
 
 namespace Client
@@ -113,7 +115,7 @@ void RegistrationDialog::Run(std::string_view serverAddress)
 
 void RegistrationDialog::OK()
 {
-    if (nameInput->text().empty())
+    if (rtc::string_trim(nameInput->text()).empty())
     {
         return messageBox->show(wui::locale("message", "name_empty"),
             wui::locale("message", "title_error"),
@@ -121,7 +123,7 @@ void RegistrationDialog::OK()
             wui::message_button::ok, [this](wui::message_result) { window->set_focused(nameInput); });
     }
 
-    if (loginInput->text().empty())
+    if (rtc::string_trim(loginInput->text()).empty())
     {
         return messageBox->show(wui::locale("message", "login_empty"),
             wui::locale("message", "title_error"),
@@ -129,7 +131,7 @@ void RegistrationDialog::OK()
             wui::message_button::ok, [this](wui::message_result) { window->set_focused(loginInput); });
     }
 
-    if (passwordInput->text().empty())
+    if (rtc::string_trim(passwordInput->text()).empty())
     {
         return messageBox->show(wui::locale("message", "password_empty"),
             wui::locale("message", "title_error"),
@@ -137,7 +139,7 @@ void RegistrationDialog::OK()
             wui::message_button::ok, [this](wui::message_result) { window->set_focused(passwordInput); });
     }
 
-    if (passwordInput->text() != passwordConfirmInput->text())
+    if (rtc::string_trim(passwordInput->text()) != rtc::string_trim(passwordConfirmInput->text()))
     {
         return messageBox->show(wui::locale("message", "password_and_confirm_not_equal"),
             wui::locale("message", "title_error"),
@@ -158,7 +160,10 @@ void RegistrationDialog::Cancel()
 
 void RegistrationDialog::Register()
 {
-    auto result = registrator->Register(nameInput->text(), "", loginInput->text(), passwordInput->text());
+    auto result = registrator->Register(rtc::string_trim(nameInput->text()),
+        "",
+        rtc::string_trim(loginInput->text()),
+        rtc::string_trim(passwordInput->text()));
     switch (result)
     {
         case Proto::USER_UPDATE_RESPONSE::Result::OK:
@@ -167,7 +172,7 @@ void RegistrationDialog::Register()
                 wui::message_icon::information,
                 wui::message_button::ok,
                 [this](wui::message_result) {
-                    auto login = loginInput->text(), password = passwordInput->text();
+                    auto login = rtc::string_trim(loginInput->text()), password = rtc::string_trim(passwordInput->text());
                     window->destroy();
                     readyCallback(RegistrationResult::ok, login, password);
             });

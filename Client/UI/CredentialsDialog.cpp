@@ -12,10 +12,12 @@
 
 #include <UI/CredentialsDialog.h>
 
+#include <resource.h>
+
+#include <webrtc/base/stringutils.h>
+
 #include <boost/foreach.hpp>
 #include <boost/algorithm/string.hpp>
-
-#include <resource.h>
 
 #include <Version.h>
 
@@ -135,7 +137,7 @@ void CredentialsDialog::OK()
 
     if (rememberCheck->turned())
     {
-        wui::config::set_string("Credentials", "Login", loginInput->text());
+        wui::config::set_string("Credentials", "Login", rtc::string_trim(loginInput->text()));
     }
 
     if (passwordInput->text().empty())
@@ -148,7 +150,7 @@ void CredentialsDialog::OK()
 
     if (rememberCheck->turned())
     {
-        wui::config::set_string("Credentials", "Password", passwordInput->text());
+        wui::config::set_string("Credentials", "Password", rtc::string_trim(passwordInput->text()));
     }
 
     if (CheckServerAddress())
