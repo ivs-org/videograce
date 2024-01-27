@@ -73,6 +73,7 @@ private:
     std::shared_ptr<wui::button> disableSpeakerChangeCheck;
     std::shared_ptr<wui::button> denyRecordCheck;
     std::shared_ptr<wui::button> autoConnectCheck;
+    std::shared_ptr<wui::button> denySelfConnectCheck;
     
     std::shared_ptr<wui::button> updateButton, startButton, closeButton;
     std::shared_ptr<wui::message> messageBox;
@@ -116,6 +117,7 @@ private:
     void DontAskTurnDevices();
     void DenyRecordChange();
     void AutoConnectChange();
+    void DenySelfConnectChange();
 
     void Update();
     void Start();

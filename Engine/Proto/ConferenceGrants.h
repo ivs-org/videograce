@@ -20,6 +20,7 @@ namespace Proto
 		RecordOnServer = 6,
 		DenyTurnMicrophone = 7,
 		DenyTurnCamera = 8,
-        DenyRecord = 9
+        DenyRecord = 9,
+		DenySelfConnectMembers = 10
 	};
 }

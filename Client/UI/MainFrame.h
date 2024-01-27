@@ -122,7 +122,7 @@ public:
     virtual void ContactCall(std::string_view name);
     
     virtual void ConferenceSelected(std::string_view tag, std::string_view name);
-    virtual void ConferenceConnect(std::string_view tag, bool my);
+    virtual void ConferenceConnect(std::string_view tag);
     
     virtual void ContactUnselected();
 

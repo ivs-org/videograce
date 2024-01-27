@@ -386,7 +386,7 @@ void MainFrame::ActionCall()
             Call(selection.id);
         break;
         case ContactList::SelectionType::Conference:
-            ConnectToConference(selection.id, selection.my);
+            ConferenceConnect(selection.id);
         break;
     }
 }
@@ -410,7 +410,7 @@ void MainFrame::ActionConference()
     }
 
     conferenceDialog.Run(Proto::Conference(), [this](std::string_view tag) {
-        ConnectToConference(tag, true);
+        ConferenceConnect(tag);
     });
 }
 
@@ -872,9 +872,20 @@ void MainFrame::ConferenceSelected(std::string_view tag, std::string_view name)
     contentPanel.SetConference(tag, name);
 }
 
-void MainFrame::ConferenceConnect(std::string_view tag, bool my)
+void MainFrame::ConferenceConnect(std::string_view tag)
 {
-    ConnectToConference(tag, my);
+    auto conf = storage.GetConference(tag);
+    auto my = conf.founder_id == controller.GetMyClientId();
+
+    if (!my && BitIsSet(conf.grants, static_cast<uint32_t>(Proto::ConferenceGrants::DenySelfConnectMembers)))
+    {
+        return messageBox->show(wui::locale("message", "conference_connecting_denied"),
+            wui::locale("message", "title_error"),
+            wui::message_icon::alert,
+            wui::message_button::ok);
+    }
+
+    ConnectToConference(tag, my && BitIsSet(conf.grants, static_cast<int32_t>(Proto::ConferenceGrants::AutoConnect)));
 }
 
 void MainFrame::ContactUnselected()

@@ -122,6 +122,7 @@
       "deny_turn_camera": "Prohibit participants from turning on the camera themselves",
       "dont_ask_turn_devices": "Turn on a participant's camera/microphone without asking",
       "deny_record": "Prohibit participants enable record",
+      "deny_self_connect": "Prohibit participants from connecting to this conference on their own",
       "auto_connect_on_start": "Automatically connect participants when the presenter is connected"
     },
     {
@@ -316,6 +317,7 @@
       "need_select_conference_to_change": "Select the conference to change",
       "conference_creating_denied": "You don't have rights to create conferences",
       "conference_creating_not_possible_in_conference": "It is not possible to create a conference during a call",
+      "conference_connecting_denied": "You are not allowed to join this conference by yourself",
       "conference_editing_denied": "You don't have rights to change conferences",
       "cant_update_not_own_conference": "You cannot change this conference as you are not its owner",
       "contact_deletion_confirm": "Do you confirm the deletion of the contact?",

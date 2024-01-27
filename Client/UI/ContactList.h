@@ -28,7 +28,7 @@ public:
     virtual void ContactCall(std::string_view name) = 0;
 
     virtual void ConferenceSelected(std::string_view tag, std::string_view name) = 0;
-    virtual void ConferenceConnect(std::string_view tag, bool my) = 0;
+    virtual void ConferenceConnect(std::string_view tag) = 0;
     
     virtual void ContactUnselected() = 0;
 

@@ -527,8 +527,8 @@ void ContactList::Edit()
         {
             if (c.id == id)
             {
-                conferenceDialog.Run(c, [this](std::string_view tag) {
-                    callback.ConferenceConnect(tag, true);
+                conferenceDialog.Run(c, [&](std::string_view tag) {
+                    callback.ConferenceConnect(tag);
                 });
                 break;
             }
@@ -611,7 +611,7 @@ void ContactList::AddConference()
     }
 
     conferenceDialog.Run(Proto::Conference(), [this](std::string_view tag) {
-        callback.ConferenceConnect(tag, true);
+        callback.ConferenceConnect(tag);
     });
 }
 
@@ -842,7 +842,9 @@ void ContactList::ActivateItem(int32_t nItem)
                 }
                 break;
                 case ItemType::Conference:
-                    callback.ConferenceConnect(item->tag, item->my);
+                {
+                    callback.ConferenceConnect(item->tag);
+                }
                 break;
                 case ItemType::Group:
                     storage.ChangeGroupRolled(item->id);
@@ -928,7 +930,7 @@ void ContactList::RightClickItem(int32_t nItem, int32_t x, int32_t y)
                     {
                         popupMenu->set_items({
                             { 0, wui::menu_item_state::normal, wui::locale("contact_list", "start_conference"), "", nullptr, {}, [this, item](int32_t) {
-                                callback.ConferenceConnect(item->tag, item->my);
+                                callback.ConferenceConnect(item->tag);
                             } },
                             { 1, wui::menu_item_state::separator, wui::locale("contact_list", "copy_conference_link"), "", nullptr, {}, [this, item](int32_t) {
                                 CopyConferenceLink(item->tag);
@@ -952,7 +954,7 @@ void ContactList::RightClickItem(int32_t nItem, int32_t x, int32_t y)
                                     if (c.id == id)
                                     {
                                         conferenceDialog.Run(c, [this](std::string_view tag) {
-                                            callback.ConferenceConnect(tag, true);
+                                            callback.ConferenceConnect(tag);
                                         });
                                         break;
                                     }
@@ -975,7 +977,7 @@ void ContactList::RightClickItem(int32_t nItem, int32_t x, int32_t y)
                     {
                         popupMenu->set_items({
                             { 0, wui::menu_item_state::normal, wui::locale("contact_list", "connect_to_conference"), "", nullptr, {}, [this, item](int32_t) {
-                                callback.ConferenceConnect(item->tag, item->my);
+                                callback.ConferenceConnect(item->tag);
                             } },
                             { 1, wui::menu_item_state::separator, wui::locale("contact_list", "copy_conference_link"), "", nullptr, {}, [this, item](int32_t) {
                                 CopyConferenceLink(item->tag);

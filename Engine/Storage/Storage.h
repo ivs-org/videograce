@@ -112,6 +112,8 @@ public:
 	std::recursive_mutex &GetConferencesMutex();
 	const Conferences &GetConferences() const;
 
+	Proto::Conference GetConference(std::string_view tag);
+
 	bool IsConferenceRolled(int64_t conferenceId);
 	void ChangeConferenceRolled(int64_t conferenceId);
 

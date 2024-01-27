@@ -1459,6 +1459,20 @@ const Conferences &Storage::GetConferences() const
 	return conferences;
 }
 
+Proto::Conference Storage::GetConference(std::string_view tag)
+{
+	std::lock_guard<std::recursive_mutex> lock(conferencesMutex);
+	for (auto& conference : conferences)
+	{
+		if (conference.tag == tag)
+		{
+			return conference;
+		}
+	}
+
+	return {};
+}
+
 bool Storage::IsConferenceRolled(int64_t conferenceId)
 {
 	std::lock_guard<std::recursive_mutex> lock(conferencesMutex);

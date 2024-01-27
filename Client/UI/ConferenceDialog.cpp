@@ -64,6 +64,7 @@ ConferenceDialog::ConferenceDialog(std::weak_ptr<wui::window> parentWindow__, Co
     disableSpeakerChangeCheck(),
     denyRecordCheck(),
     autoConnectCheck(),
+    denySelfConnectCheck(),
 
     updateButton(), startButton(),
     closeButton(),
@@ -135,6 +136,7 @@ void ConferenceDialog::Run(const Proto::Conference &editedConf_, std::function<v
     disableSpeakerChangeCheck = std::shared_ptr<wui::button>(new wui::button(wui::locale("conference_dialog", "disable_speaker_change"), std::bind(&ConferenceDialog::DisableSpeakerChange, this), wui::button_view::switcher));
     denyRecordCheck = std::shared_ptr<wui::button>(new wui::button(wui::locale("conference_dialog", "deny_record"), std::bind(&ConferenceDialog::DenyRecordChange, this), wui::button_view::switcher));
     autoConnectCheck = std::shared_ptr<wui::button>(new wui::button(wui::locale("conference_dialog", "auto_connect_on_start"), std::bind(&ConferenceDialog::AutoConnectChange, this), wui::button_view::switcher));
+    denySelfConnectCheck = std::shared_ptr<wui::button>(new wui::button(wui::locale("conference_dialog", "deny_self_connect"), std::bind(&ConferenceDialog::DenySelfConnectChange, this), wui::button_view::switcher));
 
     updateButton = std::shared_ptr<wui::button>(new wui::button(wui::locale("button", editedConf_.tag.empty() ? "create" : "change"), std::bind(&ConferenceDialog::Update, this)));
     startButton = std::shared_ptr<wui::button>(new wui::button(wui::locale("button", "start"), std::bind(&ConferenceDialog::Start, this)));
@@ -203,6 +205,7 @@ void ConferenceDialog::Run(const Proto::Conference &editedConf_, std::function<v
     disableSpeakerChangeCheck->turn(BitIsSet(editedConf.grants, static_cast<int32_t>(Proto::ConferenceGrants::DisableSpeakerChange)));
     denyRecordCheck->turn(BitIsSet(editedConf.grants, static_cast<int32_t>(Proto::ConferenceGrants::DenyRecord)));
     autoConnectCheck->turn(BitIsSet(editedConf.grants, static_cast<int32_t>(Proto::ConferenceGrants::AutoConnect)));
+    denySelfConnectCheck->turn(BitIsSet(editedConf.grants, static_cast<int32_t>(Proto::ConferenceGrants::DenySelfConnectMembers)));
 
     UpdateMemberList();
 
@@ -227,6 +230,7 @@ void ConferenceDialog::Run(const Proto::Conference &editedConf_, std::function<v
         denyTurnSpeakCheck.reset();
         denyRecordCheck.reset();
         autoConnectCheck.reset();
+        denySelfConnectCheck.reset();
         
         membersList.reset();
         downMemberButton.reset();
@@ -276,6 +280,7 @@ void ConferenceDialog::ShowBase()
     window->remove_control(disableSpeakerChangeCheck);
     window->remove_control(denyRecordCheck);
     window->remove_control(autoConnectCheck);
+    window->remove_control(denySelfConnectCheck);
 
     wui::rect pos = { 10, 80, WND_WIDTH - 10, 95 };
     window->add_control(nameText, pos);
@@ -327,6 +332,7 @@ void ConferenceDialog::ShowMembers()
     window->remove_control(disableSpeakerChangeCheck);
     window->remove_control(denyRecordCheck);
     window->remove_control(autoConnectCheck);
+    window->remove_control(denySelfConnectCheck);
 
     wui::rect pos = { 10, 80, 10 + 32, 80 + 32 };
     window->add_control(addMemberButton, pos);
@@ -380,6 +386,8 @@ void ConferenceDialog::ShowOptions()
     window->add_control(denyRecordCheck, pos);
     wui::line_up_top_bottom(pos, 15, 20);
     window->add_control(autoConnectCheck, pos);
+    wui::line_up_top_bottom(pos, 15, 10);
+    window->add_control(denySelfConnectCheck, pos);
 }
 
 void ConferenceDialog::MakeURL(std::string_view tag)
@@ -571,6 +579,18 @@ void ConferenceDialog::AutoConnectChange()
     else
     {
         ClearBit(editedConf.grants, static_cast<int32_t>(Proto::ConferenceGrants::AutoConnect));
+    }
+}
+
+void ConferenceDialog::DenySelfConnectChange()
+{
+    if (denySelfConnectCheck->turned())
+    {
+        SetBit(editedConf.grants, static_cast<int32_t>(Proto::ConferenceGrants::DenySelfConnectMembers));
+    }
+    else
+    {
+        ClearBit(editedConf.grants, static_cast<int32_t>(Proto::ConferenceGrants::DenySelfConnectMembers));
     }
 }
 
