@@ -13,6 +13,8 @@ file(GLOB SOURCES
 	Registrator/*.cpp
 	*.cpp)
 
+add_definitions(-DWEBRTC_LINUX -DWEBRTC_POSIX -DSQLITE_THREADSAFE=2)
+
 include_directories(.)
 
 add_executable(Client ${SOURCES})
