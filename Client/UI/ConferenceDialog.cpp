@@ -57,6 +57,8 @@ ConferenceDialog::ConferenceDialog(std::weak_ptr<wui::window> parentWindow__, Co
     
     disableMicrophoneIfNoSpeakCheck(),
     disableCameraIfNoSpeakCheck(),
+    enableCameraOnConnectCheck(),
+    enableMicrophoneOnConnectCheck(),
     denyTurnSpeakCheck(),
     denyTurnMicrophoneCheck(),
     denyTurnCameraCheck(),
@@ -127,14 +129,21 @@ void ConferenceDialog::Run(const Proto::Conference &editedConf_, std::function<v
     upMemberButton = std::shared_ptr<wui::button>(new wui::button(wui::locale("conference_dialog", "up_member"), std::bind(&ConferenceDialog::UpMember, this), wui::button_view::image, IMG_MC_UP_MEMBER, BTN_SIZE, wui::button::tc_tool));
     downMemberButton = std::shared_ptr<wui::button>(new wui::button(wui::locale("conference_dialog", "down_member"), std::bind(&ConferenceDialog::DownMember, this), wui::button_view::image, IMG_MC_DOWN_MEMBER, BTN_SIZE, wui::button::tc_tool));
 
-    disableMicrophoneIfNoSpeakCheck = std::shared_ptr<wui::button>(new wui::button(wui::locale("conference_dialog", "disable_microphone_if_no_speak"), std::bind(&ConferenceDialog::DisableMicrophoneIfNoSpeak, this), wui::button_view::switcher));
-    disableCameraIfNoSpeakCheck = std::shared_ptr<wui::button>(new wui::button(wui::locale("conference_dialog", "disable_camera_if_no_speak"), std::bind(&ConferenceDialog::DisableCameraIfNoSpeak, this), wui::button_view::switcher));
+    disableMicrophoneIfNoSpeakCheck = std::make_shared<wui::button>(wui::locale("conference_dialog", "disable_microphone_if_no_speak"), std::bind(&ConferenceDialog::DisableMicrophoneIfNoSpeak, this), wui::button_view::switcher);
+    disableCameraIfNoSpeakCheck = std::make_shared<wui::button>(wui::locale("conference_dialog", "disable_camera_if_no_speak"), std::bind(&ConferenceDialog::DisableCameraIfNoSpeak, this), wui::button_view::switcher);
+    
+    enableCameraOnConnectCheck = std::make_shared<wui::button>(wui::locale("conference_dialog", "enable_camera_on_connect"), std::bind(&ConferenceDialog::EnableCameraOnConnect, this), wui::button_view::switcher);
+    enableMicrophoneOnConnectCheck = std::make_shared<wui::button>(wui::locale("conference_dialog", "enable_microphone_on_connect"), std::bind(&ConferenceDialog::EnableMicrophoneOnConnect, this), wui::button_view::switcher);
+    
     denyTurnSpeakCheck = std::shared_ptr<wui::button>(new wui::button(wui::locale("conference_dialog", "deny_turn_speak"), std::bind(&ConferenceDialog::DenyTurnSpeak, this), wui::button_view::switcher));
     denyTurnMicrophoneCheck = std::shared_ptr<wui::button>(new wui::button(wui::locale("conference_dialog", "deny_turn_microphone"), std::bind(&ConferenceDialog::DenyTurnMicrophone, this), wui::button_view::switcher));
     denyTurnCameraCheck = std::shared_ptr<wui::button>(new wui::button(wui::locale("conference_dialog", "deny_turn_camera"), std::bind(&ConferenceDialog::DenyTurnCamera, this), wui::button_view::switcher));
+
     dontAskTurnDevices = std::shared_ptr<wui::button>(new wui::button(wui::locale("conference_dialog", "dont_ask_turn_devices"), std::bind(&ConferenceDialog::DontAskTurnDevices, this), wui::button_view::switcher));
     disableSpeakerChangeCheck = std::shared_ptr<wui::button>(new wui::button(wui::locale("conference_dialog", "disable_speaker_change"), std::bind(&ConferenceDialog::DisableSpeakerChange, this), wui::button_view::switcher));
+
     denyRecordCheck = std::shared_ptr<wui::button>(new wui::button(wui::locale("conference_dialog", "deny_record"), std::bind(&ConferenceDialog::DenyRecordChange, this), wui::button_view::switcher));
+
     autoConnectCheck = std::shared_ptr<wui::button>(new wui::button(wui::locale("conference_dialog", "auto_connect_on_start"), std::bind(&ConferenceDialog::AutoConnectChange, this), wui::button_view::switcher));
     denySelfConnectCheck = std::shared_ptr<wui::button>(new wui::button(wui::locale("conference_dialog", "deny_self_connect"), std::bind(&ConferenceDialog::DenySelfConnectChange, this), wui::button_view::switcher));
 
@@ -198,6 +207,8 @@ void ConferenceDialog::Run(const Proto::Conference &editedConf_, std::function<v
     descriptionInput->set_text(editedConf.descr);
     disableMicrophoneIfNoSpeakCheck->turn(BitIsSet(editedConf.grants, static_cast<int32_t>(Proto::ConferenceGrants::DisableMicrophoneIfNoSpeak)));
     disableCameraIfNoSpeakCheck->turn(BitIsSet(editedConf.grants, static_cast<int32_t>(Proto::ConferenceGrants::DisableCameraIfNoSpeak)));
+    enableCameraOnConnectCheck->turn(BitIsSet(editedConf.grants, static_cast<int32_t>(Proto::ConferenceGrants::EnableCameraOnConnect)));
+    enableMicrophoneOnConnectCheck->turn(BitIsSet(editedConf.grants, static_cast<int32_t>(Proto::ConferenceGrants::EnableMicrophoneOnConnect)));
     denyTurnSpeakCheck->turn(BitIsSet(editedConf.grants, static_cast<int32_t>(Proto::ConferenceGrants::DenyTurnSpeak)));
     denyTurnMicrophoneCheck->turn(BitIsSet(editedConf.grants, static_cast<int32_t>(Proto::ConferenceGrants::DenyTurnMicrophone)));
     denyTurnCameraCheck->turn(BitIsSet(editedConf.grants, static_cast<int32_t>(Proto::ConferenceGrants::DenyTurnCamera)));
@@ -224,6 +235,8 @@ void ConferenceDialog::Run(const Proto::Conference &editedConf_, std::function<v
         dontAskTurnDevices.reset();
         denyTurnCameraCheck.reset();
         denyTurnMicrophoneCheck.reset();
+        enableCameraOnConnectCheck.reset();
+        enableMicrophoneOnConnectCheck.reset();
         disableSpeakerChangeCheck.reset();
         disableCameraIfNoSpeakCheck.reset();
         disableMicrophoneIfNoSpeakCheck.reset();
@@ -273,6 +286,8 @@ void ConferenceDialog::ShowBase()
 
     window->remove_control(disableMicrophoneIfNoSpeakCheck);
     window->remove_control(disableCameraIfNoSpeakCheck);
+    window->remove_control(enableCameraOnConnectCheck);
+    window->remove_control(enableMicrophoneOnConnectCheck);
     window->remove_control(denyTurnSpeakCheck);
     window->remove_control(denyTurnMicrophoneCheck);
     window->remove_control(denyTurnCameraCheck);
@@ -325,6 +340,8 @@ void ConferenceDialog::ShowMembers()
 
     window->remove_control(disableMicrophoneIfNoSpeakCheck);
     window->remove_control(disableCameraIfNoSpeakCheck);
+    window->remove_control(enableCameraOnConnectCheck);
+    window->remove_control(enableMicrophoneOnConnectCheck);
     window->remove_control(denyTurnSpeakCheck);
     window->remove_control(denyTurnMicrophoneCheck);
     window->remove_control(denyTurnCameraCheck);
@@ -373,18 +390,26 @@ void ConferenceDialog::ShowOptions()
     wui::line_up_top_bottom(pos, 15, 10);
     window->add_control(disableCameraIfNoSpeakCheck, pos);
     wui::line_up_top_bottom(pos, 15, 20);
+
+    window->add_control(enableCameraOnConnectCheck, pos);
+    wui::line_up_top_bottom(pos, 15, 10);
+    window->add_control(enableMicrophoneOnConnectCheck, pos);
+    wui::line_up_top_bottom(pos, 15, 20);
+
     window->add_control(denyTurnSpeakCheck, pos);
     wui::line_up_top_bottom(pos, 15, 10);
     window->add_control(denyTurnMicrophoneCheck, pos);
     wui::line_up_top_bottom(pos, 15, 10);
     window->add_control(denyTurnCameraCheck, pos);
     wui::line_up_top_bottom(pos, 15, 20);
+
     window->add_control(dontAskTurnDevices, pos);
     wui::line_up_top_bottom(pos, 15, 10);
     window->add_control(disableSpeakerChangeCheck, pos);
     wui::line_up_top_bottom(pos, 15, 10);
     window->add_control(denyRecordCheck, pos);
     wui::line_up_top_bottom(pos, 15, 20);
+
     window->add_control(autoConnectCheck, pos);
     wui::line_up_top_bottom(pos, 15, 10);
     window->add_control(denySelfConnectCheck, pos);
@@ -507,6 +532,30 @@ void ConferenceDialog::DisableCameraIfNoSpeak()
     else
     {
         ClearBit(editedConf.grants, static_cast<int32_t>(Proto::ConferenceGrants::DisableCameraIfNoSpeak));
+    }
+}
+
+void ConferenceDialog::EnableCameraOnConnect()
+{
+    if (enableCameraOnConnectCheck->turned())
+    {
+        SetBit(editedConf.grants, static_cast<int32_t>(Proto::ConferenceGrants::EnableCameraOnConnect));
+    }
+    else
+    {
+        ClearBit(editedConf.grants, static_cast<int32_t>(Proto::ConferenceGrants::EnableCameraOnConnect));
+    }
+}
+
+void ConferenceDialog::EnableMicrophoneOnConnect()
+{
+    if (enableMicrophoneOnConnectCheck->turned())
+    {
+        SetBit(editedConf.grants, static_cast<int32_t>(Proto::ConferenceGrants::EnableMicrophoneOnConnect));
+    }
+    else
+    {
+        ClearBit(editedConf.grants, static_cast<int32_t>(Proto::ConferenceGrants::EnableMicrophoneOnConnect));
     }
 }
 

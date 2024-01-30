@@ -117,6 +117,8 @@
       "deny_turn_speak": "Prohibit participants from taking the floor on their own",
       "disable_microphone_if_no_speak": "Turn off participants' microphones when they don't take the floor",
       "disable_camera_if_no_speak": "Turn off participants' cameras when they don't take the floor",
+      "enable_camera_on_connect": "Enable participant cameras when connected",
+      "enable_microphone_on_connect": "Enable participant microphones when connected",
       "disable_speaker_change": "Turn off the output of the speaking participant in the main window",
       "deny_turn_microphone": "Prohibit participants from turning on the microphone themselves",
       "deny_turn_camera": "Prohibit participants from turning on the camera themselves",

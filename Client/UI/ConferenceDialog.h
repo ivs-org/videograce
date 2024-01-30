@@ -66,6 +66,8 @@ private:
     
     std::shared_ptr<wui::button> disableMicrophoneIfNoSpeakCheck;
     std::shared_ptr<wui::button> disableCameraIfNoSpeakCheck;
+    std::shared_ptr<wui::button> enableCameraOnConnectCheck;
+    std::shared_ptr<wui::button> enableMicrophoneOnConnectCheck;
     std::shared_ptr<wui::button> denyTurnSpeakCheck;
     std::shared_ptr<wui::button> denyTurnMicrophoneCheck;
     std::shared_ptr<wui::button> denyTurnCameraCheck;
@@ -111,6 +113,8 @@ private:
     void DenyTurnSpeak();
     void DisableMicrophoneIfNoSpeak();
     void DisableCameraIfNoSpeak();
+    void EnableCameraOnConnect();
+    void EnableMicrophoneOnConnect();
     void DisableSpeakerChange();
     void DenyTurnMicrophone();
     void DenyTurnCamera();

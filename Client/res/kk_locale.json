@@ -117,6 +117,8 @@
       "deny_turn_speak": "Қатысушыларға сөзді өз бетінше қабылдауға тыйым салу",
       "disable_microphone_if_no_speak": "Сөз алмаған кезде қатысушылардың микрофондарын өшіріңіз",
       "disable_camera_if_no_speak": "Сөзді қабылдамаған кезде мүшелердің камераларын өшіріңіз",
+      "enable_camera_on_connect": "Enable participant cameras when connected",
+      "enable_microphone_on_connect": "Enable participant microphones when connected",
       "disable_speaker_change": "Негізгі терезеде сөйлейтін қатысушының шығуын өшіріңіз",
       "deny_turn_microphone": "Қатысушыларға микрофонды өз бетінше қосуға тыйым салу",
       "deny_turn_camera": "Қатысушыларға камераны өз бетінше қосуға тыйым салу",
