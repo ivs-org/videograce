@@ -1728,15 +1728,14 @@ void MainFrame::ProcessControllerEvent()
                 }
                 else
                 {
-                    auto autoStart = BitIsSet(controller.GetCurrentConference().grants, static_cast<int32_t>(Proto::ConferenceGrants::EnableCameraOnConnect));
-                    if (autoStart && !IsCameraEnabled())
+                    auto autoStart = BitIsSet(controller.GetCurrentConference().grants, static_cast<int32_t>(Proto::ConferenceGrants::EnableCameraOnConnect));                    
+                    if (autoStart && !IsCameraEnabled() && IsCameraExists())
                     {
-                        ActionTurnCamera(false);
+                        mainToolBar.EnableCamera(true);
+                        wui::config::set_int("CaptureDevices", "CameraEnabled", 1);
                     }
-                    else
-                    {
-                        StartCamera();
-                    }
+
+                    StartCamera();
                 }
                 if ((BitIsSet(cc.grants, static_cast<int32_t>(Proto::ConferenceGrants::DisableMicrophoneIfNoSpeak)) && !memberList.IsMePresenter() && !memberList.IsMeSpeaker()) ||
                     memberList.IsMeReadOnly())
@@ -1752,14 +1751,13 @@ void MainFrame::ProcessControllerEvent()
                 else
                 {
                     auto autoStart = BitIsSet(controller.GetCurrentConference().grants, static_cast<int32_t>(Proto::ConferenceGrants::EnableMicrophoneOnConnect));
-                    if (autoStart && !IsMicrophoneEnabled())
+                    if (autoStart && !IsMicrophoneEnabled() && IsMicrophoneExists())
                     {
-                        ActionTurnMicrophone(false);
+                        mainToolBar.EnableMicrophone(true);
+                        wui::config::set_int("CaptureDevices", "MicrophoneEnabled", 1);
                     }
-                    else
-                    {
-                        StartMicrophone();
-                    }
+
+                    StartMicrophone();
                 }
 
                 UpdateTitle();
