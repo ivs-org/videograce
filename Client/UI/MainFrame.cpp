@@ -1728,7 +1728,15 @@ void MainFrame::ProcessControllerEvent()
                 }
                 else
                 {
-                    StartCamera();
+                    auto autoStart = BitIsSet(controller.GetCurrentConference().grants, static_cast<int32_t>(Proto::ConferenceGrants::EnableCameraOnConnect));
+                    if (autoStart && !IsCameraEnabled())
+                    {
+                        ActionTurnCamera(false);
+                    }
+                    else
+                    {
+                        StartCamera();
+                    }
                 }
                 if ((BitIsSet(cc.grants, static_cast<int32_t>(Proto::ConferenceGrants::DisableMicrophoneIfNoSpeak)) && !memberList.IsMePresenter() && !memberList.IsMeSpeaker()) ||
                     memberList.IsMeReadOnly())
@@ -1743,7 +1751,15 @@ void MainFrame::ProcessControllerEvent()
                 }
                 else
                 {
-                    StartMicrophone();
+                    auto autoStart = BitIsSet(controller.GetCurrentConference().grants, static_cast<int32_t>(Proto::ConferenceGrants::EnableMicrophoneOnConnect));
+                    if (autoStart && !IsMicrophoneEnabled())
+                    {
+                        ActionTurnMicrophone(false);
+                    }
+                    else
+                    {
+                        StartMicrophone();
+                    }
                 }
 
                 UpdateTitle();
