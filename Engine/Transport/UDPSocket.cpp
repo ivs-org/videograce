@@ -41,11 +41,6 @@ void UDPSocket::Start(Address::Type type, uint16_t bindPort)
         return errLog->critical("UDPSocket[null] Start() error: {0}, port: {1}", GET_LAST_ERROR, bindPort);
     }
 
-    sockaddr_in bindAddr = { 0 };
-    bindAddr.sin_addr.s_addr = INADDR_ANY;
-    bindAddr.sin_family = AF_INET;
-    bindAddr.sin_port = htons(bindPort);
-
     switch (type)
     {
         case Address::Type::IPv6:
