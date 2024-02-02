@@ -83,23 +83,21 @@ void UDPTester::Stop()
 
 bool UDPTester::TestPassed() const
 {
-	return true;
-	//return !availAddresses.empty();
+	return availAddresses.size() != inputAddresses.size();
 }
 
 std::string UDPTester::GetErrorMessage() const
 {
-    /*std::string errorMessage = locale->get("net_test", "udp_sockets_unavailable") + "\n";
-	for (auto &connection : connections)
+    std::string errorMessage = locale->get("net_test", "udp_sockets_unavailable") + "\n";
+	for (auto &input : inputAddresses)
 	{
-		if (!connection.available)
+		if (std::find(availAddresses.begin(), availAddresses.end(), input) == availAddresses.end())
 		{
-			errorMessage += connection.address.toString() + "\n";
+			errorMessage += input.toString() + "\n";
 		}
 	}
 
-	return errorMessage;*/
-	return locale->get("net_test", "udp_sockets_unavailable");
+	return errorMessage;
 }
 
 void UDPTester::Send(const Transport::IPacket &packet, const Transport::Address *address)
