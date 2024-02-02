@@ -36,7 +36,7 @@ public:
     void Run(const Proto::Conference &editedConf_ = Proto::Conference(), std::function<void(std::string_view )> readyCallback = [](std::string_view ) {});
 
 private:
-    static const int32_t WND_WIDTH = 530, WND_HEIGHT = 600,
+    static constexpr int32_t WND_WIDTH = 530, WND_HEIGHT = 600,
         BTN_SIZE = 32, XBITMAP = 32,
         MEMBER_SWITCHER_COLUMN = 75, MEMBER_SWITCHER = 38;
 
