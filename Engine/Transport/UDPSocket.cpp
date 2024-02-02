@@ -231,7 +231,10 @@ void UDPSocket::run()
                 netsocket, recvSize, addr.toString(), bindedPort);
         }
 
-        receiver(recvBuf, recvSize, addr, bindedPort);
+        if (recvSize != 65535)
+        {
+            receiver(recvBuf, recvSize, addr, bindedPort);
+        }
     }
 }
 
