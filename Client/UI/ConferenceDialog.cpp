@@ -8,6 +8,7 @@
 #include <wui/locale/locale.hpp>
 #include <wui/theme/theme.hpp>
 #include <wui/system/tools.hpp>
+#include <wui/system/uri_tools.hpp>
 
 #include <UI/ConferenceDialog.h>
 
@@ -48,6 +49,7 @@ ConferenceDialog::ConferenceDialog(std::weak_ptr<wui::window> parentWindow__, Co
     typeText(), typeSelect(),
     descriptionText(), descriptionInput(),
     linkText(), linkInput(),
+    openConfLinkButton(),
 
     addMemberButton(),
     deleteMemberButton(),
@@ -94,27 +96,28 @@ ConferenceDialog::~ConferenceDialog()
 void ConferenceDialog::Run(const Proto::Conference &editedConf_, std::function<void(std::string_view )> readyCallback_)
 {
     window->set_transient_for(parentWindow_.lock());
-    baseSheet = std::shared_ptr<wui::button>(new wui::button(wui::locale("conference_dialog", "base_sheet"), std::bind(&ConferenceDialog::ShowBase, this), wui::button_view::sheet));
-    membersSheet = std::shared_ptr<wui::button>(new wui::button(wui::locale("conference_dialog", "members_sheet"), std::bind(&ConferenceDialog::ShowMembers, this), wui::button_view::sheet));
-    optionsSheet = std::shared_ptr<wui::button>(new wui::button(wui::locale("conference_dialog", "options_sheet"), std::bind(&ConferenceDialog::ShowOptions, this), wui::button_view::sheet));
-    nameText = std::shared_ptr<wui::text>(new wui::text(wui::locale("conference_dialog", "name")));
-    nameInput = std::shared_ptr<wui::input>(new wui::input());
-    tagText = std::shared_ptr<wui::text>(new wui::text(wui::locale("conference_dialog", "tag")));
-    tagInput = std::shared_ptr<wui::input>(new wui::input());
+    baseSheet = std::make_shared<wui::button>(wui::locale("conference_dialog", "base_sheet"), std::bind(&ConferenceDialog::ShowBase, this), wui::button_view::sheet);
+    membersSheet = std::make_shared<wui::button>(wui::locale("conference_dialog", "members_sheet"), std::bind(&ConferenceDialog::ShowMembers, this), wui::button_view::sheet);
+    optionsSheet = std::make_shared<wui::button>(wui::locale("conference_dialog", "options_sheet"), std::bind(&ConferenceDialog::ShowOptions, this), wui::button_view::sheet);
+    nameText = std::make_shared<wui::text>(wui::locale("conference_dialog", "name"));
+    nameInput = std::make_shared<wui::input>();
+    tagText = std::make_shared<wui::text>(wui::locale("conference_dialog", "tag"));
+    tagInput = std::make_shared<wui::input>();
     tagInput->set_change_callback(std::bind(&ConferenceDialog::MakeURL, this, std::placeholders::_1));
-    typeText = std::shared_ptr<wui::text>(new wui::text(wui::locale("conference_dialog", "conference_type")));
-    typeSelect = std::shared_ptr<wui::select>(new wui::select());
+    typeText = std::make_shared<wui::text>(wui::locale("conference_dialog", "conference_type"));
+    typeSelect = std::make_shared<wui::select>();
     typeSelect->set_items({
             { 1, wui::locale("conference", "symmetric") },
             { 2, wui::locale("conference", "asymmetric") },
             { 3, wui::locale("conference", "asymmetric_sym_sound") }
         });
-    descriptionText = std::shared_ptr<wui::text>(new wui::text(wui::locale("conference_dialog", "description")));
-    descriptionInput = std::shared_ptr<wui::input>(new wui::input());
-    linkText = std::shared_ptr<wui::text>(new wui::text(wui::locale("conference_dialog", "link")));
-    linkInput = std::shared_ptr<wui::input>(new wui::input("", wui::input_view::readonly));
+    descriptionText = std::make_shared<wui::text>(wui::locale("conference_dialog", "description"));
+    descriptionInput = std::make_shared<wui::input>();
+    linkText = std::make_shared<wui::text>(wui::locale("conference_dialog", "link"));
+    linkInput = std::make_shared<wui::input>("", wui::input_view::readonly);
+    openConfLinkButton = std::make_shared<wui::button>(wui::locale("conference_dialog", "open_conf_link"), [this]() { wui::open_uri(linkInput->text()); });
 
-    membersList = std::shared_ptr<wui::list>(new wui::list());
+    membersList = std::make_shared<wui::list>();
     membersList->set_item_height_callback([](int32_t, int32_t& h) { h = XBITMAP; });
     membersList->set_draw_callback(std::bind(&ConferenceDialog::DrawMemberItem, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4));
     membersList->set_item_click_callback([this](wui::list::click_button btn, int32_t nItem, int32_t x, int32_t) { if (btn == wui::list::click_button::left) ClickMemberItem(nItem, x - membersList->position().left); });
@@ -124,10 +127,10 @@ void ConferenceDialog::Run(const Proto::Conference &editedConf_, std::function<v
         { MEMBER_SWITCHER_COLUMN, wui::locale("conference", "moderator") },
         { MEMBER_SWITCHER_COLUMN, wui::locale("conference", "readonly") }
         });
-    addMemberButton = std::shared_ptr<wui::button>(new wui::button(wui::locale("conference_dialog", "add_member"), std::bind(&ConferenceDialog::AddMember, this), wui::button_view::image, IMG_MC_ADD_TO_MEMBERS, BTN_SIZE, wui::button::tc_tool));
-    deleteMemberButton = std::shared_ptr<wui::button>(new wui::button(wui::locale("conference_dialog", "del_member"), std::bind(&ConferenceDialog::DeleteMember, this), wui::button_view::image, IMG_MC_DEL_MEMBER, BTN_SIZE, wui::button::tc_tool));
-    upMemberButton = std::shared_ptr<wui::button>(new wui::button(wui::locale("conference_dialog", "up_member"), std::bind(&ConferenceDialog::UpMember, this), wui::button_view::image, IMG_MC_UP_MEMBER, BTN_SIZE, wui::button::tc_tool));
-    downMemberButton = std::shared_ptr<wui::button>(new wui::button(wui::locale("conference_dialog", "down_member"), std::bind(&ConferenceDialog::DownMember, this), wui::button_view::image, IMG_MC_DOWN_MEMBER, BTN_SIZE, wui::button::tc_tool));
+    addMemberButton = std::make_shared<wui::button>(wui::locale("conference_dialog", "add_member"), std::bind(&ConferenceDialog::AddMember, this), wui::button_view::image, IMG_MC_ADD_TO_MEMBERS, BTN_SIZE, wui::button::tc_tool);
+    deleteMemberButton = std::make_shared<wui::button>(wui::locale("conference_dialog", "del_member"), std::bind(&ConferenceDialog::DeleteMember, this), wui::button_view::image, IMG_MC_DEL_MEMBER, BTN_SIZE, wui::button::tc_tool);
+    upMemberButton = std::make_shared<wui::button>(wui::locale("conference_dialog", "up_member"), std::bind(&ConferenceDialog::UpMember, this), wui::button_view::image, IMG_MC_UP_MEMBER, BTN_SIZE, wui::button::tc_tool);
+    downMemberButton = std::make_shared<wui::button>(wui::locale("conference_dialog", "down_member"), std::bind(&ConferenceDialog::DownMember, this), wui::button_view::image, IMG_MC_DOWN_MEMBER, BTN_SIZE, wui::button::tc_tool);
 
     disableMicrophoneIfNoSpeakCheck = std::make_shared<wui::button>(wui::locale("conference_dialog", "disable_microphone_if_no_speak"), std::bind(&ConferenceDialog::DisableMicrophoneIfNoSpeak, this), wui::button_view::switcher);
     disableCameraIfNoSpeakCheck = std::make_shared<wui::button>(wui::locale("conference_dialog", "disable_camera_if_no_speak"), std::bind(&ConferenceDialog::DisableCameraIfNoSpeak, this), wui::button_view::switcher);
@@ -135,28 +138,28 @@ void ConferenceDialog::Run(const Proto::Conference &editedConf_, std::function<v
     enableCameraOnConnectCheck = std::make_shared<wui::button>(wui::locale("conference_dialog", "enable_camera_on_connect"), std::bind(&ConferenceDialog::EnableCameraOnConnect, this), wui::button_view::switcher);
     enableMicrophoneOnConnectCheck = std::make_shared<wui::button>(wui::locale("conference_dialog", "enable_microphone_on_connect"), std::bind(&ConferenceDialog::EnableMicrophoneOnConnect, this), wui::button_view::switcher);
     
-    denyTurnSpeakCheck = std::shared_ptr<wui::button>(new wui::button(wui::locale("conference_dialog", "deny_turn_speak"), std::bind(&ConferenceDialog::DenyTurnSpeak, this), wui::button_view::switcher));
-    denyTurnMicrophoneCheck = std::shared_ptr<wui::button>(new wui::button(wui::locale("conference_dialog", "deny_turn_microphone"), std::bind(&ConferenceDialog::DenyTurnMicrophone, this), wui::button_view::switcher));
-    denyTurnCameraCheck = std::shared_ptr<wui::button>(new wui::button(wui::locale("conference_dialog", "deny_turn_camera"), std::bind(&ConferenceDialog::DenyTurnCamera, this), wui::button_view::switcher));
+    denyTurnSpeakCheck = std::make_shared<wui::button>(wui::locale("conference_dialog", "deny_turn_speak"), std::bind(&ConferenceDialog::DenyTurnSpeak, this), wui::button_view::switcher);
+    denyTurnMicrophoneCheck = std::make_shared<wui::button>(wui::locale("conference_dialog", "deny_turn_microphone"), std::bind(&ConferenceDialog::DenyTurnMicrophone, this), wui::button_view::switcher);
+    denyTurnCameraCheck = std::make_shared<wui::button>(wui::locale("conference_dialog", "deny_turn_camera"), std::bind(&ConferenceDialog::DenyTurnCamera, this), wui::button_view::switcher);
 
-    dontAskTurnDevices = std::shared_ptr<wui::button>(new wui::button(wui::locale("conference_dialog", "dont_ask_turn_devices"), std::bind(&ConferenceDialog::DontAskTurnDevices, this), wui::button_view::switcher));
-    disableSpeakerChangeCheck = std::shared_ptr<wui::button>(new wui::button(wui::locale("conference_dialog", "disable_speaker_change"), std::bind(&ConferenceDialog::DisableSpeakerChange, this), wui::button_view::switcher));
+    dontAskTurnDevices = std::make_shared<wui::button>(wui::locale("conference_dialog", "dont_ask_turn_devices"), std::bind(&ConferenceDialog::DontAskTurnDevices, this), wui::button_view::switcher);
+    disableSpeakerChangeCheck = std::make_shared<wui::button>(wui::locale("conference_dialog", "disable_speaker_change"), std::bind(&ConferenceDialog::DisableSpeakerChange, this), wui::button_view::switcher);
 
-    denyRecordCheck = std::shared_ptr<wui::button>(new wui::button(wui::locale("conference_dialog", "deny_record"), std::bind(&ConferenceDialog::DenyRecordChange, this), wui::button_view::switcher));
+    denyRecordCheck = std::make_shared<wui::button>(wui::locale("conference_dialog", "deny_record"), std::bind(&ConferenceDialog::DenyRecordChange, this), wui::button_view::switcher);
 
-    autoConnectCheck = std::shared_ptr<wui::button>(new wui::button(wui::locale("conference_dialog", "auto_connect_on_start"), std::bind(&ConferenceDialog::AutoConnectChange, this), wui::button_view::switcher));
-    denySelfConnectCheck = std::shared_ptr<wui::button>(new wui::button(wui::locale("conference_dialog", "deny_self_connect"), std::bind(&ConferenceDialog::DenySelfConnectChange, this), wui::button_view::switcher));
+    autoConnectCheck = std::make_shared<wui::button>(wui::locale("conference_dialog", "auto_connect_on_start"), std::bind(&ConferenceDialog::AutoConnectChange, this), wui::button_view::switcher);
+    denySelfConnectCheck = std::make_shared<wui::button>(wui::locale("conference_dialog", "deny_self_connect"), std::bind(&ConferenceDialog::DenySelfConnectChange, this), wui::button_view::switcher);
 
-    updateButton = std::shared_ptr<wui::button>(new wui::button(wui::locale("button", editedConf_.tag.empty() ? "create" : "change"), std::bind(&ConferenceDialog::Update, this)));
-    startButton = std::shared_ptr<wui::button>(new wui::button(wui::locale("button", "start"), std::bind(&ConferenceDialog::Start, this)));
-    closeButton = std::shared_ptr<wui::button>(new wui::button(wui::locale("button", "close"), std::bind(&ConferenceDialog::Close, this)));
-    messageBox = std::shared_ptr<wui::message>(new wui::message(window));
+    updateButton = std::make_shared<wui::button>(wui::locale("button", editedConf_.tag.empty() ? "create" : "change"), std::bind(&ConferenceDialog::Update, this));
+    startButton = std::make_shared<wui::button>(wui::locale("button", "start"), std::bind(&ConferenceDialog::Start, this));
+    closeButton = std::make_shared<wui::button>(wui::locale("button", "close"), std::bind(&ConferenceDialog::Close, this));
+    messageBox = std::make_shared<wui::message>(window);
 
-    switchOnImage = std::shared_ptr<wui::image>(new wui::image(wui::theme_image(wui::button::ti_switcher_on)));
-    switchOffImage = std::shared_ptr<wui::image>(new wui::image(wui::theme_image(wui::button::ti_switcher_off)));
+    switchOnImage = std::make_shared<wui::image>(wui::theme_image(wui::button::ti_switcher_on));
+    switchOffImage = std::make_shared<wui::image>(wui::theme_image(wui::button::ti_switcher_off));
 
-    groupRolledImg = std::shared_ptr<wui::image>(new wui::image(IMG_CL_GROUP_ROLLED)); groupExpandedImg = std::shared_ptr<wui::image>(new wui::image(IMG_CL_GROUP_EXPANDED));
-    ownerImg = std::shared_ptr<wui::image>(new wui::image(IMG_ML_OWNER)); moderatorImg = std::shared_ptr<wui::image>(new wui::image(IMG_ML_MODERATOR)); ordinaryImg = std::shared_ptr<wui::image>(new wui::image(IMG_ML_ORDINARY)); readOnlyImg = std::shared_ptr<wui::image>(new wui::image(IMG_ML_READONLY));
+    groupRolledImg = std::make_shared<wui::image>(IMG_CL_GROUP_ROLLED); groupExpandedImg = std::make_shared<wui::image>(IMG_CL_GROUP_EXPANDED);
+    ownerImg = std::make_shared<wui::image>(IMG_ML_OWNER); moderatorImg = std::make_shared<wui::image>(IMG_ML_MODERATOR); ordinaryImg = std::make_shared<wui::image>(IMG_ML_ORDINARY); readOnlyImg = std::make_shared<wui::image>(IMG_ML_READONLY);
 
     currentSheet = CurrentSheet::Base;
 
@@ -251,6 +254,7 @@ void ConferenceDialog::Run(const Proto::Conference &editedConf_, std::function<v
         deleteMemberButton.reset();
         addMemberButton.reset();
         
+        openConfLinkButton.reset();
         linkInput.reset();
         linkText.reset();
         descriptionInput.reset();
@@ -316,7 +320,8 @@ void ConferenceDialog::ShowBase()
     wui::line_up_top_bottom(pos, 15, 15);
     window->add_control(linkText, pos);
     wui::line_up_top_bottom(pos, 25, 5);
-    window->add_control(linkInput, pos);
+    window->add_control(linkInput, { pos.left, pos.top, pos.right - 150, pos.bottom });
+    window->add_control(openConfLinkButton, { pos.right - 140, pos.top, pos.right, pos.bottom });
 
     window->set_focused(nameInput);
 }
@@ -337,6 +342,7 @@ void ConferenceDialog::ShowMembers()
     window->remove_control(descriptionInput);
     window->remove_control(linkText);
     window->remove_control(linkInput);
+    window->remove_control(openConfLinkButton);
 
     window->remove_control(disableMicrophoneIfNoSpeakCheck);
     window->remove_control(disableCameraIfNoSpeakCheck);
@@ -378,6 +384,7 @@ void ConferenceDialog::ShowOptions()
     window->remove_control(descriptionInput);
     window->remove_control(linkText);
     window->remove_control(linkInput);
+    window->remove_control(openConfLinkButton);
 
     window->remove_control(addMemberButton);
     window->remove_control(deleteMemberButton);

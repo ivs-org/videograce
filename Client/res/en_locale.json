@@ -108,6 +108,7 @@
       "description": "Description",
       "conference_type": "Conference type",
       "link": "Link",
+      "open_conf_link": "Open in a browser",
       "avail_list": "Available users",
       "members_list": "Conference participants",
       "add_member": "Add a participant",

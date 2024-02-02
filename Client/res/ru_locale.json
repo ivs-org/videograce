@@ -108,6 +108,7 @@
       "description": "Описание",
       "conference_type": "Тип",
       "link": "Ссылка",
+      "open_conf_link": "Открыть в браузере",
       "avail_list": "Доступные пользователи",
       "members_list": "Участники конференции",
       "add_member": "Добавить участника",

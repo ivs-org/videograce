@@ -57,6 +57,7 @@ private:
     std::shared_ptr<wui::input> descriptionInput;
     std::shared_ptr<wui::text> linkText;
     std::shared_ptr<wui::input> linkInput;
+    std::shared_ptr<wui::button> openConfLinkButton;
 
     std::shared_ptr<wui::button> addMemberButton;
     std::shared_ptr<wui::button> deleteMemberButton;
