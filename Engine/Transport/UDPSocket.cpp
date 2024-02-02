@@ -216,7 +216,7 @@ void UDPSocket::run()
 
         uint8_t recvBuf[MAX_DATAGRAM_SIZE] = { 0 };
         const int recvSize = recvfrom(netsocket, (char*)recvBuf, MAX_DATAGRAM_SIZE, 0, (struct sockaddr*)&senderAddr, &senderAddrSize);
-        if (runned && (recvSize == SOCKET_ERROR || recvSize == 0))
+        if (recvSize == SOCKET_ERROR || recvSize == 0)
         {
             if (GET_LAST_ERROR != 0) errLog->critical("UDPSocket[{0}] recvfrom() error: {1}", netsocket, GET_LAST_ERROR);
             
@@ -231,10 +231,7 @@ void UDPSocket::run()
                 netsocket, recvSize, addr.toString(), bindedPort);
         }
 
-        if (recvSize != 65535)
-        {
-            receiver(recvBuf, recvSize, addr, bindedPort);
-        }
+        receiver(recvBuf, recvSize, addr, bindedPort);
     }
 }
 
