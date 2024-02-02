@@ -1188,8 +1188,6 @@ void MainFrame::ProcessControllerEvent()
                     //ActionDevices();
                 }
 
-                //CheckVGProtocol();
-
                 ConnectToURIConference();
             }
             break;
@@ -3032,76 +3030,6 @@ void SetVideoCapturerBitrate(std::shared_ptr<CaptureSession::CaptureVideoSession
 
     cvs->SetBitrate(cameraBitrate);
 }
-
-#ifdef _WIN32
-void MainFrame::CheckVGProtocol()
-{
-    wchar_t pathW[MAX_PATH] = { 0 };
-    GetModuleFileNameW(NULL, pathW, MAX_PATH);
-    std::string currentPath(boost::nowide::narrow(pathW));
-
-	wui::config::config_impl_reg cir("vg\\shell\\open", HKEY_CLASSES_ROOT);
-
-    if (cir.get_string("command", "", "") != "\"" + currentPath + "\" %1")
-    {
-        bool haveAdminPrivileges = false;
-        HANDLE hToken = NULL;
-        if (OpenProcessToken(GetCurrentProcess(), TOKEN_QUERY, &hToken))
-        {
-            TOKEN_ELEVATION elevation;
-            DWORD dwSize;
-            if (GetTokenInformation(hToken, TokenElevation, &elevation, sizeof(elevation), &dwSize))
-            {
-                haveAdminPrivileges = elevation.TokenIsElevated;
-            }
-        }
-        CloseHandle(hToken);
-
-        if (!haveAdminPrivileges)
-        {
-            messageBox->show(wui::locale("message", "app_needed_admin_privilleges"),
-                wui::locale("message", "title_notification"),
-                wui::message_icon::alert,
-                wui::message_button::ok, [](wui::message_result) {
-                wchar_t pathW[MAX_PATH] = { 0 };
-                GetModuleFileNameW(NULL, pathW, MAX_PATH);
-                ShellExecute(NULL, L"runas", pathW, L"/regproto", 0, SW_HIDE);
-            });
-        }
-        else
-        {
-            RegisterVGProtocol();
-        }
-    }
-}
-
-void MainFrame::RegisterVGProtocol()
-{
-    wchar_t pathW[MAX_PATH] = { 0 };
-    GetModuleFileNameW(NULL, pathW, MAX_PATH);
-    std::string path(boost::nowide::narrow(pathW));
-
-	wui::config::config_impl_reg cir(BROWSER_PROTO, HKEY_CLASSES_ROOT);
-
-    cir.set_string("", "", "URL:" SYSTEM_NAME " Conferencing");
-    cir.set_string("", "URL Protocol", "");
-
-    cir.set_string("DefaultIcon", "", Common::FileNameOf(path) + ",1");
-
-	wui::config::config_impl_reg cir1(BROWSER_PROTO "\\shell\\open", HKEY_CLASSES_ROOT);
-    cir1.set_string("command", "", "\"" + path + "\" %1");
-}
-
-#elif __linux__
-
-void MainFrame::CheckVGProtocol()
-{
-}
-void MainFrame::RegisterVGProtocol()
-{
-}
-
-#endif
 
 void MainFrame::UpdateOutputBitrates()
 {

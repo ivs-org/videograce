@@ -137,9 +137,6 @@ public:
     virtual void ContentPanelPinChanged();
     virtual void ContentPanelWidthChanged(int32_t width);
 
-    /// Registering the vg protocol in the browser
-    static void RegisterVGProtocol();
-
 private:
     std::shared_ptr<wui::window> window;
     std::shared_ptr<wui::message> messageBox;
@@ -274,8 +271,6 @@ private:
     std::shared_ptr<CaptureSession::CaptureVideoSession> GetCaptureVideoSession(Proto::DeviceType deviceType);
     std::shared_ptr<RendererSession::RendererVideoSession> GetRendererVideoSession(uint32_t deviceId);
     std::shared_ptr<RendererSession::RendererAudioSession> GetRendererAudioSession(uint32_t deviceId);
-
-    void CheckVGProtocol();
 
     void UpdateOutputBitrates();
 

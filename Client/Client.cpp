@@ -16,6 +16,7 @@
 #include <wui/system/tools.hpp>
 #include <wui/system/path_tools.hpp>
 #include <wui/config/config.hpp>
+#include <wui/config/config_impl_reg.hpp>
 
 #ifdef _WIN32
 #include <windows.h>
@@ -36,6 +37,7 @@
 
 #include <Transport/NetworkInit.h>
 #include <Common/Logger.h>
+#include <Common/FSHelpers.h>
 
 #include <iostream>
 
@@ -99,6 +101,37 @@ void ConnectToConference(const std::wstring &cmdLine)
     }
 }
 
+void RegisterVGProtocol()
+{
+    wchar_t pathW[MAX_PATH] = { 0 };
+    GetModuleFileNameW(NULL, pathW, MAX_PATH);
+    std::string path(boost::nowide::narrow(pathW));
+
+    wui::config::config_impl_reg cir("SOFTWARE\\Classes\\" BROWSER_PROTO, HKEY_CURRENT_USER);
+
+    cir.set_string("", "", "URL:" SYSTEM_NAME " Conferencing");
+    cir.set_string("", "URL Protocol", "");
+
+    cir.set_string("DefaultIcon", "", Common::FileNameOf(path) + ",1");
+
+    wui::config::config_impl_reg cir1("SOFTWARE\\Classes\\" BROWSER_PROTO "\\shell\\open", HKEY_CURRENT_USER);
+    cir1.set_string("command", "", "\"" + path + "\" %1");
+}
+
+void CheckVGProtocol()
+{
+    wchar_t pathW[MAX_PATH] = { 0 };
+    GetModuleFileNameW(NULL, pathW, MAX_PATH);
+    std::string currentPath(boost::nowide::narrow(pathW));
+
+    wui::config::config_impl_reg cir("SOFTWARE\\Classes\\" BROWSER_PROTO "\\shell\\open", HKEY_CURRENT_USER);
+
+    if (cir.get_string("command", "", "") != "\"" + currentPath + "\" %1")
+    {
+        RegisterVGProtocol();
+    }
+}
+
 #elif __linux__
 
 bool IsAlreadyRunning(bool waitForCloseOnRestarting)
@@ -142,6 +175,14 @@ void ConnectToConference(std::string_view cmdLine)
     }
 }
 
+void CheckVGProtocol()
+{
+}
+
+void RegisterVGProtocol()
+{
+}
+
 #endif
 
 #ifdef _WIN32
@@ -155,12 +196,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     wui::config::use_registry("Software\\IVS\\" SYSTEM_NAME "-Client", HKEY_CURRENT_USER);
 
-    if (std::wstring(lpCmdLine).find(L"/regproto") != std::wstring::npos) // finded like: /regproto
-    {
-        Client::MainFrame::RegisterVGProtocol();
-        return 0;
-    }
-    else if (std::wstring(lpCmdLine).find(_T(BROWSER_PROTO) L"://conference") != std::wstring::npos) // finded like: vg://conference/tag
+    if (std::wstring(lpCmdLine).find(_T(BROWSER_PROTO) L"://conference") != std::wstring::npos) // finded like: vg://conference/tag
     {
         ConnectToConference(lpCmdLine);
     }
@@ -263,6 +299,8 @@ int main(int argc, char *argv[])
     }
 
     Transport::NetworkInit networkInit;
+
+    CheckVGProtocol();
 
     Client::MainFrame mainFrame;
     mainFrame.Run(autorun);
