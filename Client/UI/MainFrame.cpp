@@ -1039,6 +1039,7 @@ void MainFrame::ReceiveEvents(const wui::event &ev)
                             busyBox.End();
                         break;
                         case MyEvent::CredentialsReady:
+                            storage.Connect(GetAppDataPath() + "local.db");
                             controller.SetCredentials(credentialsDialog.login, credentialsDialog.password);
 
                             UpdateTitle();
@@ -1046,7 +1047,10 @@ void MainFrame::ReceiveEvents(const wui::event &ev)
                             {
                                 controller.Disconnect();
                             }
-                            storage.Connect(GetAppDataPath() + "local.db");
+                            else
+                            {
+                                controller.Connect(wui::config::get_string("Connection", "Address", ""), wui::config::get_int("Connection", "Secure", 0) != 0);
+                            }
                         break;
                         case MyEvent::NewCredentials:
                             controller.SetCredentials(credentialsDialog.login, credentialsDialog.password);
