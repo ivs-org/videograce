@@ -828,7 +828,7 @@ void MainFrame::ActionTurnRecord()
         {
             if (IsRecordAllowed())
             {
-                recorder.Start(GetRecordName().c_str(), wui::config::get_int("Record", "MP3Mode", 0) != 0);
+                recorder.Start(GetRecordName(), wui::config::get_int("Record", "MP3Mode", 0) != 0);
             }
         }
         else
@@ -1267,7 +1267,7 @@ void MainFrame::ProcessControllerEvent()
             }
             break;
             case Controller::Event::Type::UpdateRTPAddress:
-                udpTester.AddAddress(e.data.c_str(), static_cast<int16_t>(e.iData));
+                udpTester.AddAddress(e.data, static_cast<int16_t>(e.iData));
             break;
             case Controller::Event::Type::ReadyToMakeMediaTest:
                 udpTester.DoTheTest();
