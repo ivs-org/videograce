@@ -236,7 +236,7 @@ void CaptureAudioSession::Start(uint32_t ssrc_, uint32_t deviceId_, std::string_
 		errLog->info("Can't start microphone session because no memory, device id: {0:d}, ssrc: {1:d}", deviceId, ssrc);
 		if (deviceNotifies)
 		{
-			deviceNotifies->ReceiveDeviceNotify(name.c_str(), Client::DeviceNotifyType::MemoryError, Proto::dtMicrophone, deviceId, 0);
+			deviceNotifies->ReceiveDeviceNotify(name, Client::DeviceNotifyType::MemoryError, Proto::dtMicrophone, deviceId, 0);
 		}
 		return;
 	}*/

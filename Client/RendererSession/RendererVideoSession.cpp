@@ -213,7 +213,7 @@ void RendererVideoSession::Start(uint32_t receiverSSRC_, uint32_t authorSSRC_, u
 	runned = true;
 
 	renderer->SetId(deviceId_, clientId);
-	renderer->SetName(name.c_str());
+	renderer->SetName(name);
 
 	renderer->Start();
 
