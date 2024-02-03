@@ -695,12 +695,10 @@ void MainDialog::Uninstall()
 	wui::config::config_impl_reg cir("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall");
     cir.delete_key(CLIENT_INSTALLER_GUID);
 
-    ShellExecute(NULL, L"runas", L"reg", L"delete HKCR\\vg /f", 0, SW_HIDE);
-
 	wui::config::config_impl_reg cir1("SOFTWARE\\Microsoft\\Windows\\CurrentVersion");
     cir.delete_value("Run", SYSTEM_NAME "Client");
 
-	wui::config::config_impl_reg cir2("vg", HKEY_CLASSES_ROOT);
+	wui::config::config_impl_reg cir2("SOFTWARE\\Classes\\" BROWSER_PROTO, HKEY_CURRENT_USER);
     cir2.delete_key("");
 
     window->emit_event(static_cast<int32_t>(my_event::completed), 0);
