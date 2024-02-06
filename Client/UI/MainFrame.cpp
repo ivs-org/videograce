@@ -3001,26 +3001,32 @@ void SetVideoCapturerBitrate(std::shared_ptr<CaptureSession::CaptureVideoSession
 {
     uint32_t cameraBitrate = maxCameraBitrate;
 
+    uint32_t maxBitrate1080 = wui::config::get_int("CaptureDevices", "CameraMaxBitrate1080", 4096);
+    uint32_t maxBitrate720  = wui::config::get_int("CaptureDevices", "CameraMaxBitrate720",  3072);
+    uint32_t maxBitrate480  = wui::config::get_int("CaptureDevices", "CameraMaxBitrate480",  2048);
+    uint32_t maxBitrate240  = wui::config::get_int("CaptureDevices", "CameraMaxBitrate240",  1280);
+    uint32_t maxBitrate120  = wui::config::get_int("CaptureDevices", "CameraMaxBitrate120",  1024);
+
     auto height = Video::GetValues(cvs->GetResolution()).height;
     if (height >= 1080)
     {
-        cameraBitrate = maxCameraBitrate >= 2048 ? 2048 : maxCameraBitrate;
+        cameraBitrate = maxCameraBitrate >= maxBitrate1080 ? maxBitrate1080 : maxCameraBitrate;
     }
     else if (height < 1080 && height >= 720)
     {
-        cameraBitrate = maxCameraBitrate >= 1536 ? 1536 : maxCameraBitrate;
+        cameraBitrate = maxCameraBitrate >= maxBitrate720 ? maxBitrate720 : maxCameraBitrate;
     }
     else if (height < 720 && height >= 480)
     {
-        cameraBitrate = maxCameraBitrate >= 1024 ? 1024 : maxCameraBitrate;
+        cameraBitrate = maxCameraBitrate >= maxBitrate480 ? maxBitrate480 : maxCameraBitrate;
     }
     else if (height < 480 && height >= 240)
     {
-        cameraBitrate = maxCameraBitrate >= 640 ? 640 : maxCameraBitrate;
+        cameraBitrate = maxCameraBitrate >= maxBitrate240 ? maxBitrate240 : maxCameraBitrate;
     }
     else if (height < 240)
     {
-        cameraBitrate = maxCameraBitrate >= 512 ? 512 : maxCameraBitrate;
+        cameraBitrate = maxCameraBitrate >= maxBitrate120 ? maxBitrate120 : maxCameraBitrate;
     }
 
     cvs->SetBitrate(cameraBitrate);
