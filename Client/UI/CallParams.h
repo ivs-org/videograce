@@ -22,8 +22,6 @@ struct CallParams
 
     std::string scheduleConferenceTag, scheduleConferenceName;
 
-    bool currentConferenceOneTime;
-
     time_t timeLimit;
 
     CallParams()
@@ -34,8 +32,6 @@ struct CallParams
 
         scheduleConferenceTag(),
         scheduleConferenceName(),
-
-        currentConferenceOneTime(false),
 
         timeLimit(0)
     {}
@@ -48,8 +44,6 @@ struct CallParams
         subscriberName.clear();
 
         scheduleConferenceTag.clear();
-
-        currentConferenceOneTime = false;
 
         timeLimit = 0;
     }

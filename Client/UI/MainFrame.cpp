@@ -1808,15 +1808,6 @@ void MainFrame::ProcessControllerEvent()
                     wui::config::set_int("User", "EnableMicOnEndConference", 0);
                 }
 
-                if (callParams.currentConferenceOneTime)
-                {
-                    messageBox->show(wui::locale("message", "ask_delete_one_time_conference"),
-                        wui::locale("message", "title_notification"),
-                        wui::message_icon::alert,
-                        wui::message_button::ok, [this, &e](wui::message_result) { controller.DeleteConference(static_cast<int32_t>(e.iData)); });
-                }
-                callParams.currentConferenceOneTime = false;
-
                 UpdateTitle();
 
                 miniWindow.End();
