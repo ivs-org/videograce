@@ -346,6 +346,15 @@ void SettingsDialog::UpdateLoudspeakers()
     }
 }
 
+void SettingsDialog::UpdateNetSpeed()
+{
+    connectionInSpeed = std::to_string(wui::config::get_int("User", "MaxInputBitrate", 0));
+    connectionOutSpeed = std::to_string(wui::config::get_int("User", "MaxOutputBitrate", 0));
+
+    connectionInSpeedInput->set_text(connectionInSpeed);
+    connectionOutSpeedInput->set_text(connectionOutSpeed);
+}
+
 void SettingsDialog::OK()
 {
     if (!UpdateCamera()) return;

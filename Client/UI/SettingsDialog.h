@@ -74,6 +74,8 @@ public:
     void UpdateMicrophones();
     void UpdateLoudspeakers();
 
+    void UpdateNetSpeed();
+
 private:
     static const int32_t WND_WIDTH = 700, WND_HEIGHT = 460;
     static const int32_t XBITMAP = 48;

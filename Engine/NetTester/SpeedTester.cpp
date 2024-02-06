@@ -203,12 +203,12 @@ void SpeedTester::OnWebSocket(Transport::WSMethod method, std::string_view messa
 
 								++iteration;
 
-								auto currentSpeed = static_cast<uint32_t>(summSpeed / iteration);
+								inputSpeed = static_cast<uint32_t>(summSpeed / iteration);
 
-								sysLog->trace("SpeedTester :: TakeInputSpeed :: iteration {0} result : {1} kbps", iteration, currentSpeed);
+								sysLog->trace("SpeedTester :: TakeInputSpeed :: iteration {0} result : {1} kbps", iteration, inputSpeed);
 
 								progressCallback(locale->get("net_test", "in_speed_testing") + ": " +
-									std::to_string(currentSpeed) + " " +
+									std::to_string(inputSpeed) + " " +
 									locale->get("net_test", "kbps"),
 									iteration * (100 / ITERATIONS_COUNT));
 
@@ -220,8 +220,6 @@ void SpeedTester::OnWebSocket(Transport::WSMethod method, std::string_view messa
 								}
 								else
 								{
-									inputSpeed = summSpeed / iteration;
-
 									sysLog->trace("SpeedTester :: TakeInputSpeed :: result: {0} kbps", inputSpeed);
 
 									mode_ = mode::output;
@@ -242,12 +240,12 @@ void SpeedTester::OnWebSocket(Transport::WSMethod method, std::string_view messa
 
 								++iteration;
 
-								auto currentSpeed = static_cast<uint32_t>(summSpeed / iteration);
+								outputSpeed = static_cast<uint32_t>(summSpeed / iteration);
 
-								sysLog->trace("SpeedTester :: TakeOutputSpeed :: iteration {0} result : {1} kbps", iteration, currentSpeed);
+								sysLog->trace("SpeedTester :: TakeOutputSpeed :: iteration {0} result : {1} kbps", iteration, outputSpeed);
 
 								progressCallback(locale->get("net_test", "out_speed_testing") + ": " +
-									std::to_string(currentSpeed) + " " +
+									std::to_string(outputSpeed) + " " +
 									locale->get("net_test", "kbps"),
 									iteration * (100 / ITERATIONS_COUNT));
 
@@ -259,8 +257,6 @@ void SpeedTester::OnWebSocket(Transport::WSMethod method, std::string_view messa
 								}
 								else
 								{
-									outputSpeed = summSpeed / iteration;
-
 									sysLog->trace("SpeedTester :: TakeOutputSpeed :: result: {0} kbps", outputSpeed);
 
 									std::thread([this]() { Logout(); }).detach();

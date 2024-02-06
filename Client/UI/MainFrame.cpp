@@ -1061,6 +1061,7 @@ void MainFrame::ReceiveEvents(const wui::event &ev)
                         break;
                         case MyEvent::SpeedTestCompleted:
                             UpdateTitle();
+                            settingsDialog.UpdateNetSpeed();
                         break;
                         case MyEvent::ConnectivityTestCompleted:
                             if (showConnectivityResult)
