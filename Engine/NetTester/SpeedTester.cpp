@@ -208,7 +208,7 @@ void SpeedTester::OnWebSocket(Transport::WSMethod method, std::string_view messa
 								sysLog->trace("SpeedTester :: TakeInputSpeed :: iteration {0} result : {1} kbps", iteration, inputSpeed);
 
 								progressCallback(locale->get("net_test", "in_speed_testing") + ": " +
-									std::to_string(inputSpeed) + " " +
+									std::to_string(static_cast<int32_t>(inputSpeed)) + " " +
 									locale->get("net_test", "kbps"),
 									iteration * (100 / ITERATIONS_COUNT));
 
@@ -245,7 +245,7 @@ void SpeedTester::OnWebSocket(Transport::WSMethod method, std::string_view messa
 								sysLog->trace("SpeedTester :: TakeOutputSpeed :: iteration {0} result : {1} kbps", iteration, outputSpeed);
 
 								progressCallback(locale->get("net_test", "out_speed_testing") + ": " +
-									std::to_string(outputSpeed) + " " +
+									std::to_string(static_cast<int32_t>(outputSpeed)) + " " +
 									locale->get("net_test", "kbps"),
 									iteration * (100 / ITERATIONS_COUNT));
 

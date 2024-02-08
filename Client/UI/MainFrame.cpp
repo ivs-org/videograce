@@ -2433,7 +2433,7 @@ void MainFrame::WindowControlCallback(wui::window_control control, std::string &
                 wui::hide_taskbar_icon(window->context());
                 window->minimize();
 
-                trayIcon->show_message(wui::locale("client", "title"), wui::locale("message", "application_hided"));
+                //trayIcon->show_message(wui::locale("client", "title"), wui::locale("message", "application_hided"));
             }
         break;
         case wui::window_control::state:
@@ -3759,7 +3759,7 @@ void MainFrame::ConfirmClose(bool minimizeAfterNo)
                 wui::hide_taskbar_icon(window->context());
                 window->minimize();
 
-                trayIcon->show_message(wui::locale("client", "title"), wui::locale("message", "application_hided"));
+                //trayIcon->show_message(wui::locale("client", "title"), wui::locale("message", "application_hided"));
             }
         }
     });
