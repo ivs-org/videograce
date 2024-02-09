@@ -1301,7 +1301,7 @@ void Storage::UpdateConferences(const Conferences &conferences_)
             else
             {
 				if (BitIsSet(conference.grants, static_cast<int32_t>(Proto::ConferenceGrants::Deactivated)) &&
-					conference.founder_id != myClientId)
+					conference.founder_id != GetMyClientId())
 				{
 					auto c = std::find_if(conferences.begin(), conferences.end(), [conference](const Proto::Conference& c) { return c.id == conference.id; });
 					if (c != conferences.end())
@@ -1408,7 +1408,7 @@ void Storage::LoadConferences()
 		auto conf_grants = conferences_query.get_int32(6);
 		
 		if (BitIsSet(conf_grants, static_cast<int32_t>(Proto::ConferenceGrants::Deactivated)) &&
-			founder_id != myClientId)
+			founder_id != GetMyClientId())
 		{
 			continue;
 		}
