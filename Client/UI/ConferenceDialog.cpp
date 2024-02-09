@@ -899,6 +899,8 @@ void ConferenceDialog::ConferenceUpdateCallback(const Proto::CONFERENCE_UPDATE_R
     }
     else if (response.result == Proto::CONFERENCE_UPDATE_RESPONSE::Result::OK)
     {
+        bool newConfCreated = editedConf.id == 0;
+
         editedConf.id = response.id;
         editedConf.tag = tagInput->text();
 
@@ -912,6 +914,13 @@ void ConferenceDialog::ConferenceUpdateCallback(const Proto::CONFERENCE_UPDATE_R
             {
                 readyCallback(editedConf.tag);
             }
+        }
+        else
+        {
+            messageBox->show(wui::locale("message", newConfCreated ? "conference_created" : "conference_updated"),
+                wui::locale("message", "title_confirmation"),
+                wui::message_icon::information,
+                wui::message_button::ok);
         }
     }
     else

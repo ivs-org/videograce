@@ -1190,7 +1190,21 @@ void MainFrame::ProcessControllerEvent()
                 if (wui::config::get_int("User", "FirstRun", 1) != 0)
                 {
                     wui::config::set_int("User", "FirstRun", 0);
-                    //ActionDevices();
+
+                    if (wui::config::get_string("User", "ConferenceTag", "").empty()
+                        && License::Parse(controller.GetGrants()).allowedCreatingConferences)
+                    {
+                        messageBox->show(wui::locale("message", "create_you_first_conference"),
+                            wui::locale("message", "title_welcome"),
+                            wui::message_icon::information,
+                            wui::message_button::yes_no,
+                            [this](wui::message_result r) {
+                                if (r == wui::message_result::yes)
+                                {
+                                    ActionConference();
+                                }
+                            });
+                    }
                 }
 
                 ConnectToURIConference();
