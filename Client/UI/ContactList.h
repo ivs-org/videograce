@@ -116,13 +116,13 @@ private:
 
         int32_t unreaded_count;
 
-        bool my;
+        bool my, deacivated;
 
         Item()
-            : id(0), group_id(-1), type(ItemType::Undefined), name(), number(), tag(), level(0), image(), unreaded_count(0), my(false) {}
+            : id(0), group_id(-1), type(ItemType::Undefined), name(), number(), tag(), level(0), image(), unreaded_count(0), my(false), deacivated(false) {}
 
-        Item(int64_t id_, int64_t group_id_, ItemType type_, std::string_view name_, std::string_view number_, std::string_view tag_, int32_t level_, std::shared_ptr<wui::image> image_, int32_t unreaded_count_, bool my_)
-            : id(id_), group_id(group_id_), type(type_), name(name_), number(number_), tag(tag_), level(level_), image(image_), unreaded_count(unreaded_count_), my(my_) {}
+        Item(int64_t id_, int64_t group_id_, ItemType type_, std::string_view name_, std::string_view number_, std::string_view tag_, int32_t level_, std::shared_ptr<wui::image> image_, int32_t unreaded_count_, bool my_, bool deacivated_)
+            : id(id_), group_id(group_id_), type(type_), name(name_), number(number_), tag(tag_), level(level_), image(image_), unreaded_count(unreaded_count_), my(my_), deacivated(deacivated_) {}
     };
 
     std::mutex itemsMutex;

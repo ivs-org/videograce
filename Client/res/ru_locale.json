@@ -109,6 +109,7 @@
       "conference_type": "Тип",
       "link": "Ссылка",
       "open_conf_link": "Открыть в браузере",
+      "deactivate_conference": "Деактивировать конференцию",
       "avail_list": "Доступные пользователи",
       "members_list": "Участники конференции",
       "add_member": "Добавить участника",

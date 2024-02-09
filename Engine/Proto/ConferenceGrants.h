@@ -23,6 +23,8 @@ namespace Proto
         DenyRecord = 9,
 		DenySelfConnectMembers = 10,
 		EnableCameraOnConnect = 11,
-		EnableMicrophoneOnConnect = 12
+		EnableMicrophoneOnConnect = 12,
+
+		Deactivated = 20
 	};
 }

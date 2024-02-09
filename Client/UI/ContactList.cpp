@@ -17,6 +17,7 @@
 #include <Common/BitHelpers.h>
 #include <Proto/MemberGrants.h>
 #include <Proto/GroupGrants.h>
+#include <Proto/ConferenceGrants.h>
 
 #include <License/Grants.h>
 
@@ -341,7 +342,17 @@ void ContactList::MakeGroups()
 
         if (group.parent_id == 0 || !rolled || !storage.IsGroupRolled(group.parent_id))
         {
-            items.emplace_back(Item(group.id, group.id, ItemType::Group, group.name, "", "", group.level, rolled ? groupRolledImg : groupExpandedImg, 0, my_group));
+            items.emplace_back(Item(group.id,
+                group.id,
+                ItemType::Group,
+                group.name,
+                "",
+                "",
+                group.level,
+                rolled ? groupRolledImg : groupExpandedImg,
+                0,
+                my_group, 
+                false));
         }
 
         if (!rolled)
@@ -363,9 +374,17 @@ void ContactList::MakeGroups()
                         break;
                     }
 
-                    items.emplace_back(Item(contact.id, group.id,
+                    items.emplace_back(Item(contact.id,
+                        group.id,
                         my_group ? ItemType::Contact : ItemType::GroupUser,
-                        contact.name, contact.number, "", group.level, img, contact.unreaded_count, my_group));
+                        contact.name,
+                        contact.number,
+                        "",
+                        group.level,
+                        img,
+                        contact.unreaded_count,
+                        my_group,
+                        false));
                 }
             }
         }
@@ -379,10 +398,13 @@ void ContactList::MakeConferences()
     bool rolled = wui::config::get_int("User", "ConferencesGroupRolled", 0) != 0 
         && selected.find(CONFERENCE_MEMBER) == std::string::npos;
 
-    items.emplace_back(Item(-1, -1,
+    items.emplace_back(Item(-1,
+        -1,
         ItemType::ConferencesGroup,
         wui::locale("common", "conferences"), "", "", -1,
-        rolled ? conferencesRolledImg : conferencesExpandedImg, 0, true));
+        rolled ? conferencesRolledImg : conferencesExpandedImg, 0,
+        true,
+        false));
 
     if (rolled)
     {
@@ -421,7 +443,17 @@ void ContactList::MakeConferences()
             break;
         }
 
-        items.emplace_back(Item(conference.id, -1, ItemType::Conference, conference.name, "", conference.tag, 0, img, conference.unreaded_count, my_conf));
+        items.emplace_back(Item(conference.id,
+            -1,
+            ItemType::Conference,
+            conference.name,
+            "",
+            conference.tag,
+            0,
+            img,
+            conference.unreaded_count,
+            my_conf,
+            BitIsSet(conference.grants, static_cast<int32_t>(Proto::ConferenceGrants::Deactivated))));
         if (conference.tag == selectedConferenceTag &&
             wui::config::get_int("User", "ConferenceUsersRolled", 0) != 0)
         {
@@ -444,9 +476,17 @@ void ContactList::MakeConferences()
                     img = ownerImg;
                 }
 
-                items.emplace_back(Item(member.id, conference.id,
+                items.emplace_back(Item(member.id,
+                    conference.id,
                     ItemType::ConferenceUser,
-                    member.name, member.number, conference.tag, 1, img, 0, my_conf));
+                    member.name,
+                    member.number,
+                    conference.tag,
+                    1,
+                    img,
+                    0,
+                    my_conf, 
+                    false));
             }
         }
     }
@@ -734,6 +774,19 @@ void ContactList::DrawItem(wui::graphic &gr, int32_t nItem, const wui::rect &ite
         itemRect.left + XBITMAP + padd,
         itemRect.top + XBITMAP });
     item->image->draw(gr, { 0 });
+
+    if (item->deacivated)
+    {
+        int32_t center = itemRect.top + (XBITMAP / 2);
+        gr.draw_rect({ itemRect.left + padd + 5,
+                center - 2,
+                itemRect.left + XBITMAP + padd - 5,
+                center + 2 },
+            wui::make_color(234, 10, 40),
+            wui::make_color(234, 10, 40),
+            1,
+            4);
+    }
 }
 
 void ContactList::ClickItem(int32_t nItem)

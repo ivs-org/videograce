@@ -110,6 +110,7 @@
       "link": "Link",
       "open_conf_link": "Open in a browser",
       "avail_list": "Available users",
+      "deactivate_conference": "Deactivate the conference",
       "members_list": "Conference participants",
       "add_member": "Add a participant",
       "del_member": "Delete a participant",

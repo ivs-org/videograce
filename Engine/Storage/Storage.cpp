@@ -14,6 +14,9 @@
 
 #include <Storage/Storage.h>
 
+#include <Proto/ConferenceGrants.h>
+#include <Common/BitHelpers.h>
+
 #include <db/connection.h>
 #include <db/transaction.h>
 #include <db/query.h>
@@ -1005,7 +1008,7 @@ bool Storage::GetShowNumbers()
     get_query.prepare("select value from settings where key='show_number_on_contact_list'");
     if (get_query.step())
     {
-        showNumbers = get_query.get_string(0) != "0" ? 0 : 1;
+        showNumbers = get_query.get_string(0) == "0" ? 0 : 1;
     }
 
     return showNumbers != 0;
@@ -1297,8 +1300,20 @@ void Storage::UpdateConferences(const Conferences &conferences_)
             }
             else
             {
-                conferences.emplace_back(conference);
-                newConferences.emplace_back(conference.tag);
+				if (BitIsSet(conference.grants, static_cast<int32_t>(Proto::ConferenceGrants::Deactivated)) &&
+					conference.founder_id != myClientId)
+				{
+					auto c = std::find_if(conferences.begin(), conferences.end(), [conference](const Proto::Conference& c) { return c.id == conference.id; });
+					if (c != conferences.end())
+					{
+						conferences.erase(c);
+					}
+				}
+				else
+				{
+					conferences.emplace_back(conference);
+					newConferences.emplace_back(conference.tag);
+				}
             }
 		}
         else
@@ -1387,11 +1402,20 @@ void Storage::LoadConferences()
 	conferences_query.prepare("select id, tag, name, descr, founder_id, type, grants, duration, connect_members from conferences where deleted is null order by name");
 	while (conferences_query.step())
 	{
-		auto conferenceId = conferences_query.get_int32(0);
+		auto conf_id = conferences_query.get_int32(0);
+		auto conf_tag = conferences_query.get_string(1);
+		auto founder_id = conferences_query.get_int64(4);
+		auto conf_grants = conferences_query.get_int32(6);
+		
+		if (BitIsSet(conf_grants, static_cast<int32_t>(Proto::ConferenceGrants::Deactivated)) &&
+			founder_id != myClientId)
+		{
+			continue;
+		}
 
 		std::vector<Proto::Member> members;
 
-		members_query.set(0, conferenceId);
+		members_query.set(0, conf_id);
 		while (members_query.step())
 		{
 			auto userId = members_query.get_int64(0);
@@ -1422,18 +1446,18 @@ void Storage::LoadConferences()
 		}
 		members_query.reset();
 
-		rolled_query.set(0, conferenceId);
+		rolled_query.set(0, conf_id);
 		bool rolled = rolled_query.step();
 		rolled_query.reset();
 
 		auto conference = Proto::Conference(
-			conferenceId,
-			conferences_query.get_string(1),
+			conf_id,
+			conf_tag,
 			conferences_query.get_string(2),
 			conferences_query.get_string(3), "", 
-			conferences_query.get_int32(4),
+			founder_id,
 			static_cast<Proto::ConferenceType>(conferences_query.get_int32(5)),
-			conferences_query.get_int32(6),
+			conf_grants,
 			conferences_query.get_int32(7),
 			members,
 			conferences_query.get_int32(8) != 0,
@@ -1441,7 +1465,7 @@ void Storage::LoadConferences()
 			false,
 			rolled);
 
-        conference.unreaded_count = CalcUnreadedConference(conn, conferences_query.get_string(1));
+        conference.unreaded_count = CalcUnreadedConference(conn, conf_tag);
 
         conferences.emplace_back(conference);
 	}

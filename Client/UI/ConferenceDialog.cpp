@@ -50,6 +50,7 @@ ConferenceDialog::ConferenceDialog(std::weak_ptr<wui::window> parentWindow__, Co
     descriptionText(), descriptionInput(),
     linkText(), linkInput(),
     openConfLinkButton(),
+    deactiveConfCheck(),
 
     addMemberButton(),
     deleteMemberButton(),
@@ -116,6 +117,7 @@ void ConferenceDialog::Run(const Proto::Conference &editedConf_, std::function<v
     linkText = std::make_shared<wui::text>(wui::locale("conference_dialog", "link"));
     linkInput = std::make_shared<wui::input>("", wui::input_view::readonly);
     openConfLinkButton = std::make_shared<wui::button>(wui::locale("conference_dialog", "open_conf_link"), [this]() { wui::open_uri(linkInput->text()); });
+    deactiveConfCheck = std::make_shared<wui::button>(wui::locale("conference_dialog", "deactivate_conference"), std::bind(&ConferenceDialog::DeactivateChange, this), wui::button_view::switcher);
 
     membersList = std::make_shared<wui::list>();
     membersList->set_item_height_callback([](int32_t, int32_t& h) { h = XBITMAP; });
@@ -150,7 +152,7 @@ void ConferenceDialog::Run(const Proto::Conference &editedConf_, std::function<v
     autoConnectCheck = std::make_shared<wui::button>(wui::locale("conference_dialog", "auto_connect_on_start"), std::bind(&ConferenceDialog::AutoConnectChange, this), wui::button_view::switcher);
     denySelfConnectCheck = std::make_shared<wui::button>(wui::locale("conference_dialog", "deny_self_connect"), std::bind(&ConferenceDialog::DenySelfConnectChange, this), wui::button_view::switcher);
 
-    updateButton = std::make_shared<wui::button>(wui::locale("button", editedConf_.tag.empty() ? "create" : "change"), std::bind(&ConferenceDialog::Update, this));
+    updateButton = std::make_shared<wui::button>(wui::locale("button", editedConf_.tag.empty() ? "create" : "change"), std::bind(&ConferenceDialog::Update, this), "green_button");
     startButton = std::make_shared<wui::button>(wui::locale("button", "start"), std::bind(&ConferenceDialog::Start, this));
     closeButton = std::make_shared<wui::button>(wui::locale("button", "close"), std::bind(&ConferenceDialog::Close, this));
     messageBox = std::make_shared<wui::message>(window);
@@ -208,6 +210,7 @@ void ConferenceDialog::Run(const Proto::Conference &editedConf_, std::function<v
     tagInput->set_text(editedConf.tag);
     typeSelect->select_item_id(editedConf.type != Proto::ConferenceType::Undefined ? static_cast<int32_t>(editedConf.type) : 1);
     descriptionInput->set_text(editedConf.descr);
+    deactiveConfCheck->turn(BitIsSet(editedConf.grants, static_cast<int32_t>(Proto::ConferenceGrants::Deactivated)));
     disableMicrophoneIfNoSpeakCheck->turn(BitIsSet(editedConf.grants, static_cast<int32_t>(Proto::ConferenceGrants::DisableMicrophoneIfNoSpeak)));
     disableCameraIfNoSpeakCheck->turn(BitIsSet(editedConf.grants, static_cast<int32_t>(Proto::ConferenceGrants::DisableCameraIfNoSpeak)));
     enableCameraOnConnectCheck->turn(BitIsSet(editedConf.grants, static_cast<int32_t>(Proto::ConferenceGrants::EnableCameraOnConnect)));
@@ -254,6 +257,7 @@ void ConferenceDialog::Run(const Proto::Conference &editedConf_, std::function<v
         deleteMemberButton.reset();
         addMemberButton.reset();
         
+        deactiveConfCheck.reset();
         openConfLinkButton.reset();
         linkInput.reset();
         linkText.reset();
@@ -322,6 +326,8 @@ void ConferenceDialog::ShowBase()
     wui::line_up_top_bottom(pos, 25, 5);
     window->add_control(linkInput, { pos.left, pos.top, pos.right - 150, pos.bottom });
     window->add_control(openConfLinkButton, { pos.right - 140, pos.top, pos.right, pos.bottom });
+    wui::line_up_top_bottom(pos, 35, 5);
+    window->add_control(deactiveConfCheck, pos);
 
     window->set_focused(nameInput);
 }
@@ -343,6 +349,7 @@ void ConferenceDialog::ShowMembers()
     window->remove_control(linkText);
     window->remove_control(linkInput);
     window->remove_control(openConfLinkButton);
+    window->remove_control(deactiveConfCheck);
 
     window->remove_control(disableMicrophoneIfNoSpeakCheck);
     window->remove_control(disableCameraIfNoSpeakCheck);
@@ -385,6 +392,7 @@ void ConferenceDialog::ShowOptions()
     window->remove_control(linkText);
     window->remove_control(linkInput);
     window->remove_control(openConfLinkButton);
+    window->remove_control(deactiveConfCheck);
 
     window->remove_control(addMemberButton);
     window->remove_control(deleteMemberButton);
@@ -647,6 +655,18 @@ void ConferenceDialog::DenySelfConnectChange()
     else
     {
         ClearBit(editedConf.grants, static_cast<int32_t>(Proto::ConferenceGrants::DenySelfConnectMembers));
+    }
+}
+
+void ConferenceDialog::DeactivateChange()
+{
+    if (deactiveConfCheck->turned())
+    {
+        SetBit(editedConf.grants, static_cast<int32_t>(Proto::ConferenceGrants::Deactivated));
+    }
+    else
+    {
+        ClearBit(editedConf.grants, static_cast<int32_t>(Proto::ConferenceGrants::Deactivated));
     }
 }
 
