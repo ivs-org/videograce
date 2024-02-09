@@ -389,7 +389,7 @@ int32_t Storage::CalcUnreadedContact(db::connection &conn, int64_t clientId)
 {
     db::query count_query(conn);
     count_query.prepare("select subscriber_id, count(id) from messages where status < " + std::to_string(static_cast<int32_t>(Proto::MessageStatus::Readed)) + " and author_id <> ? and conference_tag is null group by subscriber_id");
-    count_query.set(0, clientId);
+    count_query.set(0, GetMyClientId());
     while (count_query.step())
     {
         if (count_query.get_int64(0) == clientId)
