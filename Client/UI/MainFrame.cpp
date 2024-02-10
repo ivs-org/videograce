@@ -900,11 +900,14 @@ void MainFrame::ListPanelMembersSelected()
 
 void MainFrame::ListPanelClosed()
 {
-    mainToolBar.EnableList(false);
-    wui::config::set_int("ListPanel", "Enabled", 0);
+    if (working)
+    {
+        mainToolBar.EnableList(false);
+        wui::config::set_int("ListPanel", "Enabled", 0);
 
-    UpdateVideoRendererPosition();
-    UpdateContentPanelLeft();
+        UpdateVideoRendererPosition();
+        UpdateContentPanelLeft();
+    }
 }
 
 void MainFrame::ListPanelPinChanged()
@@ -926,10 +929,13 @@ void MainFrame::ListPanelWidthChanged(int32_t width)
 
 void MainFrame::ContentPanelClosed()
 {
-    mainToolBar.EnableContent(false);
-    wui::config::set_int("ContentPanel", "Enabled", 0);
-    
-    UpdateVideoRendererPosition();
+    if (working)
+    {
+        mainToolBar.EnableContent(false);
+        wui::config::set_int("ContentPanel", "Enabled", 0);
+
+        UpdateVideoRendererPosition();
+    }
 }
 
 void MainFrame::ContentPanelPinChanged()

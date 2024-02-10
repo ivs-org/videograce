@@ -37,19 +37,19 @@ ContactList::ContactList(Storage::Storage &storage_, Controller::IController &co
     conferenceDialog(conferenceDialog_),
     callback(callback_),
     parentWindow_(),
-    searchInput(new wui::input()),
-    list(new wui::list()),
-    conferencesRolledImg(new wui::image(IMG_CL_CONFERENCES_ROLLED)), conferencesExpandedImg(new wui::image(IMG_CL_CONFERENCES_EXPANDED)),
-    symConfImg(new wui::image(IMG_CL_SYM_CONF)), asymConfImg(new wui::image(IMG_CL_ASYM_CONF)), asymSSConfImg(new wui::image(IMG_CL_ASYM_SS_CONF)),
-    symConfMyImg(new wui::image(IMG_CL_SYM_CONF_MY)), asymConfMyImg(new wui::image(IMG_CL_ASYM_CONF_MY)), asymSSConfMyImg(new wui::image(IMG_CL_ASYM_SS_CONF_MY)),
-    groupRolledImg(new wui::image(IMG_CL_GROUP_ROLLED)), groupExpandedImg(new wui::image(IMG_CL_GROUP_EXPANDED)),
-    accountDeletedImg(new wui::image(IMG_CL_ACCOUNT_DELETED)), accountOfflineImg(new wui::image(IMG_CL_ACCOUNT_OFFLINE)), accountOnlineImg(new wui::image(IMG_CL_ACCOUNT_ONLINE)),
-    ownerImg(new wui::image(IMG_ML_OWNER)), moderatorImg(new wui::image(IMG_ML_MODERATOR)), ordinaryImg(new wui::image(IMG_ML_ORDINARY)), readOnlyImg(new wui::image(IMG_ML_READONLY)),
-    popupMenu(new wui::menu()),
-    addButton(new wui::button(wui::locale("button", "add"), std::bind(&ContactList::Add, this), wui::button_view::image, IMG_TB_CL_ADD, 32, wui::button::tc_tool)),
-    deleteButton(new wui::button(wui::locale("button", "del"), std::bind(&ContactList::Del, this), wui::button_view::image, IMG_TB_CL_DEL, 24, wui::button::tc_tool)),
-    editButton(new wui::button(wui::locale("button", "edit"), std::bind(&ContactList::Edit, this), wui::button_view::image, IMG_TB_CL_EDIT, 24, wui::button::tc_tool)),
-    separator(new wui::image(IMG_TB_CL_SEPARATOR)),
+    searchInput(std::make_shared<wui::input>()),
+    list(std::make_shared<wui::list>()),
+    conferencesRolledImg(std::make_shared<wui::image>(IMG_CL_CONFERENCES_ROLLED)), conferencesExpandedImg(std::make_shared<wui::image>(IMG_CL_CONFERENCES_EXPANDED)),
+    symConfImg(std::make_shared<wui::image>(IMG_CL_SYM_CONF)), asymConfImg(std::make_shared<wui::image>(IMG_CL_ASYM_CONF)), asymSSConfImg(std::make_shared<wui::image>(IMG_CL_ASYM_SS_CONF)),
+    symConfMyImg(std::make_shared<wui::image>(IMG_CL_SYM_CONF_MY)), asymConfMyImg(std::make_shared<wui::image>(IMG_CL_ASYM_CONF_MY)), asymSSConfMyImg(std::make_shared<wui::image>(IMG_CL_ASYM_SS_CONF_MY)),
+    groupRolledImg(std::make_shared<wui::image>(IMG_CL_GROUP_ROLLED)), groupExpandedImg(std::make_shared<wui::image>(IMG_CL_GROUP_EXPANDED)),
+    accountDeletedImg(std::make_shared<wui::image>(IMG_CL_ACCOUNT_DELETED)), accountOfflineImg(std::make_shared<wui::image>(IMG_CL_ACCOUNT_OFFLINE)), accountOnlineImg(std::make_shared<wui::image>(IMG_CL_ACCOUNT_ONLINE)),
+    ownerImg(std::make_shared<wui::image>(IMG_ML_OWNER)), moderatorImg(std::make_shared<wui::image>(IMG_ML_MODERATOR)), ordinaryImg(std::make_shared<wui::image>(IMG_ML_ORDINARY)), readOnlyImg(std::make_shared<wui::image>(IMG_ML_READONLY)),
+    popupMenu(std::make_shared<wui::menu>()),
+    addButton(std::make_shared<wui::button>(wui::locale("button", "add"), std::bind(&ContactList::Add, this), wui::button_view::image, IMG_TB_CL_ADD, 32, wui::button::tc_tool)),
+    deleteButton(std::make_shared<wui::button>(wui::locale("button", "del"), std::bind(&ContactList::Del, this), wui::button_view::image, IMG_TB_CL_DEL, 24, wui::button::tc_tool)),
+    editButton(std::make_shared<wui::button>(wui::locale("button", "edit"), std::bind(&ContactList::Edit, this), wui::button_view::image, IMG_TB_CL_EDIT, 24, wui::button::tc_tool)),
+    separator(std::make_shared<wui::image>(IMG_TB_CL_SEPARATOR)),
     messageBox(),
     contactDialog(storage, controller, std::bind(&ContactList::ContactDialogCallback, this, std::placeholders::_1, std::placeholders::_2)),
     itemsMutex(),
@@ -77,23 +77,23 @@ void ContactList::Run(std::weak_ptr<wui::window> parentWindow__)
 {
     parentWindow_ = parentWindow__;
 
-    if (!messageBox)
-    {
-        messageBox = std::shared_ptr<wui::message>(new wui::message(parentWindow_.lock()));
-    }
-
     auto parentWindow = parentWindow_.lock();
-    if (parentWindow)
+
+    if (messageBox)
     {
-        parentWindow->add_control(searchInput,  { 0 });
-        parentWindow->add_control(list,         { 0 });
-        parentWindow->add_control(popupMenu,    { 0 });
-        parentWindow->add_control(addButton,    { 0 });
-        parentWindow->add_control(deleteButton, { 0 });
-        parentWindow->add_control(separator,    { 0 });
-        parentWindow->add_control(editButton,   { 0 });
+        messageBox.reset();
     }
 
+    messageBox = std::make_shared<wui::message>(parentWindow->parent().lock() ? parentWindow->parent().lock() : parentWindow);
+
+    parentWindow->add_control(searchInput,  { 0 });
+    parentWindow->add_control(list,         { 0 });
+    parentWindow->add_control(popupMenu,    { 0 });
+    parentWindow->add_control(addButton,    { 0 });
+    parentWindow->add_control(deleteButton, { 0 });
+    parentWindow->add_control(separator,    { 0 });
+    parentWindow->add_control(editButton,   { 0 });
+    
     searchInput->update_theme();
     list->update_theme();
     addButton->update_theme();
@@ -625,7 +625,8 @@ void ContactList::Del()
 
 void ContactList::AddContact()
 {
-    contactDialog.Run(parentWindow_, ContactDialogMode::AddContacts);
+    auto parentWindow = parentWindow_.lock();
+    contactDialog.Run(parentWindow->parent().lock() ? parentWindow->parent().lock() : parentWindow, ContactDialogMode::AddContacts);
 }
 
 void ContactList::DeleteContact(int64_t id)
@@ -932,7 +933,7 @@ void ContactList::RightClickItem(int32_t nItem, int32_t x, int32_t y)
                                 }
                             } },
                             { 1, wui::menu_item_state::normal, wui::locale("contact_list", "add_user"), "", nullptr, {}, [this](int32_t) {
-                                contactDialog.Run(parentWindow_, ContactDialogMode::AddContacts);
+                                AddContact();
                             } },
                             { 2, wui::menu_item_state::normal, wui::locale("contact_list", "remove_user"), "", nullptr, {}, [this, item](int32_t) { DeleteContact(item->id); } }
                         });
@@ -941,7 +942,7 @@ void ContactList::RightClickItem(int32_t nItem, int32_t x, int32_t y)
                     {
                         popupMenu->set_items({
                             { 0, wui::menu_item_state::normal, wui::locale("contact_list", "add_user"), "", nullptr, {}, [this](int32_t) {
-                                contactDialog.Run(parentWindow_, ContactDialogMode::AddContacts);
+                                AddContact();
                             } },
                             { 1, wui::menu_item_state::normal, wui::locale("contact_list", "remove_user"), "", nullptr, {}, [this, item](int32_t) { DeleteContact(item->id); } }
                         });
@@ -968,7 +969,7 @@ void ContactList::RightClickItem(int32_t nItem, int32_t x, int32_t y)
                     {
                         popupMenu->set_items({
                             { 0, wui::menu_item_state::normal, wui::locale("contact_list", "add_user"), "", nullptr, {}, [this](int32_t) {
-                                contactDialog.Run(parentWindow_, ContactDialogMode::AddContacts);
+                                AddContact();
                             } }
                         });
                         popupMenu->show_on_point(x, y);

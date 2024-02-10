@@ -27,19 +27,19 @@ MemberList::MemberList(Storage::Storage &storage_, Controller::IController &cont
     : storage(storage_), controller(controller_),
     itemsMutex(), items(),
     parentWindow_(),
-    list(new wui::list()),
-    ownerImg(new wui::image(IMG_ML_OWNER)), moderatorImg(new wui::image(IMG_ML_MODERATOR)), ordinaryImg(new wui::image(IMG_ML_ORDINARY)), readOnlyImg(new wui::image(IMG_ML_READONLY)), deafImg(new wui::image(IMG_ML_DEAF)),
-    cameraMicrophoneEnabledImg(new wui::image(IMG_ML_CAMERA_MICROPHONE_ENABLED)), cameraEnabledImg(new wui::image(IMG_ML_CAMERA_ENABLED)), microphoneEnabledImg(new wui::image(IMG_ML_MICROPHONE_ENABLED)), speakEnabledImg(new wui::image(IMG_ML_SPEAK_ENABLED)),
-    addButton(new wui::button(wui::locale("member_list", "add_members"), std::bind(&MemberList::Add, this), wui::button_view::image, IMG_TB_ML_ADD, 24, wui::button::tc_tool)),
-    kickButton(new wui::button(wui::locale("member_list", "kick"), std::bind(&MemberList::Kick, this), wui::button_view::image, IMG_TB_ML_DEL, 24, wui::button::tc_tool)),
-    toTopButton(new wui::button(wui::locale("member_list", "to_top"), std::bind(&MemberList::ToTop, this), wui::button_view::image, IMG_TB_ML_UP, 24, wui::button::tc_tool)),
-    muteAllButton(new wui::button(wui::locale("member_list", "mute_all"), std::bind(&MemberList::MuteAll, this), wui::button_view::image, IMG_TB_ML_MUTE_ALL, 24, wui::button::tc_tool)),
-    speakButton(new wui::button(wui::locale("member_list", "turn_speak"), std::bind(&MemberList::TurnSpeak, this), wui::button_view::image, IMG_TB_ML_SPEAK, 24, wui::button::tc_tool)),
-    devicesButton(new wui::button(wui::locale("member_list", "devices"), std::bind(&MemberList::Devices, this), wui::button_view::image, IMG_TB_ML_DEVICES, 24, wui::button::tc_tool)),
-    cameraImage(new wui::image(IMG_TB_ML_CAMERA)), microphoneImage(new wui::image(IMG_TB_ML_MICROPHONE)), demonstrationImage(new wui::image(IMG_TB_ML_SCREENCAPTURE)),
-    separator0(new wui::image(IMG_TB_ML_SEPARATOR)),
-    separator1(new wui::image(IMG_TB_ML_SEPARATOR)),
-    devicesMenu(new wui::menu()),
+    list(std::make_shared<wui::list>()),
+    ownerImg(std::make_shared<wui::image>(IMG_ML_OWNER)), moderatorImg(std::make_shared<wui::image>(IMG_ML_MODERATOR)), ordinaryImg(std::make_shared<wui::image>(IMG_ML_ORDINARY)), readOnlyImg(std::make_shared<wui::image>(IMG_ML_READONLY)), deafImg(std::make_shared<wui::image>(IMG_ML_DEAF)),
+    cameraMicrophoneEnabledImg(std::make_shared<wui::image>(IMG_ML_CAMERA_MICROPHONE_ENABLED)), cameraEnabledImg(std::make_shared<wui::image>(IMG_ML_CAMERA_ENABLED)), microphoneEnabledImg(std::make_shared<wui::image>(IMG_ML_MICROPHONE_ENABLED)), speakEnabledImg(std::make_shared<wui::image>(IMG_ML_SPEAK_ENABLED)),
+    addButton(std::make_shared<wui::button>(wui::locale("member_list", "add_members"), std::bind(&MemberList::Add, this), wui::button_view::image, IMG_TB_ML_ADD, 24, wui::button::tc_tool)),
+    kickButton(std::make_shared<wui::button>(wui::locale("member_list", "kick"), std::bind(&MemberList::Kick, this), wui::button_view::image, IMG_TB_ML_DEL, 24, wui::button::tc_tool)),
+    toTopButton(std::make_shared<wui::button>(wui::locale("member_list", "to_top"), std::bind(&MemberList::ToTop, this), wui::button_view::image, IMG_TB_ML_UP, 24, wui::button::tc_tool)),
+    muteAllButton(std::make_shared<wui::button>(wui::locale("member_list", "mute_all"), std::bind(&MemberList::MuteAll, this), wui::button_view::image, IMG_TB_ML_MUTE_ALL, 24, wui::button::tc_tool)),
+    speakButton(std::make_shared<wui::button>(wui::locale("member_list", "turn_speak"), std::bind(&MemberList::TurnSpeak, this), wui::button_view::image, IMG_TB_ML_SPEAK, 24, wui::button::tc_tool)),
+    devicesButton(std::make_shared<wui::button>(wui::locale("member_list", "devices"), std::bind(&MemberList::Devices, this), wui::button_view::image, IMG_TB_ML_DEVICES, 24, wui::button::tc_tool)),
+    cameraImage(std::make_shared<wui::image>(IMG_TB_ML_CAMERA)), microphoneImage(std::make_shared<wui::image>(IMG_TB_ML_MICROPHONE)), demonstrationImage(std::make_shared<wui::image>(IMG_TB_ML_SCREENCAPTURE)),
+    separator0(std::make_shared<wui::image>(IMG_TB_ML_SEPARATOR)),
+    separator1(std::make_shared<wui::image>(IMG_TB_ML_SEPARATOR)),
+    devicesMenu(std::make_shared<wui::menu>()),
     contactDialog(storage, controller, std::bind(&MemberList::ContactDialogCallback, this, std::placeholders::_1, std::placeholders::_2))
 {
     list->set_item_height_callback([](int32_t, int32_t& h) { h = XBITMAP; });
@@ -61,22 +61,20 @@ void MemberList::Run(std::weak_ptr<wui::window> parentWindow__)
     parentWindow_ = parentWindow__;
 
     auto parentWindow = parentWindow_.lock();
-    if (parentWindow)
-    {
-        parentWindow->add_control(list, { 0 });
+    
+    parentWindow->add_control(list, { 0 });
         
-        parentWindow->add_control(addButton, { 0 });
-        parentWindow->add_control(kickButton, { 0 });
-        parentWindow->add_control(separator0, { 0 });
-        parentWindow->add_control(toTopButton, { 0 });
-        parentWindow->add_control(muteAllButton, { 0 });
-        parentWindow->add_control(speakButton, { 0 });
-        parentWindow->add_control(separator1, { 0 });
-        parentWindow->add_control(devicesButton, { 0 });
+    parentWindow->add_control(addButton, { 0 });
+    parentWindow->add_control(kickButton, { 0 });
+    parentWindow->add_control(separator0, { 0 });
+    parentWindow->add_control(toTopButton, { 0 });
+    parentWindow->add_control(muteAllButton, { 0 });
+    parentWindow->add_control(speakButton, { 0 });
+    parentWindow->add_control(separator1, { 0 });
+    parentWindow->add_control(devicesButton, { 0 });
 
-        parentWindow->add_control(devicesMenu, { 0 });
-    }
-
+    parentWindow->add_control(devicesMenu, { 0 });
+    
     list->update_theme();
     addButton->update_theme();
     kickButton->update_theme();

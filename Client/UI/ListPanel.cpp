@@ -21,10 +21,10 @@ ListPanel::ListPanel(std::weak_ptr<wui::window> mainFrame_, ContactList &contact
     contactList(contactList_), memberList(memberList_), callback(callback_),
     panelMode(PanelMode::ContactList),
     pinned(true),
-    window(new wui::window()),
-    contactsSheet(new wui::button(wui::locale("list_panel", "contacts"), [this]() { ShowContacts(); }, wui::button_view::sheet)),
-    membersSheet(new wui::button(wui::locale("list_panel", "members"), [this]() { ShowMembers(); }, wui::button_view::sheet)),
-    splitter(new wui::splitter(wui::splitter_orientation::vertical, std::bind(&ListPanel::SplitterCallback, this, std::placeholders::_1, std::placeholders::_2)))
+    window(std::make_shared<wui::window>()),
+    contactsSheet(std::make_shared<wui::button>(wui::locale("list_panel", "contacts"), [this]() { ShowContacts(); }, wui::button_view::sheet)),
+    membersSheet(std::make_shared<wui::button>(wui::locale("list_panel", "members"), [this]() { ShowMembers(); }, wui::button_view::sheet)),
+    splitter(std::make_shared<wui::splitter>(wui::splitter_orientation::vertical, std::bind(&ListPanel::SplitterCallback, this, std::placeholders::_1, std::placeholders::_2)))
 {
     window->subscribe(std::bind(&ListPanel::ReceiveEvents, this, std::placeholders::_1), wui::event_type::internal);
 
@@ -36,6 +36,7 @@ ListPanel::ListPanel(std::weak_ptr<wui::window> mainFrame_, ContactList &contact
 
 ListPanel::~ListPanel()
 {
+    splitter.reset();
 }
 
 /// Interface
@@ -53,7 +54,7 @@ void ListPanel::Run()
     {
         memberList.Run(window);
     }
-    
+   
     if (pinned)
     {
         auto mainFrame_ = mainFrame.lock();
@@ -76,7 +77,7 @@ void ListPanel::Run()
             if (!window->context().valid() || !pinned)
             {
                 callback.ListPanelClosed();
-                splitter->hide(); 
+                if (splitter) splitter->hide();
             }
         });
 

@@ -40,18 +40,18 @@ ContentPanel::ContentPanel(std::weak_ptr<wui::window> mainFrame_, Storage::Stora
     storage(storage_),
     controller(controller_),
     callback(callback_),
-    window(new wui::window()),
-    splitter(new wui::splitter(wui::splitter_orientation::vertical, std::bind(&ContentPanel::SplitterCallback, this, std::placeholders::_1, std::placeholders::_2))),
-    titlePanel(new wui::panel("content_title_panel")),
-    title(new wui::text("", wui::hori_alignment::left, wui::vert_alignment::top, "content_title_text")),
-    list(new wui::list("content_box")),
-    sendButton(new wui::button(wui::locale("content_panel", "send_message"), std::bind(&ContentPanel::SendMsg, this), wui::button_view::image, IMG_TB_SEND, 25, wui::button::tc_tool)),
-    input(new wui::input()),
-    popupMenu(new wui::menu()),
-    msgCreatedImg(new wui::image(IMG_MSG_CREATED)), msgSendedImg(new wui::image(IMG_MSG_SENDED)), msgDeliveredImg(new wui::image(IMG_MSG_DELIVERED)), msgReadedImg(new wui::image(IMG_MSG_READED)),
-    replyImg(new wui::image(IMG_REPLY)),
-    replyAuthor(new wui::text("", wui::hori_alignment::left, wui::vert_alignment::top, "author_text")), replyText(new wui::text()),
-    replyCloseButton(new wui::button(wui::locale("content_panel", "close_reply"), std::bind(&ContentPanel::CloseReply, this), wui::button_view::image, wui::theme_image(wui::window::ti_close), 24, wui::button::tc_tool)),
+    window(std::make_shared<wui::window>()),
+    splitter(std::make_shared<wui::splitter>(wui::splitter_orientation::vertical, std::bind(&ContentPanel::SplitterCallback, this, std::placeholders::_1, std::placeholders::_2))),
+    titlePanel(std::make_shared<wui::panel>("content_title_panel")),
+    title(std::make_shared<wui::text>("", wui::hori_alignment::left, wui::vert_alignment::top, "content_title_text")),
+    list(std::make_shared<wui::list>("content_box")),
+    sendButton(std::make_shared<wui::button>(wui::locale("content_panel", "send_message"), std::bind(&ContentPanel::SendMsg, this), wui::button_view::image, IMG_TB_SEND, 25, wui::button::tc_tool)),
+    input(std::make_shared<wui::input>()),
+    popupMenu(std::make_shared<wui::menu>()),
+    msgCreatedImg(std::make_shared<wui::image>(IMG_MSG_CREATED)), msgSendedImg(std::make_shared<wui::image>(IMG_MSG_SENDED)), msgDeliveredImg(std::make_shared<wui::image>(IMG_MSG_DELIVERED)), msgReadedImg(std::make_shared<wui::image>(IMG_MSG_READED)),
+    replyImg(std::make_shared<wui::image>(IMG_REPLY)),
+    replyAuthor(std::make_shared<wui::text>("", wui::hori_alignment::left, wui::vert_alignment::top, "author_text")), replyText(std::make_shared<wui::text>()),
+    replyCloseButton(std::make_shared<wui::button>(wui::locale("content_panel", "close_reply"), std::bind(&ContentPanel::CloseReply, this), wui::button_view::image, wui::theme_image(wui::window::ti_close), 24, wui::button::tc_tool)),
     memGr(),
     statusImageWidth(0),
     pinned(true), standbyMode(true),
@@ -80,6 +80,7 @@ ContentPanel::ContentPanel(std::weak_ptr<wui::window> mainFrame_, Storage::Stora
 
 ContentPanel::~ContentPanel()
 {
+    splitter.reset();
 }
 
 /// Interface
@@ -129,7 +130,7 @@ void ContentPanel::Run()
             if (!window->context().valid() || !pinned)
             {
                 callback.ContentPanelClosed();
-                splitter->hide(); 
+                if (splitter) splitter->hide();
             }
         });
 
@@ -152,11 +153,7 @@ void ContentPanel::Run()
 
     if (!memGr)
     {
-#ifdef _WIN32
-        memGr = std::unique_ptr<wui::graphic>(new wui::graphic(wui::system_context{ window->context().hwnd }));
-#elif __linux__
-        memGr = std::unique_ptr<wui::graphic>(new wui::graphic(window->context()));
-#endif
+        memGr = std::make_unique<wui::graphic>(window->context());
         memGr->init(window->position(), 0);
     }
 
