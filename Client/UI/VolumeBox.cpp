@@ -20,10 +20,10 @@ VolumeBox::VolumeBox(std::function<void(int32_t value, VolumeBoxMode mode, bool 
     : callback(callback_), mode(VolumeBoxMode::Microphone), enabled_(true),
     parent_(),
     mySubscriberId(),
-    panel(new wui::panel(std::bind(&VolumeBox::DrawPanel, this, std::placeholders::_1))),
-    slider(new wui::slider(0, 100, 100, std::bind(&VolumeBox::SliderChange, this, std::placeholders::_1), wui::slider_orientation::vertical)),
-    image(new wui::image(IMG_TB_LOUDSPEAKER)),
-    text(new wui::text("100", wui::hori_alignment::center))
+    panel(std::make_shared<wui::panel>(std::bind(&VolumeBox::DrawPanel, this, std::placeholders::_1))),
+    slider(std::make_shared<wui::slider>(0, 100, 100, std::bind(&VolumeBox::SliderChange, this, std::placeholders::_1), wui::slider_orientation::vertical)),
+    image(std::make_shared<wui::image>(IMG_TB_LOUDSPEAKER)),
+    text(std::make_shared<wui::text>("100", wui::hori_alignment::center))
 {
     panel->set_topmost(true);
     slider->set_topmost(true);

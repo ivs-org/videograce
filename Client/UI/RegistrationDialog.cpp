@@ -29,7 +29,7 @@ RegistrationDialog::RegistrationDialog(std::weak_ptr<wui::window> transientWindo
     : transientWindow(transientWindow_),
     readyCallback(readyCallback_),
     registrator(),
-    window(new wui::window()),
+    window(std::make_shared<wui::window>()),
     nameText(),
     nameInput(),
     loginText(),
@@ -51,19 +51,19 @@ RegistrationDialog::~RegistrationDialog()
 void RegistrationDialog::Run(std::string_view serverAddress)
 {
     window->set_transient_for(transientWindow.lock());
-    nameText = std::shared_ptr<wui::text>(new wui::text(wui::locale("registration_dialog", "name")));
-    nameInput = std::shared_ptr<wui::input>(new wui::input(wui::config::get_string("User", "Name", "")));
-    loginText = std::shared_ptr<wui::text>(new wui::text(wui::locale("registration_dialog", "login")));
-    loginInput = std::shared_ptr<wui::input>(new wui::input());
-    passwordText = std::shared_ptr<wui::text>(new wui::text(wui::locale("registration_dialog", "password")));
-    passwordInput = std::shared_ptr<wui::input>(new wui::input(wui::config::get_string("Credentials", "Password", ""), wui::input_view::password));
-    passwordConfirmText = std::shared_ptr<wui::text>(new wui::text(wui::locale("registration_dialog", "password_confirm")));
-    passwordConfirmInput = std::shared_ptr<wui::input>(new wui::input(wui::config::get_string("Credentials", "Password", ""), wui::input_view::password));
-    okButton = std::shared_ptr<wui::button>(new wui::button(wui::locale("button", "ok"), std::bind(&RegistrationDialog::OK, this)));
-    cancelButton = std::shared_ptr<wui::button>(new wui::button(wui::locale("button", "cancel"), std::bind(&RegistrationDialog::Cancel, this)));
-    messageBox = std::shared_ptr<wui::message>(new wui::message(window));
+    nameText = std::shared_ptr<wui::text>(std::make_shared<wui::text>(wui::locale("registration_dialog", "name")));
+    nameInput = std::shared_ptr<wui::input>(std::make_shared<wui::input>(wui::config::get_string("User", "Name", "")));
+    loginText = std::shared_ptr<wui::text>(std::make_shared<wui::text>(wui::locale("registration_dialog", "login")));
+    loginInput = std::shared_ptr<wui::input>(std::make_shared<wui::input>());
+    passwordText = std::shared_ptr<wui::text>(std::make_shared<wui::text>(wui::locale("registration_dialog", "password")));
+    passwordInput = std::shared_ptr<wui::input>(std::make_shared<wui::input>(wui::config::get_string("Credentials", "Password", ""), wui::input_view::password));
+    passwordConfirmText = std::shared_ptr<wui::text>(std::make_shared<wui::text>(wui::locale("registration_dialog", "password_confirm")));
+    passwordConfirmInput = std::shared_ptr<wui::input>(std::make_shared<wui::input>(wui::config::get_string("Credentials", "Password", ""), wui::input_view::password));
+    okButton = std::shared_ptr<wui::button>(std::make_shared<wui::button>(wui::locale("button", "ok"), std::bind(&RegistrationDialog::OK, this)));
+    cancelButton = std::shared_ptr<wui::button>(std::make_shared<wui::button>(wui::locale("button", "cancel"), std::bind(&RegistrationDialog::Cancel, this)));
+    messageBox = std::shared_ptr<wui::message>(std::make_shared<wui::message>(window));
 
-    registrator = std::unique_ptr<Registrator::Registrator>(new Registrator::Registrator());
+    registrator = std::make_unique<Registrator::Registrator>();
 
     registrator->Connect(serverAddress);
 

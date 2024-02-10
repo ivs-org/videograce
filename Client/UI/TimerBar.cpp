@@ -37,7 +37,7 @@ TimerBar::TimerBar(std::weak_ptr<wui::window> mainFrame_, Common::TimeMeter &tim
     timeMeter(timeMeter_),
     limitEndCallback(limitEndCallback_),
     timer_(std::bind(&TimerBar::OnTimer, this)),
-    timeTextFront(new wui::text()), timeTextBack(new wui::text()),
+    timeTextFront(std::make_shared<wui::text>()), timeTextBack(std::make_shared<wui::text>()),
     backTime(0), limitTime(0), estimateTime(0)
 {
     parent.lock()->add_control(timeTextBack, { 0 });

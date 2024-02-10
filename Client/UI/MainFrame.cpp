@@ -155,11 +155,11 @@ std::string GetRecordName()
 }
 
 MainFrame::MainFrame()
-    : window(new wui::window()),
-    messageBox(new wui::message(window)),
-    mainMenu(new wui::menu()),
-    mainProgress(new wui::progress(0, 100, 0)),
-    volumeBox(new VolumeBox(std::bind(&MainFrame::VolumeBoxChangeCallback, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3))),
+    : window(std::make_shared<wui::window>()),
+    messageBox(std::make_shared<wui::message>(window)),
+    mainMenu(std::make_shared<wui::menu>()),
+    mainProgress(std::make_shared<wui::progress>(0, 100, 0)),
+    volumeBox(std::make_shared<VolumeBox>(std::bind(&MainFrame::VolumeBoxChangeCallback, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3))),
     trayIcon(),
 
     controllerEventsQueueMutex(), controllerEventsQueue(),
@@ -340,7 +340,7 @@ void MainFrame::Run(bool minimized)
 		wui::hide_taskbar_icon(window->context());
 	}
 
-    trayIcon = std::shared_ptr<wui::tray_icon>(new wui::tray_icon(window, ICO_INACTIVE, wui::locale("client", "title") + "(" + wui::locale("common", "offline") + ")", std::bind(&MainFrame::TrayIconCallback, this, std::placeholders::_1)));
+    trayIcon = std::make_shared<wui::tray_icon>(window, ICO_INACTIVE, wui::locale("client", "title") + "(" + wui::locale("common", "offline") + ")", std::bind(&MainFrame::TrayIconCallback, this, std::placeholders::_1));
 
     InitAudio();
 
@@ -2341,11 +2341,7 @@ void MainFrame::UpdateTitle(std::string_view text, int32_t progress)
     {
         if (!mainProgress->showed() || prevSize != title.size())
         {
-#ifdef _WIN32
-            auto memGr = std::unique_ptr<wui::graphic>(new wui::graphic(wui::system_context{ window->context().hwnd }));
-#elif __linux__
-            auto memGr = std::unique_ptr<wui::graphic>(new wui::graphic(window->context()));
-#endif
+            auto memGr = std::make_unique<wui::graphic>(window->context());
             memGr->init(window->position(), 0);
 
             auto titleWidth = memGr->measure_text(title, wui::theme_font("window", "caption_font")).width();

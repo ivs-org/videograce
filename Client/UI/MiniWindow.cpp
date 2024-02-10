@@ -19,7 +19,7 @@ namespace Client
 MiniWindow::MiniWindow(std::weak_ptr<wui::window> mainWindow_)
     : mainWindow(mainWindow_),
     window(),
-    cameraImage(new wui::image(IMG_MW_CAMERA_ON)), microphoneImage(new wui::image(IMG_MW_MICROPHONE_ON)),
+    cameraImage(std::make_shared<wui::image>(IMG_MW_CAMERA_ON)), microphoneImage(std::make_shared<wui::image>(IMG_MW_MICROPHONE_ON)),
     timer_(std::bind(&MiniWindow::Redraw, this)),
     cameraEnabled(false), microphoneEnabled(false),
     blinkTickCount(0)
@@ -39,7 +39,7 @@ void MiniWindow::Run()
 
     auto screenSize = wui::get_screen_size(mainWindow.lock()->context());
 
-    window = std::shared_ptr<wui::window>(new wui::window());
+    window = std::shared_ptr<wui::window>(std::make_shared<wui::window>());
     window->subscribe(std::bind(&MiniWindow::ReceiveEvents, this, std::placeholders::_1), wui::event_type::mouse);
 
     window->add_control(cameraImage, { WND_WIDTH - 10 - microphoneImage->width() - 10 - cameraImage->width(),

@@ -29,7 +29,7 @@ CredentialsDialog::CredentialsDialog(std::weak_ptr<wui::window> mainFrame_, Cont
     mainFrame(mainFrame_),
     controller(controller_),
     closeCallback(closeCallback_),
-    window(new wui::window()),
+    window(std::make_shared<wui::window>()),
     cloudButton(), localButton(),
     serverText(),
     serverInput(),
@@ -54,20 +54,20 @@ CredentialsDialog::~CredentialsDialog()
 void CredentialsDialog::Run()
 {
     window->set_transient_for(mainFrame.lock());
-    cloudButton = std::shared_ptr<wui::button>(new wui::button(wui::locale("credentials_dialog", "connection_cloud"), std::bind(&CredentialsDialog::Cloud, this), wui::button_view::image_right_text, IMG_CONNECTION_CLOUD, 32, "check_button_calm"));
-    localButton = std::shared_ptr<wui::button>(new wui::button(wui::locale("credentials_dialog", "connection_local"), std::bind(&CredentialsDialog::Local, this), wui::button_view::image_right_text, IMG_CONNECTION_LOCAL, 32, "check_button_active"));
-    serverText = std::shared_ptr<wui::text>(new wui::text(wui::locale("credentials_dialog", "server")));
-    serverInput = std::shared_ptr<wui::input>(new wui::input((wui::config::get_int("Connection", "Secure", 0) != 0 ? "https://" : "http://") + wui::config::get_string("Connection", "Address", "server_address:8778")));
-    loginText = std::shared_ptr<wui::text>(new wui::text(wui::locale("credentials_dialog", "login")));
-    loginInput = std::shared_ptr<wui::input>(new wui::input(wui::config::get_string("Credentials", "Login", "")));
-    passwordText = std::shared_ptr<wui::text>(new wui::text(wui::locale("credentials_dialog", "password")));
-    passwordInput = std::shared_ptr<wui::input>(new wui::input(wui::config::get_string("Credentials", "Password", ""), wui::input_view::password));
-    rememberCheck = std::shared_ptr<wui::button>(new wui::button(wui::locale("credentials_dialog", "remember_me"), []() {}, wui::button_view::switcher));
+    cloudButton = std::shared_ptr<wui::button>(std::make_shared<wui::button>(wui::locale("credentials_dialog", "connection_cloud"), std::bind(&CredentialsDialog::Cloud, this), wui::button_view::image_right_text, IMG_CONNECTION_CLOUD, 32, "check_button_calm"));
+    localButton = std::shared_ptr<wui::button>(std::make_shared<wui::button>(wui::locale("credentials_dialog", "connection_local"), std::bind(&CredentialsDialog::Local, this), wui::button_view::image_right_text, IMG_CONNECTION_LOCAL, 32, "check_button_active"));
+    serverText = std::shared_ptr<wui::text>(std::make_shared<wui::text>(wui::locale("credentials_dialog", "server")));
+    serverInput = std::shared_ptr<wui::input>(std::make_shared<wui::input>((wui::config::get_int("Connection", "Secure", 0) != 0 ? "https://" : "http://") + wui::config::get_string("Connection", "Address", "server_address:8778")));
+    loginText = std::shared_ptr<wui::text>(std::make_shared<wui::text>(wui::locale("credentials_dialog", "login")));
+    loginInput = std::shared_ptr<wui::input>(std::make_shared<wui::input>(wui::config::get_string("Credentials", "Login", "")));
+    passwordText = std::shared_ptr<wui::text>(std::make_shared<wui::text>(wui::locale("credentials_dialog", "password")));
+    passwordInput = std::shared_ptr<wui::input>(std::make_shared<wui::input>(wui::config::get_string("Credentials", "Password", ""), wui::input_view::password));
+    rememberCheck = std::shared_ptr<wui::button>(std::make_shared<wui::button>(wui::locale("credentials_dialog", "remember_me"), []() {}, wui::button_view::switcher));
     rememberCheck->turn(true);
-    okButton = std::shared_ptr<wui::button>(new wui::button(wui::locale("button", "ok"), std::bind(&CredentialsDialog::OK, this)));
-    cancelButton = std::shared_ptr<wui::button>(new wui::button(wui::locale("button", "cancel"), std::bind(&CredentialsDialog::Cancel, this)));
-    registrationLink = std::shared_ptr<wui::button>(new wui::button(wui::locale("credentials_dialog", "registration"), std::bind(&CredentialsDialog::Registration, this), wui::button_view::anchor));
-    messageBox = std::shared_ptr<wui::message>(new wui::message(window));
+    okButton = std::shared_ptr<wui::button>(std::make_shared<wui::button>(wui::locale("button", "ok"), std::bind(&CredentialsDialog::OK, this)));
+    cancelButton = std::shared_ptr<wui::button>(std::make_shared<wui::button>(wui::locale("button", "cancel"), std::bind(&CredentialsDialog::Cancel, this)));
+    registrationLink = std::shared_ptr<wui::button>(std::make_shared<wui::button>(wui::locale("credentials_dialog", "registration"), std::bind(&CredentialsDialog::Registration, this), wui::button_view::anchor));
+    messageBox = std::shared_ptr<wui::message>(std::make_shared<wui::message>(window));
     
     window->add_control(cloudButton, { 10, 50, 180, 82 });
     window->add_control(localButton, { 200, 50, 380, 82 });
@@ -176,7 +176,7 @@ void CredentialsDialog::Registration()
 {
     if (CheckServerAddress())
     {
-        registrationDialog = std::shared_ptr<RegistrationDialog>(new RegistrationDialog(window, std::bind(&CredentialsDialog::RegistrationEndCallback, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)));
+        registrationDialog = std::make_shared<RegistrationDialog>(window, std::bind(&CredentialsDialog::RegistrationEndCallback, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
         registrationDialog->Run(serverInput->text());
     }
 }

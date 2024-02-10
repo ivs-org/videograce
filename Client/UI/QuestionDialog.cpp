@@ -18,7 +18,7 @@ QuestionDialog::QuestionDialog(std::weak_ptr<wui::window> transientWindow_, std:
     : missed(false),
     transientWindow(transientWindow_),
     callback(callback_),
-    window(new wui::window()),
+    window(std::make_shared<wui::window>()),
     text(),
     image(),
     yesButton(),
@@ -33,10 +33,10 @@ QuestionDialog::~QuestionDialog()
 void QuestionDialog::Run(std::string_view question)
 {
     window->set_transient_for(transientWindow.lock());
-    text = std::shared_ptr<wui::text>(new wui::text());
-    image = std::shared_ptr<wui::image>(new wui::image(IMG_CALLIN));
-    yesButton = std::shared_ptr<wui::button>(new wui::button(wui::locale("button", "yes"), std::bind(&QuestionDialog::Yes, this), "green_button"));
-    noButton = std::shared_ptr<wui::button>(new wui::button(wui::locale("button", "no"), std::bind(&QuestionDialog::No, this), "red_button"));
+    text = std::shared_ptr<wui::text>(std::make_shared<wui::text>());
+    image = std::shared_ptr<wui::image>(std::make_shared<wui::image>(IMG_CALLIN));
+    yesButton = std::shared_ptr<wui::button>(std::make_shared<wui::button>(wui::locale("button", "yes"), std::bind(&QuestionDialog::Yes, this), "green_button"));
+    noButton = std::shared_ptr<wui::button>(std::make_shared<wui::button>(wui::locale("button", "no"), std::bind(&QuestionDialog::No, this), "red_button"));
 
     missed = false;
 

@@ -25,7 +25,7 @@ namespace Client
 ContactDialog::ContactDialog(Storage::Storage &storage_, Controller::IController &controller_, std::function<void(ContactDialogMode, const Storage::Contacts &)> callback_)
     : storage(storage_), controller(controller_), callback(callback_),
     mode(ContactDialogMode::AddContacts),
-    window(new wui::window()),
+    window(std::make_shared<wui::window>()),
     input(),
     searchButton(),
     list(),
@@ -67,26 +67,26 @@ void ContactDialog::Run(std::weak_ptr<wui::window> parentWindow_, ContactDialogM
         break;
     }
 
-    input = std::shared_ptr<wui::input>(new wui::input());
-    searchButton = std::shared_ptr<wui::button>(new wui::button(wui::locale("button", "search"), std::bind(&ContactDialog::Search, this)));
+    input = std::shared_ptr<wui::input>(std::make_shared<wui::input>());
+    searchButton = std::shared_ptr<wui::button>(std::make_shared<wui::button>(wui::locale("button", "search"), std::bind(&ContactDialog::Search, this)));
     
-    list = std::shared_ptr<wui::list>(new wui::list());
+    list = std::shared_ptr<wui::list>(std::make_shared<wui::list>());
     list->set_item_height_callback([](int32_t, int32_t& h) { h = XBITMAP; });
     list->set_draw_callback(std::bind(&ContactDialog::DrawItem, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4));
     list->set_item_activate_callback([this](int32_t) { Add(); });
     list->set_item_click_callback([this](wui::list::click_button btn, int32_t nItem, int32_t x, int32_t y) { if (btn == wui::list::click_button::left) ClickItem(nItem, x, y); });
 
-    addButton = std::shared_ptr<wui::button>(new wui::button(wui::locale("button", "add"), std::bind(&ContactDialog::Add, this), "green_button"));
-    closeButton = std::shared_ptr<wui::button>(new wui::button(wui::locale("button", "close"), [this]() { items.clear(); window->destroy(); }));
-    checkOnImage = std::shared_ptr<wui::image>(new wui::image(IMG_CHECK_ON));
-    checkOffImage = std::shared_ptr<wui::image>(new wui::image(IMG_CHECK_OFF));
-    groupRolledImg = std::shared_ptr<wui::image>(new wui::image(IMG_CL_GROUP_ROLLED));
-    groupExpandedImg = std::shared_ptr<wui::image>(new wui::image(IMG_CL_GROUP_EXPANDED));
-    accountDeletedImg = std::shared_ptr<wui::image>(new wui::image(IMG_CL_ACCOUNT_DELETED));
-    onlineImg = std::shared_ptr<wui::image>(new wui::image(IMG_CL_ACCOUNT_ONLINE));
-    offlineImg = std::shared_ptr<wui::image>(new wui::image(IMG_CL_ACCOUNT_OFFLINE));
+    addButton = std::shared_ptr<wui::button>(std::make_shared<wui::button>(wui::locale("button", "add"), std::bind(&ContactDialog::Add, this), "green_button"));
+    closeButton = std::shared_ptr<wui::button>(std::make_shared<wui::button>(wui::locale("button", "close"), [this]() { items.clear(); window->destroy(); }));
+    checkOnImage = std::shared_ptr<wui::image>(std::make_shared<wui::image>(IMG_CHECK_ON));
+    checkOffImage = std::shared_ptr<wui::image>(std::make_shared<wui::image>(IMG_CHECK_OFF));
+    groupRolledImg = std::shared_ptr<wui::image>(std::make_shared<wui::image>(IMG_CL_GROUP_ROLLED));
+    groupExpandedImg = std::shared_ptr<wui::image>(std::make_shared<wui::image>(IMG_CL_GROUP_EXPANDED));
+    accountDeletedImg = std::shared_ptr<wui::image>(std::make_shared<wui::image>(IMG_CL_ACCOUNT_DELETED));
+    onlineImg = std::shared_ptr<wui::image>(std::make_shared<wui::image>(IMG_CL_ACCOUNT_ONLINE));
+    offlineImg = std::shared_ptr<wui::image>(std::make_shared<wui::image>(IMG_CL_ACCOUNT_OFFLINE));
 
-    messageBox = std::shared_ptr<wui::message>(new wui::message(window));
+    messageBox = std::shared_ptr<wui::message>(std::make_shared<wui::message>(window));
 
     window->set_transient_for(parentWindow_.lock());
 

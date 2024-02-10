@@ -17,11 +17,11 @@ namespace Client
 static const int32_t BUSY_UPDATE = 369876;
 
 BusyBox::BusyBox(std::weak_ptr<wui::window> transientWindow_)
-    : window(new wui::window()),
-    image(new wui::image(IMG_LOADING_01)),
-    title(new wui::text("", wui::hori_alignment::center, wui::vert_alignment::top, "busy_title_text")),
-    subTitle(new wui::text("", wui::hori_alignment::center, wui::vert_alignment::top, "busy_sub_title_text")),
-    progress(new wui::progress(0, 100, 0)),
+    : window(std::make_shared<wui::window>()),
+    image(std::make_shared<wui::image>(IMG_LOADING_01)),
+    title(std::make_shared<wui::text>("", wui::hori_alignment::center, wui::vert_alignment::top, "busy_title_text")),
+    subTitle(std::make_shared<wui::text>("", wui::hori_alignment::center, wui::vert_alignment::top, "busy_sub_title_text")),
+    progress(std::make_shared<wui::progress>(0, 100, 0)),
     timer_([this]() { window->emit_event(BUSY_UPDATE, 0); }),
     currentImage(0)
 {

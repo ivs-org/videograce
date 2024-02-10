@@ -38,7 +38,7 @@ std::shared_ptr<wui::i_theme> MakeFontTheme(int32_t size, wui::decorations decor
 
 AboutDialog::AboutDialog(std::weak_ptr<wui::window> transientWindow_)
     : transientWindow(transientWindow_),
-    window(new wui::window()),
+    window(std::make_shared<wui::window>()),
     logo(),
     appName(), client(),
     version(),
@@ -63,19 +63,19 @@ void AboutDialog::Run(uint32_t grants_)
     License::Grants grants = License::Parse(grants_);
 
     window->set_transient_for(transientWindow.lock());
-    logo = std::shared_ptr<wui::image>(new wui::image(IMG_LOGO));
-    appName = std::shared_ptr<wui::text>(new wui::text(wui::locale("about", "app_name"), wui::hori_alignment::center));
+    logo = std::shared_ptr<wui::image>(std::make_shared<wui::image>(IMG_LOGO));
+    appName = std::shared_ptr<wui::text>(std::make_shared<wui::text>(wui::locale("about", "app_name"), wui::hori_alignment::center));
     appName->update_theme(appNameFont);
-    client = std::shared_ptr<wui::text>(new wui::text(wui::locale("about", "client"), wui::hori_alignment::center));
+    client = std::shared_ptr<wui::text>(std::make_shared<wui::text>(wui::locale("about", "client"), wui::hori_alignment::center));
     client->update_theme(mediumFont);
-    version = std::shared_ptr<wui::text>(new wui::text(SYSTEM_VERSION, wui::hori_alignment::center));
+    version = std::shared_ptr<wui::text>(std::make_shared<wui::text>(SYSTEM_VERSION, wui::hori_alignment::center));
     version->update_theme(mediumFont);
-    license = std::shared_ptr<wui::text>(new wui::text(wui::locale("about", grants.freeLicense ? "license_free" : "license_commercial"), wui::hori_alignment::center));
-    wuiInfo = std::shared_ptr<wui::text>(new wui::text(wui::about::full_name + std::string("\n") + wui::about::version, wui::hori_alignment::center));
-    wuiURLAnchor= std::shared_ptr<wui::button>(new wui::button(wui::about::web, [](){ wui::open_uri(wui::about::web); }, wui::button_view::anchor));
-    vendorURLAnchor = std::shared_ptr<wui::button>(new wui::button("www." + wui::locale("about", "vendor_url"), [](){ wui::open_uri(std::string("https://") + wui::locale("about", "vendor_url")); }, wui::button_view::anchor));
-    copyright = std::shared_ptr<wui::text>(new wui::text(wui::locale("about", "copyright"), wui::hori_alignment::center));
-    closeButton = std::shared_ptr<wui::button>(new wui::button(wui::locale("button", "close"), [this]() { window->destroy(); }, "green_button"));
+    license = std::shared_ptr<wui::text>(std::make_shared<wui::text>(wui::locale("about", grants.freeLicense ? "license_free" : "license_commercial"), wui::hori_alignment::center));
+    wuiInfo = std::shared_ptr<wui::text>(std::make_shared<wui::text>(wui::about::full_name + std::string("\n") + wui::about::version, wui::hori_alignment::center));
+    wuiURLAnchor= std::shared_ptr<wui::button>(std::make_shared<wui::button>(wui::about::web, [](){ wui::open_uri(wui::about::web); }, wui::button_view::anchor));
+    vendorURLAnchor = std::shared_ptr<wui::button>(std::make_shared<wui::button>("www." + wui::locale("about", "vendor_url"), [](){ wui::open_uri(std::string("https://") + wui::locale("about", "vendor_url")); }, wui::button_view::anchor));
+    copyright = std::shared_ptr<wui::text>(std::make_shared<wui::text>(wui::locale("about", "copyright"), wui::hori_alignment::center));
+    closeButton = std::shared_ptr<wui::button>(std::make_shared<wui::button>(wui::locale("button", "close"), [this]() { window->destroy(); }, "green_button"));
 
     window->add_control(logo, { 100, 30, 300, 230 });
     window->add_control(appName, { 10, 235, WND_WIDTH - 10, 255 });

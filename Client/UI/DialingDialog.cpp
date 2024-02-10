@@ -17,7 +17,7 @@ namespace Client
 DialingDialog::DialingDialog(std::weak_ptr<wui::window> transientWindow_, std::function<void()> cancelCallback_)
     : transientWindow(transientWindow_),
     cancelCallback(cancelCallback_),
-    window(new wui::window()),
+    window(std::make_shared<wui::window>()),
     text(),
     image(),
     cancelButton()
@@ -31,9 +31,9 @@ DialingDialog::~DialingDialog()
 void DialingDialog::Run(std::string_view subscriber)
 {
     window->set_transient_for(transientWindow.lock());
-    text = std::shared_ptr<wui::text>(new wui::text());
-    image = std::shared_ptr<wui::image>(new wui::image(IMG_CALLOUT));
-    cancelButton = std::shared_ptr<wui::button>(new wui::button(wui::locale("button", "cancel"), std::bind(&DialingDialog::Cancel, this)));
+    text = std::shared_ptr<wui::text>(std::make_shared<wui::text>());
+    image = std::shared_ptr<wui::image>(std::make_shared<wui::image>(IMG_CALLOUT));
+    cancelButton = std::shared_ptr<wui::button>(std::make_shared<wui::button>(wui::locale("button", "cancel"), std::bind(&DialingDialog::Cancel, this)));
 
     text->set_text(wui::locale("dialing_dialog", "dial") + " " + std::string(subscriber));
 

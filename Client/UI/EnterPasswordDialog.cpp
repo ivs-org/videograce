@@ -24,10 +24,10 @@ namespace Client
 {
 
 EnterPasswordDialog::EnterPasswordDialog(std::weak_ptr<wui::window> transientWindow, std::function<void(const std::string&)> readyCallback)
-    : window(new wui::window()),
-    passwordInput(new wui::input("", wui::input_view::password)),
-    okButton(new wui::button(wui::locale("button", "ok"), [this, readyCallback]() { window->destroy(); readyCallback(passwordInput->text()); })),
-    cancelButton(new wui::button(wui::locale("button", "cancel"), [this]() { window->destroy(); }))
+    : window(std::make_shared<wui::window>()),
+    passwordInput(std::make_shared<wui::input>("", wui::input_view::password)),
+    okButton(std::make_shared<wui::button>(wui::locale("button", "ok"), [this, readyCallback]() { window->destroy(); readyCallback(passwordInput->text()); })),
+    cancelButton(std::make_shared<wui::button>(wui::locale("button", "cancel"), [this]() { window->destroy(); }))
 {
     window->set_transient_for(transientWindow.lock());
 }

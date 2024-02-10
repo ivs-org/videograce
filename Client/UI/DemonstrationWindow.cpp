@@ -29,11 +29,11 @@ DemonstrationWindow::DemonstrationWindow(RendererSession::RendererVideoSession &
     Controller::IController& controller_,
     const wui::rect &screenSize)
     : rvs(rvs_), controller(controller_),
-    window(new wui::window()),
-    rcButton(new wui::button(wui::locale("screen_capturer", "enable_remote_control"), std::bind(&DemonstrationWindow::OnRemoteControl, this), wui::button_view::image, IMG_TB_REMOTE_CONTROL, BTN_SIZE, wui::button::tc_tool)),
-    scaleButton(new wui::button(wui::locale("screen_capturer", "scale_rc_to_window"), std::bind(&DemonstrationWindow::OnScale, this), wui::button_view::image, IMG_TB_SCALE, BTN_SIZE, wui::button::tc_tool)),
-    verScroll(new wui::scroll(0, 0, wui::orientation::vertical, std::bind(&DemonstrationWindow::OnVertScroll, this, std::placeholders::_1, std::placeholders::_2))),
-    horScroll(new wui::scroll(0, 0, wui::orientation::horizontal, std::bind(&DemonstrationWindow::OnHorScroll, this, std::placeholders::_1, std::placeholders::_2))),
+    window(std::make_shared<wui::window>()),
+    rcButton(std::make_shared<wui::button>(wui::locale("screen_capturer", "enable_remote_control"), std::bind(&DemonstrationWindow::OnRemoteControl, this), wui::button_view::image, IMG_TB_REMOTE_CONTROL, BTN_SIZE, wui::button::tc_tool)),
+    scaleButton(std::make_shared<wui::button>(wui::locale("screen_capturer", "scale_rc_to_window"), std::bind(&DemonstrationWindow::OnScale, this), wui::button_view::image, IMG_TB_SCALE, BTN_SIZE, wui::button::tc_tool)),
+    verScroll(std::make_shared<wui::scroll>(0, 0, wui::orientation::vertical, std::bind(&DemonstrationWindow::OnVertScroll, this, std::placeholders::_1, std::placeholders::_2))),
+    horScroll(std::make_shared<wui::scroll>(0, 0, wui::orientation::horizontal, std::bind(&DemonstrationWindow::OnHorScroll, this, std::placeholders::_1, std::placeholders::_2))),
     timer_(std::bind(&DemonstrationWindow::Redraw, this)),
     scaleFactor(1.0),
     shiftLeft(0), shiftTop(0)
