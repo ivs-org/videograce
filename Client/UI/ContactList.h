@@ -46,6 +46,8 @@ public:
     void Run(std::weak_ptr<wui::window> parentWindow_);
     void End();
 
+    void UpdateParent();
+
     void UpdateSize(int32_t width, int32_t height);
 
     enum class SelectionType

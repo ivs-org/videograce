@@ -77,14 +77,9 @@ void ContactList::Run(std::weak_ptr<wui::window> parentWindow__)
 {
     parentWindow_ = parentWindow__;
 
+    UpdateParent();
+
     auto parentWindow = parentWindow_.lock();
-
-    if (messageBox)
-    {
-        messageBox.reset();
-    }
-
-    messageBox = std::make_shared<wui::message>(parentWindow->parent().lock() ? parentWindow->parent().lock() : parentWindow);
 
     parentWindow->add_control(searchInput,  { 0 });
     parentWindow->add_control(list,         { 0 });
@@ -116,6 +111,17 @@ void ContactList::End()
         parentWindow->remove_control(deleteButton);
         parentWindow->remove_control(editButton);
     }
+}
+
+void ContactList::UpdateParent()
+{
+    if (messageBox)
+    {
+        messageBox.reset();
+    }
+
+    auto parentWindow = parentWindow_.lock();
+    messageBox = std::make_shared<wui::message>(parentWindow->parent().lock() ? parentWindow->parent().lock() : parentWindow);
 }
 
 void ContactList::UpdateSize(int32_t width, int32_t height)

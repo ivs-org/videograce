@@ -54,7 +54,7 @@ void ListPanel::Run()
     {
         memberList.Run(window);
     }
-   
+  
     if (pinned)
     {
         auto mainFrame_ = mainFrame.lock();
@@ -69,6 +69,8 @@ void ListPanel::Run()
             UpdateHeight(mainFrame_->position().height());
         }
     }
+
+    contactList.UpdateParent();
 
     window->init("",
         { 0 },
@@ -154,6 +156,8 @@ void ListPanel::Pin()
         
         UpdateHeight(parentWindow_->position().height());
     }
+
+    contactList.UpdateParent();
 }
 
 void ListPanel::Unpin()
