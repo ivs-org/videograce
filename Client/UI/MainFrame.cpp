@@ -265,7 +265,7 @@ MainFrame::MainFrame()
     window->add_control(volumeBox, { 0 });
 
     controller.SetEventHandler([this](const Controller::Event &ev) {
-        //std::lock_guard<std::mutex> lock(controllerEventsQueueMutex);
+        std::lock_guard<std::mutex> lock(controllerEventsQueueMutex);
         controllerEventsQueue.push(ev);
 
         if (window)
@@ -1055,7 +1055,10 @@ void MainFrame::ReceiveEvents(const wui::event &ev)
                             }
                             else
                             {
-                                controller.Connect(wui::config::get_string("Connection", "Address", ""), wui::config::get_int("Connection", "Secure", 0) != 0);
+                                if (ev.internal_event_.y == 0)
+                                {
+                                    controller.Connect(wui::config::get_string("Connection", "Address", ""), wui::config::get_int("Connection", "Secure", 0) != 0);
+                                }
                             }
                         break;
                         case MyEvent::NewCredentials:
@@ -1140,7 +1143,7 @@ void MainFrame::ReceiveEvents(const wui::event &ev)
 
 bool MainFrame::GetEventFromQueue(Controller::Event &ev)
 {
-    //std::lock_guard<std::mutex> lock(controllerEventsQueueMutex);
+    std::lock_guard<std::mutex> lock(controllerEventsQueueMutex);
     if (!controllerEventsQueue.empty())
     {
         ev = controllerEventsQueue.front();
@@ -2791,7 +2794,7 @@ void MainFrame::SettingsReadyCallback()
         credentialsDialog.login = wui::config::get_string("Credentials", "Login", "");
         credentialsDialog.password = wui::config::get_string("Credentials", "Password", "");
         
-        window->emit_event(static_cast<int32_t>(MyEvent::CredentialsReady), 0);
+        window->emit_event(static_cast<int32_t>(MyEvent::CredentialsReady), 1);
     }
 
     auto localeType = static_cast<wui::locale_type>(wui::config::get_int("User", "Locale", static_cast<int32_t>(wui::locale_type::rus)));

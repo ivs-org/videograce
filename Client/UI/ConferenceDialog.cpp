@@ -329,7 +329,7 @@ void ConferenceDialog::ShowBase()
     wui::line_up_top_bottom(pos, 35, 5);
     window->add_control(deactiveConfCheck, pos);
 
-    window->set_focused(nameInput);
+    //window->set_focused(nameInput);
 }
 
 void ConferenceDialog::ShowMembers()
