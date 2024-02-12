@@ -1,0 +1,54 @@
+site_name: VideoGrace Server
+
+#plugins:
+#  - with-pdf:
+#      author: WHO
+#      copyright: ANY TEXT
+    
+#      cover: false
+#      back_cover: true
+#      cover_title: TITLE TEXT
+#      cover_subtitle: SUBTITLE TEXT
+#      custom_template_path: TEMPLATES PATH
+    
+#      toc_title: TOC TITLE TEXT
+#      heading_shift: false
+#      toc_level: 3
+#      ordered_chapter_level: 2
+    
+#      render_js: true
+      #headless_chrome_path: headless-chromium
+    
+#      output_path: any-place/document.pdf
+#      enabled_if_env: ENABLE_PDF_EXPORT
+    
+#      debug_html: true
+#      show_anchors: true
+#      verbose: true      
+
+nav:
+  - Домашняя: 'index.md'
+  - Установка:
+    - Установка на Windows: 'install/win.md'
+    - Установка на Linux: 'install/lin.md'
+  - Начало работы:
+    - Обеспечение доступа: 'setup/accessibility.md'
+    - Подключение пользователей: 'setup/client_connect.md'
+  - Система:
+    - Управление системой: 'system/managing.md'      
+    - Пользователи и группы: 'system/clients_groups.md'
+    - Конференции: 'system/conferences.md'
+    - Сеть: 'system/network.md'
+    - Настройки: 'system/settings.md'
+    - API: 'system/api.md'
+  - Технические требования:
+    - Клиентское рабочее место: 'requirements/client.md'
+    - Серверное оборудование: 'requirements/server.md'
+    - Требования к сети: 'requirements/network.md'
+    - Камеры и экраны: 'requirements/camera.md'
+    - Звуковое оборудование: 'requirements/sound.md'
+  - О системе:
+    - Версия: 'about/version.md'
+    - Лицензия: 'about/licence.md'
+    - Компания разработчик: 'about/company.md'
+    - Контакты: 'about/contacts.md'
