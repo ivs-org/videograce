@@ -1,18 +1,8 @@
-# Контакты и поддержка
+# Официальные контакты
 
-## Официальные контакты
-- Web site: [https://libwui.org](https://libwui.org/main_ru)
-- Telegram: [Official WUI channel](https://t.me/libwui)
-- Email: [info@libwui.org](mailto:info@libwui.org)
+- Web site: [videograce.ru](https://videograce.ru)
+- Telegram: [Чат в телеграм](https://t.me/VideoGrace)
+- Email: [info@videograce.ru](mailto:info@videograce.ru)
+- Телефон: [+74951804895](tel:+74951804895)
+- Адрес: 634033, Томск, ул. 1я-Степная 11-1, ООО "ИВС"
 
-## WUI поддерживается независимыми разработчиками:
-### Антон Головков
-- GitHub: [https://github.com/ud84](https://github.com/ud84)
-- Telegram: [@udattsk](https://t.me/udattsk)
-- Email: [udattsk@gmail.com](mailto:udattsk@gmail.com)
-
-### Возможно вы?
-- Напишите на [info@libwui.org](mailto:info@libwui.org) если хотите присоединиться 🤝
-
-## Пожертвования ❤️
-- Если вам понравился наш проект, будем признательны за любую посильную помощь: [https://libwui.org/donate_ru](https://libwui.org/donate_ru)

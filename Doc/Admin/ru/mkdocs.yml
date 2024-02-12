@@ -1,4 +1,6 @@
 site_name: VideoGrace Server
+site_url: https://videograce.ru
+theme: material
 
 #plugins:
 #  - with-pdf:
