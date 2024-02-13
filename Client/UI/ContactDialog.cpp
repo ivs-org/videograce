@@ -116,7 +116,7 @@ void ContactDialog::Run(std::weak_ptr<wui::window> parentWindow_, ContactDialogM
         Storage::Contacts selectedContacts;
         if (added)
         {
-            std::lock_guard<std::mutex> lock(itemsMutex);
+            std::lock_guard<std::recursive_mutex> lock(itemsMutex);
             for (auto &item : items)
             {
                 if (item.type == ItemType::Contact && item.checked)
@@ -152,7 +152,7 @@ void ContactDialog::Search()
         {
             int pos = 0;
             bool finded = false; 
-            std::lock_guard<std::mutex> lock(itemsMutex);
+            std::lock_guard<std::recursive_mutex> lock(itemsMutex);
             for (const auto &item : items)
             {
                 finded = boost::ifind_first(item.name, input->text());
@@ -175,7 +175,7 @@ void ContactDialog::Add()
 {
     bool hasSelected = false;
     {
-        std::lock_guard<std::mutex> lock(itemsMutex);
+        std::lock_guard<std::recursive_mutex> lock(itemsMutex);
         for (auto &item : items)
         {
             if (item.checked)
@@ -213,7 +213,7 @@ void ContactDialog::Add()
 
 void ContactDialog::MakeCurrentContactListItems()
 {
-    std::lock_guard<std::mutex> lockItems(itemsMutex);
+    std::lock_guard<std::recursive_mutex> lockItems(itemsMutex);
 
     items.clear();
 
@@ -260,7 +260,7 @@ void ContactDialog::MakeCurrentContactListItems()
 
 void ContactDialog::DrawItem(wui::graphic &gr, int32_t nItem, const wui::rect &itemRect, wui::list::item_state state)
 {
-    std::lock_guard<std::mutex> lock(itemsMutex);
+    std::lock_guard<std::recursive_mutex> lock(itemsMutex);
     auto item = GetItem(nItem);
     if (!item)
     {
@@ -327,7 +327,7 @@ void ContactDialog::CheckChildren(int64_t parentID, bool checked)
 
 void ContactDialog::ContactListCallback(const Storage::Contacts &contacts)
 {
-    std::lock_guard<std::mutex> lock(itemsMutex);
+    std::lock_guard<std::recursive_mutex> lock(itemsMutex);
 
     items.clear();
 
@@ -350,7 +350,7 @@ void ContactDialog::ClickItem(int32_t nItem, int32_t x, int32_t y)
         auto listPos = list->position();
         if (x > listPos.right - checkOnImage->width() - 20 && x <= listPos.right - 20)
         {
-            std::lock_guard<std::mutex> lock(itemsMutex);
+            std::lock_guard<std::recursive_mutex> lock(itemsMutex);
             items[nItem].checked = !items[nItem].checked;
             if (item->type == ItemType::Group)
             {
@@ -365,7 +365,7 @@ void ContactDialog::ClickItem(int32_t nItem, int32_t x, int32_t y)
             {
                 storage.ChangeGroupRolled(item->id);
 
-                std::lock_guard<std::mutex> lock(itemsMutex);
+                std::lock_guard<std::recursive_mutex> lock(itemsMutex);
                 items.clear();
                 MakeCurrentContactListItems();
                 list->set_item_count(static_cast<int32_t>(items.size()));

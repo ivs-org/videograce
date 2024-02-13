@@ -89,7 +89,7 @@ private:
             : id(id_), parent_id(parent_id_), type(type_), name(name_), number(number_), tag(tag_), level(level_), image(image_), checked(checked_) {}
     };
 
-    std::mutex itemsMutex;
+    std::recursive_mutex itemsMutex;
     std::vector<Item> items;
     bool added;
     
