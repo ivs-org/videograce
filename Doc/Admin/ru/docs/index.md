@@ -17,6 +17,7 @@
 * [Сеть](system/network.md)
 * [Настройки](system/settings.md)
 * [API](system/api.md)
+* [Нагрузочное тестирование](system/load_testing.md)
 
 ## Технические требования
 * [Клиентское рабочее место](requirements/client.md)
