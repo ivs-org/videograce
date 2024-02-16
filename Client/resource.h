@@ -44,7 +44,6 @@
 #define IMG_MSG_DELIVERED              4076
 #define IMG_MSG_READED                 4077
 #define IMG_REPLY                      4080
-#define IMG_NO_VIDEO                   4200
 #define IMG_TB_CALL                    4210
 #define IMG_TB_CONFERENCE              4211
 #define IMG_TB_HANGUP                  4212
@@ -155,7 +154,6 @@ static constexpr const char* IMG_REPLY                       = "ContentPanel/rep
 static constexpr const char* IMG_MSG_SENDED                  = "ContentPanel/msg_sended.png";
 static constexpr const char* IMG_MSG_DELIVERED               = "ContentPanel/msg_delivered.png";
 static constexpr const char* IMG_MSG_READED                  = "ContentPanel/msg_readed.png";
-static constexpr const char* IMG_NO_VIDEO                    = "no_video.png";
 static constexpr const char* IMG_TB_CALL                     = "MainToolbar/call.png";
 static constexpr const char* IMG_TB_CONFERENCE               = "MainToolbar/conference.png";
 static constexpr const char* IMG_TB_HANGUP                   = "MainToolbar/hangup.png";

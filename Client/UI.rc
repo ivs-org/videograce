@@ -69,9 +69,6 @@ IMG_CONNECTION_CLOUD    IMAGES_LIGHT                 "res\\light\\Connection\\cl
 IMG_CONNECTION_LOCAL    IMAGES_DARK                  "res\\dark\\Connection\\local.png"
 IMG_CONNECTION_LOCAL    IMAGES_LIGHT                 "res\\light\\Connection\\local.png"
 
-IMG_NO_VIDEO            IMAGES_DARK                  "res\\dark\\no_video.png"
-IMG_NO_VIDEO            IMAGES_LIGHT                 "res\\light\\no_video.png"
-
 IMG_CHECK_ON            IMAGES_DARK                  "res\\dark\\check_on.png"
 IMG_CHECK_ON            IMAGES_LIGHT                 "res\\light\\check_on.png"
 
