@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2024-02-13T10:28:59.952Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36" etag="pkmHeAActudLE3d3kvmu" version="23.1.1" type="google">
+<mxfile host="app.diagrams.net" modified="2024-02-16T04:18:33.863Z" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36" etag="9TIYppI_1XEHLf8-bXOb" version="23.1.5" type="google">
   <diagram name="Страница — 1" id="yXJeaMvFoXF_CdNia8LF">
     <mxGraphModel grid="1" page="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
@@ -36,6 +36,18 @@
         </mxCell>
         <mxCell id="WZh6ZhMA239aKEn7YsyJ-12" value="&lt;font face=&quot;Helvetica&quot; style=&quot;font-size: 18px;&quot;&gt;8781 UDP&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
           <mxGeometry x="190" y="250" width="110" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="-I8UMZvwhjBuwq5xOJi--2" value="" style="shape=curlyBracket;whiteSpace=wrap;html=1;rounded=1;flipH=1;labelPosition=right;verticalLabelPosition=middle;align=left;verticalAlign=middle;size=0.5;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="320" y="140" width="30" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="-I8UMZvwhjBuwq5xOJi--3" value="&lt;font style=&quot;font-size: 20px;&quot;&gt;AV Translators,&lt;br style=&quot;border-color: var(--border-color); color: rgb(51, 51, 51);&quot;&gt;&lt;span style=&quot;color: rgb(51, 51, 51);&quot;&gt;media traffic&lt;/span&gt;&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="370" y="180" width="160" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="-I8UMZvwhjBuwq5xOJi--4" value="" style="shape=curlyBracket;whiteSpace=wrap;html=1;rounded=1;flipH=1;labelPosition=right;verticalLabelPosition=middle;align=left;verticalAlign=middle;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="320" y="50" width="30" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="-I8UMZvwhjBuwq5xOJi--5" value="&lt;font style=&quot;font-size: 18px;&quot;&gt;Command connection,&lt;br&gt;&lt;font style=&quot;font-size: 18px;&quot;&gt;media failover&lt;/font&gt;&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="350" y="40" width="200" height="60" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
