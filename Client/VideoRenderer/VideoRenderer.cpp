@@ -26,7 +26,6 @@ namespace VideoRenderer
 VideoRenderer::VideoRenderer()
 	: parent_(), position_(),
     showed_(true), runned(false),
-    mutex(),
     bufferWidth(0), bufferHeight(0),
 	name(),
 	id(0), clientId(0),
@@ -61,8 +60,6 @@ void VideoRenderer::draw(wui::graphic &gr, const wui::rect &)
     {
         return;
     }
-
-    std::lock_guard<std::mutex> lock(mutex);
 
     auto pos = position();
 
@@ -104,8 +101,6 @@ void VideoRenderer::draw(wui::graphic &gr, const wui::rect &)
 
 void VideoRenderer::set_position(const wui::rect &position__, bool redraw)
 {
-    std::lock_guard<std::mutex> lock(mutex);
-
     update_control_position(position_, position__, redraw, parent_);
 }
 
@@ -198,8 +193,6 @@ void VideoRenderer::Start()
 {
 	if (!runned)
 	{
-        std::lock_guard<std::mutex> lock(mutex);
-
 		CreateBuffers();
         runned = true;
         nowSpeak = false;
@@ -210,10 +203,7 @@ void VideoRenderer::Stop()
 {
 	runned = false;
 
-    {
-        std::lock_guard<std::mutex> lock(mutex);
-        DestroyBuffers();
-    }
+    DestroyBuffers();
     
     auto parent__ = parent_.lock();
     if (parent__)
@@ -260,7 +250,6 @@ void VideoRenderer::SetResolution(Video::Resolution resolution_)
 	if (runned)
 	{
         runned = false;
-        std::lock_guard<std::mutex> lock(mutex);
 
 		DestroyBuffers();
 		resolution = resolution_;
@@ -319,8 +308,6 @@ void VideoRenderer::Send(const Transport::IPacket &packet_, const Transport::Add
 	{
 		return;
 	}
-
-    std::lock_guard<std::mutex> lock(mutex);
 
     bufferWidth = position_.width();
     bufferHeight = position_.height();

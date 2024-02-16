@@ -84,7 +84,6 @@ private:
     
 	bool showed_, runned;
 
-    std::mutex mutex;
     int32_t bufferWidth, bufferHeight;
 
 	std::string name;
