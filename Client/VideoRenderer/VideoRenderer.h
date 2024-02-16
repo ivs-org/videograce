@@ -82,8 +82,6 @@ private:
     std::weak_ptr<wui::window> parent_;
     wui::rect position_;
     
-    std::shared_ptr<wui::image> avatar;
-
 	bool showed_, runned;
 
     std::mutex mutex;

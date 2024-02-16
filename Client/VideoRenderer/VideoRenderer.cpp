@@ -25,7 +25,6 @@ namespace VideoRenderer
 /// VideoRenderer
 VideoRenderer::VideoRenderer()
 	: parent_(), position_(),
-    avatar(new wui::image(IMG_NO_VIDEO)),
     showed_(true), runned(false),
     mutex(),
     bufferWidth(0), bufferHeight(0),
@@ -67,14 +66,14 @@ void VideoRenderer::draw(wui::graphic &gr, const wui::rect &)
 
     auto pos = position();
 
-    if (deviceType != Proto::DeviceType::Avatar)
+	if (deviceType != Proto::DeviceType::Avatar)
     {
         gr.draw_buffer({ pos.left, pos.top, pos.left + bufferWidth, pos.top + bufferHeight }, scaleBuffer.get(), 0, 0);
     }
     else
     {
         gr.draw_rect(pos, wui::make_color(65, 65, 65));
-        avatar->draw(gr, { 0 });
+		gr.draw_text(pos, "👤", wui::make_color(240, 245, 230), wui::font{"Segoe UI", static_cast<int32_t>(pos.height() * 0.7)});
     }
 
     gr.draw_text({ pos.left + 11, pos.bottom - 24 }, name,
@@ -94,10 +93,10 @@ void VideoRenderer::draw(wui::graphic &gr, const wui::rect &)
         gr.draw_line({ pos.left, pos.top, pos.left, pos.bottom }, color, 1);
     }
 
-	/*auto stop = high_resolution_clock::now();
+	auto stop = high_resolution_clock::now();
 	auto duration = duration_cast<microseconds>(stop - start);
 	OutputDebugStringA(std::to_string(duration.count()).c_str());
-	OutputDebugStringA("\n");*/
+	OutputDebugStringA("\n");
 }
 
 void VideoRenderer::set_position(const wui::rect &position__, bool redraw)
@@ -105,10 +104,6 @@ void VideoRenderer::set_position(const wui::rect &position__, bool redraw)
     std::lock_guard<std::mutex> lock(mutex);
 
     update_control_position(position_, position__, redraw, parent_);
-
-    auto controlPos = position();
-    int32_t size = controlPos.width() > controlPos.height() ? controlPos.height() : controlPos.width();
-    avatar->set_position({ controlPos.left, controlPos.top, controlPos.left + size, controlPos.top + size });
 }
 
 wui::rect VideoRenderer::position() const
