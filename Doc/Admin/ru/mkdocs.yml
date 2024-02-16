@@ -30,6 +30,8 @@ theme: material
 
 nav:
   - Домашняя: 'index.md'
+  - Полезные сведения:
+    - Виды систем видеоконференцсвязи: 'helpful/vcs_types.md'
   - Установка:
     - Установка на Windows: 'install/win.md'
     - Установка на Linux: 'install/lin.md'
@@ -43,8 +45,9 @@ nav:
     - Конференции: 'system/conferences.md'
     - Сеть: 'system/network.md'
     - Настройки: 'system/settings.md'
-    - API: 'system/api.md'
     - Нагрузочное тестирование: 'system/load_testing.md'
+  - API:
+    - REST: 'api/rest.md'
   - Технические требования:
     - Клиентское рабочее место: 'requirements/client.md'
     - Серверное оборудование: 'requirements/server.md'
