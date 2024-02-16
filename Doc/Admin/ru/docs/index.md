@@ -5,6 +5,7 @@
 ## Установка
 * [Установка на Windows](install/win.md)
 * [Установка на Linux](install/lin.md)
+* [Первоначальная настройка](install/first_steps.md)
 
 ## Начало работы
 * [Обеспечение доступа](setup/accessibility.md)
