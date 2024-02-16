@@ -55,6 +55,9 @@ void VideoRenderer::SetDeviceNotifyCallback(Client::DeviceNotifyCallback deviceN
 
 void VideoRenderer::draw(wui::graphic &gr, const wui::rect &)
 {
+	using namespace std::chrono;
+	auto start = high_resolution_clock::now();
+
     if (!runned || !showed_)
     {
         return;
@@ -90,6 +93,11 @@ void VideoRenderer::draw(wui::graphic &gr, const wui::rect &)
         gr.draw_line({ pos.right, pos.bottom - 1, pos.left, pos.bottom - 1 }, color, 1);
         gr.draw_line({ pos.left, pos.top, pos.left, pos.bottom }, color, 1);
     }
+
+	/*auto stop = high_resolution_clock::now();
+	auto duration = duration_cast<microseconds>(stop - start);
+	OutputDebugStringA(std::to_string(duration.count()).c_str());
+	OutputDebugStringA("\n");*/
 }
 
 void VideoRenderer::set_position(const wui::rect &position__, bool redraw)
@@ -299,6 +307,9 @@ void VideoRenderer::ResizeImage_C4R(const Ipp8u* pSrc, IppiSize srcSize, Ipp32s 
 
 void VideoRenderer::Send(const Transport::IPacket &packet_, const Transport::Address *)
 {
+	using namespace std::chrono;
+	auto start = high_resolution_clock::now();
+
 	if (!runned)
 	{
 		return;
@@ -339,6 +350,11 @@ void VideoRenderer::Send(const Transport::IPacket &packet_, const Transport::Add
 	ResizeImage_C4R(data, srcSz, rv.width * 4, scaleBuffer.get(), dstSz, dstSz.width * 4);
 
     prevSz = dstSz;
+
+	/*auto stop = high_resolution_clock::now();
+	auto duration = duration_cast<microseconds>(stop - start);
+	OutputDebugStringA(std::to_string(duration.count()).c_str());
+	OutputDebugStringA("\n");*/
 }
 
 }

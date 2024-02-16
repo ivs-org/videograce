@@ -421,6 +421,56 @@ wui::rect RenderersBox::GetRendererEvenGridPos(uint32_t pos, Video::Resolution r
         lines = 10;
         columns = 10;
     }
+    else if (count > 100 && count < 111) // 11x10
+    {
+        lines = 11;
+        columns = 10;
+    }
+    else if (count > 110 && count < 121) // 11x11
+    {
+        lines = 11;
+        columns = 11;
+    }
+    else if (count > 120 && count < 133) // 12x11
+    {
+        lines = 12;
+        columns = 11;
+    }
+    else if (count > 132 && count < 145) // 12x12
+    {
+        lines = 12;
+        columns = 12;
+    }
+    else if (count > 144 && count < 157) // 13x12
+    {
+        lines = 13;
+        columns = 12;
+    }
+    else if (count > 156 && count < 170) // 13x13
+    {
+        lines = 13;
+        columns = 13;
+    }
+    else if (count > 169 && count < 183) // 14x13
+    {
+        lines = 14;
+        columns = 13;
+    }
+    else if (count > 182 && count < 197) // 14x14
+    {
+        lines = 14;
+        columns = 14;
+    }
+    else if (count > 196 && count < 211) // 15x14
+    {
+        lines = 15;
+        columns = 14;
+    }
+    else if (count > 210 && count < 226) // 15x15
+    {
+        lines = 15;
+        columns = 15;
+    }
 
 	width = width / columns;
 	height = height / lines;
