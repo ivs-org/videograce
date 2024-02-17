@@ -73,10 +73,10 @@ void VideoRenderer::draw(wui::graphic &gr, const wui::rect &)
 		gr.draw_text(pos,
 			"👤",
 			wui::make_color(240, 245, 230),
-			wui::font{ wui::theme_font("window", "caption_font").name, static_cast<int32_t>(pos.height() * 0.7) });
+			wui::font{ wui::theme_font("window", "caption_font").name, static_cast<int32_t>(pos.height() * 0.4) });
     }
 
-    gr.draw_text({ pos.left + 11, pos.bottom - 24 }, name,
+    gr.draw_text({pos.left + 11, pos.bottom - 24}, name,
         wui::make_color(50, 50, 50),
         wui::theme_font("window", "caption_font"));
 
@@ -93,10 +93,10 @@ void VideoRenderer::draw(wui::graphic &gr, const wui::rect &)
         gr.draw_line({ pos.left, pos.top, pos.left, pos.bottom }, color, 1);
     }
 
-	//auto stop = high_resolution_clock::now();
-	//auto duration = duration_cast<microseconds>(stop - start);
-	//OutputDebugStringA(std::to_string(duration.count()).c_str());
-	//OutputDebugStringA("\n");
+	/*auto stop = high_resolution_clock::now();
+	auto duration = duration_cast<microseconds>(stop - start);
+	OutputDebugStringA(std::to_string(duration.count()).c_str());
+	OutputDebugStringA("\n");*/
 }
 
 void VideoRenderer::set_position(const wui::rect &position__, bool redraw)
