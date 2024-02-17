@@ -5,6 +5,8 @@
  * Copyright (C), Infinity Video Soft LLC, 2018
  */
 
+#ifdef WIN32
+
 #pragma once
 
 #include <windows.h>
@@ -33,4 +35,26 @@ static bool IsWindowsVistaOrGreater()
         dwlConditionMask);
 }
 
+static bool IsWindows10OrGreater()
+{
+    int(__stdcall * RtlGetVersion)(PRTL_OSVERSIONINFOW lpVersionInformation) = nullptr;
+    HMODULE ntdll = GetModuleHandle(L"ntdll.dll");
+    if (ntdll == NULL)
+        return false;
+    *reinterpret_cast<FARPROC*>(&RtlGetVersion) = GetProcAddress(ntdll, "RtlGetVersion");
+    if (RtlGetVersion == nullptr)
+        return false;
+
+    OSVERSIONINFOEX versionInfo{ sizeof(OSVERSIONINFOEX) };
+    if (RtlGetVersion(reinterpret_cast<LPOSVERSIONINFO>(&versionInfo)) < 0)
+        return false;
+
+    if (versionInfo.dwMajorVersion >= HIBYTE(_WIN32_WINNT_WIN10))
+        return true;
+
+    return false;
 }
+
+}
+
+#endif

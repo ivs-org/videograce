@@ -12,6 +12,7 @@
 #include <atomic>
 
 #include <Transport/RTP/RTPPacket.h>
+#include <Common/WindowsVersion.h>
 
 #include <wui/window/window.hpp>
 #include <wui/system/tools.hpp>
@@ -70,7 +71,7 @@ void VideoRenderer::draw(wui::graphic &gr, const wui::rect &)
     else
     {
 #ifdef _WIN32
-		auto fontName = "Segoe UI Emoji";
+		auto fontName = Common::IsWindows10OrGreater() ? "Segoe UI Emoji" : "Segoe UI Symbol";
 #else
 		auto fontName = "noto-fonts-emoji";
 #endif
