@@ -69,11 +69,16 @@ void VideoRenderer::draw(wui::graphic &gr, const wui::rect &)
     }
     else
     {
+#ifdef _WIN32
+		auto fontName = "Segoe UI Emoji";
+#else
+		auto fontName = "noto-fonts-emoji";
+#endif
         gr.draw_rect(pos, wui::make_color(65, 65, 65));
 		gr.draw_text(pos,
 			"👤",
 			wui::make_color(240, 245, 230),
-			wui::font{ wui::theme_font("window", "caption_font").name, static_cast<int32_t>(pos.height() * 0.4) });
+			wui::font{ fontName, static_cast<int32_t>(pos.height() * 0.4) });
     }
 
     gr.draw_text({pos.left + 11, pos.bottom - 24}, name,
