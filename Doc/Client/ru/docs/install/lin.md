@@ -36,6 +36,7 @@
     sudo yum install xcb-util-cursor 
     sudo yum install xcb-util-wm
 
+## Обновление
 Обновление осуществляется автоматически с сервера
 
 ## Удаление
