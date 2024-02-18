@@ -147,7 +147,6 @@ private:
 
     std::shared_ptr<wui::tray_icon> trayIcon;
 
-    std::mutex controllerEventsQueueMutex;
     std::queue<Controller::Event> controllerEventsQueue;
 
     ActivateHandler activateHandler;
