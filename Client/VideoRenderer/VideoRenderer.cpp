@@ -64,22 +64,29 @@ void VideoRenderer::draw(wui::graphic &gr, const wui::rect &)
 
     auto pos = position();
 
+	auto color = nowSpeak ? wui::make_color(54, 183, 41) : wui::make_color(250, 250, 250);
+
 	if (deviceType != Proto::DeviceType::Avatar)
     {
         gr.draw_buffer({ pos.left, pos.top, pos.left + bufferWidth, pos.top + bufferHeight }, scaleBuffer.get(), 0, 0);
     }
     else
     {
+		gr.draw_rect(pos, wui::make_color(65, 65, 65));
 #ifdef _WIN32
-		auto fontName = Common::IsWindows10OrGreater() ? "Segoe UI Emoji" : "Segoe UI Symbol";
-#else
-		auto fontName = "noto-fonts-emoji";
-#endif
-        gr.draw_rect(pos, wui::make_color(65, 65, 65));
 		gr.draw_text(pos,
 			"👤",
-			wui::make_color(240, 245, 230),
-			wui::font{ fontName, static_cast<int32_t>(pos.height() * 0.4) });
+			color,
+			wui::font {
+					Common::IsWindows10OrGreater() ? "Segoe UI Emoji" : "Segoe UI Symbol",
+					static_cast<int32_t>(pos.height() * 0.4)
+				});
+#else
+		gr.draw_text(pos,
+			"&",
+			color,
+			wui::font{ "D050000L", static_cast<int32_t>(pos.height() * 0.8)	});
+#endif
     }
 
     gr.draw_text({pos.left + 11, pos.bottom - 24}, name,
@@ -87,12 +94,11 @@ void VideoRenderer::draw(wui::graphic &gr, const wui::rect &)
         wui::theme_font("window", "caption_font"));
 
     gr.draw_text({ pos.left + 10, pos.bottom - 25 }, name,
-        nowSpeak ? wui::make_color(54, 183, 41) : wui::make_color(250, 250, 250),
+        color,
         wui::theme_font("window", "caption_font"));
 
     if (nowSpeak)
     {
-        auto color = wui::make_color(54, 183, 41);
         gr.draw_line({ pos.left, pos.top, pos.right, pos.top }, color, 1);
         gr.draw_line({ pos.right - 1, pos.top, pos.right - 1, pos.bottom }, color, 1);
         gr.draw_line({ pos.right, pos.bottom - 1, pos.left, pos.bottom - 1 }, color, 1);
