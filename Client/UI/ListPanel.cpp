@@ -186,7 +186,7 @@ bool ListPanel::Pinned() const
 
 void ListPanel::ShowContacts()
 {
-    if (panelMode == PanelMode::ContactList)
+    if (panelMode == PanelMode::ContactList || !window->context().valid())
     {
         return;
     }
@@ -206,7 +206,7 @@ void ListPanel::ShowContacts()
 
 void ListPanel::ShowMembers()
 {
-    if (panelMode == PanelMode::MemberList)
+    if (panelMode == PanelMode::MemberList || !window->context().valid())
     {
         return;
     }
@@ -226,6 +226,11 @@ void ListPanel::ShowMembers()
 
 void ListPanel::ActivateMembers()
 {
+    if (!window->context().valid())
+    {
+        return;
+    }
+
     if (pinned)
     {
         auto parentWindow_ = mainFrame.lock();

@@ -340,7 +340,7 @@ void ContentPanel::SetUser(const int64_t id, std::string_view name)
     list->set_item_count(count);
     list->scroll_to_end();
     
-    if (count != 0)
+    if (count != 0 && window->context().valid())
     {
         window->emit_event(static_cast<int32_t>(CPEvent::SendReaded), 0);
     }
@@ -371,7 +371,7 @@ void ContentPanel::SetConference(std::string_view tag, std::string_view name)
     list->set_item_count(count);
     list->scroll_to_end();
 
-    if (count != 0)
+    if (count != 0 && window->context().valid())
     {
         window->emit_event(static_cast<int32_t>(CPEvent::SendReaded), 0);
     }
