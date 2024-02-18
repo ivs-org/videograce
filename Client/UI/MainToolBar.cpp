@@ -123,8 +123,8 @@ MainToolBar::MainToolBar(std::weak_ptr<wui::window> mainFrame_, IControlActions 
     separator5    (std::make_shared<wui::image>(IMG_TB_SEPARATOR)),
     fullscreen    (std::make_shared<wui::button>(wui::locale("toolbar", "fullscreen"),          [&receiver]() { receiver.ActionFullScreen();            }, wui::button_view::image, IMG_TB_FULLSCREEN,                  BTN_SIZE, wui::button::tc_tool)),
     menu          (std::make_shared<wui::button>(wui::locale("toolbar", "menu"),                [&receiver]() { receiver.ActionMenu();                  }, wui::button_view::image, IMG_TB_MENU,                        BTN_SIZE, wui::button::tc_tool)),
-    timer         ([this]() { auto parent_ = parent.lock(); if (parent_) parent_->emit_event(static_cast<int32_t>(MyEvent::UpdatePanelPosition), 0); }),
-    showPos(0), delayCount(0),
+    timer         ([this]() { ++delayCount; if (delayCount > 10) { auto parent_ = parent.lock(); if (parent_) parent_->emit_event(static_cast<int32_t>(MyEvent::UpdatePanelPosition), 0); } }),
+    delayCount(0),
     normal(true)
 {
 }
@@ -321,10 +321,9 @@ void MainToolBar::FullScreen()
 
     normal = false;
 
-    showPos = 0;
     delayCount = 0;
 
-    UpdatePanelPosition(true);
+    SetFullScreenPosition();
 
     panel->set_topmost(true);
     call->set_topmost(true);
@@ -349,7 +348,7 @@ void MainToolBar::FullScreen()
     fullscreen->set_topmost(true);
     menu->set_topmost(true);
 
-    timer.start(100);
+    timer.start(250);
 }
 
 int32_t MainToolBar::Bottom() const
@@ -372,32 +371,29 @@ std::shared_ptr<wui::i_control> MainToolBar::GetMenuControl() const
     return menu;
 }
 
-void MainToolBar::UpdatePanelPosition(bool show)
+void MainToolBar::ReceiveEvents(const wui::event &ev)
+{
+    switch (ev.type)
+    {
+        case wui::event_type::mouse:
+            if (!normal)
+            {
+                Show();
+            }
+        break;
+        case wui::event_type::internal:
+            if (!normal && ev.internal_event_.x == static_cast<int32_t>(MyEvent::UpdatePanelPosition))
+            {
+                Hide();
+            }
+        break;
+    }
+}
+
+void MainToolBar::SetFullScreenPosition()
 {
     auto width = 13 * (SHIFT + BTN_SIZE) + 7 * 6;
     auto height = 2 * SHIFT + BTN_SIZE;
-
-    if (!show)
-    {
-        if (showPos > height)
-        {
-            return;
-        }
-
-        ++delayCount;
-
-        if (delayCount < 10)
-        {
-            return;
-        }
-
-        showPos += 4;
-    }
-    else
-    {      
-        delayCount = 0;
-        showPos = 0;
-    }
 
     auto parent_ = parent.lock();
     if (!parent_)
@@ -409,8 +405,6 @@ void MainToolBar::UpdatePanelPosition(bool show)
 
     auto left = (parentPos.width() - width) / 2;
     auto top = parentPos.height() - height;
-
-    top += showPos;
 
     panel->set_position({ left, top, left + width, top + height });
 
@@ -448,34 +442,84 @@ void MainToolBar::UpdatePanelPosition(bool show)
     menu->set_position({ left, top, left + BTN_SIZE, bottom });
 }
 
-void MainToolBar::ReceiveEvents(const wui::event &ev)
+void MainToolBar::Show()
 {
-    switch (ev.type)
-    {
-        case wui::event_type::mouse:
-            if (!normal)
-            {
-                if (ev.mouse_event_.type == wui::mouse_event_type::move)
-                {
-                    static int32_t x = 0, y = 0;
+    delayCount = 0;
 
-                    if (ev.mouse_event_.x == x && ev.mouse_event_.y == y)
-                    {
-                        return;
-                    }
-                    x = ev.mouse_event_.x;
-                    y = ev.mouse_event_.y;
-                }
-                UpdatePanelPosition(true);
-            }
-        break;
-        case wui::event_type::internal:
-            if (!normal && ev.internal_event_.x == static_cast<int32_t>(MyEvent::UpdatePanelPosition))
-            {
-                UpdatePanelPosition(false);
-            }
-        break;
+    if (panel->showed())
+    {
+        return;
     }
+
+    panel->show();
+
+    call->show();
+    conference->show();
+    hangup->show();
+    separator0->show();
+
+    camera->show();
+    microphone->show();
+    microphoneVol->show();
+    speaker->show();
+    speakerVol->show();
+    separator1->show();
+
+    screenCapturer->show();
+    separator2->show();
+
+    rendererMode->show();
+    separator3->show();
+
+    hand->show();
+    separator4->show();
+
+    list->show();
+    content->show();
+    separator5->show();
+
+    fullscreen->show();
+
+    menu->show();
+}
+
+void MainToolBar::Hide()
+{
+    if (!panel->showed() || normal)
+    {
+        return;
+    }
+
+    panel->hide();
+
+    call->hide();
+    conference->hide();
+    hangup->hide();
+    separator0->hide();
+
+    camera->hide();
+    microphone->hide();
+    microphoneVol->hide();
+    speaker->hide();
+    speakerVol->hide();
+    separator1->hide();
+
+    screenCapturer->hide();
+    separator2->hide();
+
+    rendererMode->hide();
+    separator3->hide();
+
+    hand->hide();
+    separator4->hide();
+
+    list->hide();
+    content->hide();
+    separator5->hide();
+
+    fullscreen->hide();
+
+    menu->hide();
 }
 
 }

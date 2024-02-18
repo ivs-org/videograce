@@ -71,11 +71,13 @@ private:
     std::shared_ptr<wui::button> menu;
 
     mt::timer timer;
-    int32_t showPos, delayCount;
+    int32_t delayCount;
 
     bool normal;
 
-    void UpdatePanelPosition(bool show);
+    void SetFullScreenPosition();
+    void Show();
+    void Hide();
 
     void ReceiveEvents(const wui::event &ev);
 };
