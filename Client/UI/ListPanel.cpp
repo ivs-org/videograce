@@ -186,7 +186,7 @@ bool ListPanel::Pinned() const
 
 void ListPanel::ShowContacts()
 {
-    if (panelMode == PanelMode::ContactList || !window->context().valid())
+    if (panelMode == PanelMode::ContactList)
     {
         return;
     }
@@ -195,6 +195,11 @@ void ListPanel::ShowContacts()
 
     contactsSheet->turn(true);
     membersSheet->turn(false);
+
+    if (!window->context().valid())
+    {
+        return;
+    }
 
     memberList.End();
     contactList.Run(window);
@@ -206,7 +211,7 @@ void ListPanel::ShowContacts()
 
 void ListPanel::ShowMembers()
 {
-    if (panelMode == PanelMode::MemberList || !window->context().valid())
+    if (panelMode == PanelMode::MemberList)
     {
         return;
     }
@@ -215,6 +220,11 @@ void ListPanel::ShowMembers()
 
     contactsSheet->turn(false);
     membersSheet->turn(true);
+
+    if (!window->context().valid())
+    {
+        return;
+    }
 
     memberList.Run(window);
     contactList.End();
@@ -226,12 +236,7 @@ void ListPanel::ShowMembers()
 
 void ListPanel::ActivateMembers()
 {
-    if (!window->context().valid())
-    {
-        return;
-    }
-
-    if (pinned)
+    if (pinned && window->context().valid())
     {
         auto parentWindow_ = mainFrame.lock();
         if (parentWindow_)
