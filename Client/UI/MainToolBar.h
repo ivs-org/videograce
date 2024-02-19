@@ -48,7 +48,7 @@ public:
     std::shared_ptr<wui::i_control> GetMenuControl() const;
 
 private:
-    static const int32_t TOP = 30, SHIFT = 2, BTN_SIZE = 48, EXP_SIZE = 16, SEP_SIZE = 5;
+    static constexpr int32_t TOP = 30, SHIFT = 2, BTN_SIZE = 48, EXP_SIZE = 16, SEP_SIZE = 5;
     
     std::weak_ptr<wui::window> parent;
 

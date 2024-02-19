@@ -37,7 +37,7 @@ public:
     int64_t GetClientId() const;
 
 private:
-    static const int32_t BTN_SIZE = 32;
+    static constexpr int32_t BTN_SIZE = 32;
 
     RendererSession::RendererVideoSession& rvs;
     Controller::IController& controller;
