@@ -416,7 +416,8 @@ void MemberList::DrawItem(wui::graphic &gr, int32_t nItem, const wui::rect &item
 
 void MemberList::Add()
 {
-    contactDialog.Run(parentWindow_, ContactDialogMode::ConnectToConference);
+    auto parentWindow = parentWindow_.lock();
+    contactDialog.Run(parentWindow->parent().lock() ? parentWindow->parent().lock() : parentWindow, ContactDialogMode::ConnectToConference);
 }
 
 void MemberList::Kick()
