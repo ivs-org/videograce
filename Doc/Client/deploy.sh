@@ -1,15 +1,11 @@
 #!/bin/sh
 
 cd en
-mkdocs build
-rm -rf ../../../wui_site/doc
-mv site ../../../wui_site/doc
-mkdir -p ../../../wui_site/doc/img
-cp img/* ../../../wui_site/doc/img
+#mkdocs build
+#rm -rf ../../../vg_site/doc/client
+#mv site ../../../vg_site/doc/client
 
 cd ../ru
 mkdocs build
-rm -rf ../../../wui_site/doc_ru
-mv site ../../../wui_site/doc_ru
-mkdir -p ../../../wui_site/doc_ru/img
-cp img/* ../../../wui_site/doc_ru/img
+rm -rf ../../../../vg_site_ru/doc/client
+mv site ../../../../vg_site_ru/doc/client

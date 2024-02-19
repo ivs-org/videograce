@@ -2,31 +2,14 @@ site_name: VideoGrace Client
 site_url: https://videograce.ru
 theme: material
 
-#plugins:
-#  - with-pdf:
-#      author: WHO
-#      copyright: ANY TEXT
+plugins:
+  - with-pdf:
+      author: v 1.0.240218
+      copyright: (C) ООО "ИВС", 2024
     
-#      cover: false
-#      back_cover: true
-#      cover_title: TITLE TEXT
-#      cover_subtitle: SUBTITLE TEXT
-#      custom_template_path: TEMPLATES PATH
-    
-#      toc_title: TOC TITLE TEXT
-#      heading_shift: false
-#      toc_level: 3
-#      ordered_chapter_level: 2
-    
-#      render_js: true
-      #headless_chrome_path: headless-chromium
-    
-#      output_path: any-place/document.pdf
-#      enabled_if_env: ENABLE_PDF_EXPORT
-    
-#      debug_html: true
-#      show_anchors: true
-#      verbose: true      
+      cover: true
+      cover_title: VideoGrace Client
+      cover_subtitle: Руководство пользователя
 
 nav:
   - Домашняя: 'index.md'
@@ -50,6 +33,6 @@ nav:
     - Завершение конференции: 'conferencing/end.md' 
   - О системе:
     - Версия: 'about/version.md'
-    - Лицензия: 'about/licence.md'
+    - Лицензия: 'about/license.md'
     - Компания разработчик: 'about/company.md'
     - Контакты: 'about/contacts.md'
