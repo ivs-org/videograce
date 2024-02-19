@@ -121,7 +121,10 @@ void ContactList::UpdateParent()
     }
 
     auto parentWindow = parentWindow_.lock();
-    messageBox = std::make_shared<wui::message>(parentWindow->parent().lock() ? parentWindow->parent().lock() : parentWindow);
+    if (parentWindow)
+    {
+        messageBox = std::make_shared<wui::message>(parentWindow->parent().lock() ? parentWindow->parent().lock() : parentWindow);
+    }
 }
 
 void ContactList::UpdateSize(int32_t width, int32_t height)
