@@ -34,6 +34,6 @@
 
 ## О системе:
 * [Версия](about/version.md)
-* [Лицензия](about/licence.md)
+* [Лицензия](about/license.md)
 * [Правообладатель](about/company.md)
 * [Контакты](about/contacts.md)
