@@ -324,6 +324,11 @@ void VideoRenderer::Send(const Transport::IPacket &packet_, const Transport::Add
     bufferWidth = position_.width();
     bufferHeight = position_.height();
 
+	if (bufferWidth < 10 || bufferHeight < 10)
+	{
+		return;
+	}
+
 	auto &packet = *static_cast<const Transport::RTPPacket*>(&packet_);
 
 	const uint8_t *data = packet.payload;
