@@ -26,6 +26,8 @@ ListPanel::ListPanel(std::weak_ptr<wui::window> mainFrame_, ContactList &contact
     membersSheet(std::make_shared<wui::button>(wui::locale("list_panel", "members"), [this]() { ShowMembers(); }, wui::button_view::sheet)),
     splitter(std::make_shared<wui::splitter>(wui::splitter_orientation::vertical, std::bind(&ListPanel::SplitterCallback, this, std::placeholders::_1, std::placeholders::_2)))
 {
+    splitter->set_no_redraw(true);
+
     window->subscribe(std::bind(&ListPanel::ReceiveEvents, this, std::placeholders::_1), wui::event_type::internal);
 
     window->set_min_size(240, 240);

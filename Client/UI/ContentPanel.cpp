@@ -68,6 +68,7 @@ ContentPanel::ContentPanel(std::weak_ptr<wui::window> mainFrame_, Storage::Stora
     window->set_min_size(240, 240);
 
     splitter->hide();
+    splitter->set_no_redraw(true);
 
     list->set_item_count(0);
     list->set_item_height_callback(std::bind(&ContentPanel::ListItemHeightCallback, this, std::placeholders::_1, std::placeholders::_2));
