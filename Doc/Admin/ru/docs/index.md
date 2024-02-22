@@ -26,6 +26,7 @@
 * [REST](api/rest.md)
 
 ## Технические требования
+* [Технические характеристики](requirements/tech_spec.md)
 * [Клиентское рабочее место](requirements/client.md)
 * [Серверное оборудование](requirements/server.md)
 * [Требования к сети](requirements/network.md)
