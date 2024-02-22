@@ -622,7 +622,7 @@ void RenderersBox::Redraw()
     auto parent_ = parent.lock();
     if (parent_)
     {
-        parent_->redraw({ position.left, position.top, position.right + 5, position.bottom }, true);
+        parent_->redraw({ position.left - 5, position.top, position.right + 5, position.bottom }, true);
     }
 }
 

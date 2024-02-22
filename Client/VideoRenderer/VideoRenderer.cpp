@@ -57,7 +57,7 @@ void VideoRenderer::draw(wui::graphic &gr, const wui::rect &)
 	//using namespace std::chrono;
 	//auto start = high_resolution_clock::now();
 
-    if (!runned || !showed_ || bufferWidth == 0 || bufferHeight == 0)
+    if (!runned || !showed_)
     {
         return;
     }
@@ -68,7 +68,15 @@ void VideoRenderer::draw(wui::graphic &gr, const wui::rect &)
 
 	if (deviceType != Proto::DeviceType::Avatar)
     {
-        gr.draw_buffer({ pos.left, pos.top, pos.left + bufferWidth, pos.top + bufferHeight }, scaleBuffer.get(), 0, 0);
+		if (bufferWidth > 0 && bufferHeight > 0)
+		{
+        	gr.draw_buffer({ pos.left,
+					pos.top,
+					pos.left + bufferWidth,
+					pos.top + bufferHeight },
+				scaleBuffer.get(),
+				0, 0);
+		}
     }
     else
     {
