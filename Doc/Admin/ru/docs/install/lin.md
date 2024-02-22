@@ -54,7 +54,8 @@
 Перейдите в папку инсталлятора сервера и выполните
     
     cd VideoGraceServer-2.0.240220-x64
-    ./uninstall.sh
+    sudo ./uninstall.sh
+
 ---
 **Важно**
 

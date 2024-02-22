@@ -27,9 +27,9 @@
 
 ## Технические требования
 * [Технические характеристики](requirements/tech_spec.md)
+* [Требования к сети](requirements/network.md)
 * [Клиентское рабочее место](requirements/client.md)
 * [Серверное оборудование](requirements/server.md)
-* [Требования к сети](requirements/network.md)
 * [Камеры и экраны](requirements/camera.md)
 * [Звуковое оборудование](requirements/sound.md)
 
