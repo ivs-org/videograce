@@ -57,7 +57,7 @@ void VideoRenderer::draw(wui::graphic &gr, const wui::rect &)
 	//using namespace std::chrono;
 	//auto start = high_resolution_clock::now();
 
-    if (!runned || !showed_)
+    if (!runned || !showed_ || bufferWidth == 0 || bufferHeight == 0)
     {
         return;
     }
