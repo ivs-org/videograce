@@ -2,14 +2,14 @@ site_name: VideoGrace Client
 site_url: https://videograce.ru
 theme: material
 
-plugins:
-  - with-pdf:
-      author: v 1.0.240220
-      copyright: (C) ООО "ИВС", 2024
+#plugins:
+#  - with-pdf:
+#      author: v 1.0.240220
+#      copyright: (C) ООО "ИВС", 2024
     
-      cover: true
-      cover_title: VideoGrace Client
-      cover_subtitle: Руководство пользователя
+#      cover: true
+#      cover_title: VideoGrace Client
+#      cover_subtitle: Руководство пользователя
 
 nav:
   - Домашняя: 'index.md'
