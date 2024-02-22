@@ -1,6 +1,8 @@
 site_name: VideoGrace Client
 site_url: https://videograce.ru
-theme: material
+theme:
+  name: material
+  custom_dir: overrides
 
 plugins:
   - with-pdf:
