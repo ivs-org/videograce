@@ -1072,6 +1072,7 @@ void MainFrame::ReceiveEvents(const wui::event &ev)
                             storage.Connect(GetAppDataPath() + "local.db");
                         break;
                         case MyEvent::SpeedTestCompleted:
+                            controller.SetMaxBitrate(wui::config::get_int("User", "MaxInputBitrate", 32));
                             UpdateTitle();
                             settingsDialog.UpdateNetSpeed();
                         break;
@@ -2616,8 +2617,6 @@ void MainFrame::SpeedTestCompleted(uint32_t inputSpeed, uint32_t outputSpeed)
         controller.GetMaxOutputBitrate() : outputSpeed;
     wui::config::set_int("User", "MaxInputBitrate", inputSpeed);
     wui::config::set_int("User", "MaxOutputBitrate", maxOutputBitrate);
-
-    controller.SetMaxBitrate(inputSpeed);
 
     if (window)
     {
