@@ -438,6 +438,8 @@ void SettingsDialog::DrawListItem(wui::graphic &gr, int32_t nItem, const wui::re
 
 void SettingsDialog::ChangeListItem(int32_t nItem)
 {
+    window->disable_draw();
+
     switch (static_cast<SettingsSection>(nItem))
     {
         case SettingsSection::Camera:
@@ -511,6 +513,11 @@ void SettingsDialog::ChangeListItem(int32_t nItem)
             ShowRecord();
         break;
     }
+
+    window->enable_draw();
+    window->redraw(window->parent().lock()
+        ? window->position()
+        : wui::rect{ 0, 0, window->position().width(), window->position().height() }, true);
 }
 
 /// Camera settings

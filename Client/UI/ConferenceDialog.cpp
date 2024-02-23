@@ -282,6 +282,8 @@ void ConferenceDialog::Run(const Proto::Conference &editedConf_, std::function<v
 
 void ConferenceDialog::ShowBase()
 {
+    window->disable_draw();
+
     baseSheet->turn(true);
     membersSheet->turn(false);
     optionsSheet->turn(false);
@@ -330,10 +332,17 @@ void ConferenceDialog::ShowBase()
     window->add_control(deactiveConfCheck, pos);
 
     //window->set_focused(nameInput);
+
+    window->enable_draw();
+    window->redraw(window->parent().lock()
+        ? window->position()
+        : wui::rect{ 0, 0, window->position().width(), window->position().height() }, true);
 }
 
 void ConferenceDialog::ShowMembers()
 {
+    window->disable_draw();
+
     baseSheet->turn(false);
     membersSheet->turn(true);
     optionsSheet->turn(false);
@@ -373,10 +382,17 @@ void ConferenceDialog::ShowMembers()
     wui::line_up_left_right(pos, 32, 4);
     window->add_control(downMemberButton, pos);
     window->add_control(membersList, { 10, 80 + 42, WND_WIDTH - 10, WND_HEIGHT - 45 });
+
+    window->enable_draw();
+    window->redraw(window->parent().lock()
+        ? window->position()
+        : wui::rect{ 0, 0, window->position().width(), window->position().height() }, true);
 }
 
 void ConferenceDialog::ShowOptions()
 {
+    window->disable_draw();
+
     baseSheet->turn(false);
     membersSheet->turn(false);
     optionsSheet->turn(true);
@@ -399,7 +415,7 @@ void ConferenceDialog::ShowOptions()
     window->remove_control(upMemberButton);
     window->remove_control(downMemberButton);
     window->remove_control(membersList);
-    
+
     wui::rect pos = { 10, 80, WND_WIDTH - 10, 80 + 15 };
     window->add_control(disableMicrophoneIfNoSpeakCheck, pos);
     wui::line_up_top_bottom(pos, 15, 10);
@@ -428,6 +444,11 @@ void ConferenceDialog::ShowOptions()
     window->add_control(autoConnectCheck, pos);
     wui::line_up_top_bottom(pos, 15, 10);
     window->add_control(denySelfConnectCheck, pos);
+
+    window->enable_draw();
+    window->redraw(window->parent().lock()
+        ? window->position()
+        : wui::rect{ 0, 0, window->position().width(), window->position().height() }, true);
 }
 
 void ConferenceDialog::MakeURL(std::string_view tag)
