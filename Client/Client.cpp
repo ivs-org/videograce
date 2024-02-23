@@ -29,6 +29,7 @@
 
 #include <boost/interprocess/shared_memory_object.hpp>
 #include <boost/interprocess/mapped_region.hpp>
+
 #endif
 
 #include <boost/foreach.hpp>
@@ -134,6 +135,23 @@ void CheckVGProtocol()
 
 #elif __linux__
 
+std::string exec(std::string_view cmd)
+{
+    std::array<char, 4096> buffer;
+    std::string result;
+    std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(cmd.data(), "r"), pclose);
+    if (!pipe)
+    {
+        throw std::runtime_error("popen() failed!");
+    }
+    while (fgets(buffer.data(), static_cast<int>(buffer.size()), pipe.get()) != nullptr)
+    {
+        result += buffer.data();
+    }
+    std::cout << result << std::endl;
+    return result;
+}
+
 bool IsAlreadyRunning(bool waitForCloseOnRestarting)
 {
 	for (;;)
@@ -236,7 +254,14 @@ int main(int argc, char *argv[])
 
     if (IsAlreadyRunning(argc > 1 ? std::string(argv[1]).find("/restart") != std::string::npos : false))
     {
-        return 0;
+        if (exec("ps a").find(SYSTEM_NAME "Client") != std::string::npos)
+        {
+            return 0 ;
+        }
+        else
+        {
+            boost::interprocess::shared_memory_object::remove(SYSTEM_NAME "ClientRunned");
+        }
     }
 
     if (setlocale(LC_ALL, "") == NULL)
