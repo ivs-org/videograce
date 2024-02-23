@@ -254,9 +254,9 @@ int main(int argc, char *argv[])
 
     if (IsAlreadyRunning(argc > 1 ? std::string(argv[1]).find("/restart") != std::string::npos : false))
     {
-        if (exec("ps a").find(SYSTEM_NAME "Client") != std::string::npos)
+        if (!exec("pgrep -f " SYSTEM_NAME "Client").empty())
         {
-            return 0 ;
+            return 0;
         }
         else
         {
