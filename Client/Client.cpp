@@ -254,7 +254,10 @@ int main(int argc, char *argv[])
 
     if (IsAlreadyRunning(argc > 1 ? std::string(argv[1]).find("/restart") != std::string::npos : false))
     {
-        if (!exec("pgrep -f " SYSTEM_NAME "Client").empty())
+        auto strPids = exec("pgrep -f " SYSTEM_NAME "Client");
+        std::vector<std::string> pids;
+        boost::split(pids, strPids, boost::is_any_of("\n"));
+        if (!strPids.empty() && pids.size() > 3)
         {
             return 0;
         }
