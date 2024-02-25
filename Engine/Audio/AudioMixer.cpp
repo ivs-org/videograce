@@ -107,11 +107,11 @@ void AudioMixer::Start()
                 if (totalDuration > FRAME_DURATION)
                 {
                     //std::cout << "play: " << playDuration << ", " << totalDuration << std::endl;
-                    OutputDebugStringA("play: ");
-                    OutputDebugStringA(std::to_string(playDuration).c_str());
-                    OutputDebugStringA(", ");
-                    OutputDebugStringA(std::to_string(totalDuration).c_str());
-                    OutputDebugStringA("\n");
+                    //OutputDebugStringA("play: ");
+                    //OutputDebugStringA(std::to_string(playDuration).c_str());
+                    //OutputDebugStringA(", ");
+                    //OutputDebugStringA(std::to_string(totalDuration).c_str());
+                    //OutputDebugStringA("\n");
                 }
             }
 #ifdef _WIN32
