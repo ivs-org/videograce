@@ -5,8 +5,7 @@
  * Copyright (C), Infinity Video Soft LLC, 2016 - 2018
  */
 
-#include <algorithm>
-#include <cmath>
+#include <mt/thread_priority.h>
 
 #include <Transport/RTP/RTPPacket.h>
 
@@ -77,13 +76,14 @@ void AudioMixer::Start()
         runned = true;
 
         playThread = std::thread([this](){
+
 #ifdef _WIN32
-    HANDLE hTask = 0;
-    if (Common::IsWindowsVistaOrGreater())
-    {
-        DWORD taskIndex = 0;
-        hTask = AvSetMmThreadCharacteristics(L"Pro Audio", &taskIndex);
-    }
+            HANDLE hTask = 0;
+            if (Common::IsWindowsVistaOrGreater())
+            {
+                DWORD taskIndex = 0;
+                hTask = AvSetMmThreadCharacteristics(L"Pro Audio", &taskIndex);
+            }
 #endif
             while (runned)
             {
@@ -91,27 +91,38 @@ void AudioMixer::Start()
 
                 Play();
 
-                //auto playDuration = duration_cast<microseconds>(high_resolution_clock::now() - startTime).count();
+                auto playDuration = duration_cast<microseconds>(high_resolution_clock::now() - startTime).count();
 
-                while (runned && duration_cast<microseconds>(high_resolution_clock::now() - startTime).count() < FRAME_DURATION - 500)
+                while (runned && duration_cast<microseconds>(high_resolution_clock::now() - startTime).count() < FRAME_DURATION - 2000)
                 {
-                    Common::ShortSleep(250);
+                    Common::ShortSleep();
+                }
+                while (runned && duration_cast<microseconds>(high_resolution_clock::now() - startTime).count() < FRAME_DURATION)
+                {
+                    ; // small busy wait (about 2 ms)
                 }
 
-                /*auto totalDuration = duration_cast<microseconds>(high_resolution_clock::now() - startTime).count();
+                auto totalDuration = duration_cast<microseconds>(high_resolution_clock::now() - startTime).count();
                 
                 if (totalDuration > FRAME_DURATION)
                 {
-                    std::cout << "play: " << playDuration << ", " << totalDuration << std::endl;
-                }*/
+                    //std::cout << "play: " << playDuration << ", " << totalDuration << std::endl;
+                    OutputDebugStringA("play: ");
+                    OutputDebugStringA(std::to_string(playDuration).c_str());
+                    OutputDebugStringA(", ");
+                    OutputDebugStringA(std::to_string(totalDuration).c_str());
+                    OutputDebugStringA("\n");
+                }
             }
 #ifdef _WIN32
-    if (Common::IsWindowsVistaOrGreater())
-    {
-        AvRevertMmThreadCharacteristics(hTask);
-    }
+            if (Common::IsWindowsVistaOrGreater())
+            {
+                AvRevertMmThreadCharacteristics(hTask);
+            }
 #endif
         });
+
+        mt::set_thread_priority(playThread, mt::priority_type::real_time);
     }
 }
 
@@ -125,7 +136,7 @@ void AudioMixer::Stop()
 }
 
 void AudioMixer::Send(const Transport::IPacket &packet, const Transport::Address *)
-{
+{   
     if (!runned)
     {
         return;
@@ -154,7 +165,7 @@ void AudioMixer::Send(const Transport::IPacket &packet, const Transport::Address
 
 void AudioMixer::Play()
 {
-    soundblock_t &outBlock = outBuffer[outPos > 0 ? outPos - 1 : 3];
+    auto &outBlock = outBuffer[outPos > 0 ? outPos - 1 : 3];
 
     ++outPos;
     if (outPos > outBuffer.size() - 1) outPos = 0;
