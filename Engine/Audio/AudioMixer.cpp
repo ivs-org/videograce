@@ -22,6 +22,8 @@
 
 #include "AudioMixer.h"
 
+#include <iostream>
+
 namespace Audio
 {
 
@@ -32,9 +34,7 @@ AudioMixer::AudioMixer()
 	inputsRWLock(),
 	inputs(),
 	receiver(),
-	thread(),
-	timeMeter(),
-	processTime(0)
+	thread()
 {
 }
 
@@ -94,8 +94,6 @@ void AudioMixer::Start()
 {
 	if (!runned)
 	{
-		timeMeter.Reset();
-
 		thread = std::thread(&AudioMixer::Process, this);
 	}
 }
@@ -134,16 +132,13 @@ void AudioMixer::Mix()
 
 	mt::scoped_rw_lock lock(&inputsRWLock, false);
 
-	uint64_t prevPower = 0;
-	int64_t maxPowerClientId = 0;
-
 	for (const auto &input_ : inputs)
 	{
 		const auto &input = input_.second;
         
         soundblock_t inBlock;
         input->buffer.pop(inBlock);
-        
+
         auto volume = input->volume != 0 ? (exp((double)input->volume / 100) / 2.718281828) : 0;
         for (uint16_t i = 0; i != FRAME_SIZE; i += 2)
         {
@@ -159,7 +154,7 @@ void AudioMixer::Mix()
         }
         outBlock.ts = inBlock.ts;
 	}
-
+	
     Transport::RTPPacket packet;
     packet.rtpHeader.ts = outBlock.ts;
     packet.payload = outBlock.data;
@@ -181,21 +176,31 @@ void AudioMixer::Process()
 	}
 #endif
 
-	const uint64_t APPROACH = 500;
+	const uint64_t APPROACH = 600;
+
+	using namespace std::chrono;
 
 	while (runned)
 	{
-		auto startTime = timeMeter.Measure();
-		while (runned && processTime + APPROACH < FRAME_DURATION && timeMeter.Measure() - startTime < FRAME_DURATION - processTime - APPROACH)
+		auto startTime = high_resolution_clock::now();
+
+		Mix();
+
+		auto stopProc = high_resolution_clock::now();
+		
+		while (duration_cast<microseconds>(high_resolution_clock::now() - startTime).count() < FRAME_DURATION - APPROACH)
 		{
 			Common::ShortSleep();
 		}
 
-		auto sendTime = timeMeter.Measure();
-
-		Mix();
-
-		processTime = timeMeter.Measure() - sendTime;
+		auto stop = high_resolution_clock::now();
+		auto duration = duration_cast<microseconds>(stop - startTime);
+		if (duration.count() > 20000)
+		{
+			auto procDuration = duration_cast<microseconds>(stopProc - startTime);
+			auto sleepDuration = duration_cast<microseconds>(stop - stopProc);
+			std::cout << duration.count() << ", " << procDuration.count() << ", " << sleepDuration.count() << std::endl;
+		}
 	}
 
 #ifdef _WIN32

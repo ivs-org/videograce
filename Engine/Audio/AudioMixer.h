@@ -21,8 +21,6 @@
 
 #include <Audio/SoundBlock.h>
 
-#include <Common/TimeMeter.h>
-
 #include <functional>
 
 namespace Audio
@@ -77,9 +75,6 @@ private:
 	Transport::ISocket* receiver;
 	
 	std::thread thread;
-
-	Common::TimeMeter timeMeter;
-	uint64_t processTime;
 
 	void Process();
 

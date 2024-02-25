@@ -54,8 +54,12 @@ void AudioRendererImpl::Start(int32_t sampleFreq)
 	};
 
 	int error = 0;
+
+	pa_buffer_attr ba = {
+		.maxlength = static_cast<uint32_t>((sampleFreq / 25) * 2)
+	};
 	// Create a new playback stream
-	if (!(s = pa_simple_new(NULL, SYSTEM_NAME "Client", PA_STREAM_PLAYBACK, NULL, "playback", &ss, NULL, NULL, &error)))
+	if (!(s = pa_simple_new(NULL, SYSTEM_NAME "Client", PA_STREAM_PLAYBACK, NULL, "playback", &ss, NULL, &ba, &error)))
 	{
 		return errLog->critical("pa_simple_new() failed: {0}", pa_strerror(error));
 	}
