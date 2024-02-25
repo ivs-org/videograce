@@ -284,9 +284,9 @@ void Ringer::Play()
     while (runned && playPosition <= snd.size() - (FRAME_SIZE * 2))
     {
         auto startTime = timeMeter.Measure();
-        while (runned && processTime < FRAME_DURATION - 1000 && timeMeter.Measure() - startTime < FRAME_DURATION - processTime - 1000)
+        while (runned && processTime < FRAME_DURATION - 200 && timeMeter.Measure() - startTime < FRAME_DURATION - processTime - 200)
         {
-            Common::ShortSleep();
+            Common::ShortSleep(100);
         }
 
         auto sendTime = timeMeter.Measure();

@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include <queue>
+
 #include <wui/window/window.hpp>
 #include <wui/control/menu.hpp>
 #include <wui/control/button.hpp>
