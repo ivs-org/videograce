@@ -293,9 +293,14 @@ void Ringer::Play()
 
 		playPosition += FRAME_SIZE;
 
-		while (runned && duration_cast<microseconds>(high_resolution_clock::now() - startTime).count() < FRAME_DURATION - 200)
+		while (runned && duration_cast<microseconds>(high_resolution_clock::now() - startTime).count() < FRAME_DURATION - 1000)
 		{
 			Common::ShortSleep();
+		}
+
+		while (runned && duration_cast<microseconds>(high_resolution_clock::now() - startTime).count() < FRAME_DURATION)
+		{
+			// 1 ms busy wait to precise output
 		}
     }
 }
