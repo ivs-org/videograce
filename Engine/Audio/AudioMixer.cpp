@@ -94,14 +94,15 @@ void AudioMixer::Start()
 
                 //auto playDuration = duration_cast<microseconds>(high_resolution_clock::now() - startTime).count();
 
-                while (runned && duration_cast<microseconds>(high_resolution_clock::now() - startTime).count() < FRAME_DURATION - 500)
+                while (runned && duration_cast<microseconds>(high_resolution_clock::now() - startTime).count() < FRAME_DURATION - 1000)
                 {
                     Common::ShortSleep();
                 }
 
-                /*while (runned && duration_cast<microseconds>(high_resolution_clock::now() - startTime).count() < FRAME_DURATION)
+                while (runned && duration_cast<microseconds>(high_resolution_clock::now() - startTime).count() < FRAME_DURATION)
                 {
-                }*/
+                    // 1 ms busy wait to precise output
+                }
 
                 //auto totalDuration = duration_cast<microseconds>(high_resolution_clock::now() - startTime).count();
                 
@@ -171,8 +172,9 @@ void AudioMixer::Play()
     soundblock_t outBlock;
     {
         std::lock_guard<std::mutex> lock(mutex);
-        outBlock = outBuffer[outPos > 0 ? outPos - 1 : 3];
-        memset(outBuffer[outPos > 0 ? outPos - 1 : 3].data, 0, sizeof(outBlock.data));
+        auto readPos = outPos > 0 ? outPos - 1 : outBuffer.size() - 1;
+        outBlock = outBuffer[readPos];
+        memset(outBuffer[readPos].data, 0, sizeof(outBlock.data));
         
         ++outPos;
         if (outPos > outBuffer.size() - 1) outPos = 0;
