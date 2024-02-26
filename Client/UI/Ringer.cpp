@@ -28,9 +28,7 @@ Ringer::Ringer(Audio::AudioMixer &mixer_, std::function<void(RingType)> endCallb
     endCallback(endCallback_),
 	runned(false),
 	snd(),
-	thread(),
-	timeMeter(),
-	processTime(0)
+	thread()
 {
     mixer.AddInput(OUT_SSRC, 0);
 }
@@ -279,27 +277,26 @@ void Ringer::Play()
         return;
     }
 
+	using namespace std::chrono;
+
     auto playPosition = START_POS;
 
     while (runned && playPosition <= snd.size() - (FRAME_SIZE * 2))
     {
-        auto startTime = timeMeter.Measure();
-        while (runned && processTime < FRAME_DURATION - 500 && timeMeter.Measure() - startTime < FRAME_DURATION - processTime - 500)
-        {
-            Common::ShortSleep();
-        }
+		auto startTime = high_resolution_clock::now();
 
-        auto sendTime = timeMeter.Measure();
+		Transport::RTPPacket packet;
+		packet.rtpHeader.ssrc = OUT_SSRC;
+		packet.payload = (uint8_t*)snd.c_str() + playPosition;
+		packet.payloadSize = FRAME_SIZE;
+		mixer.Send(packet);
 
-        playPosition += FRAME_SIZE;
+		playPosition += FRAME_SIZE;
 
-        Transport::RTPPacket packet;
-        packet.rtpHeader.ssrc = OUT_SSRC;
-        packet.payload = (uint8_t*)snd.c_str() + playPosition;
-        packet.payloadSize = FRAME_SIZE;
-        mixer.Send(packet);
-        
-        processTime = timeMeter.Measure() - sendTime;
+		while (runned && duration_cast<microseconds>(high_resolution_clock::now() - startTime).count() < FRAME_DURATION - 500)
+		{
+			Common::ShortSleep();
+		}
     }
 }
 

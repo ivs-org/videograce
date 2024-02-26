@@ -9,7 +9,6 @@
 
 #include <Audio/AudioMixer.h>
 
-#include <Common/TimeMeter.h>
 #include <Common/ShortSleep.h>
 
 #include <atomic>
@@ -57,9 +56,6 @@ private:
 	std::atomic<bool> runned;
 	
     std::string snd;
-
-	Common::TimeMeter timeMeter;
-	uint64_t processTime;
 
 	std::thread thread;
 

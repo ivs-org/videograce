@@ -119,11 +119,7 @@ void JB::run()
 	while (runned)
 	{
 		auto startTime = timeMeter.Measure();
-		while (runned && renderTime + APPROACH < packetDuration && timeMeter.Measure() - startTime < packetDuration - renderTime - APPROACH)
-		{
-			Common::ShortSleep();
-		}
-        
+		        
         std::shared_ptr<Transport::OwnedRTPPacket> packet;
         {
             std::lock_guard<std::mutex> lock(mutex);
@@ -202,6 +198,12 @@ void JB::run()
                 slowRenderingCallback();
             }
 		}
+
+        while (runned
+            && timeMeter.Measure() - startTime < packetDuration - APPROACH)
+        {
+            Common::ShortSleep();
+        }
 	}
 }
 

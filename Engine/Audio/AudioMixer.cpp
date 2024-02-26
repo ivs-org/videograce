@@ -30,7 +30,8 @@ namespace Audio
 
 AudioMixer::AudioMixer()
     : runned(false),
-    outBuffer{ soundblock_t(), soundblock_t(), soundblock_t(), soundblock_t()},
+    mutex(),
+    outBuffer{ soundblock_t(), soundblock_t() },
     outPos(0),
     receiver(),
     playThread()
@@ -91,28 +92,28 @@ void AudioMixer::Start()
 
                 Play();
 
-                auto playDuration = duration_cast<microseconds>(high_resolution_clock::now() - startTime).count();
+                //auto playDuration = duration_cast<microseconds>(high_resolution_clock::now() - startTime).count();
 
-                while (runned && duration_cast<microseconds>(high_resolution_clock::now() - startTime).count() < FRAME_DURATION - 2000)
+                while (runned && duration_cast<microseconds>(high_resolution_clock::now() - startTime).count() < FRAME_DURATION - 3000)
                 {
                     Common::ShortSleep();
                 }
+
                 while (runned && duration_cast<microseconds>(high_resolution_clock::now() - startTime).count() < FRAME_DURATION)
                 {
-                    ; // small busy wait (about 2 ms)
                 }
 
-                auto totalDuration = duration_cast<microseconds>(high_resolution_clock::now() - startTime).count();
+                //auto totalDuration = duration_cast<microseconds>(high_resolution_clock::now() - startTime).count();
                 
-                if (totalDuration > FRAME_DURATION)
-                {
+                //if (totalDuration > FRAME_DURATION)
+                //{
                     //std::cout << "play: " << playDuration << ", " << totalDuration << std::endl;
                     //OutputDebugStringA("play: ");
                     //OutputDebugStringA(std::to_string(playDuration).c_str());
                     //OutputDebugStringA(", ");
                     //OutputDebugStringA(std::to_string(totalDuration).c_str());
                     //OutputDebugStringA("\n");
-                }
+                //}
             }
 #ifdef _WIN32
             if (Common::IsWindowsVistaOrGreater())
@@ -136,11 +137,13 @@ void AudioMixer::Stop()
 }
 
 void AudioMixer::Send(const Transport::IPacket &packet, const Transport::Address *)
-{   
+{
     if (!runned)
     {
         return;
     }
+
+    //std::lock_guard<std::mutex> lock(mutex);
 
     soundblock_t &outBlock = outBuffer[outPos];
     auto &rtpPacket = *static_cast<const Transport::RTPPacket*>(&packet);
@@ -148,7 +151,7 @@ void AudioMixer::Send(const Transport::IPacket &packet, const Transport::Address
     outBlock.size = FRAME_SIZE;
     outBlock.ts = rtpPacket.rtpHeader.ts;
     outBlock.seq = rtpPacket.rtpHeader.seq;
-
+    
     for (uint16_t i = 0; i != FRAME_SIZE; i += 2)
     {
         const auto availableFrame = *reinterpret_cast<const int16_t*>(outBlock.data + i);
@@ -165,10 +168,16 @@ void AudioMixer::Send(const Transport::IPacket &packet, const Transport::Address
 
 void AudioMixer::Play()
 {
-    auto &outBlock = outBuffer[outPos > 0 ? outPos - 1 : 3];
+    soundblock_t outBlock;
+    {
+        //std::lock_guard<std::mutex> lock(mutex);
+        outBlock = outBuffer[outPos > 0 ? outPos - 1 : 2];
+        
+        ++outPos;
+        if (outPos > outBuffer.size() - 1) outPos = 0;
 
-    ++outPos;
-    if (outPos > outBuffer.size() - 1) outPos = 0;
+        //memset(outBuffer[outPos].data, 0, sizeof(outBlock.data));
+    }
 
     Transport::RTPPacket packet;
     packet.rtpHeader.ts = outBlock.ts;
@@ -176,8 +185,6 @@ void AudioMixer::Play()
     packet.payloadSize = FRAME_SIZE;
 
     receiver->Send(packet);
-
-    memset(outBlock.data, 0, sizeof(outBlock.data));
 }
 
 }
