@@ -47,7 +47,7 @@ private:
 	std::atomic_bool runned;
 
 	std::mutex mutex;
-	std::array<soundblock_t, 3> outBuffer;
+	std::array<soundblock_t, 4> outBuffer;
 	size_t outPos;
 	
 	Transport::ISocket* receiver;

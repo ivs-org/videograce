@@ -96,7 +96,7 @@ void JB::SetFrameRate(uint32_t rate)
 
 void JB::Send(const Transport::IPacket &packet_, const Transport::Address *)
 {
-	if (runned)
+    if (runned)
 	{
 		const auto &packet = *static_cast<const Transport::RTPPacket*>(&packet_);
 
@@ -114,8 +114,6 @@ void JB::Send(const Transport::IPacket &packet_, const Transport::Address *)
 
 void JB::run()
 {
-	const uint64_t APPROACH = 500;
-
 	while (runned)
 	{
 		auto startTime = timeMeter.Measure();
@@ -154,12 +152,13 @@ void JB::run()
             }
             else
             {
+                sysLog->trace("JB buffering :: maxRxInterval: {0}", maxRxInterval);
                 if (mode == Mode::sound)
                 {
                     packet = std::shared_ptr<Transport::OwnedRTPPacket>(new Transport::OwnedRTPPacket(
                         {},
-                        (uint8_t*)"°ÿşãsÕFO¯OO®/Ş",
-                        16,
+                        0, //(uint8_t*)"ï¿½ï¿½ï¿½ï¿½sï¿½ï¿½FOï¿½OOï¿½ï¿½/ï¿½",
+                        0, //16,
                         Transport::RTPPayloadType::ptOpus)); // Send the silent packet to prevent audio clicks
                 }
                 else
@@ -200,7 +199,7 @@ void JB::run()
 		}
 
         while (runned
-            && timeMeter.Measure() - startTime < packetDuration - APPROACH)
+            && timeMeter.Measure() - startTime < packetDuration - 500)
         {
             Common::ShortSleep();
         }

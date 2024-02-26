@@ -46,13 +46,13 @@ public:
     virtual void Send(const Transport::IPacket &packet, const Transport::Address *address = nullptr);
 
 private:
-    std::atomic<bool> runned;
+    std::atomic_bool runned;
 
     std::string deviceName;
 
     uint16_t volume;
 
-    bool mute;
+    std::atomic_bool mute;
 
     pa_simple *s;
 

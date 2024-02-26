@@ -31,7 +31,7 @@ namespace Audio
 AudioMixer::AudioMixer()
     : runned(false),
     mutex(),
-    outBuffer{ soundblock_t(), soundblock_t() },
+    outBuffer{ soundblock_t(), soundblock_t(), soundblock_t(), soundblock_t() },
     outPos(0),
     receiver(),
     playThread()
@@ -94,14 +94,14 @@ void AudioMixer::Start()
 
                 //auto playDuration = duration_cast<microseconds>(high_resolution_clock::now() - startTime).count();
 
-                while (runned && duration_cast<microseconds>(high_resolution_clock::now() - startTime).count() < FRAME_DURATION - 3000)
+                while (runned && duration_cast<microseconds>(high_resolution_clock::now() - startTime).count() < FRAME_DURATION - 500)
                 {
                     Common::ShortSleep();
                 }
 
-                while (runned && duration_cast<microseconds>(high_resolution_clock::now() - startTime).count() < FRAME_DURATION)
+                /*while (runned && duration_cast<microseconds>(high_resolution_clock::now() - startTime).count() < FRAME_DURATION)
                 {
-                }
+                }*/
 
                 //auto totalDuration = duration_cast<microseconds>(high_resolution_clock::now() - startTime).count();
                 
@@ -143,7 +143,7 @@ void AudioMixer::Send(const Transport::IPacket &packet, const Transport::Address
         return;
     }
 
-    //std::lock_guard<std::mutex> lock(mutex);
+    std::lock_guard<std::mutex> lock(mutex);
 
     soundblock_t &outBlock = outBuffer[outPos];
     auto &rtpPacket = *static_cast<const Transport::RTPPacket*>(&packet);
@@ -170,13 +170,13 @@ void AudioMixer::Play()
 {
     soundblock_t outBlock;
     {
-        //std::lock_guard<std::mutex> lock(mutex);
-        outBlock = outBuffer[outPos > 0 ? outPos - 1 : 2];
+        std::lock_guard<std::mutex> lock(mutex);
+        outBlock = outBuffer[outPos > 0 ? outPos - 1 : 3];
         
         ++outPos;
         if (outPos > outBuffer.size() - 1) outPos = 0;
 
-        //memset(outBuffer[outPos].data, 0, sizeof(outBlock.data));
+        memset(outBuffer[outPos].data, 0, sizeof(outBlock.data));
     }
 
     Transport::RTPPacket packet;

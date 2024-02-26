@@ -97,6 +97,7 @@ bool AudioRendererImpl::SetMute(bool yes)
 {
     wui::config::set_int("AudioRenderer", "Enabled", yes ? 0 : 1);
     mute = yes;
+	sysLog->info("AudioRenderer {0}", mute ? "muted" : "unmuted");
     return true;
 }
 
@@ -141,7 +142,7 @@ void AudioRendererImpl::Send(const Transport::IPacket &packet_, const Transport:
 	{
 		return;
 	}
-
+	
 	const Transport::RTPPacket *packet = static_cast<const Transport::RTPPacket*>(&packet_);
 	{
 		int error = 0;
