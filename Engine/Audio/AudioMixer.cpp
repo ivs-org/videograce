@@ -172,11 +172,10 @@ void AudioMixer::Play()
     {
         std::lock_guard<std::mutex> lock(mutex);
         outBlock = outBuffer[outPos > 0 ? outPos - 1 : 3];
+        memset(outBuffer[outPos > 0 ? outPos - 1 : 3].data, 0, sizeof(outBlock.data));
         
         ++outPos;
         if (outPos > outBuffer.size() - 1) outPos = 0;
-
-        memset(outBuffer[outPos].data, 0, sizeof(outBlock.data));
     }
 
     Transport::RTPPacket packet;
