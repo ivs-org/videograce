@@ -16,7 +16,6 @@
 
 #include <thread>
 
-
 namespace Video
 {
 
@@ -58,6 +57,8 @@ void VP8RTPSplitter::Send(const Transport::IPacket &packet_, const Transport::Ad
 	// T/K: |TID:Y|  KEYIDX   | (optional)
 	//      +-+-+-+-+-+-+-+-+-+
 
+	using namespace std::chrono;
+
 	const Transport::RTPPacket &inputPacket = *static_cast<const Transport::RTPPacket*>(&packet_);
 
 	SetBit(buffer[0], 3); /// Set the S flag
@@ -66,6 +67,8 @@ void VP8RTPSplitter::Send(const Transport::IPacket &packet_, const Transport::Ad
 
 	for (uint32_t pos = 0; pos != inputPacket.payloadSize;)
 	{
+		auto start = high_resolution_clock::now();
+
 		Transport::RTPPacket packet;
 		packet.rtpHeader = inputPacket.rtpHeader;
 		packet.rtpHeader.seq = ++lastSeq;

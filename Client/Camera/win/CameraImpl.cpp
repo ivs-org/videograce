@@ -499,15 +499,11 @@ void CALLBACK CameraImpl::OutputCallback(uint8_t* data, int len, void *instance_
 
 void CameraImpl::send()
 {
-	const uint64_t APPROACH = 200;
+	using namespace std::chrono;
 
 	while (runned)
 	{
-		auto startTime = timeMeter.Measure();
-		while (runned && processTime + APPROACH < packetDuration && timeMeter.Measure() - startTime < packetDuration - processTime - APPROACH)
-		{
-			Common::ShortSleep();
-		}
+		auto start = timeMeter.Measure();
 
 		uint32_t length = 0;
 		{
@@ -522,17 +518,15 @@ void CameraImpl::send()
 			memcpy(outputBuffer.get(), captureBuffer.get(), length);
 		}
 
-		auto sendTime = timeMeter.Measure();
-
 		Transport::RTPPacket packet;
 
-		packet.rtpHeader.ts = (uint32_t)(sendTime / 1000);
+		packet.rtpHeader.ts = (uint32_t)(start / 1000);
 		packet.payload = outputBuffer.get();
 		packet.payloadSize = length;
 
 		receiver.Send(packet);
 
-		processTime = timeMeter.Measure() - sendTime;
+		processTime = timeMeter.Measure() - start;
 
 		if (processTime > packetDuration + 5000)
 		{
@@ -550,6 +544,8 @@ void CameraImpl::send()
                 deviceNotifyCallback(name, Client::DeviceNotifyType::OvertimeCoding, Proto::DeviceType::Camera, deviceId, 0);
 			}
 		}
+
+		if (packetDuration > processTime) Common::ShortSleep(packetDuration - processTime - 1000);
 	}
 }
 

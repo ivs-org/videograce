@@ -10,11 +10,11 @@
 #include <Transport/RTP/RTPPacket.h>
 #include <Transport/RTP/RTCPPacket.h>
 
+#include <Common/ShortSleep.h>
+
 #include <wui/config/config.hpp>
 
 #include <wui/locale/locale.hpp>
-
-#include <Common/ShortSleep.h>
 
 #include <ippcc.h>
 #include <ippi.h>
@@ -45,7 +45,6 @@ ScreenCapturerImpl::ScreenCapturerImpl(Common::TimeMeter &timeMeter_, Transport:
 	windowCapturing(false),
 	deviceNotifyCallback(),
 	runned(false),
-	captureTime(0),
 	thread(),
 	rcMode(false),
 	sysLog(spdlog::get("System")), errLog(spdlog::get("Error"))
@@ -141,23 +140,19 @@ void ScreenCapturerImpl::SetDeviceNotifyCallback(Client::DeviceNotifyCallback de
 
 void ScreenCapturerImpl::run()
 {
-	sysLog->info("ScreenCapturer started");
+	using namespace std::chrono;
 
-	const uint64_t APPROACH = 200;
-	
+	sysLog->info("ScreenCapturer started");
+		
 	while (runned)
 	{
-		auto startTime = timeMeter.Measure();
-		while (runned && captureTime + APPROACH < packetDuration && timeMeter.Measure() - startTime < packetDuration - captureTime - APPROACH)
-		{
-			Common::ShortSleep();
-		}
-
-		auto startCapturingTime = timeMeter.Measure();
+		auto start = high_resolution_clock::now();
 
 		CaptureTheScreen();
 
-		captureTime = timeMeter.Measure() - startCapturingTime;
+		auto playDuration = duration_cast<microseconds>(high_resolution_clock::now() - start).count();
+
+		if (packetDuration > playDuration) Common::ShortSleep(packetDuration - playDuration - 1000);
 	}
 
 	sysLog->info("ScreenCapturer ended");

@@ -133,6 +133,30 @@ void CheckVGProtocol()
     }
 }
 
+void SetMinTimerResolution()
+{
+    const auto TARGET_RESOLUTION = 1; // 1 - millisecond target resolution
+
+    TIMECAPS tc;
+
+    auto getCapsResult = timeGetDevCaps(&tc, sizeof(TIMECAPS));
+    if (getCapsResult != TIMERR_NOERROR)
+    {
+        return spdlog::get("Error")->critical("SetMinTimerResolution :: timeGetDevCaps error: {0}", getCapsResult);
+    }
+
+    spdlog::get("System")->debug("SetMinTimerResolution :: Resolutions: (min: {0}, max: {1})", tc.wPeriodMin, tc.wPeriodMax);
+
+    UINT wTimerRes = min(max(tc.wPeriodMin, TARGET_RESOLUTION), tc.wPeriodMax);
+    auto beginPeriodResult = timeBeginPeriod(wTimerRes);
+    if (getCapsResult != TIMERR_NOERROR)
+    {
+        spdlog::get("Error")->critical("SetMinTimerResolution :: timeBeginPeriod error: {0}", beginPeriodResult);
+    }
+
+    spdlog::get("System")->info("SetMinTimerResolution :: Set timer resolution to: {0}", wTimerRes);
+}
+
 #elif __linux__
 
 std::string exec(std::string_view cmd)
@@ -199,6 +223,11 @@ void CheckVGProtocol()
 
 void RegisterVGProtocol()
 {
+}
+
+void SetMinTimerResolution()
+{
+    // todo!!
 }
 
 #endif
@@ -326,6 +355,7 @@ int main(int argc, char *argv[])
         return -1;
     }
 
+    SetMinTimerResolution();
     Transport::NetworkInit networkInit;
 
     CheckVGProtocol();

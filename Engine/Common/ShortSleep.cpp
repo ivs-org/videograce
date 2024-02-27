@@ -24,7 +24,7 @@ void ShortSleep(uint32_t microseconds)
 #ifdef _WIN32
 	LARGE_INTEGER interval;
 	interval.QuadPart = -1 * static_cast<int32_t>(microseconds) * 10;
-	NtDelayExecution(true, &interval);
+	NtDelayExecution(FALSE, &interval);
 #else
 	usleep(microseconds);
 #endif

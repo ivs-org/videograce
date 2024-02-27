@@ -11,6 +11,8 @@
 
 #include <Transport/RTP/RTPPacket.h>
 
+#include <Common/ShortSleep.h>
+
 #include <fstream>
 #include <wui/system/tools.hpp>
 #include <wui/system/path_tools.hpp>
@@ -283,7 +285,7 @@ void Ringer::Play()
 
     while (runned && playPosition <= snd.size() - (FRAME_SIZE * 2))
     {
-		auto startTime = high_resolution_clock::now();
+		auto start = high_resolution_clock::now();
 
 		Transport::RTPPacket packet;
 		packet.rtpHeader.ssrc = OUT_SSRC;
@@ -293,15 +295,9 @@ void Ringer::Play()
 
 		playPosition += FRAME_SIZE;
 
-		while (runned && duration_cast<microseconds>(high_resolution_clock::now() - startTime).count() < FRAME_DURATION - 1000)
-		{
-			Common::ShortSleep();
-		}
+		auto playDuration = duration_cast<microseconds>(high_resolution_clock::now() - start).count();
 
-		while (runned && duration_cast<microseconds>(high_resolution_clock::now() - startTime).count() < FRAME_DURATION)
-		{
-			// 1 ms busy wait to precise output
-		}
+		if (FRAME_DURATION > playDuration) Common::ShortSleep(FRAME_DURATION - playDuration - 1000);
     }
 }
 

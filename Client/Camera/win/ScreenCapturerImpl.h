@@ -53,7 +53,7 @@ private:
 	int16_t left, top;
 	std::unique_ptr<uint8_t[]> buffer;
 
-	uint64_t packetDuration;
+	int32_t packetDuration;
 
 	uint32_t deviceId;
 	
@@ -68,8 +68,6 @@ private:
     Client::DeviceNotifyCallback deviceNotifyCallback;
 		
 	std::atomic<bool> runned;
-
-	uint64_t captureTime;
 
 	std::thread thread;
 

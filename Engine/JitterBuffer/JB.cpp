@@ -2,7 +2,7 @@
  * JitterBuffer.cpp - Contains the jitter buffer's impl
  *
  * Author: Anton (ud) Golovkov, udattsk@gmail.com
- * Copyright (C), Infinity Video Soft LLC, 2022
+ * Copyright (C), Infinity Video Soft LLC, 2022, 2024
  */
 
 #include <JitterBuffer/JB.h>
@@ -117,7 +117,7 @@ void JB::run()
 	while (runned)
 	{
 		auto startTime = timeMeter.Measure();
-		        
+                
         std::shared_ptr<Transport::OwnedRTPPacket> packet;
         {
             std::lock_guard<std::mutex> lock(mutex);
@@ -157,9 +157,9 @@ void JB::run()
                 {
                     packet = std::shared_ptr<Transport::OwnedRTPPacket>(new Transport::OwnedRTPPacket(
                         {},
-                        0, //(uint8_t*)"����s��FO�OO��/�",
-                        0, //16,
-                        Transport::RTPPayloadType::ptOpus)); // Send the silent packet to prevent audio clicks
+                        0,
+                        0,
+                        Transport::RTPPayloadType::ptOpus)); // Send empty frames to the codec so it knows about lost frames
                 }
                 else
                 {
@@ -198,11 +198,8 @@ void JB::run()
             }
 		}
 
-        while (runned
-            && timeMeter.Measure() - startTime < packetDuration - 500)
-        {
-            Common::ShortSleep();
-        }
+        auto workDuration = timeMeter.Measure();
+        if (packetDuration > workDuration) Common::ShortSleep(packetDuration - workDuration - 1000);
 	}
 }
 

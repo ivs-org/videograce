@@ -557,9 +557,6 @@
     <ClInclude Include="Proto\CmdLoadMessages.h">
       <Filter>Header Files\Proto</Filter>
     </ClInclude>
-    <ClInclude Include="Common\ShortSleep.h">
-      <Filter>Header Files\Common</Filter>
-    </ClInclude>
     <ClInclude Include="webrtc\base\arch.h">
       <Filter>Header Files\webrtc\base</Filter>
     </ClInclude>
@@ -1199,6 +1196,9 @@
     <ClInclude Include="Transport\WSM\WSMSocket.h">
       <Filter>Header Files\Transport\WSM</Filter>
     </ClInclude>
+    <ClInclude Include="Common\ShortSleep.h">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Video\Resolution.cpp">
@@ -1413,9 +1413,6 @@
     </ClCompile>
     <ClCompile Include="Proto\CmdLoadMessages.cpp">
       <Filter>Source Files\Proto</Filter>
-    </ClCompile>
-    <ClCompile Include="Common\ShortSleep.cpp">
-      <Filter>Source Files\Common</Filter>
     </ClCompile>
     <ClCompile Include="webrtc\base\checks.cc">
       <Filter>Source Files\webrtc\base</Filter>
@@ -1737,6 +1734,9 @@
     </ClCompile>
     <ClCompile Include="Transport\WSM\WSMSocket.cpp">
       <Filter>Source Files\Transport\WSM</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\ShortSleep.cpp">
+      <Filter>Source Files\Common</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

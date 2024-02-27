@@ -11,7 +11,6 @@
 
 #include <Common/Common.h>
 #include <wui/config/config.hpp>
-#include <Common/ShortSleep.h>
 
 #include <boost/nowide/convert.hpp>
 
@@ -40,6 +39,8 @@
 #include "AecKsBinder.h"
 
 #include <Device/DS/DSCommon.h>
+
+#include <Common/ShortSleep.h>
 
 #define SAFE_ARRAYDELETE(p) {if (p) delete[] (p); (p) = NULL;}
 #define SAFE_RELEASE(p) {if (NULL != p) {(p)->Release(); (p) = NULL;}}
@@ -299,17 +300,13 @@ HRESULT MicrophoneDMO::Run()
     cOutputBufLen = wfxOut.nSamplesPerSec * wfxOut.nBlockAlign;
     pbOutputBuffer = new BYTE[cOutputBufLen];
 
-    const uint64_t APPROACH = 200;
     const uint64_t PACKET_DURATION = 20000;
-    uint64_t processTime = 0;
+
+    using namespace std::chrono;
 
     while (runned)
     {
-        auto startTime = timeMeter.Measure();
-        while (runned && processTime + APPROACH < PACKET_DURATION && timeMeter.Measure() - startTime < PACKET_DURATION - processTime - APPROACH)
-        {
-            Common::ShortSleep();
-        }
+        auto start = high_resolution_clock::now();
 
         auto sendTime = timeMeter.Measure();
 
@@ -348,7 +345,9 @@ HRESULT MicrophoneDMO::Run()
         }
         while (OutputBufferStruct.dwStatus & DMO_OUTPUT_DATA_BUFFERF_INCOMPLETE);
 
-        processTime = timeMeter.Measure() - sendTime;
+        auto playDuration = duration_cast<microseconds>(high_resolution_clock::now() - start).count();
+
+        if (PACKET_DURATION > playDuration) Common::ShortSleep(PACKET_DURATION - playDuration - 1000);
     }
 
     SAFE_ARRAYDELETE(pbOutputBuffer);

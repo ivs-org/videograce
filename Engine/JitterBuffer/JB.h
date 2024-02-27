@@ -57,7 +57,7 @@ private:
     std::function<void(void)> slowRenderingCallback;
 
     Mode mode;
-    std::atomic<bool> runned;
+    std::atomic_bool runned;
     std::thread thread;
 
     std::mutex mutex;
@@ -67,7 +67,7 @@ private:
 
     uint64_t measureTime;
 	uint64_t renderTime;
-    uint32_t overTimeCount;
+    int32_t overTimeCount;
 
     uint32_t prevRxTS, maxRxInterval;
     double stateRxTS, covarianceRxTS;

@@ -189,7 +189,7 @@ MainFrame::MainFrame()
     captureAudioSession(),
 
     recorder(),
-    audioRenderer(), resampler(audioRenderer), audioMixer(),
+    audioRenderer(), resampler(audioRenderer), audioMixer(resampler),
     renderersVideo(), renderersAudio(),
 
     cpuMeter(),
@@ -285,8 +285,7 @@ MainFrame::MainFrame()
     }
 
     audioRenderer.SetErrorHandler(std::bind(&MainFrame::AudioRendererErrorCallback, this, std::placeholders::_1, std::placeholders::_2));
-    audioMixer.SetReceiver(&resampler);
-
+    
     mainProgress->hide();
 }
 
