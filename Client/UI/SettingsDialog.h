@@ -25,7 +25,6 @@
 #include <UI/SoundIndicator.h>
 #include <UI/Ringer.h>
 #include <AudioRenderer/AudioRenderer.h>
-#include <Audio/Resampler.h>
 #include <Audio/AudioMixer.h>
 #include <Controller/IController.h>
 
@@ -54,8 +53,7 @@ class SettingsDialog
 public:
     SettingsDialog(std::weak_ptr<wui::window> transientWindow,
         Controller::IController &controller,
-        AudioRenderer::IAudioRenderer &audioRenderer,
-        Audio::Resampler &resampler,
+        AudioRenderer::AudioRenderer &audioRenderer,
         Audio::AudioMixer &audioMixer,
         Ringer &ringer,
         std::function<void(bool)> netSpeedDeterminer,
@@ -124,8 +122,7 @@ private:
     std::shared_ptr<wui::slider> loudspeakerSlider;
     std::shared_ptr<wui::button> loudspeakerCheckButton;
     std::shared_ptr<wui::button> loudspeaker16SampleRateCheck, loudspeaker48SampleRateCheck;
-    AudioRenderer::IAudioRenderer &audioRenderer;
-    Audio::Resampler &resampler;
+    AudioRenderer::AudioRenderer &audioRenderer;
     Audio::AudioMixer &audioMixer;
     Ringer &ringer;
     int64_t currentLoudspeakerId;

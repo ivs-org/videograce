@@ -57,24 +57,20 @@ void Recorder::Start(std::string_view name, bool mp3Mode_)
 	{
 		std::lock_guard<std::recursive_mutex> lock(writerMutex);
 
-		audioMixer.reset();
-
 		mp3Mode = mp3Mode_;
 
 		if (mp3Mode)
 		{
 			mp3Writer.Start(name);
 
-			audioMixer = std::make_unique<Audio::AudioMixer>(mp3Writer);
-			audioMixer->Start();
+			audioMixer.Start();
 
 			runned = true;
 
 			return sysLog->info("Recorder start in mp3 only mode, writing file: {0}", name);
 		}
 
-		audioMixer = std::make_unique<Audio::AudioMixer>(audioEncoder);
-		audioMixer->Start();
+		audioMixer.Start();
 
 		ts = 0;
 		hasKeyFrame = false;
@@ -157,7 +153,7 @@ void Recorder::Start(std::string_view name, bool mp3Mode_)
 
 		// Start the audio encoder and mixer
 		audioEncoder.Start(Audio::CodecType::Opus, 0);
-		audioMixer->Start();
+		audioMixer.Start();
 
 		// Start the fake video encoder
 		fakeVideoEncoder.Start(Video::CodecType::VP8, 0);
@@ -173,8 +169,6 @@ void Recorder::Stop()
 	if (runned)
 	{
 		runned = false;
-
-		audioMixer.reset();
 
 		if (mp3Mode)
 		{
@@ -279,12 +273,12 @@ void Recorder::DeleteVideo(uint32_t ssrc)
 
 void Recorder::AddAudio(uint32_t ssrc, int64_t clientId)
 {
-	audioMixer->AddInput(ssrc, clientId);
+	//audioMixer->AddInput(ssrc, clientId);
 }
 
 void Recorder::DeleteAudio(uint32_t ssrc)
 {
-	audioMixer->DeleteInput(ssrc);
+	audioMixer.DeleteInput(ssrc);
 }
 
 bool IsKeyFrame(const uint8_t *data)
@@ -325,7 +319,7 @@ void Recorder::Send(const Transport::IPacket &packet_, const Transport::Address 
 	switch (static_cast<Transport::RTPPayloadType>(packet.rtpHeader.pt))
 	{
 		case Transport::RTPPayloadType::ptPCM: // Receiving audio from clients
-			audioMixer->Send(packet_);
+			//audioMixer->Send(packet_);
 		break;
 		case Transport::RTPPayloadType::ptOpus: // Mixed from mixer and encoded by local encoder
 		{

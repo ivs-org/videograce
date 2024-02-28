@@ -94,7 +94,7 @@ namespace Recorder
 		MP3Writer mp3Writer;
 
 		Audio::Encoder audioEncoder;
-		std::unique_ptr<Audio::AudioMixer> audioMixer;
+		Audio::AudioMixer audioMixer;
 
 		std::unique_ptr<uint8_t[]> fakeVideoSource;
 		std::unique_ptr<uint8_t[]> buffer0, buffer1, buffer2;

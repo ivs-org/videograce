@@ -16,8 +16,8 @@
 namespace AudioRenderer
 {
 
-AudioRenderer::AudioRenderer()
-	: impl(new AudioRendererImpl())
+AudioRenderer::AudioRenderer(std::function<void(Transport::OwnedRTPPacket&)> pcmSource)
+	: impl(new AudioRendererImpl(pcmSource))
 {
 }
 
@@ -58,11 +58,6 @@ void AudioRenderer::SetVolume(uint16_t value)
 uint16_t AudioRenderer::GetVolume()
 {
     return impl->GetVolume();
-}
-
-void AudioRenderer::Send(const Transport::IPacket &packet_, const Transport::Address *)
-{
-    impl->Send(packet_, nullptr);
 }
 
 std::vector<std::string> AudioRenderer::GetSoundRenderers()

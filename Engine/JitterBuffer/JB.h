@@ -8,13 +8,11 @@
 #pragma once
 
 #include <Transport/ISocket.h>
-#include <Transport/RTP/RTPPacket.h>
 #include <Transport/RTP/OwnedRTPPacket.h>
 
 #include <Common/TimeMeter.h>
 
 #include <atomic>
-#include <thread>
 #include <mutex>
 #include <deque>
 #include <vector>
@@ -37,7 +35,7 @@ enum class Mode
 class JB : public Transport::ISocket
 {
 public:
-	JB(Transport::ISocket &receiver, Common::TimeMeter &timeMeter);
+	JB(Common::TimeMeter &timeMeter);
 	~JB();
 
     void SetFrameRate(uint32_t rate);
@@ -48,17 +46,18 @@ public:
 
     void SetSlowRenderingCallback(std::function<void(void)> callback);
     
+    /// Receive PCM audio or RGB video frame
 	virtual void Send(const Transport::IPacket &packet_, const Transport::Address *address = nullptr) final;
 
+    /// Get next frame to play in renderer (The data will be moved to the buffer provided by the argument)
+    void GetFrame(Transport::OwnedRTPPacket&);
 private:
-    Transport::ISocket &receiver;
     Common::TimeMeter &timeMeter;
 
     std::function<void(void)> slowRenderingCallback;
 
     Mode mode;
     std::atomic_bool runned;
-    std::thread thread;
 
     std::mutex mutex;
     std::deque<std::shared_ptr<Transport::OwnedRTPPacket>> buffer;
@@ -74,8 +73,6 @@ private:
     uint32_t checkTime;
  
     std::shared_ptr<spdlog::logger> sysLog, errLog;
-
-	void run();
 
     uint32_t KalmanCorrectRxTS(uint32_t interarrivalTime);
 

@@ -166,16 +166,16 @@ MainFrame::MainFrame()
     controllerEventsQueue(),
 
     activateHandler(std::bind(&MainFrame::ActivateCallback, this)),
-    
+
     storage(),
-    
+
     contactList(storage, controller, conferenceDialog, *this),
     memberList(storage, controller),
 
     controller(storage, memberList),
 
     timeMeter(),
-    
+
     speedTester(wui::get_locale(),
         std::bind(&MainFrame::SpeedTestCompleted, this, std::placeholders::_1, std::placeholders::_2),
         std::bind(&MainFrame::SetMainProgess, this, std::placeholders::_1, std::placeholders::_2)),
@@ -189,8 +189,11 @@ MainFrame::MainFrame()
     captureAudioSession(),
 
     recorder(),
-    audioRenderer(), resampler(audioRenderer), audioMixer(resampler),
-    renderersVideo(), renderersAudio(),
+    audioMixer(),
+    audioRenderer(std::bind(&Audio::AudioMixer::GetSound, &audioMixer, std::placeholders::_1)),
+
+    renderersVideo(),
+    renderersAudio(),
 
     cpuMeter(),
 
@@ -221,7 +224,6 @@ MainFrame::MainFrame()
     settingsDialog(window,
         controller,
         audioRenderer,
-        resampler,
         audioMixer,
         ringer,
         std::bind(&MainFrame::DetermineNetSpeed, this, std::placeholders::_1),
@@ -2502,7 +2504,6 @@ void MainFrame::InitAudio()
 
     audioMixer.Stop();
     audioRenderer.Stop();
-    resampler.SetSampleFreq(48000, wui::config::get_int("AudioRenderer", "SampleFreq", 48000));
     audioRenderer.Start(wui::config::get_int("AudioRenderer", "SampleFreq", 48000));
     audioMixer.Start();
 
@@ -3640,11 +3641,6 @@ void MainFrame::DeleteAudioRenderer(uint32_t deviceId, int64_t clientId)
     if (ras)
     {
         ras->Stop();
-
-        if (ras->GetMy() && captureAudioSession)
-        {
-            captureAudioSession->SetLocalReceiver(nullptr);
-        }
 
         renderersAudio.erase(deviceId);
     }

@@ -73,7 +73,7 @@ void Encryptor::Send(const Transport::IPacket &packet_, const Transport::Address
 {
 	if (!runned)
 	{
-		return;
+		return receiver->Send(packet_);
 	}
 	
 	const Transport::RTPPacket &inputPacket = *static_cast<const Transport::RTPPacket*>(&packet_);

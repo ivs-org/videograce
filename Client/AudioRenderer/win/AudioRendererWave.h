@@ -2,12 +2,12 @@
  * AudioRendererWave.h - Contains audio renderer's header based on waveOut API (for WinXP)
  *
  * Author: Anton (ud) Golovkov, udattsk@gmail.com
- * Copyright (C), Infinity Video Soft LLC, 2016
+ * Copyright (C), Infinity Video Soft LLC, 2016, 2024
  */
 
 #pragma once
 
-#include <AudioRenderer/IAudioRenderer.h>
+#include <AudioRenderer/AudioRenderer.h>
 
 #include <Transport/ISocket.h>
 
@@ -42,30 +42,28 @@ private:
 	int      m_nBytes;
 };
 
-class AudioRendererWave : public IAudioRenderer, public Transport::ISocket
+class AudioRendererWave
 {
 public:
-	AudioRendererWave();
-	virtual ~AudioRendererWave();
+	AudioRendererWave(std::function<void(Transport::OwnedRTPPacket&)> pcmSource);
+	~AudioRendererWave();
 
-	/// Impl of IAudioRenderer
-	virtual bool SetDeviceName(std::string_view name) final;
-	virtual void Start(int32_t sampleFreq) final;
-	virtual void Stop() final;
-	virtual std::vector<std::string> GetSoundRenderers();
-	virtual bool SetMute(bool yes) final;
-	virtual bool GetMute() final;
-	virtual void SetVolume(uint16_t val) final;
-    virtual uint16_t GetVolume() final;
-	virtual uint32_t GetLatency() const final;
+	bool SetDeviceName(std::string_view name);
+	void Start(int32_t sampleFreq);
+	void Stop();
+	std::vector<std::string> GetSoundRenderers();
+	bool SetMute(bool yes);
+	bool GetMute();
+	void SetVolume(uint16_t val);
+    uint16_t GetVolume();
+	uint32_t GetLatency() const;
 
-	virtual void SetAECReceiver(Transport::ISocket *socket) final;
-    virtual void SetErrorHandler(std::function<void(uint32_t code, std::string_view msg)>) final;
-
-	/// Impl of Transport::ISocket
-	virtual void Send(const Transport::IPacket &packet, const Transport::Address *) final;
+	void SetAECReceiver(Transport::ISocket *socket);
+    void SetErrorHandler(std::function<void(uint32_t code, std::string_view msg)>);
 
 private:
+	std::function<void(Transport::OwnedRTPPacket&)> pcmSource;
+
 	std::atomic<bool> runned, error;
 
 	mt::semaphore readySem;

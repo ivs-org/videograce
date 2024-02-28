@@ -9,6 +9,7 @@
 
 #include <Video/Resolution.h>
 #include <Proto/DeviceType.h>
+#include <Transport/RTP/OwnedRTPPacket.h>
 
 #include <string>
 #include <cstdint>
@@ -25,7 +26,7 @@ public:
     virtual void SetDeviceType(Proto::DeviceType deviceType) = 0;
     virtual Proto::DeviceType GetDeviceType() = 0;
 
-	virtual void Start() = 0;
+	virtual void Start(std::function<void(Transport::OwnedRTPPacket&)> rgbSource) = 0;
 	virtual void Stop() = 0;
 
 	virtual void SetResolution(Video::Resolution resolution = Video::rVGA) = 0;

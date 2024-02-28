@@ -19,7 +19,6 @@
 
 #include <Record/Recorder.h>
 #include <AudioRenderer/AudioRenderer.h>
-#include <Audio/Resampler.h>
 #include <Audio/AudioMixer.h>
 #include <Controller/Controller.h>
 #include <Storage/Storage.h>
@@ -175,9 +174,8 @@ private:
 
     Recorder::Recorder recorder;
 
-    AudioRenderer::AudioRenderer audioRenderer;
-    Audio::Resampler resampler;
     Audio::AudioMixer audioMixer;
+    AudioRenderer::AudioRenderer audioRenderer;
 
     std::vector<std::shared_ptr<RendererSession::RendererVideoSession>> renderersVideo;
     std::map<uint32_t, std::shared_ptr<RendererSession::RendererAudioSession>> renderersAudio;

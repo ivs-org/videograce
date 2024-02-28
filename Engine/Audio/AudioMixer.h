@@ -9,46 +9,51 @@
 
 #include <atomic>
 #include <array>
-#include <thread>
+#include <functional>
 
-#include <Transport/ISocket.h>
+#include <Transport/RTP/OwnedRTPPacket.h>
 #include <Audio/SoundBlock.h>
 
 namespace Audio
 {
 
-class AudioMixer : public Transport::ISocket
+class AudioMixer
 {
 public:
-	AudioMixer(Transport::ISocket& receiver);
+	AudioMixer();
 	~AudioMixer();
 	
-	/// AudioMixer interface
-	void AddInput(uint32_t ssrc, int64_t clientId, int32_t volume = 0);
+	/// Input must provide a method that gives PCM data 48000, 16, 1
+	void AddInput(uint32_t ssrc,
+		int64_t clientId,
+		std::function<void(Transport::OwnedRTPPacket&)> pcmCallback,
+		int32_t volume = 0);
+
 	void SetInputVolume(uint32_t ssrc, int32_t volume);
 	void DeleteInput(uint32_t ssrc);
 
 	void Start();
 	void Stop();
 
-	/// Impl of Transport::ISocket (receive sound from inputs)
-	virtual void Send(const Transport::IPacket &packet, const Transport::Address *address = nullptr) final;
+	/// Return PCM data 48000, 16, 1 various size how much the 
+	/// sound card needs at the moment (480 - 3840 bytes)
+	void GetSound(Transport::OwnedRTPPacket& outputBuffer);
 
 private:
 	static const uint16_t FRAME_SIZE = 1920;
 	static const uint64_t FRAME_DURATION = 20000;
 
-	Transport::ISocket& receiver;
+	struct Input
+	{
+		uint32_t ssrc;
+		int64_t clientId;
+		std::function<void(Transport::OwnedRTPPacket&)> pcmCallback;
+		int32_t volume;
+	};
+
+	std::vector<Input> inputs;
 
 	std::atomic_bool runned;
-
-	std::array<soundblock_t, 3> outBuffer;
-	size_t pos;
-	
-	std::thread playThread;
-
-	void Play();
-	void PreciseSleep(std::chrono::steady_clock::time_point startTime);
 };
 
 }

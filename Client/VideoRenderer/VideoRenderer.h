@@ -68,7 +68,7 @@ public:
 	virtual void SetId(uint32_t id, int64_t clientId);
     virtual void SetDeviceType(Proto::DeviceType deviceType);
     virtual Proto::DeviceType GetDeviceType();
-	virtual void Start();
+	virtual void Start(std::function<void(Transport::OwnedRTPPacket&)> rgbSource);
 	virtual void Stop();
 	virtual void SetResolution(Video::Resolution resolution = Video::rVGA);
 	virtual void SetMirrorVideo(bool yes);
@@ -79,6 +79,8 @@ public:
 	virtual void Send(const Transport::IPacket &packet, const Transport::Address *address = nullptr) final;
 
 private:
+    std::function<void(Transport::OwnedRTPPacket&)> rgbSource;
+
     std::weak_ptr<wui::window> parent_;
     wui::rect position_;
     

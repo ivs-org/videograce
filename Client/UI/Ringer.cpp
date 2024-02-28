@@ -29,10 +29,11 @@ Ringer::Ringer(Audio::AudioMixer &mixer_, std::function<void(RingType)> endCallb
 	ringType(RingType::CallIn),
     endCallback(endCallback_),
 	runned(false),
-	snd(),
-	thread()
+	currentRingCount(0), targetRingCount(1),
+	playPosition(START_POS),
+	snd()
 {
-    mixer.AddInput(OUT_SSRC, 0);
+    mixer.AddInput(OUT_SSRC, 0, std::bind(&Ringer::GetFrame, this, std::placeholders::_1));
 }
 
 Ringer::~Ringer()
@@ -53,13 +54,88 @@ void Ringer::Ring(RingType ringType_)
     ringType = ringType_;
     snd.clear();
     
-    runned = true;
-    thread = std::thread(&Ringer::run, this);
+    currentRingCount = 0;
+	playPosition = START_POS;
+
+	switch (ringType)
+	{
+	case RingType::CallIn:
+	{
+		targetRingCount = 10;
+#ifdef _WIN32
+		Load(SND_CALLIN);
+#else
+		Load(resoursesPath + "/" + SND_CALLIN);
+#endif
+	}
+	break;
+	case RingType::CallOut:
+	{
+		targetRingCount = 10;
+#ifdef _WIN32
+		Load(SND_CALLOUT);
+#else
+		Load(resoursesPath + "/" + SND_CALLOUT);
+#endif
+	}
+	break;
+	case RingType::ScheduleConnectQuick: case RingType::ScheduleConnectLong:
+	{
+		targetRingCount = (ringType == RingType::ScheduleConnectQuick ? 2 : 10);
+#ifdef _WIN32
+		Load(SND_SCHEDULECONNECT);
+#else
+		Load(resoursesPath + "/" + SND_SCHEDULECONNECT);
+#endif
+	}
+	break;
+	case RingType::Dial:
+	{
+		targetRingCount = 1;
+#ifdef _WIN32
+		Load(SND_DIAL);
+#else
+		Load(resoursesPath + "/" + SND_DIAL);
+#endif
+	}
+	break;
+	case RingType::Hangup:
+	{
+		targetRingCount = 1;
+#ifdef _WIN32
+		Load(SND_HANGUP);
+#else
+		Load(resoursesPath + "/" + SND_HANGUP);
+#endif
+	}
+	break;
+	case RingType::NewMessage:
+	{
+		targetRingCount = 1;
+#ifdef _WIN32
+		Load(SND_NEW_MESSAGE);
+#else
+		Load(resoursesPath + "/" + SND_NEW_MESSAGE);
+#endif
+	}
+	break;
+	case RingType::SoundCheck:
+	{
+		targetRingCount = 1;
+#ifdef _WIN32
+		Load(SND_SCHEDULECONNECT);
+#else
+		Load(resoursesPath + "/" + SND_SCHEDULECONNECT);
+#endif
+	}
+	break;
+	}
+
+	runned = true;
 }
 void Ringer::Stop()
 {
 	runned = false;
-	if (thread.joinable()) thread.join();
 }
 
 bool Ringer::Runned() const
@@ -67,7 +143,32 @@ bool Ringer::Runned() const
     return runned;
 }
 
-void Ringer::run()
+void Ringer::GetFrame(Transport::OwnedRTPPacket &output)
+{
+	if (!runned || snd.empty())
+	{
+		return;
+	}
+
+	output.header.ssrc = OUT_SSRC;
+	memcpy(output.data, (uint8_t*)snd.c_str() + playPosition, FRAME_SIZE);
+	output.size = FRAME_SIZE;
+	
+	playPosition += FRAME_SIZE;
+
+	if (playPosition > snd.size() - (FRAME_SIZE * 2))
+	{
+		playPosition = START_POS;
+		++currentRingCount;
+	}
+
+	if (currentRingCount >= targetRingCount)
+	{
+		runned = false;
+	}
+}
+
+/*void Ringer::run()
 {
 #ifndef _WIN32
     auto resoursesPath = wui::config::get_string("Application", "Resources", "~/." CLIENT_USER_FOLDER "/res");
@@ -221,7 +322,7 @@ void Ringer::run()
 	}
 	break;
 	}
-}
+}*/
 
 #ifdef _WIN32
 void Ringer::Load(int res)
@@ -272,7 +373,7 @@ void Ringer::Load(std::string_view fileName)
 }
 #endif
 
-void Ringer::Play()
+/*void Ringer::Play()
 {
     if (snd.empty())
     {
@@ -291,7 +392,7 @@ void Ringer::Play()
 		packet.rtpHeader.ssrc = OUT_SSRC;
 		packet.payload = (uint8_t*)snd.c_str() + playPosition;
 		packet.payloadSize = FRAME_SIZE;
-		mixer.Send(packet);
+		//mixer.Send(packet);
 
 		playPosition += FRAME_SIZE;
 
@@ -299,6 +400,6 @@ void Ringer::Play()
 
 		if (FRAME_DURATION > playDuration) Common::ShortSleep(FRAME_DURATION - playDuration - 1000);
     }
-}
+}*/
 
 }

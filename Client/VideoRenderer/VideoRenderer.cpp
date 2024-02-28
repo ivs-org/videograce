@@ -25,7 +25,8 @@ namespace VideoRenderer
 
 /// VideoRenderer
 VideoRenderer::VideoRenderer()
-	: parent_(), position_(),
+	: rgbSource(),
+	parent_(), position_(),
     showed_(true), runned(false),
     bufferWidth(0), bufferHeight(0),
 	name(),
@@ -209,10 +210,12 @@ Proto::DeviceType VideoRenderer::GetDeviceType()
     return deviceType;
 }
 
-void VideoRenderer::Start()
+void VideoRenderer::Start(std::function<void(Transport::OwnedRTPPacket&)> rgbSource_)
 {
 	if (!runned)
 	{
+		rgbSource = rgbSource_;
+
 		CreateBuffers();
         runned = true;
         nowSpeak = false;

@@ -49,8 +49,7 @@ std::shared_ptr<wui::i_theme> MakeErrorTextTheme()
 
 SettingsDialog::SettingsDialog(std::weak_ptr<wui::window> transientWindow_,
     Controller::IController &controller_,
-    AudioRenderer::IAudioRenderer &audioRenderer_,
-    Audio::Resampler &resampler_,
+    AudioRenderer::AudioRenderer &audioRenderer_,
     Audio::AudioMixer &audioMixer_,
     Ringer &ringer_,
     std::function<void(bool)> netSpeedDeterminer_,
@@ -106,7 +105,6 @@ SettingsDialog::SettingsDialog(std::weak_ptr<wui::window> transientWindow_,
     loudspeaker16SampleRateCheck(std::make_shared<wui::button>(wui::locale("settings", "loudspeaker_16_sample_rate"), [this]() { ChangeLoudspeakerSampleRate(16000); loudspeaker48SampleRateCheck->turn(!loudspeaker48SampleRateCheck->turned()); }, wui::button_view::radio)),
     loudspeaker48SampleRateCheck(std::make_shared<wui::button>(wui::locale("settings", "loudspeaker_48_sample_rate"), [this]() { ChangeLoudspeakerSampleRate(48000); loudspeaker16SampleRateCheck->turn(!loudspeaker16SampleRateCheck->turned()); }, wui::button_view::radio)),
     audioRenderer(audioRenderer_),
-    resampler(resampler_),
     audioMixer(audioMixer_),
     ringer(ringer_),
     currentLoudspeakerId(-1),
@@ -860,7 +858,6 @@ void SettingsDialog::ChangeLoudspeakerSampleRate(int32_t sampleRate)
 {
     audioMixer.Stop();
     audioRenderer.Stop();
-    resampler.SetSampleFreq(48000, sampleRate);
     audioRenderer.Start(sampleRate);
     audioMixer.Start();
 

@@ -2,7 +2,12 @@
  * RendererAudioSession.cpp - Contains impl of renderer audio session
  *
  * Author: Anton (ud) Golovkov, udattsk@gmail.com
- * Copyright (C), Infinity Video Soft LLC, 2014
+ * Copyright (C), Infinity Video Soft LLC, 2014 - 2024
+ * 
+ *                                                  ,-> [Decoder] -> [JitterBuffer] <-> [AudioMixer] <- [AudioRenderer]
+ * [NetSocket] -> [Decryptor] -> [RecordSplitter] -<
+ *                                                  `-> [RecordBuffer]
+ * 
  */
 
 #include "RendererAudioSession.h"
@@ -22,7 +27,7 @@ RendererAudioSession::RendererAudioSession(Common::TimeMeter &timeMeter_, Audio:
 	recordSplitter(),
 	decryptor(),
 	decoder(),
-	jitterBuffer(decoder, timeMeter_),
+	jitterBuffer(timeMeter_),
 	rtpSocket(),
 	wsmSocket(),
 	outSocket(&rtpSocket),
@@ -40,11 +45,11 @@ RendererAudioSession::RendererAudioSession(Common::TimeMeter &timeMeter_, Audio:
 	wsAddr(), accessToken(), wsDestAddr(),
 	sysLog(spdlog::get("System")), errLog(spdlog::get("Error"))
 {
-    recordSplitter.SetReceiver0(&audioMixer);
-	rtpSocket.SetReceiver(&decryptor, nullptr);
+    rtpSocket.SetReceiver(&decryptor, nullptr);
 	wsmSocket.SetReceiver(&decryptor, nullptr);
-	decryptor.SetReceiver(&jitterBuffer);
-	decoder.SetReceiver(&recordSplitter);
+	decryptor.SetReceiver(&recordSplitter);
+	recordSplitter.SetReceiver0(&decoder);
+	decoder.SetReceiver(&jitterBuffer);
 }
 
 RendererAudioSession::~RendererAudioSession()
@@ -66,7 +71,7 @@ void RendererAudioSession::SetVolume(int vol)
 void RendererAudioSession::SetMute(bool yes)
 {
 	mute = yes;
-	recordSplitter.SetReceiver0(yes ? nullptr : &audioMixer);
+	recordSplitter.SetReceiver0(yes ? nullptr : &decoder);
 }
 
 bool RendererAudioSession::GetMute()
@@ -194,14 +199,9 @@ void RendererAudioSession::Start(uint32_t receiverSSRC_, uint32_t authorSSRC_, u
 
 	lastPacketLoss = 0;
 
-	if (!my && !secureKey.empty())
+	if (!secureKey.empty())
 	{
-		SetSocketReceiver(&decryptor);
 		decryptor.Start(secureKey);
-	}
-	else
-	{
-		SetSocketReceiver(&jitterBuffer);
 	}
 
 	if (recorder)
@@ -215,7 +215,7 @@ void RendererAudioSession::Start(uint32_t receiverSSRC_, uint32_t authorSSRC_, u
 		errLog->info("Can't start audio renderer session because no memory to decoder, client id: {0:d}, device id: {0:1}, receiver ssrc: {2:d}, author ssrc: {3:d}", clientId, deviceId, receiverSSRC, authorSSRC);
 		if (deviceNotifyCallback)
 		{
-            deviceNotifyCallback(name, Client::DeviceNotifyType::MemoryError, Proto::DeviceType::AudioRenderer, deviceId, 0);
+			deviceNotifyCallback(name, Client::DeviceNotifyType::MemoryError, Proto::DeviceType::AudioRenderer, deviceId, 0);
 		}
 		return;
 	}
@@ -230,21 +230,23 @@ void RendererAudioSession::Start(uint32_t receiverSSRC_, uint32_t authorSSRC_, u
 		{
 			wsmSocket.Start(wsAddr, accessToken, wsDestAddr);
 		}
+	
 		jitterBuffer.Start(JB::Mode::sound);
 		if (!jitterBuffer.IsStarted())
 		{
 			errLog->info("Can't start audio renderer session because no memory to jitter buffer, client id: {0:d}, device id: {0:1}, receiver ssrc: {2:d}, author ssrc: {3:d}", clientId, deviceId, receiverSSRC, authorSSRC);
 			if (deviceNotifyCallback)
 			{
-                deviceNotifyCallback(name, Client::DeviceNotifyType::MemoryError, Proto::DeviceType::VideoRenderer, deviceId, 0);
+				deviceNotifyCallback(name, Client::DeviceNotifyType::MemoryError, Proto::DeviceType::VideoRenderer, deviceId, 0);
 			}
 			return;
 		}
 
 		pingCnt = 80;
 		pinger = std::thread(&RendererAudioSession::EstablishConnection, this);
+
+		audioMixer.AddInput(authorSSRC, clientId, std::bind(&JB::JB::GetFrame, &jitterBuffer, std::placeholders::_1));
 	}
-	audioMixer.AddInput(authorSSRC, clientId, volume);
 	
 	sysLog->info("Started audio renderer session, client id: {0:d}, device id: {0:1}, receiver ssrc: {2:d}, author ssrc: {3:d}", clientId, deviceId, receiverSSRC, authorSSRC);
 }

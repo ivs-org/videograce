@@ -20,7 +20,7 @@
 
 #include <Microphone/Microphone.h>
 #include <Audio/AudioEncoder.h>
-#include <AudioRenderer/IAudioRenderer.h>
+#include <AudioRenderer/AudioRenderer.h>
 #include <Audio/SilentDetector.h>
 #include <Audio/Resampler.h>
 #include <AEC/AEC.h>
@@ -37,7 +37,7 @@ namespace CaptureSession
 		CaptureAudioSession(Common::TimeMeter &timeMeter);
 		~CaptureAudioSession();
 		
-		void SetAudioRenderer(AudioRenderer::IAudioRenderer *audioRenderer);
+		void SetAudioRenderer(AudioRenderer::AudioRenderer *audioRenderer);
         void SetDeviceNotifyCallback(Client::DeviceNotifyCallback deviceNotifyCallback);
 
 		/// derived from ICaptureAudioSession
@@ -69,7 +69,7 @@ namespace CaptureSession
 		virtual void Send(const Transport::IPacket &packet, const Transport::Address *address = nullptr);
 	private:
         Client::DeviceNotifyCallback deviceNotifyCallback;
-		AudioRenderer::IAudioRenderer *audioRenderer;
+		AudioRenderer::AudioRenderer *audioRenderer;
 		Transport::RTPSocket rtpSocket;
 		Transport::WSMSocket wsmSocket;
 		Transport::SocketSplitter localReceiverSplitter;

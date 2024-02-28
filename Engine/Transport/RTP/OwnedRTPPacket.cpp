@@ -7,6 +7,7 @@
 
 #include <Transport/RTP/OwnedRTPPacket.h>
 
+#include <utility>
 #include <new>
 
 namespace Transport
@@ -21,23 +22,32 @@ OwnedRTPPacket::OwnedRTPPacket()
 {
 }
 
+OwnedRTPPacket::OwnedRTPPacket(uint32_t size_)
+    : header(),
+    data(size_ ? new (std::nothrow) uint8_t[size_] : nullptr),
+    size(size_),
+    payload_ms(0),
+    payload_type(Transport::RTPPayloadType::ptUndefined)
+{
+    if (data)
+    {
+        memset(data, 0, size);
+    }
+}
+
 OwnedRTPPacket::OwnedRTPPacket(const Transport::RTPPacket::RTPHeader &header_,
     const uint8_t *payload, 
     uint32_t size_,
     Transport::RTPPayloadType payload_type_)
         : header(header_),
-        data(nullptr),
+        data(size ? new (std::nothrow) uint8_t[size_] : nullptr),
         size(size_),
         payload_ms(payload_type_ == Transport::RTPPayloadType::ptVP8 ? 40 : 20),
         payload_type(payload_type_)
 {
-    if (size)
+    if (data && payload)
     {
-        data = new (std::nothrow) uint8_t[size];
-        if (data && payload)
-        {
-            memcpy(data, payload, size);
-        }
+        memcpy(data, payload, size);
     }
 }
 
@@ -48,6 +58,22 @@ OwnedRTPPacket::~OwnedRTPPacket()
         delete[] data;
         data = nullptr;
     }
+}
+
+OwnedRTPPacket& OwnedRTPPacket::operator=(OwnedRTPPacket&& other) noexcept
+{
+    // Guard self assignment
+    if (this == &other)
+        return *this; // delete[]/size=0 would also be ok
+
+    delete[] data;                             // release resource in *this
+    data = std::exchange(other.data, nullptr); // leave other in valid state
+    size = std::exchange(other.size, 0);
+    header = std::exchange(other.header, {});
+    payload_ms = std::exchange(other.payload_ms, 0);
+    payload_type = std::exchange(other.payload_type, {});
+
+    return *this;
 }
 
 }

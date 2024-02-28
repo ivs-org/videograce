@@ -2,7 +2,12 @@
  * RendererVideoSession.cpp - Contains impl of renderer video session
  *
  * Author: Anton (ud) Golovkov, udattsk@gmail.com
- * Copyright (C), Infinity Video Soft LLC, 2014
+ * Copyright (C), Infinity Video Soft LLC, 2014 - 2024
+ *
+ *                                                                       ,-> [Decoder] -> [JitterBuffer] <-> [Renderer]
+ * [NetSocket] -> [Decryptor] -> [vp8RTPCollector] -> [RecordSplitter] -<
+ *                                                                       `-> [RecordBuffer]
+ * 
  */
 
 #include <Common/Common.h>
@@ -13,10 +18,10 @@ namespace RendererSession
 {
 
 RendererVideoSession::RendererVideoSession(Common::TimeMeter &timeMeter)
-	: renderer(new VideoRenderer::VideoRenderer()),
+	: renderer(std::make_shared<VideoRenderer::VideoRenderer>()),
 	recorder(nullptr),
 	recordSplitter(),
-	jitterBuffer(decoder, timeMeter),
+	jitterBuffer(timeMeter),
 	decoder(),
 	vp8RTPCollector(),
 	decryptor(),
@@ -43,10 +48,11 @@ RendererVideoSession::RendererVideoSession(Common::TimeMeter &timeMeter)
 	wsmSocket.SetReceiver(&decryptor, nullptr);
 	decryptor.SetReceiver(&vp8RTPCollector);
 	vp8RTPCollector.SetReceiver(&recordSplitter);
-	recordSplitter.SetReceiver0(&jitterBuffer);
+	recordSplitter.SetReceiver0(&decoder);
 	recordSplitter.SetReceiver1(nullptr);
-    jitterBuffer.SetSlowRenderingCallback(std::bind(&RendererVideoSession::SlowRenderingCallback, this));
+    decoder.SetReceiver(&jitterBuffer);
 	decoder.SetCallback(this);
+	jitterBuffer.SetSlowRenderingCallback(std::bind(&RendererVideoSession::SlowRenderingCallback, this));
 }
 
 RendererVideoSession::~RendererVideoSession()
@@ -215,9 +221,7 @@ void RendererVideoSession::Start(uint32_t receiverSSRC_, uint32_t authorSSRC_, u
 	renderer->SetId(deviceId_, clientId);
 	renderer->SetName(name);
 
-	renderer->Start();
-
-	decoder.SetReceiver(&(*renderer));
+	renderer->Start(std::bind(&JB::JB::GetFrame, &jitterBuffer, std::placeholders::_1));
 
 	receiverSSRC = receiverSSRC_;
 	authorSSRC = authorSSRC_;
@@ -226,13 +230,7 @@ void RendererVideoSession::Start(uint32_t receiverSSRC_, uint32_t authorSSRC_, u
 
 	if (!my && !secureKey.empty())
 	{
-		SetSocketReceiver(&decryptor);
 		decryptor.Start(secureKey);
-	}
-	else
-	{
-		recordSplitter.SetReceiver0(&decoder);
-		SetSocketReceiver(&vp8RTPCollector);
 	}
 
 	if (recorder)
@@ -259,7 +257,7 @@ void RendererVideoSession::Start(uint32_t receiverSSRC_, uint32_t authorSSRC_, u
 
 	if (!my && GetDeviceType() != Proto::DeviceType::Avatar)
 	{
-		recordSplitter.SetReceiver0(&jitterBuffer);
+		recordSplitter.SetReceiver0(&decoder);
         
         StartRemote();
 
@@ -428,18 +426,6 @@ void RendererVideoSession::EstablishConnection()
 			pingCnt = 0;
 		}
 		std::this_thread::sleep_for(std::chrono::milliseconds(50));
-	}
-}
-
-void RendererVideoSession::SetSocketReceiver(Transport::ISocket* receiver)
-{
-	if (wsAddr.empty())
-	{
-		rtpSocket.SetReceiver(receiver, nullptr);
-	}
-	else
-	{
-		wsmSocket.SetReceiver(receiver, nullptr);
 	}
 }
 

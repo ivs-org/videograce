@@ -14,14 +14,12 @@
 namespace JB
 {
 
-JB::JB(Transport::ISocket &receiver_, Common::TimeMeter &timeMeter_)
-	: receiver(receiver_),
-    timeMeter(timeMeter_),
+JB::JB(Common::TimeMeter &timeMeter_)
+	: timeMeter(timeMeter_),
     slowRenderingCallback(),
 
     mode(Mode::video),
     runned(false),
-    thread(),
 
     mutex(),
     buffer(),
@@ -64,7 +62,6 @@ void JB::Start(Mode mode_)
 		measureTime = timeMeter.Measure();
 
 		runned = true;
-		thread = std::thread(&JB::run, this);
 	}
 }
 
@@ -73,7 +70,6 @@ void JB::Stop()
 	if (runned)
 	{
 		runned = false;
-		if (thread.joinable()) thread.join();
 	}
 }
 
@@ -112,7 +108,41 @@ void JB::Send(const Transport::IPacket &packet_, const Transport::Address *)
 	}
 }
 
-void JB::run()
+void JB::GetFrame(Transport::OwnedRTPPacket& outputPacket)
+{
+    if (!runned)
+    {
+        return;
+    }
+    
+    std::lock_guard<std::mutex> lock(mutex);
+    if (checkTime == (packetDuration / 1000) * (mode == Mode::sound ? 300 : 150))
+    {
+        while (!buffer.empty() && maxRxInterval < buffer.size() * (packetDuration / 1000))
+        {
+            buffer.pop_front();
+        }
+
+        checkTime = 0;
+        maxRxInterval = static_cast<uint32_t>(packetDuration / 1000);
+    }
+    checkTime += static_cast<uint32_t>(packetDuration / 1000);
+
+    if (!buffer.empty() && maxRxInterval < buffer.size() * (packetDuration / 1000))
+    {
+        auto &packet = buffer.front();
+
+        outputPacket = std::move(*packet);
+
+        buffer.pop_front();
+    }
+    else
+    {
+        sysLog->trace("JB buffering :: maxRxInterval: {0}", maxRxInterval);
+    }  
+}
+
+/*void JB::run()
 {
 	while (runned)
 	{
@@ -201,7 +231,7 @@ void JB::run()
         auto workDuration = timeMeter.Measure();
         if (packetDuration > workDuration) Common::ShortSleep(packetDuration - workDuration - 1000);
 	}
-}
+}*/
 
 void JB::CalcJitter(const Transport::RTPPacket::RTPHeader &header)
 {

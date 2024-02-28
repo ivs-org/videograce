@@ -37,10 +37,11 @@ CaptureAudioSession::CaptureAudioSession(Common::TimeMeter &timeMeter_)
 	sysLog(spdlog::get("System")), errLog(spdlog::get("Error"))
 {
     aec.SetReceiver(&silentSplitter);
-	silentSplitter.SetReceiver0(&encoder);
+	silentSplitter.SetReceiver0(&localReceiverSplitter);
 	silentSplitter.SetReceiver1(&silentDetector);
 	encoder.SetReceiver(&localReceiverSplitter);
 	localReceiverSplitter.SetReceiver0(&encryptor);
+	encoder.SetReceiver(&encryptor);
 	encryptor.SetReceiver(&rtpSocket);
 	rtpSocket.SetReceiver(nullptr, this);
 	wsmSocket.SetReceiver(nullptr, this);
@@ -51,7 +52,7 @@ CaptureAudioSession::~CaptureAudioSession()
 	Stop();
 }
 
-void CaptureAudioSession::SetAudioRenderer(AudioRenderer::IAudioRenderer *audioRenderer_)
+void CaptureAudioSession::SetAudioRenderer(AudioRenderer::AudioRenderer *audioRenderer_)
 {
 	audioRenderer = audioRenderer_;
 }
@@ -212,19 +213,7 @@ void CaptureAudioSession::Start(uint32_t ssrc_, uint32_t deviceId_, std::string_
 	
 	if (!secureKey.empty())
 	{
-		localReceiverSplitter.SetReceiver0(&encryptor);
 		encryptor.Start(secureKey);
-	}
-	else
-	{
-		if (wsAddr.empty())
-		{
-			localReceiverSplitter.SetReceiver0(&rtpSocket);
-		}
-		else
-		{
-			localReceiverSplitter.SetReceiver0(&wsmSocket);
-		}
 	}
 
 	microphone.SetDeviceId(deviceId);

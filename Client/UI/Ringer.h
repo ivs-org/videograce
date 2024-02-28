@@ -8,9 +8,11 @@
 #pragma once
 
 #include <Audio/AudioMixer.h>
+#include <Transport/RTP/OwnedRTPPacket.h>
 
 #include <atomic>
 #include <functional>
+#include <string>
 
 namespace Client
 {
@@ -45,26 +47,26 @@ public:
     void Stop();
     bool Runned() const;
 
+	void GetFrame(Transport::OwnedRTPPacket&);
+
 private:
 	Audio::AudioMixer &mixer;
 	RingType ringType;
 
     std::function<void(RingType)> endCallback;
 
-	std::atomic<bool> runned;
+	std::atomic_bool runned;
+
+	int32_t currentRingCount, targetRingCount,
+		playPosition;
 	
     std::string snd;
-
-	std::thread thread;
-
-    void run();
 
 #ifdef _WIN32
     void Load(int res);
 #else
     void Load(std::string_view fileName);
 #endif
-    void Play();
 };
 
 }

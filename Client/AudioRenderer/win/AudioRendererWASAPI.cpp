@@ -15,6 +15,7 @@
 
 #include "AudioRendererWASAPI.h"
 #include <Transport/RTP/RTPPacket.h>
+#include <Common/ShortSleep.h>
 
 #include <wui/config/config.hpp>
 
@@ -48,7 +49,7 @@ template <class T> inline void SafeRelease(T*& p)
 namespace AudioRenderer
 {
 
-AudioRendererWASAPI::AudioRendererWASAPI()
+AudioRendererWASAPI::AudioRendererWASAPI(std::function<void(Transport::OwnedRTPPacket&)> pcmSource_)
 	: runned(false), mute(wui::config::get_int("AudioRenderer", "Enabled", 1) == 0),
 	volume(static_cast<float>(wui::config::get_int("AudioRenderer", "Volume", 100)) / 100),
 	deviceName(),
@@ -60,7 +61,9 @@ AudioRendererWASAPI::AudioRendererWASAPI()
 	bufferFrameCount(0),
 	latency(0),
 	aecReceiver(nullptr),
-    errorHandler()
+    errorHandler(),
+	pcmSource(pcmSource_),
+	thread()
 {
 }
 
@@ -211,11 +214,13 @@ void AudioRendererWASAPI::Start(int32_t sampleFreq_)
 	}
 
 	runned = true;
+	thread = std::thread(std::bind(&AudioRendererWASAPI::Play, this));
 }
 
 void AudioRendererWASAPI::Stop()
 {
 	runned = false;
+	if (thread.joinable()) thread.join();
 		
 	// Stop playing
 	if (audioClient)
@@ -257,35 +262,55 @@ uint16_t AudioRendererWASAPI::GetVolume()
     return static_cast<uint16_t>(volume * 100);
 }
 
-void AudioRendererWASAPI::Send(const Transport::IPacket &packet_, const Transport::Address *)
+void AudioRendererWASAPI::Play()
 {
-	if (runned && !mute)
+	using namespace std::chrono;
+	const uint64_t PACKET_DURATION = 20000;
+
+	while (runned)
 	{
-		const auto &packet = *static_cast<const Transport::RTPPacket*>(&packet_);
+		if (mute)
+		{
+			std::this_thread::sleep_for(milliseconds(200));
+			continue;
+		}
+
+		auto start = high_resolution_clock::now();
+
+		Transport::OwnedRTPPacket packet(1920 * 2);
+		pcmSource(packet);
 
 		uint32_t framesPadding = 0;
 		HRESULT hr = audioClient->GetCurrentPadding(&framesPadding);
 		CHECK_HR(hr, "audioClient->GetCurrentPadding")
 
 		uint32_t framesAvailable = bufferFrameCount - framesPadding;
-		if (framesAvailable * 2 > packet.payloadSize)
+		if (framesAvailable * 2 > packet.size)
 		{
-			framesAvailable = packet.payloadSize / 2;
+			framesAvailable = packet.size / 2;
 		}
+
+		if (framesAvailable != 960)
+			ATLTRACE("bfc: %d, fp: %d\n", bufferFrameCount, framesPadding);
 
 		BYTE *pData = nullptr;
 		hr = audioRenderClient->GetBuffer(framesAvailable, &pData);
 		CHECK_HR(hr, "audioClient->GetBuffer")
 
-		memcpy(pData, packet.payload, framesAvailable * 2);
+		memcpy(pData, packet.data, framesAvailable * 2);
 
 		hr = audioRenderClient->ReleaseBuffer(framesAvailable, 0);
 		CHECK_HR(hr, "audioRenderClient->ReleaseBuffer")
 
 		if (aecReceiver)
 		{
-			aecReceiver->Send(packet_);
+			//aecReceiver->Send(packet.rtp());
 		}
+
+		auto playTime = duration_cast<microseconds>(high_resolution_clock::now() - start).count();
+		if (PACKET_DURATION > playTime) Common::ShortSleep(PACKET_DURATION - playTime - 500);
+		//while (duration_cast<microseconds>(high_resolution_clock::now() - start).count() < PACKET_DURATION)
+		//{ /* Busy wait */ }
 	}
 }
 

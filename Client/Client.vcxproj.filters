@@ -111,9 +111,6 @@
     <ClInclude Include="Microphone\Microphone.h">
       <Filter>Header Files\Microphone</Filter>
     </ClInclude>
-    <ClInclude Include="AudioRenderer\IAudioRenderer.h">
-      <Filter>Header Files\AudioRenderer</Filter>
-    </ClInclude>
     <ClInclude Include="RendererSession\IRendererVideoSession.h">
       <Filter>Header Files\RendererSession</Filter>
     </ClInclude>

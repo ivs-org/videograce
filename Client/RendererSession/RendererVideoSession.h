@@ -141,8 +141,6 @@ private:
 	
 	void EstablishConnection();
 
-	void SetSocketReceiver(Transport::ISocket* receiver);
- 
 	void StartRemote();
 	void StopRemote();
 

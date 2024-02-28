@@ -86,8 +86,9 @@ BOOL WaveBuffer::Write(PBYTE pData, int nBytes, int& BytesWritten)
 }
 
 ///
-AudioRendererWave::AudioRendererWave()
-	: runned(false),
+AudioRendererWave::AudioRendererWave(std::function<void(Transport::OwnedRTPPacket&)> pcmSource_)
+	: pcmSource(pcmSource_),
+	runned(false),
 	readySem(),
 	thread(),
 	deviceName(),
@@ -183,7 +184,7 @@ void AudioRendererWave::SetVolume()
 	}
 }
 
-void AudioRendererWave::Send(const Transport::IPacket &packet, const Transport::Address *)
+/*void AudioRendererWave::Send(const Transport::IPacket& packet, const Transport::Address*)
 {
 	if (runned && !mute)
 	{
@@ -193,14 +194,14 @@ void AudioRendererWave::Send(const Transport::IPacket &packet, const Transport::
 		int nBytes = rtpPacket.payloadSize;
 		while (nBytes != 0)
 		{
-			/*  Get a buffer if necessary. */
+			//  Get a buffer if necessary.
 			if (m_NoBuffer)
 			{
 				WaitForSingleObject(m_hSem, INFINITE);
 				m_NoBuffer = FALSE;
 			}
 
-			/*  Write into a buffer. */
+			//  Write into a buffer.
 			int nWritten = 0;
 			if (m_Hdrs[m_CurrentBuffer].Write(pData, nBytes, nWritten))
 			{
@@ -222,7 +223,7 @@ void AudioRendererWave::Send(const Transport::IPacket &packet, const Transport::
 			}
 		}
 	}
-}
+}*/
 
 void CALLBACK WaveCallback(HWAVEOUT hWave, UINT uMsg, DWORD_PTR dwUser,
 	DWORD_PTR dw1, DWORD_PTR dw2)

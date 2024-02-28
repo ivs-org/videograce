@@ -233,19 +233,7 @@ void CaptureVideoSession::Start(uint32_t ssrc_, Video::ColorSpace colorSpace_, u
 	
 	if (!secureKey.empty())
 	{
-		vp8RTPSplitter.SetReceiver(&encryptor);
 		encryptor.Start(secureKey);
-	}
-	else
-	{
-		if (wsAddr.empty())
-		{
-			vp8RTPSplitter.SetReceiver(&rtpSocket);
-		}
-		else
-		{
-			vp8RTPSplitter.SetReceiver(&wsmSocket);
-		}
 	}
 
 	encoder.Start(encoderType, ssrc);

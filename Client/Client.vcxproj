@@ -211,7 +211,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="AudioRenderer\AudioRenderer.h" />
-    <ClInclude Include="AudioRenderer\IAudioRenderer.h" />
     <ClInclude Include="AudioRenderer\win\AudioRendererImpl.h" />
     <ClInclude Include="AudioRenderer\win\AudioRendererWASAPI.h" />
     <ClInclude Include="AudioRenderer\win\AudioRendererWave.h" />

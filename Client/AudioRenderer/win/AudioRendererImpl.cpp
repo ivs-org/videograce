@@ -12,8 +12,8 @@
 namespace AudioRenderer
 {
 
-AudioRendererImpl::AudioRendererImpl()
-    : use_wasapi(Common::IsWindowsVistaOrGreater()), wasapi(), wave()
+AudioRendererImpl::AudioRendererImpl(std::function<void(Transport::OwnedRTPPacket&)> pcmSource)
+    : use_wasapi(Common::IsWindowsVistaOrGreater()), wasapi(pcmSource), wave(pcmSource)
 {
 }
 
@@ -54,11 +54,6 @@ void AudioRendererImpl::SetVolume(uint16_t value)
 uint16_t AudioRendererImpl::GetVolume()
 {
     return use_wasapi ? wasapi.GetVolume() : wave.GetVolume();
-}
-
-void AudioRendererImpl::Send(const Transport::IPacket &packet_, const Transport::Address *)
-{
-    use_wasapi ? wasapi.Send(packet_, nullptr) : wave.Send(packet_, nullptr);
 }
 
 std::vector<std::string> AudioRendererImpl::GetSoundRenderers()
