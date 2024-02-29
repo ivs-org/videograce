@@ -40,7 +40,7 @@ OwnedRTPPacket::OwnedRTPPacket(const Transport::RTPPacket::RTPHeader &header_,
     uint32_t size_,
     Transport::RTPPayloadType payload_type_)
         : header(header_),
-        data(size ? new (std::nothrow) uint8_t[size_] : nullptr),
+        data(size_ ? new (std::nothrow) uint8_t[size_] : nullptr),
         size(size_),
         payload_ms(payload_type_ == Transport::RTPPayloadType::ptVP8 ? 40 : 20),
         payload_type(payload_type_)
@@ -66,8 +66,11 @@ OwnedRTPPacket& OwnedRTPPacket::operator=(OwnedRTPPacket&& other) noexcept
     if (this == &other)
         return *this; // delete[]/size=0 would also be ok
 
-    delete[] data;                             // release resource in *this
-    data = std::exchange(other.data, nullptr); // leave other in valid state
+    if (other.data)
+    {
+        delete[] data;                             // release resource in *this
+        data = std::exchange(other.data, nullptr); // leave other in valid state
+    }
     size = std::exchange(other.size, 0);
     header = std::exchange(other.header, {});
     payload_ms = std::exchange(other.payload_ms, 0);

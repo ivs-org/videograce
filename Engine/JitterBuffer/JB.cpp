@@ -108,7 +108,7 @@ void JB::Send(const Transport::IPacket &packet_, const Transport::Address *)
 	}
 }
 
-void JB::GetFrame(Transport::OwnedRTPPacket& outputPacket)
+void JB::GetFrame(Transport::OwnedRTPPacket& output)
 {
     if (!runned)
     {
@@ -130,15 +130,13 @@ void JB::GetFrame(Transport::OwnedRTPPacket& outputPacket)
 
     if (!buffer.empty() && maxRxInterval < buffer.size() * (packetDuration / 1000))
     {
-        outputPacket = *(buffer.front());
-
-        outputPacket = std::move(*packet);
+        output = std::move(*buffer.front());
 
         buffer.pop_front();
     }
     else
     {
-        sysLog->trace("JB buffering :: maxRxInterval: {0}", maxRxInterval);
+        sysLog->trace("JB buffering :: maxRxInterval: {0}, buffer size: {1}", maxRxInterval, buffer.size());
     }  
 }
 
