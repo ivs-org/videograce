@@ -2,7 +2,12 @@
  * RendererAudioSession.h - Contains impl interface of renderer audio session
  *
  * Author: Anton (ud) Golovkov, udattsk@gmail.com
- * Copyright (C), Infinity Video Soft LLC, 2014
+ * Copyright (C), Infinity Video Soft LLC, 2014, 2024
+ *  
+ *                                                  ,-> [Decoder] -> [JitterBuffer] <-> [AudioMixer] <- [AudioRenderer]
+ * [NetSocket] -> [Decryptor] -> [RecordSplitter] -<
+ *                                                  `-> [RecordBuffer]
+ * 
  */
 
 #pragma once
@@ -103,7 +108,6 @@ namespace RendererSession
 		
 		std::shared_ptr<spdlog::logger> sysLog, errLog;
 
-		void SetSocketReceiver(Transport::ISocket *receiver);
 		void EstablishConnection();
 	};
 

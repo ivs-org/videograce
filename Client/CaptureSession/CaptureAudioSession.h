@@ -2,7 +2,13 @@
  * CaptureAudioSession.h - Contains impl interface of capture audio session
  *
  * Author: Anton (ud) Golovkov, udattsk@gmail.com
- * Copyright (C), Infinity Video Soft LLC, 2014
+ * Copyright (C), Infinity Video Soft LLC, 2014, 2024
+ * 
+ *                                                                                                       ,-> [Encryptor] -> [NetSocket]
+ *                                                            ,-> [Encoder] -> [LocalReceiverSplitter] -<
+ * [Microphone] -> [Resampler] -> [AEC] -> [SilentSplitter] -<                                           '-> [LocalRenderer]
+ *                                  ^                         '-> [SilentDetector]
+ *                                  '- [AudioRenderer]
  */
 
 #pragma once

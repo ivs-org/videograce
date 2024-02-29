@@ -172,18 +172,6 @@ std::string RendererAudioSession::GetSecureKey() const
 	return secureKey;
 }
 
-void RendererAudioSession::SetSocketReceiver(Transport::ISocket* receiver)
-{
-	if (wsAddr.empty())
-	{
-		rtpSocket.SetReceiver(receiver, nullptr);
-	}
-	else
-	{
-		wsmSocket.SetReceiver(receiver, nullptr);
-	}
-}
-
 void RendererAudioSession::Start(uint32_t receiverSSRC_, uint32_t authorSSRC_, uint32_t deviceId_, std::string_view secureKey_)
 {
 	if (runned)

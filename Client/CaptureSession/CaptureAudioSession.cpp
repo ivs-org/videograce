@@ -2,7 +2,13 @@
  * CaptureAudioSession.cpp - Contains impl of capture audio session
  *
  * Author: Anton (ud) Golovkov, udattsk@gmail.com
- * Copyright (C), Infinity Video Soft LLC, 2014
+ * Copyright (C), Infinity Video Soft LLC, 2014, 2024
+ *
+ *                                                                                                       ,-> [Encryptor] -> [NetSocket]
+ *                                                            ,-> [Encoder] -> [LocalReceiverSplitter] -<
+ * [Microphone] -> [Resampler] -> [AEC] -> [SilentSplitter] -<                                           '-> [LocalRenderer]
+ *                                  ^                         '-> [SilentDetector]
+ *                                  '- [AudioRenderer]
  */
 
 #include <wui/config/config.hpp>
@@ -37,11 +43,10 @@ CaptureAudioSession::CaptureAudioSession(Common::TimeMeter &timeMeter_)
 	sysLog(spdlog::get("System")), errLog(spdlog::get("Error"))
 {
     aec.SetReceiver(&silentSplitter);
-	silentSplitter.SetReceiver0(&localReceiverSplitter);
+	silentSplitter.SetReceiver0(&encoder);
 	silentSplitter.SetReceiver1(&silentDetector);
 	encoder.SetReceiver(&localReceiverSplitter);
 	localReceiverSplitter.SetReceiver0(&encryptor);
-	encoder.SetReceiver(&encryptor);
 	encryptor.SetReceiver(&rtpSocket);
 	rtpSocket.SetReceiver(nullptr, this);
 	wsmSocket.SetReceiver(nullptr, this);
