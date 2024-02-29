@@ -266,6 +266,7 @@ void AudioRendererWASAPI::Play()
 {
 	using namespace std::chrono;
 	const uint64_t PACKET_DURATION = 20000;
+	const auto FRAMES_COUNT = 960;
 
 	while (runned)
 	{
@@ -277,7 +278,7 @@ void AudioRendererWASAPI::Play()
 
 		auto start = high_resolution_clock::now();
 
-		Transport::OwnedRTPPacket packet(1920 * 2);
+		Transport::OwnedRTPPacket packet(FRAMES_COUNT * 2);
 		pcmSource(packet);
 
 		uint32_t framesPadding = 0;
@@ -285,13 +286,10 @@ void AudioRendererWASAPI::Play()
 		CHECK_HR(hr, "audioClient->GetCurrentPadding")
 
 		uint32_t framesAvailable = bufferFrameCount - framesPadding;
-		if (framesAvailable * 2 > packet.size)
+		if (framesAvailable > FRAMES_COUNT)
 		{
-			framesAvailable = packet.size / 2;
+			framesAvailable = FRAMES_COUNT;
 		}
-
-		if (framesAvailable != 960)
-			ATLTRACE("bfc: %d, fp: %d\n", bufferFrameCount, framesPadding);
 
 		BYTE *pData = nullptr;
 		hr = audioRenderClient->GetBuffer(framesAvailable, &pData);
@@ -302,9 +300,23 @@ void AudioRendererWASAPI::Play()
 		hr = audioRenderClient->ReleaseBuffer(framesAvailable, 0);
 		CHECK_HR(hr, "audioRenderClient->ReleaseBuffer")
 
+		auto tail = FRAMES_COUNT - framesAvailable;
+		if (tail != 0)
+		{
+			OutputDebugStringA("we have a tail:");
+			OutputDebugStringA(std::to_string(tail).c_str());
+			OutputDebugStringA("\n");
+		}
+		/*else
+			ATLTRACE("-\n");*/
+
 		if (aecReceiver)
 		{
-			//aecReceiver->Send(packet.rtp());
+			Transport::RTPPacket rtp;
+			rtp.rtpHeader = packet.header;
+			rtp.payload = packet.data;
+			rtp.payloadSize = packet.size;
+			aecReceiver->Send(rtp);
 		}
 
 		auto playTime = duration_cast<microseconds>(high_resolution_clock::now() - start).count();

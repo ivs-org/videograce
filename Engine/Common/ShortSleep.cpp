@@ -19,7 +19,7 @@ static NTSTATUS(__stdcall *NtDelayExecution)(BOOL Alertable, PLARGE_INTEGER Dela
 namespace Common
 {
 
-void ShortSleep(uint32_t microseconds)
+void ShortSleep(uint64_t microseconds)
 {
 #ifdef _WIN32
 	LARGE_INTEGER interval;

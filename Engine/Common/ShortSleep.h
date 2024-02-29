@@ -12,6 +12,6 @@
 namespace Common
 {
 
-void ShortSleep(uint32_t microseconds = 500);
+void ShortSleep(uint64_t microseconds = 500);
 
 }

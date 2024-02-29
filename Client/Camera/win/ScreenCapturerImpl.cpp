@@ -152,7 +152,7 @@ void ScreenCapturerImpl::run()
 
 		auto playDuration = duration_cast<microseconds>(high_resolution_clock::now() - start).count();
 
-		if (packetDuration > playDuration) Common::ShortSleep(packetDuration - playDuration - 1000);
+		if (packetDuration > playDuration) Common::ShortSleep(packetDuration - playDuration - 500);
 	}
 
 	sysLog->info("ScreenCapturer ended");

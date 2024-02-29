@@ -347,7 +347,7 @@ HRESULT MicrophoneDMO::Run()
 
         auto playDuration = duration_cast<microseconds>(high_resolution_clock::now() - start).count();
 
-        if (PACKET_DURATION > playDuration) Common::ShortSleep(PACKET_DURATION - playDuration - 1000);
+        if (PACKET_DURATION > playDuration) Common::ShortSleep(PACKET_DURATION - playDuration - 500);
     }
 
     SAFE_ARRAYDELETE(pbOutputBuffer);

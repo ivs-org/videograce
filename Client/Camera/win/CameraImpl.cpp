@@ -545,7 +545,7 @@ void CameraImpl::send()
 			}
 		}
 
-		if (packetDuration > processTime) Common::ShortSleep(packetDuration - processTime - 1000);
+		if (packetDuration > processTime) Common::ShortSleep(packetDuration - processTime - 500);
 	}
 }
 
