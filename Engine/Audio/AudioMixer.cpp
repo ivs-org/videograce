@@ -91,7 +91,7 @@ void AudioMixer::GetSound(Transport::OwnedRTPPacket& outputBuffer)
 {
     for (auto& input : inputs)
     {
-        Transport::OwnedRTPPacket inputPacket(FRAME_SIZE * 2);
+        Transport::OwnedRTPPacket inputPacket(FRAME_SIZE);
         input.pcmCallback(inputPacket);
 
         if (inputPacket.size == 0) continue;
