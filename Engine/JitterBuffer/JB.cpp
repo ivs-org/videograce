@@ -132,7 +132,7 @@ void JB::GetFrame(Transport::OwnedRTPPacket& outputPacket)
     {
         outputPacket = *(buffer.front());
 
-        //outputPacket = std::move(*packet);
+        outputPacket = std::move(*packet);
 
         buffer.pop_front();
     }
