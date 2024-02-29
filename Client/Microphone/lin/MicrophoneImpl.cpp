@@ -173,7 +173,7 @@ void MicrophoneImpl::run()
 		return errLog->critical("Microphone {0} cannot prepare audio interface for use ({1})", deviceName, snd_strerror(ret));
 	}
 
-	const int samplesCount = freq == 48000 ? 480 * 2 : 160 * 2;
+	const int samplesCount = freq == 48000 ? 480 : 160;
 	const int bufSize = samplesCount * 2;
 
 	char buffer[480 * 4] = { 0 };

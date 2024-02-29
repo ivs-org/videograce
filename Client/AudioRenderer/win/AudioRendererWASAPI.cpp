@@ -62,6 +62,7 @@ AudioRendererWASAPI::AudioRendererWASAPI(std::function<void(Transport::OwnedRTPP
 	audioClient(),
 	audioRenderClient(),
 	audioVolume(),
+	playReadyEvent(0), closeEvent(0),
 	bufferFrameCount(0),
 	latency(0),
 	aecReceiver(nullptr),
@@ -178,12 +179,33 @@ void AudioRendererWASAPI::Start(int32_t sampleFreq_)
     const GUID guid = { 0xc1acafa8, 0x3eab, 0x4374, { 0xaa, 0xb4, 0x3c, 0x15, 0xdc, 0xe8, 0x23, 0xe1 } };
     	
 	hr = audioClient->Initialize(AUDCLNT_SHAREMODE_SHARED,
-		AUDCLNT_STREAMFLAGS_AUTOCONVERTPCM | AUDCLNT_STREAMFLAGS_SRC_DEFAULT_QUALITY, 600000, 0, &wfx, &guid);
+		AUDCLNT_STREAMFLAGS_EVENTCALLBACK | AUDCLNT_STREAMFLAGS_NOPERSIST | AUDCLNT_STREAMFLAGS_AUTOCONVERTPCM | AUDCLNT_STREAMFLAGS_SRC_DEFAULT_QUALITY ,
+		80 * 10000, 0, &wfx, &guid);
 	CHECK_HR(hr, "audioClient->Initialize")
 
 	// Get the actual size (in sample frames) of each half of the circular audio buffer
 	hr = audioClient->GetBufferSize(&bufferFrameCount);
 	CHECK_HR(hr, "audioClient->GetBufferSize")
+
+	// Set the event driven mode
+	closeEvent = CreateEventEx(NULL, NULL, 0, EVENT_MODIFY_STATE | SYNCHRONIZE);
+	if (closeEvent == NULL)
+	{
+		if (errorHandler) { errorHandler(hr, "AudioRendererWASAPI :: Create close event error"); }
+		runned = false;
+		return;
+	}
+
+	playReadyEvent = CreateEventEx(NULL, NULL, 0, EVENT_MODIFY_STATE | SYNCHRONIZE);
+	if (playReadyEvent == NULL)
+	{
+		if (errorHandler) { errorHandler(hr, "AudioRendererWASAPI :: Create play event error"); }
+		runned = false;
+		return;
+	}
+
+	hr = audioClient->SetEventHandle(playReadyEvent);
+	CHECK_HR(hr, "audioClient->SetEventHandle")
 
 	// Get the IAudioRenderClient (used to access the audio buffer)
 	hr = audioClient->GetService(IID_IAudioRenderClient, (void **)&audioRenderClient);
@@ -224,8 +246,21 @@ void AudioRendererWASAPI::Start(int32_t sampleFreq_)
 void AudioRendererWASAPI::Stop()
 {
 	runned = false;
+
+	SetEvent(closeEvent);
 	if (thread.joinable()) thread.join();
-		
+
+	if (closeEvent)
+	{
+		CloseHandle(closeEvent);
+		closeEvent = NULL;
+	}
+	if (playReadyEvent)
+	{
+		CloseHandle(playReadyEvent);
+		playReadyEvent = NULL;
+	}
+
 	// Stop playing
 	if (audioClient)
 	{
@@ -268,9 +303,10 @@ uint16_t AudioRendererWASAPI::GetVolume()
 
 void AudioRendererWASAPI::Play()
 {
+	HANDLE waitArray[2] = { closeEvent, playReadyEvent };
+
 	using namespace std::chrono;
-	const uint64_t PACKET_DURATION = 20000;
-	const auto FRAMES_COUNT = 960;
+	const uint32_t FRAMES_COUNT = sampleFreq / 100;
 
 	while (runned)
 	{
@@ -280,78 +316,54 @@ void AudioRendererWASAPI::Play()
 			continue;
 		}
 
-		auto start = high_resolution_clock::now();
-
-		Transport::OwnedRTPPacket packet(FRAMES_COUNT * 2);
-		pcmSource(packet);
-
-		uint32_t framesPadding = 0;
-		HRESULT hr = audioClient->GetCurrentPadding(&framesPadding);
-		CHECK_HR(hr, "audioClient->GetCurrentPadding")
-
-		uint32_t framesAvailable = bufferFrameCount - framesPadding;
-		//subtle_trace("framesAvailable: ", framesAvailable);
-		if (framesAvailable > FRAMES_COUNT)
+		DWORD waitResult = WaitForMultipleObjects(2, waitArray, FALSE, INFINITE);
+		switch (waitResult)
 		{
-			//subtle_trace("framesAvailable > FRAMES_COUNT: ", framesAvailable);
-			framesAvailable = FRAMES_COUNT;
-		}
-
-		BYTE *pData = nullptr;
-		hr = audioRenderClient->GetBuffer(framesAvailable, &pData);
-		CHECK_HR(hr, "audioClient->GetBuffer")
-
-		memcpy(pData, packet.data, framesAvailable * 2);
-
-		hr = audioRenderClient->ReleaseBuffer(framesAvailable, 0);
-		CHECK_HR(hr, "audioRenderClient->ReleaseBuffer")
-
-		auto tail = FRAMES_COUNT - framesAvailable;
-		if (tail != 0)
-		{
-			//subtle_trace("we have a tail: ", tail);
-		
-			//Common::ShortSleep(0.7 * 1000000 * tail / sampleFreq);
-
-			framesPadding = 0;
-			hr = audioClient->GetCurrentPadding(&framesPadding);
-			CHECK_HR(hr, "audioClient->GetCurrentPadding")
-
-			framesAvailable = bufferFrameCount - framesPadding;
-			if (framesAvailable > FRAMES_COUNT - tail)
+			case WAIT_OBJECT_0 + 0:   // closeEvent
+				runned = false;       // We're done, exit the loop.
+			break;
+			case WAIT_OBJECT_0 + 1:
 			{
-				subtle_trace("framesAvailable > FRAMES_COUNT - tail: ", framesAvailable);
-				framesAvailable = FRAMES_COUNT - tail;
+				Transport::OwnedRTPPacket packet(FRAMES_COUNT * 2);
+				pcmSource(packet);
+
+				if (aecReceiver)
+				{
+					Transport::RTPPacket rtp;
+					rtp.rtpHeader = packet.header;
+					rtp.payload = packet.data;
+					rtp.payloadSize = packet.size;
+					aecReceiver->Send(rtp);
+				}
+
+				uint32_t framesPadding = 0;
+				HRESULT hr = audioClient->GetCurrentPadding(&framesPadding);
+				CHECK_HR(hr, "audioClient->GetCurrentPadding")
+
+				uint32_t framesAvailable = bufferFrameCount - framesPadding;
+				if (framesAvailable > FRAMES_COUNT)
+				{
+					//subtle_trace("framesAvailable > FRAMES_COUNT: ", framesAvailable);
+					framesAvailable = FRAMES_COUNT;
+				}
+
+				BYTE* pData = nullptr;
+				hr = audioRenderClient->GetBuffer(framesAvailable, &pData);
+				CHECK_HR(hr, "audioClient->GetBuffer")
+
+				memcpy(pData, packet.data, framesAvailable * 2);
+
+				hr = audioRenderClient->ReleaseBuffer(framesAvailable, 0);
+				CHECK_HR(hr, "audioRenderClient->ReleaseBuffer")
+
+				auto tail = FRAMES_COUNT - framesAvailable;
+				if (tail != 0)
+				{
+					subtle_trace("we have a tail: ", tail);
+				}
 			}
-
-			BYTE* pData = nullptr;
-			hr = audioRenderClient->GetBuffer(framesAvailable, &pData);
-			CHECK_HR(hr, "audioClient->GetBuffer")
-
-			memcpy(pData, packet.data + (tail * 2), framesAvailable * 2);
-
-			hr = audioRenderClient->ReleaseBuffer(framesAvailable, 0);
-			CHECK_HR(hr, "audioRenderClient->ReleaseBuffer")
-			
-			//if (framesAvailable == 0)
-			subtle_trace("sended tail: ", framesAvailable);
+			break;
 		}
-		/*else
-			ATLTRACE("-\n");*/
-
-		if (aecReceiver)
-		{
-			Transport::RTPPacket rtp;
-			rtp.rtpHeader = packet.header;
-			rtp.payload = packet.data;
-			rtp.payloadSize = packet.size;
-			aecReceiver->Send(rtp);
-		}
-
-		int64_t playTime = duration_cast<microseconds>(high_resolution_clock::now() - start).count();
-		if (PACKET_DURATION > playTime) Common::ShortSleep(PACKET_DURATION - playTime - 500);
-		//while (duration_cast<microseconds>(high_resolution_clock::now() - start).count() < PACKET_DURATION)
-		//{ /* Busy wait */ }
 	}
 }
 

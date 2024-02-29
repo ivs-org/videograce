@@ -20,8 +20,8 @@ namespace Client
 class Ringer
 {
 	static const uint32_t START_POS = 48;
-	static const uint16_t FRAME_SIZE = 1920;
-	static const uint64_t FRAME_DURATION = 20000; /// 20 ms out duration
+	static const uint16_t FRAME_SIZE = 960;
+	static const uint64_t FRAME_DURATION = 10000; /// 10 ms out duration
 	static const uint32_t OUT_SSRC = 1;
 public:
 	enum class RingType

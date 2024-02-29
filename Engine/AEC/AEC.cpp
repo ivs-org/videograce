@@ -28,7 +28,7 @@ enum
 {
 	SAMPLING_FREQ = 48000,
 
-	FRAMES_COUNT = 2, /// Two 10 ms frames in one input / output packet
+	FRAMES_COUNT = 1, /// Two 10 ms frames in one input / output packet
 	BANDS_COUNT = 3,  /// Three bands of 16 kHz (16 + 16 + 16 = 48)
 	BAND_SIZE = 160   /// One 16KHz band has 160 samples (duration 10 ms)
 };

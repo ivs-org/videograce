@@ -35,13 +35,12 @@ public:
 	void Start();
 	void Stop();
 
-	/// Return PCM data 48000, 16, 1 various size how much the 
-	/// sound card needs at the moment (480 - 3840 bytes)
+	/// Return PCM data 48000, 16, 1 
 	void GetSound(Transport::OwnedRTPPacket& outputBuffer);
 
 private:
-	static const uint16_t FRAME_SIZE = 1920;
-	static const uint64_t FRAME_DURATION = 20000;
+	static const uint16_t FRAME_SIZE = 960;
+	static const uint64_t FRAME_DURATION = 10000;
 
 	struct Input
 	{

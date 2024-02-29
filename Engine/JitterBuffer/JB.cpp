@@ -24,13 +24,13 @@ JB::JB(Common::TimeMeter &timeMeter_)
     mutex(),
     buffer(),
 
-	packetDuration(20000),
+	packetDuration(10000),
 	measureTime(0),
 	renderTime(0),
     overTimeCount(0),
 
     prevRxTS(0), maxRxInterval(static_cast<uint32_t>(packetDuration / 1000)),
-    stateRxTS(20.0), covarianceRxTS(0.1),
+    stateRxTS(10.0), covarianceRxTS(0.1),
     checkTime(0),
 
     sysLog(spdlog::get("System")), errLog(spdlog::get("Error"))
@@ -47,14 +47,14 @@ void JB::Start(Mode mode_)
 	if (!runned)
 	{
 		mode = mode_;
-        packetDuration = (mode == Mode::sound ? 20000 : (packetDuration < 40000 ? 40000 : packetDuration));
+        packetDuration = (mode == Mode::sound ? 10000 : (packetDuration < 40000 ? 40000 : packetDuration));
 
         renderTime = 0;
         overTimeCount = 0;
 
         prevRxTS = static_cast<uint32_t>(timeMeter.Measure() / 1000);
         maxRxInterval = static_cast<uint32_t>(packetDuration / 1000);
-        stateRxTS = 20.0;
+        stateRxTS = (mode == Mode::sound ? 10.0 : 40.0);
         covarianceRxTS = 0.1;
 
         checkTime = 0;

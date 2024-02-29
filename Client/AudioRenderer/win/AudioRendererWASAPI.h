@@ -61,6 +61,8 @@ private:
 	CComPtr<IAudioRenderClient> audioRenderClient;
 	CComPtr<ISimpleAudioVolume> audioVolume;
 
+	HANDLE playReadyEvent, closeEvent;
+
 	uint32_t bufferFrameCount;
 
 	uint32_t latency;

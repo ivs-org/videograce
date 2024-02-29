@@ -100,7 +100,7 @@ HRESULT BuildGraph(IFilterGraph2 *pGraph,
 	CHECK_HR(hr, "QueryInterface IID_IAMBufferNegotiation error");
 
 	ALLOCATOR_PROPERTIES prop = { 0 };
-	prop.cbBuffer = (freq / 1000) * (stereo ? 4 : 2) * 20; // 20 ms frame
+	prop.cbBuffer = (freq / 1000) * (stereo ? 4 : 2) * 10; // 10 ms frame
 	prop.cBuffers = 6;                                     // 6 frames
 	prop.cbAlign = microphoneFormat.nBlockAlign;
 
