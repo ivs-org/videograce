@@ -150,7 +150,7 @@ void ScreenCapturerImpl::run()
 
 		CaptureTheScreen();
 
-		auto playDuration = duration_cast<microseconds>(high_resolution_clock::now() - start).count();
+		int64_t playDuration = duration_cast<microseconds>(high_resolution_clock::now() - start).count();
 
 		if (packetDuration > playDuration) Common::ShortSleep(packetDuration - playDuration - 500);
 	}

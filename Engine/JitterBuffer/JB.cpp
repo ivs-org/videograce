@@ -118,7 +118,9 @@ void JB::GetFrame(Transport::OwnedRTPPacket& output)
     std::lock_guard<std::mutex> lock(mutex);
     if (checkTime == (packetDuration / 1000) * (mode == Mode::sound ? 300 : 150))
     {
-        while (!buffer.empty() && maxRxInterval < buffer.size() * (packetDuration / 1000))
+        sysLog->trace("JB clearing :: maxRxInterval: {0}, buffer size: {1}", maxRxInterval, buffer.size());
+
+        while (buffer.size() > 10 && maxRxInterval < buffer.size() * (packetDuration / 1000))
         {
             buffer.pop_front();
         }
@@ -128,15 +130,22 @@ void JB::GetFrame(Transport::OwnedRTPPacket& output)
     }
     checkTime += static_cast<uint32_t>(packetDuration / 1000);
 
-    if (!buffer.empty() && maxRxInterval < buffer.size() * (packetDuration / 1000))
+    if (!buffer.empty())
     {
         output = std::move(*buffer.front());
 
-        buffer.pop_front();
+        if (buffer.size() > 1 && maxRxInterval <= buffer.size() * (packetDuration / 1000))
+        {
+            buffer.pop_front();
+        }
+        else
+        {
+            sysLog->trace("JB buffering :: maxRxInterval: {0}, buffer size: {1}", maxRxInterval, buffer.size());
+        }
     }
     else
     {
-        sysLog->trace("JB buffering :: maxRxInterval: {0}, buffer size: {1}", maxRxInterval, buffer.size());
+        sysLog->trace("JB empty :: maxRxInterval: {0}", maxRxInterval);
     }  
 }
 

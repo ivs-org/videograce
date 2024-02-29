@@ -345,7 +345,7 @@ HRESULT MicrophoneDMO::Run()
         }
         while (OutputBufferStruct.dwStatus & DMO_OUTPUT_DATA_BUFFERF_INCOMPLETE);
 
-        auto playDuration = duration_cast<microseconds>(high_resolution_clock::now() - start).count();
+        int64_t playDuration = duration_cast<microseconds>(high_resolution_clock::now() - start).count();
 
         if (PACKET_DURATION > playDuration) Common::ShortSleep(PACKET_DURATION - playDuration - 500);
     }

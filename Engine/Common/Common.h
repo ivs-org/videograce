@@ -20,10 +20,30 @@
 #define DBGTRACE(x, ...)
 #endif
 
+#ifdef SUBTLE_TRACE
+inline void subtle_trace(std::string_view s, int64_t i)
+{
+	printf("%s, %d", s.data, i);
+}
+#else
+inline void subtle_trace(std::string_view, int64_t) {}
+#endif
+
 #else
 
 #include <tchar.h>
 #include <atltrace.h>
 #define DBGTRACE ATLTRACE
+
+#ifdef SUBTLE_TRACE
+inline void subtle_trace(std::string_view s, int64_t i)
+{
+	OutputDebugStringA(s.data());
+	OutputDebugStringA(std::to_string(i).c_str());
+	OutputDebugStringA("\n");
+}
+#else
+inline void subtle_trace(std::string_view, int64_t) {}
+#endif
 
 #endif

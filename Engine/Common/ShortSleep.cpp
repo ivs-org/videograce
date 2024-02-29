@@ -19,8 +19,9 @@ static NTSTATUS(__stdcall *NtDelayExecution)(BOOL Alertable, PLARGE_INTEGER Dela
 namespace Common
 {
 
-void ShortSleep(uint64_t microseconds)
+void ShortSleep(int64_t microseconds)
 {
+	if (microseconds < 0) return;
 #ifdef _WIN32
 	LARGE_INTEGER interval;
 	interval.QuadPart = -1 * static_cast<int32_t>(microseconds) * 10;

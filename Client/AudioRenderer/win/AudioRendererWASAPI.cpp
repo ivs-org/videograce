@@ -15,6 +15,10 @@
 
 #include "AudioRendererWASAPI.h"
 #include <Transport/RTP/RTPPacket.h>
+
+#define SUBTLE_TRACE 1
+#include <Common/Common.h>
+
 #include <Common/ShortSleep.h>
 
 #include <wui/config/config.hpp>
@@ -174,7 +178,7 @@ void AudioRendererWASAPI::Start(int32_t sampleFreq_)
     const GUID guid = { 0xc1acafa8, 0x3eab, 0x4374, { 0xaa, 0xb4, 0x3c, 0x15, 0xdc, 0xe8, 0x23, 0xe1 } };
     	
 	hr = audioClient->Initialize(AUDCLNT_SHAREMODE_SHARED,
-		AUDCLNT_STREAMFLAGS_AUTOCONVERTPCM | AUDCLNT_STREAMFLAGS_SRC_DEFAULT_QUALITY, 600000, 600000, &wfx, &guid);
+		AUDCLNT_STREAMFLAGS_AUTOCONVERTPCM | AUDCLNT_STREAMFLAGS_SRC_DEFAULT_QUALITY, 600000, 0, &wfx, &guid);
 	CHECK_HR(hr, "audioClient->Initialize")
 
 	// Get the actual size (in sample frames) of each half of the circular audio buffer
@@ -286,8 +290,10 @@ void AudioRendererWASAPI::Play()
 		CHECK_HR(hr, "audioClient->GetCurrentPadding")
 
 		uint32_t framesAvailable = bufferFrameCount - framesPadding;
+		//subtle_trace("framesAvailable: ", framesAvailable);
 		if (framesAvailable > FRAMES_COUNT)
 		{
+			//subtle_trace("framesAvailable > FRAMES_COUNT: ", framesAvailable);
 			framesAvailable = FRAMES_COUNT;
 		}
 
@@ -303,9 +309,32 @@ void AudioRendererWASAPI::Play()
 		auto tail = FRAMES_COUNT - framesAvailable;
 		if (tail != 0)
 		{
-			OutputDebugStringA("we have a tail:");
-			OutputDebugStringA(std::to_string(tail).c_str());
-			OutputDebugStringA("\n");
+			//subtle_trace("we have a tail: ", tail);
+		
+			//Common::ShortSleep(0.7 * 1000000 * tail / sampleFreq);
+
+			framesPadding = 0;
+			hr = audioClient->GetCurrentPadding(&framesPadding);
+			CHECK_HR(hr, "audioClient->GetCurrentPadding")
+
+			framesAvailable = bufferFrameCount - framesPadding;
+			if (framesAvailable > FRAMES_COUNT - tail)
+			{
+				subtle_trace("framesAvailable > FRAMES_COUNT - tail: ", framesAvailable);
+				framesAvailable = FRAMES_COUNT - tail;
+			}
+
+			BYTE* pData = nullptr;
+			hr = audioRenderClient->GetBuffer(framesAvailable, &pData);
+			CHECK_HR(hr, "audioClient->GetBuffer")
+
+			memcpy(pData, packet.data + (tail * 2), framesAvailable * 2);
+
+			hr = audioRenderClient->ReleaseBuffer(framesAvailable, 0);
+			CHECK_HR(hr, "audioRenderClient->ReleaseBuffer")
+			
+			//if (framesAvailable == 0)
+			subtle_trace("sended tail: ", framesAvailable);
 		}
 		/*else
 			ATLTRACE("-\n");*/
@@ -319,7 +348,7 @@ void AudioRendererWASAPI::Play()
 			aecReceiver->Send(rtp);
 		}
 
-		auto playTime = duration_cast<microseconds>(high_resolution_clock::now() - start).count();
+		int64_t playTime = duration_cast<microseconds>(high_resolution_clock::now() - start).count();
 		if (PACKET_DURATION > playTime) Common::ShortSleep(PACKET_DURATION - playTime - 500);
 		//while (duration_cast<microseconds>(high_resolution_clock::now() - start).count() < PACKET_DURATION)
 		//{ /* Busy wait */ }
