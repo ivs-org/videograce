@@ -312,14 +312,13 @@ void AudioRendererWASAPI::Play()
 
 	HANDLE waitArray[2] = { closeEvent, playReadyEvent };
 
-	using namespace std::chrono;
 	const uint32_t FRAMES_COUNT = sampleFreq / 100;
 
 	while (runned)
 	{
 		if (mute)
 		{
-			std::this_thread::sleep_for(milliseconds(200));
+			std::this_thread::sleep_for(std::chrono::milliseconds(200));
 			continue;
 		}
 

@@ -49,6 +49,10 @@ void Ringer::Ring(RingType ringType_)
         return;
     }
 
+#ifndef _WIN32
+    auto resoursesPath = wui::config::get_string("Application", "Resources", "~/." CLIENT_USER_FOLDER "/res");
+#endif
+
     Stop();
 
     ringType = ringType_;

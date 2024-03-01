@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include <AudioRenderer/IAudioRenderer.h>
+#include <AudioRenderer/AudioRenderer.h>
 #include <Transport/ISocket.h>
 
 #include <pulse/simple.h>
@@ -15,6 +15,7 @@
 
 #include <atomic>
 #include <string>
+#include <thread>
 #include <vector>
 
 #include <spdlog/spdlog.h>
@@ -22,10 +23,10 @@
 namespace AudioRenderer
 {
 
-class AudioRendererImpl : public IAudioRenderer, public Transport::ISocket
+class AudioRendererImpl
 {
 public:
-    AudioRendererImpl();
+    AudioRendererImpl(std::function<void(Transport::OwnedRTPPacket&)> pcmSource);
     virtual ~AudioRendererImpl();
     
     /// Impl of IAudioRenderer
@@ -42,13 +43,11 @@ public:
     virtual void SetAECReceiver(Transport::ISocket *socket) final;
     virtual void SetErrorHandler(std::function<void(uint32_t code, std::string_view msg)>) final;
 
-    /// Impl of Transport::ISocket
-    virtual void Send(const Transport::IPacket &packet, const Transport::Address *address = nullptr);
-
 private:
     std::atomic_bool runned;
 
     std::string deviceName;
+    int32_t sampleFreq;
 
     uint16_t volume;
 
@@ -57,6 +56,10 @@ private:
     pa_simple *s;
 
     Transport::ISocket* aecReceiver;
+    std::function<void(Transport::OwnedRTPPacket&)> pcmSource;
+
+    std::thread thread;
+	void Play();
 
 	std::shared_ptr<spdlog::logger> sysLog, errLog;
 };

@@ -18,13 +18,16 @@
 namespace AudioRenderer
 {
 
-AudioRendererImpl::AudioRendererImpl()
+AudioRendererImpl::AudioRendererImpl(std::function<void(Transport::OwnedRTPPacket&)> pcmSource_)
 	: runned(false),
 	deviceName("default"),
+	sampleFreq(48000),
 	volume(wui::config::get_int("AudioRenderer", "Volume", 100)),
     mute(wui::config::get_int("AudioRenderer", "Enabled", 1) == 0),
 	s(nullptr),
 	aecReceiver(nullptr),
+	pcmSource(pcmSource_),
+	thread(),
 	sysLog(spdlog::get("System")), errLog(spdlog::get("Error"))
 {
 }
@@ -40,12 +43,14 @@ bool AudioRendererImpl::SetDeviceName(std::string_view name)
 	return true;
 }
 
-void AudioRendererImpl::Start(int32_t sampleFreq)
+void AudioRendererImpl::Start(int32_t sampleFreq_)
 {
 	if (runned)
 	{
 		return;
 	}
+
+	sampleFreq = sampleFreq_;
 
 	static const pa_sample_spec ss = {
 			.format = PA_SAMPLE_S16LE,
@@ -65,6 +70,7 @@ void AudioRendererImpl::Start(int32_t sampleFreq)
 	}
 
 	runned = true;
+	thread = std::thread(std::bind(&AudioRendererImpl::Play, this));
 
 	sysLog->info("AudioRenderer {0} was started", deviceName);
 }
@@ -77,6 +83,7 @@ void AudioRendererImpl::Stop()
 	}
 
 	runned = false;
+	if (thread.joinable()) thread.join();
 
 	int error = 0;
 	if (pa_simple_drain(s, &error) < 0)
@@ -136,25 +143,35 @@ void AudioRendererImpl::SetErrorHandler(std::function<void(uint32_t code, std::s
 {
 }
 
-void AudioRendererImpl::Send(const Transport::IPacket &packet_, const Transport::Address *)
+void AudioRendererImpl::Play()
 {
-	if (!runned || mute)
+	while (runned)
 	{
-		return;
-	}
-	
-	const Transport::RTPPacket *packet = static_cast<const Transport::RTPPacket*>(&packet_);
-	{
+		if (mute)
+		{
+			std::this_thread::sleep_for(std::chrono::milliseconds(200));
+			continue;
+		}
+
+		const uint32_t FRAMES_COUNT = sampleFreq / 100;
+
+		Transport::OwnedRTPPacket packet(FRAMES_COUNT * 2);
+		pcmSource(packet);
+
+		if (aecReceiver)
+		{
+			Transport::RTPPacket rtp;
+			rtp.rtpHeader = packet.header;
+			rtp.payload = packet.data;
+			rtp.payloadSize = packet.size;
+			aecReceiver->Send(rtp);
+		}
+
 		int error = 0;
-		if (pa_simple_write(s, packet->payload, packet->payloadSize, &error) < 0)
+		if (pa_simple_write(s, packet.data, packet.size, &error) < 0)
 		{
 			errLog->critical("pa_simple_write() failed: {0}", pa_strerror(error));
 		}
-	}
-
-	if (aecReceiver)
-	{
-		aecReceiver->Send(packet_);
 	}
 }
 

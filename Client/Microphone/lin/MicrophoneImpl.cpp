@@ -174,9 +174,9 @@ void MicrophoneImpl::run()
 	}
 
 	const int samplesCount = freq == 48000 ? 480 : 160;
-	const int bufSize = samplesCount * 2;
+	const int bufSize = samplesCount;
 
-	char buffer[480 * 4] = { 0 };
+	char buffer[bufSize * 2] = { 0 };
 
 	while (runned)
 	{
