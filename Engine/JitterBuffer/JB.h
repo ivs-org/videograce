@@ -29,7 +29,8 @@ namespace JB
 enum class Mode
 {
     video,
-    sound
+    sound,
+    local
 };
 
 class JB : public Transport::ISocket
@@ -40,7 +41,7 @@ public:
 
     void SetFrameRate(uint32_t rate);
 
-	void Start(Mode mode);
+	void Start(Mode mode, std::string_view name);
 	void Stop();
 	bool IsStarted();
 
@@ -57,6 +58,7 @@ private:
     std::function<void(void)> slowRenderingCallback;
 
     Mode mode;
+    std::string name;
     std::atomic_bool runned;
 
     std::mutex mutex;

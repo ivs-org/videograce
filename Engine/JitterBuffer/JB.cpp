@@ -14,11 +14,22 @@
 namespace JB
 {
 
+const char* to_string(Mode mode)
+{
+    switch (mode)
+    {
+    case Mode::local: return "Local";
+    case Mode::sound: return "Sound";
+    case Mode::video: return "Video";
+    }
+}
+
 JB::JB(Common::TimeMeter &timeMeter_)
 	: timeMeter(timeMeter_),
     slowRenderingCallback(),
 
     mode(Mode::video),
+    name(),
     runned(false),
 
     mutex(),
@@ -42,11 +53,12 @@ JB::~JB()
 	Stop();
 }
 
-void JB::Start(Mode mode_)
+void JB::Start(Mode mode_, std::string_view name_)
 {
 	if (!runned)
 	{
 		mode = mode_;
+        name = name_;
         packetDuration = (mode == Mode::sound ? 10000 : (packetDuration < 40000 ? 40000 : packetDuration));
 
         renderTime = 0;
@@ -87,7 +99,7 @@ void JB::SetFrameRate(uint32_t rate)
 {
 	Stop();
 	packetDuration = (1000 / rate) * 1000;
-	Start(mode);
+	Start(mode, name);
 }
 
 void JB::Send(const Transport::IPacket &packet_, const Transport::Address *)
@@ -116,9 +128,9 @@ void JB::GetFrame(Transport::OwnedRTPPacket& output)
     }
     
     std::lock_guard<std::mutex> lock(mutex);
-    if (checkTime == (packetDuration / 1000) * (mode == Mode::sound ? 300 : 150))
+    if (checkTime == (packetDuration / 1000) * (mode == Mode::sound ? 600 : 150))
     {
-        sysLog->trace("JB clearing :: maxRxInterval: {0}, buffer size: {1}", maxRxInterval, buffer.size());
+        sysLog->trace("{0}_JB[{1}] clearing :: maxRxInterval: {2}, buffer size: {3}", to_string(mode), name, maxRxInterval, buffer.size());
 
         while (buffer.size() > 10 && maxRxInterval < buffer.size() * (packetDuration / 1000))
         {
@@ -133,19 +145,23 @@ void JB::GetFrame(Transport::OwnedRTPPacket& output)
     if (!buffer.empty())
     {
         output = std::move(*buffer.front());
+        if (mode == Mode::local)
+        {
+            return buffer.pop_front();
+        }
 
-        if (maxRxInterval <= buffer.size() * (packetDuration / 1000))
+        if (round((double)maxRxInterval/10) * 10 <= buffer.size() * (packetDuration / 1000))
         {
             buffer.pop_front();
         }
         else
         {
-            sysLog->trace("JB buffering :: maxRxInterval: {0}, buffer size: {1}", maxRxInterval, buffer.size());
+            sysLog->trace("{0}_JB[{1}] buffering :: maxRxInterval: {2}, buffer size: {3}", to_string(mode), name, maxRxInterval, buffer.size());
         }
     }
     else
     {
-        sysLog->trace("JB empty :: maxRxInterval: {0}", maxRxInterval);
+        sysLog->trace("{0}_JB[{1}] empty :: maxRxInterval: {2}", to_string(mode), name, maxRxInterval);
     }  
 }
 

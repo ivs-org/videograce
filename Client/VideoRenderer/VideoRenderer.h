@@ -77,8 +77,8 @@ private:
 
     std::weak_ptr<wui::window> parent_;
     wui::rect position_;
-    
-	bool showed_, runned;
+
+    bool showed_, runned;
 
 	std::string name;
 	uint32_t id;
@@ -87,6 +87,8 @@ private:
     Proto::DeviceType deviceType;
 
 	bool nowSpeak;
+
+    std::unique_ptr<uint8_t[]> flickerBuffer;
 
     Client::DeviceNotifyCallback deviceNotifyCallback;
 

@@ -33,6 +33,7 @@ VideoRenderer::VideoRenderer()
 	id(0), clientId(0),
     deviceType(Proto::DeviceType::Camera),
 	nowSpeak(false),
+    flickerBuffer(),
 	deviceNotifyCallback(),
 	err{},
 	sysLog(spdlog::get("System")), errLog(spdlog::get("Error"))
@@ -70,12 +71,15 @@ void VideoRenderer::draw(wui::graphic &gr, const wui::rect &)
 		Transport::OwnedRTPPacket packet;
 		rgbSource(packet);
 
-        if (packet.size == pos.width() * pos.height() * 4)
+        int32_t size = pos.width() * pos.height() * 4;
+        if (packet.size == size)
         {
-            gr.draw_buffer(pos,
-                packet.data,
-                0, 0);
+            memcpy(flickerBuffer.get(), packet.data, size);
         }
+
+        gr.draw_buffer(pos,
+            flickerBuffer.get(),
+            0, 0);
     }
     else
     {
@@ -212,6 +216,8 @@ void VideoRenderer::Start(std::function<void(Transport::OwnedRTPPacket&)> rgbSou
 
         runned = true;
         nowSpeak = false;
+
+        flickerBuffer = std::unique_ptr<uint8_t[]>(new uint8_t[3840 * 2160 * 4]);
 	}
 }
 
@@ -219,6 +225,8 @@ void VideoRenderer::Stop()
 {
 	runned = false;
     
+    flickerBuffer.reset(nullptr);
+
     auto parent__ = parent_.lock();
     if (parent__)
     {

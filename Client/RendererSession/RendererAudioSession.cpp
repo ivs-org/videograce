@@ -219,7 +219,7 @@ void RendererAudioSession::Start(uint32_t receiverSSRC_, uint32_t authorSSRC_, u
 			wsmSocket.Start(wsAddr, accessToken, wsDestAddr);
 		}
 	
-		jitterBuffer.Start(JB::Mode::sound);
+		jitterBuffer.Start(JB::Mode::sound, name);
 		if (!jitterBuffer.IsStarted())
 		{
 			errLog->info("Can't start audio renderer session because no memory to jitter buffer, client id: {0:d}, device id: {0:1}, receiver ssrc: {2:d}, author ssrc: {3:d}", clientId, deviceId, receiverSSRC, authorSSRC);
