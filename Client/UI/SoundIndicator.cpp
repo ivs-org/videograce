@@ -135,7 +135,7 @@ void SoundIndicator::Send(const Transport::IPacket &packet_, const Transport::Ad
     for (uint16_t i = 0; i != packet.payloadSize; i += 2)
     {
         auto sample = *reinterpret_cast<const int16_t*>(packet.payload + i);
-        value += sample * 10;
+        value += sample;
     }
 
     data.push_back(value);
