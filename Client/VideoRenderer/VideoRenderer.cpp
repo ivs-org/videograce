@@ -26,16 +26,12 @@ namespace VideoRenderer
 /// VideoRenderer
 VideoRenderer::VideoRenderer()
 	: rgbSource(),
+	resizeCallback(),
 	parent_(), position_(),
     showed_(true), runned(false),
-    bufferWidth(0), bufferHeight(0),
 	name(),
 	id(0), clientId(0),
     deviceType(Proto::DeviceType::Camera),
-	resolution(Video::rVGA),
-	mirror(false),
-	dstSz{ 0, 0 }, prevSz{ 0, 0 },
-	mirrorBuffer(), scaleBuffer(), scaleInitBuffer(), scaleSpecBuffer(), scaleWorkBuffer(),
 	nowSpeak(false),
 	deviceNotifyCallback(),
 	err{},
@@ -53,31 +49,33 @@ void VideoRenderer::SetDeviceNotifyCallback(Client::DeviceNotifyCallback deviceN
     deviceNotifyCallback = deviceNotifyCallback_;
 }
 
+void VideoRenderer::SetResizeCallback(std::function<void(int32_t, int32_t)> resizeCallback_)
+{
+	resizeCallback = resizeCallback_;
+}
+
 void VideoRenderer::draw(wui::graphic &gr, const wui::rect &)
 {
-	//using namespace std::chrono;
-	//auto start = high_resolution_clock::now();
-
     if (!runned || !showed_)
     {
         return;
     }
-
-    auto pos = position();
+	
+	auto pos = position();
 
 	auto color = nowSpeak ? wui::make_color(54, 183, 41) : wui::make_color(250, 250, 250);
 
 	if (deviceType != Proto::DeviceType::Avatar)
     {
-		if (bufferWidth > 0 && bufferHeight > 0)
-		{
-        	gr.draw_buffer({ pos.left,
-					pos.top,
-					pos.left + bufferWidth,
-					pos.top + bufferHeight },
-				scaleBuffer.get(),
-				0, 0);
-		}
+		Transport::OwnedRTPPacket packet;
+		rgbSource(packet);
+
+        if (packet.size == pos.width() * pos.height() * 4)
+        {
+            gr.draw_buffer(pos,
+                packet.data,
+                0, 0);
+        }
     }
     else
     {
@@ -113,16 +111,12 @@ void VideoRenderer::draw(wui::graphic &gr, const wui::rect &)
         gr.draw_line({ pos.right, pos.bottom - 1, pos.left, pos.bottom - 1 }, color, 1);
         gr.draw_line({ pos.left, pos.top, pos.left, pos.bottom }, color, 1);
     }
-
-	/*auto stop = high_resolution_clock::now();
-	auto duration = duration_cast<microseconds>(stop - start);
-	OutputDebugStringA(std::to_string(duration.count()).c_str());
-	OutputDebugStringA("\n");*/
 }
 
 void VideoRenderer::set_position(const wui::rect &position__, bool redraw)
 {
     update_control_position(position_, position__, redraw, parent_);
+    resizeCallback(position__.width(), position__.height());
 }
 
 wui::rect VideoRenderer::position() const
@@ -216,7 +210,6 @@ void VideoRenderer::Start(std::function<void(Transport::OwnedRTPPacket&)> rgbSou
 	{
 		rgbSource = rgbSource_;
 
-		CreateBuffers();
         runned = true;
         nowSpeak = false;
 	}
@@ -225,8 +218,6 @@ void VideoRenderer::Start(std::function<void(Transport::OwnedRTPPacket&)> rgbSou
 void VideoRenderer::Stop()
 {
 	runned = false;
-
-    DestroyBuffers();
     
     auto parent__ = parent_.lock();
     if (parent__)
@@ -235,139 +226,9 @@ void VideoRenderer::Stop()
     }
 }
 
-void VideoRenderer::CreateBuffers()
-{
-	auto rv = Video::GetValues(resolution);
-
-	try
-	{
-		mirrorBuffer = std::unique_ptr<uint8_t[]>(new uint8_t[rv.width * rv.height * 4]);
-		scaleBuffer = std::unique_ptr<uint8_t[]>(new uint8_t[3840 * 2160 * 4]);
-		scaleInitBuffer = std::unique_ptr<uint8_t[]>(new uint8_t[rv.width * rv.height * 4]);
-		scaleSpecBuffer = std::unique_ptr<uint8_t[]>(new uint8_t[rv.width * rv.height * 4]);
-		scaleWorkBuffer = std::unique_ptr<uint8_t[]>(new uint8_t[3840 * 2160 * 4]);
-	}
-	catch (std::bad_alloc &)
-	{
-		if (deviceNotifyCallback)
-		{
-            deviceNotifyCallback(name, Client::DeviceNotifyType::MemoryError, Proto::DeviceType::VideoRenderer, id, 0);
-		}
-		return;
-	}
-
-	prevSz = { 0, 0 };
-}
-
-void VideoRenderer::DestroyBuffers()
-{
-    mirrorBuffer.reset(nullptr);
-	scaleBuffer.reset(nullptr);
-	scaleInitBuffer.reset(nullptr);
-	scaleSpecBuffer.reset(nullptr);
-	scaleWorkBuffer.reset(nullptr);
-}
-
-void VideoRenderer::SetResolution(Video::Resolution resolution_)
-{
-	if (runned)
-	{
-        runned = false;
-
-		DestroyBuffers();
-		resolution = resolution_;
-		CreateBuffers();
-        runned = true;
-	}
-	else
-	{
-		resolution = resolution_;
-	}
-}
-
-void VideoRenderer::SetMirrorVideo(bool yes)
-{
-	mirror = yes;
-}
-
-bool VideoRenderer::GetVideoMirrored() const
-{
-	return mirror;
-}
-
 void VideoRenderer::SetSpeak(bool speak)
 {
 	nowSpeak = speak;
-}
-
-void VideoRenderer::ResizeImage_C4R(const Ipp8u* pSrc, IppiSize srcSize, Ipp32s srcStep, Ipp8u* pDst, IppiSize dstSize, Ipp32s dstStep)
-{
-	if (prevSz.width != dstSize.width || prevSz.height != dstSize.height)
-	{
-		auto status = ippiResizeLanczosInit_8u(srcSize, dstSize, 3, (IppiResizeSpec_32f*)scaleSpecBuffer.get(), scaleInitBuffer.get());
-		if (status != ippStsNoErr)
-		{
-			errLog->critical("ippiResizeLanczosInit_8u error: {0:d}", status);
-			return;
-		}
-	}
-
-	ippiResizeLanczos_8u_C4R(pSrc, srcStep, pDst, dstStep, { 0, 0 }, dstSize, ippBorderRepl, 0, (IppiResizeSpec_32f*)scaleSpecBuffer.get(), scaleWorkBuffer.get());
-}
-
-void VideoRenderer::Send(const Transport::IPacket &packet_, const Transport::Address *)
-{
-	//using namespace std::chrono;
-	//auto start = high_resolution_clock::now();
-
-	if (!runned)
-	{
-		return;
-	}
- 
-	auto rv = Video::GetValues(resolution);
-
-	if (rv.width == 0 || rv.height == 0)
-	{
-		return;
-	}
-
-    bufferWidth = position_.width();
-    bufferHeight = position_.height();
-
-	if (bufferWidth < 10 || bufferHeight < 10)
-	{
-		return;
-	}
-
-	auto &packet = *static_cast<const Transport::RTPPacket*>(&packet_);
-
-	const uint8_t *data = packet.payload;
-	const IppiSize srcSz = { rv.width, rv.height };
-
-	if (mirror)
-	{
-		ippiMirror_8u_C4R(data, rv.width * 4, mirrorBuffer.get(), rv.width * 4, srcSz, ippAxsVertical);
-		data = mirrorBuffer.get();
-	}
-
-    auto scale = static_cast<double>(bufferWidth) / rv.width;
-	
-	dstSz = { bufferWidth,  static_cast<int>((static_cast<double>(rv.height) * scale)) };
-
-    if (dstSz.width > 3840 || dstSz.height > 2160)
-	{
-		return;
-	}
-
-	ResizeImage_C4R(data, srcSz, rv.width * 4, scaleBuffer.get(), dstSz, dstSz.width * 4);
-
-    prevSz = dstSz;
-
-	/*auto stop = high_resolution_clock::now();
-	auto duration = duration_cast<microseconds>(stop - start);
-	OutputDebugStringA(std::to_string(duration.count()).c_str());
-	OutputDebugStringA("\n");*/
 }
 
 }

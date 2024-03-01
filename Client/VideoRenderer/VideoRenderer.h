@@ -2,37 +2,35 @@
  * VideoRenderer.h - Contains video renderer's header
  *
  * Author: Anton (ud) Golovkov, udattsk@gmail.com
- * Copyright (C), Infinity Video Soft LLC, 2014 - 2022
+ * Copyright (C), Infinity Video Soft LLC, 2014 - 2022, 2024
  */
 
 #pragma once
 
+#include "IVideoRenderer.h"
+
 #include <wui/control/i_control.hpp>
 #include <wui/control/image.hpp>
 
-#include <memory>
-
 #include <Transport/ISocket.h>
+#include <Transport/RTP/OwnedRTPPacket.h>
 
 #include <UI/DeviceNotifies.h>
 
 #include <spdlog/spdlog.h>
 
-#include <ippcc.h>
-#include <ippi.h>
-
-#include "IVideoRenderer.h"
-
 namespace VideoRenderer
 {
 
-class VideoRenderer : public wui::i_control, public std::enable_shared_from_this<VideoRenderer>, public IVideoRenderer, public Transport::ISocket
+class VideoRenderer : public wui::i_control, public std::enable_shared_from_this<VideoRenderer>, public IVideoRenderer
 {
 public:
 	VideoRenderer();
 	~VideoRenderer();
 
     void SetDeviceNotifyCallback(Client::DeviceNotifyCallback deviceNotifyCallback);
+
+    void SetResizeCallback(std::function<void(int32_t, int32_t)>);
 
     /// wui::i_control impl
     virtual void draw(wui::graphic &gr, const wui::rect &);
@@ -70,36 +68,23 @@ public:
     virtual Proto::DeviceType GetDeviceType();
 	virtual void Start(std::function<void(Transport::OwnedRTPPacket&)> rgbSource);
 	virtual void Stop();
-	virtual void SetResolution(Video::Resolution resolution = Video::rVGA);
-	virtual void SetMirrorVideo(bool yes);
-	virtual bool GetVideoMirrored() const;
 	virtual void SetSpeak(bool speak);
-
-	/// Impl of Transport::ISocket
-	virtual void Send(const Transport::IPacket &packet, const Transport::Address *address = nullptr) final;
 
 private:
     std::function<void(Transport::OwnedRTPPacket&)> rgbSource;
+
+    std::function<void(int32_t, int32_t)> resizeCallback;
 
     std::weak_ptr<wui::window> parent_;
     wui::rect position_;
     
 	bool showed_, runned;
 
-    int32_t bufferWidth, bufferHeight;
-
 	std::string name;
 	uint32_t id;
 	int64_t clientId;
 
     Proto::DeviceType deviceType;
-
-	Video::Resolution resolution;
-	bool mirror;
-	
-	IppiSize dstSz, prevSz;
-	std::unique_ptr<uint8_t[]> mirrorBuffer,
-		scaleBuffer, scaleInitBuffer, scaleSpecBuffer, scaleWorkBuffer;
 
 	bool nowSpeak;
 
@@ -108,11 +93,6 @@ private:
     wui::error err;
 
 	std::shared_ptr<spdlog::logger> sysLog, errLog;
-
-	void ResizeImage_C4R(const Ipp8u* pSrc, IppiSize srcSize, Ipp32s srcStep, Ipp8u* pDst, IppiSize dstSize, Ipp32s dstStep);
-
-	void CreateBuffers();
-	void DestroyBuffers();
 };
 
 }

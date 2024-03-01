@@ -49,7 +49,6 @@ namespace RendererSession
 		virtual void SetFrameRate(uint32_t rate) = 0;
 
 		virtual void SetMirrorVideo(bool yes) = 0;
-		virtual bool GetVideoMirrored() const = 0;
 
 		virtual void SetDecoderType(Video::CodecType dt) = 0;
 				

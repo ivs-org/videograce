@@ -4,10 +4,10 @@
  * Author: Anton (ud) Golovkov, udattsk@gmail.com
  * Copyright (C), Infinity Video Soft LLC, 2014 - 2024
  *
- *                                                                       ,-> [Decoder] -> [JitterBuffer] <-> [Renderer]
+ *                                                                       ,-> [Decoder] -> [Resizer] -> [JitterBuffer] <-> [VideoRenderer]
  * [NetSocket] -> [Decryptor] -> [vp8RTPCollector] -> [RecordSplitter] -<
- *                                                                       `-> [RecordBuffer]
- * 
+ *                                                            ^          `-> [Recorder]
+ *                                                            '- <- [Local Capturer]
  */
 
 #include <Common/Common.h>
@@ -22,6 +22,7 @@ RendererVideoSession::RendererVideoSession(Common::TimeMeter &timeMeter)
 	recorder(nullptr),
 	recordSplitter(),
 	jitterBuffer(timeMeter),
+	resizer(),
 	decoder(),
 	vp8RTPCollector(),
 	decryptor(),
@@ -44,13 +45,15 @@ RendererVideoSession::RendererVideoSession(Common::TimeMeter &timeMeter)
 	wsAddr(), accessToken(), wsDestAddr(),
 	sysLog(spdlog::get("System")), errLog(spdlog::get("Error"))
 {
+	renderer->SetResizeCallback(std::bind(&Video::Resizer::SetSize, &resizer, std::placeholders::_1, std::placeholders::_2));
 	rtpSocket.SetReceiver(&decryptor, nullptr);
 	wsmSocket.SetReceiver(&decryptor, nullptr);
 	decryptor.SetReceiver(&vp8RTPCollector);
 	vp8RTPCollector.SetReceiver(&recordSplitter);
 	recordSplitter.SetReceiver0(&decoder);
 	recordSplitter.SetReceiver1(nullptr);
-    decoder.SetReceiver(&jitterBuffer);
+    decoder.SetReceiver(&resizer);
+	resizer.SetReceiver(&jitterBuffer);
 	decoder.SetCallback(this);
 	jitterBuffer.SetSlowRenderingCallback(std::bind(&RendererVideoSession::SlowRenderingCallback, this));
 }
@@ -115,7 +118,7 @@ void RendererVideoSession::SetResolution(Video::Resolution resolution_)
 {
 	resolution = resolution_;
 
-	renderer->SetResolution(resolution);
+	resizer.SetResolution(resolution);
 
 	if (recorder)
 	{
@@ -146,12 +149,7 @@ void RendererVideoSession::SetFrameRate(uint32_t rate)
 
 void RendererVideoSession::SetMirrorVideo(bool yes)
 {
-	renderer->SetMirrorVideo(yes);
-}
-
-bool RendererVideoSession::GetVideoMirrored() const
-{
-	return renderer->GetVideoMirrored();
+	resizer.SetMirror(yes);
 }
 
 void RendererVideoSession::SetDecoderType(Video::CodecType dt)
@@ -223,6 +221,8 @@ void RendererVideoSession::Start(uint32_t receiverSSRC_, uint32_t authorSSRC_, u
 
 	renderer->Start(std::bind(&JB::JB::GetFrame, &jitterBuffer, std::placeholders::_1));
 
+	resizer.Start();
+
 	receiverSSRC = receiverSSRC_;
 	authorSSRC = authorSSRC_;
 	deviceId = deviceId_;
@@ -242,6 +242,16 @@ void RendererVideoSession::Start(uint32_t receiverSSRC_, uint32_t authorSSRC_, u
 
 	if (GetDeviceType() != Proto::DeviceType::Avatar)
 	{
+		jitterBuffer.Start(JB::Mode::video);
+		if (!jitterBuffer.IsStarted())
+		{
+			errLog->info("Can't start video renderer session because no memory to jitter buffer, client id: {0:d}, device id: {0:1}, receiver ssrc: {2:d}, author ssrc: {3:d}", clientId, deviceId, receiverSSRC, authorSSRC);
+			if (deviceNotifyCallback)
+			{
+				deviceNotifyCallback(name, Client::DeviceNotifyType::MemoryError, Proto::DeviceType::VideoRenderer, deviceId, 0);
+			}
+		}
+
 		decoder.Start(decoderType, Video::ColorSpace::RGB32);
 
 		if (!decoder.IsStarted())
@@ -291,6 +301,7 @@ void RendererVideoSession::Stop()
 	decryptor.Stop();
 	decoder.Stop();
 	renderer->Stop();
+	resizer.Stop();
 
 	if (recorder)
 	{
@@ -310,24 +321,12 @@ void RendererVideoSession::StartRemote()
 	{
 		wsmSocket.Start(wsAddr, accessToken, wsDestAddr);
 	}
-
-	jitterBuffer.Start(JB::Mode::video);
-	if (!jitterBuffer.IsStarted())
-	{
-		errLog->info("Can't start video renderer session because no memory to jitter buffer, client id: {0:d}, device id: {0:1}, receiver ssrc: {2:d}, author ssrc: {3:d}", clientId, deviceId, receiverSSRC, authorSSRC);
-		if (deviceNotifyCallback)
-		{
-            deviceNotifyCallback(name, Client::DeviceNotifyType::MemoryError, Proto::DeviceType::VideoRenderer, deviceId, 0);
-		}
-	}
 }
 
 void RendererVideoSession::StopRemote()
 {
 	rtpSocket.Stop();
 	wsmSocket.Stop();
-	
-	jitterBuffer.Stop();
 }
 
 void RendererVideoSession::Pause()

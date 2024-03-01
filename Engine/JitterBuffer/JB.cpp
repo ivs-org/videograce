@@ -134,7 +134,7 @@ void JB::GetFrame(Transport::OwnedRTPPacket& output)
     {
         output = std::move(*buffer.front());
 
-        if (buffer.size() > 1 && maxRxInterval <= buffer.size() * (packetDuration / 1000))
+        if (maxRxInterval <= buffer.size() * (packetDuration / 1000))
         {
             buffer.pop_front();
         }

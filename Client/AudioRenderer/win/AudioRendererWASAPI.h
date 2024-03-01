@@ -2,7 +2,7 @@
  * AudioRendererWASAPI.h - Contains audio renderer's header, based on WASAPI (for Vista+ systems)
  *
  * Author: Anton (ud) Golovkov, udattsk@gmail.com
- * Copyright (C), Infinity Video Soft LLC, 2019
+ * Copyright (C), Infinity Video Soft LLC, 2019, 2024
  */
 
 #pragma once

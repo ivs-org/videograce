@@ -6,8 +6,8 @@
  * 
  *                                                  ,-> [Decoder] -> [JitterBuffer] <-> [AudioMixer] <- [AudioRenderer]
  * [NetSocket] -> [Decryptor] -> [RecordSplitter] -<
- *                                                  `-> [RecordBuffer]
- * 
+ *                                       ^          `-> [Recorder]
+ *                                       '- <- [Local Capturer]
  */
 
 #include "RendererAudioSession.h"
@@ -113,7 +113,7 @@ bool RendererAudioSession::GetMy()
 
 Transport::ISocket* RendererAudioSession::GetDirectReceiver()
 {
-	return &decoder;
+	return &recordSplitter;
 }
 
 void RendererAudioSession::SetRTPParams(std::string_view recvFromAddr, uint16_t recvFromRTPPort)

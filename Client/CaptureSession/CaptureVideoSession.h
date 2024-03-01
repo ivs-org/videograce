@@ -2,7 +2,11 @@
  * CaptureVideoSession.h - Contains impl interface of capture video session
  *
  * Author: Anton (ud) Golovkov, udattsk@gmail.com
- * Copyright (C), Infinity Video Soft LLC, 2014
+ * Copyright (C), Infinity Video Soft LLC, 2014, 2024
+ * 
+ *                                                    ,-> [Encoder] -> [vp8RTPSplitter] -> [Encryptor] -> [NetSocket]
+ * [Camera] -> [Encoder] -> [LocalReceiverSplitter] -<
+ *                                                    '-> [LocalRenderer]
  */
 
 #pragma once

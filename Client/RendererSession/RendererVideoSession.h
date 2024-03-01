@@ -2,7 +2,12 @@
  * RendererVideoSession.h - Contains impl interface of renderer video session
  *
  * Author: Anton (ud) Golovkov, udattsk@gmail.com
- * Copyright (C), Infinity Video Soft LLC, 2014
+ * Copyright (C), Infinity Video Soft LLC, 2014, 2024
+ *  
+ *                                                                       ,-> [Decoder] -> [Resizer] -> [JitterBuffer] <-> [VideoRenderer]
+ * [NetSocket] -> [Decryptor] -> [vp8RTPCollector] -> [RecordSplitter] -<
+ *                                                            ^          `-> [Recorder]
+ *                                                            '- <- [Local Capturer] 
  */
 
 #pragma once
@@ -21,6 +26,7 @@
 
 #include <Video/VideoDecoder.h>
 #include <Video/VP8RTPCollector.h>
+#include <Video/Resizer.h>
 
 #include <VideoRenderer/VideoRenderer.h>
 
@@ -65,7 +71,6 @@ public:
 	virtual Video::Resolution GetResolution();
 	virtual void SetFrameRate(uint32_t rate);
 	virtual void SetMirrorVideo(bool yes);
-	virtual bool GetVideoMirrored() const;
 	virtual void SetDecoderType(Video::CodecType dt);
 	virtual void SetRTPParams(std::string_view recvFromAddr, uint16_t recvFromRTPPort);
 	virtual void SetWSMParams(std::string_view addr, std::string_view accessToken, std::string_view wsDestAddr);
@@ -111,6 +116,7 @@ private:
 	Recorder::Recorder *recorder;
 	Transport::SocketSplitter recordSplitter;
 	JB::JB jitterBuffer;
+	Video::Resizer resizer;
 	Video::Decoder decoder;
 	Video::VP8RTPCollector vp8RTPCollector;
 	Crypto::Decryptor decryptor;

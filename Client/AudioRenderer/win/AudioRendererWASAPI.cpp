@@ -1,8 +1,8 @@
 /**
- * AudioRenderer.cpp - Contains audio renderer's impl
+ * AudioRendererWASAPI.cpp - Contains Windows 7 audio renderer's impl
  *
  * Author: Anton (ud) Golovkov, udattsk@gmail.com
- * Copyright (C), Infinity Video Soft LLC, 2019
+ * Copyright (C), Infinity Video Soft LLC, 2019, 2024
  */
 
 #include <atlbase.h>

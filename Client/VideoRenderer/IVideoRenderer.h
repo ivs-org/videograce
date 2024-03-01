@@ -13,6 +13,7 @@
 
 #include <string>
 #include <cstdint>
+#include <functional>
 
 namespace VideoRenderer
 {
@@ -28,10 +29,6 @@ public:
 
 	virtual void Start(std::function<void(Transport::OwnedRTPPacket&)> rgbSource) = 0;
 	virtual void Stop() = 0;
-
-	virtual void SetResolution(Video::Resolution resolution = Video::rVGA) = 0;
-	virtual void SetMirrorVideo(bool yes) = 0;
-	virtual bool GetVideoMirrored() const = 0;
 
 	virtual void SetSpeak(bool speak) = 0;
 

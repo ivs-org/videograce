@@ -441,6 +441,7 @@
     <ClInclude Include="Video\IPacketLossCallback.h" />
     <ClInclude Include="Video\IVideoDecoder.h" />
     <ClInclude Include="Video\IVideoEncoder.h" />
+    <ClInclude Include="Video\Resizer.h" />
     <ClInclude Include="Video\Resolution.h" />
     <ClInclude Include="Video\SplittedPacketSize.h" />
     <ClInclude Include="Video\VideoDecoder.h" />
@@ -618,6 +619,7 @@
     <ClCompile Include="Transport\URI\URI.cpp" />
     <ClCompile Include="Transport\WSM\WSMSocket.cpp" />
     <ClCompile Include="Transport\WS\WebSocket.cpp" />
+    <ClCompile Include="Video\Resizer.cpp" />
     <ClCompile Include="Video\Resolution.cpp" />
     <ClCompile Include="Video\VideoDecoder.cpp" />
     <ClCompile Include="Video\VideoEncoder.cpp" />

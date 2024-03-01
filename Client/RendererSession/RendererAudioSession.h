@@ -6,8 +6,8 @@
  *  
  *                                                  ,-> [Decoder] -> [JitterBuffer] <-> [AudioMixer] <- [AudioRenderer]
  * [NetSocket] -> [Decryptor] -> [RecordSplitter] -<
- *                                                  `-> [RecordBuffer]
- * 
+ *                                       ^          `-> [Recorder]
+ *                                       '- <- [Local Capturer] 
  */
 
 #pragma once
