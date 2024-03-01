@@ -16,6 +16,8 @@
 #include "AudioRendererWASAPI.h"
 #include <Transport/RTP/RTPPacket.h>
 
+#include <mt/thread_priority.h>
+
 #define SUBTLE_TRACE 1
 #include <Common/Common.h>
 
@@ -180,7 +182,7 @@ void AudioRendererWASAPI::Start(int32_t sampleFreq_)
     	
 	hr = audioClient->Initialize(AUDCLNT_SHAREMODE_SHARED,
 		AUDCLNT_STREAMFLAGS_EVENTCALLBACK | AUDCLNT_STREAMFLAGS_NOPERSIST | AUDCLNT_STREAMFLAGS_AUTOCONVERTPCM | AUDCLNT_STREAMFLAGS_SRC_DEFAULT_QUALITY ,
-		80 * 10000, 0, &wfx, &guid);
+		20 * 10000, 0, &wfx, &guid);
 	CHECK_HR(hr, "audioClient->Initialize")
 
 	// Get the actual size (in sample frames) of each half of the circular audio buffer
@@ -241,6 +243,8 @@ void AudioRendererWASAPI::Start(int32_t sampleFreq_)
 
 	runned = true;
 	thread = std::thread(std::bind(&AudioRendererWASAPI::Play, this));
+
+	mt::set_thread_priority(thread, mt::priority_type::real_time);
 }
 
 void AudioRendererWASAPI::Stop()
@@ -303,6 +307,9 @@ uint16_t AudioRendererWASAPI::GetVolume()
 
 void AudioRendererWASAPI::Play()
 {
+	DWORD taskIndex = 0;
+	HANDLE hTask = AvSetMmThreadCharacteristics(L"Pro Audio", &taskIndex);
+
 	HANDLE waitArray[2] = { closeEvent, playReadyEvent };
 
 	using namespace std::chrono;
@@ -341,30 +348,22 @@ void AudioRendererWASAPI::Play()
 				CHECK_HR(hr, "audioClient->GetCurrentPadding")
 
 				uint32_t framesAvailable = bufferFrameCount - framesPadding;
-				if (framesAvailable > FRAMES_COUNT)
-				{
-					//subtle_trace("framesAvailable > FRAMES_COUNT: ", framesAvailable);
-					framesAvailable = FRAMES_COUNT;
-				}
-
+				uint32_t writeFrames = framesAvailable > FRAMES_COUNT ? FRAMES_COUNT : framesAvailable;
+				
 				BYTE* pData = nullptr;
-				hr = audioRenderClient->GetBuffer(framesAvailable, &pData);
+				hr = audioRenderClient->GetBuffer(writeFrames, &pData);
 				CHECK_HR(hr, "audioClient->GetBuffer")
 
-				memcpy(pData, packet.data, framesAvailable * 2);
+				memcpy(pData, packet.data, writeFrames * 2);
 
-				hr = audioRenderClient->ReleaseBuffer(framesAvailable, 0);
+				hr = audioRenderClient->ReleaseBuffer(writeFrames, 0);
 				CHECK_HR(hr, "audioRenderClient->ReleaseBuffer")
-
-				auto tail = FRAMES_COUNT - framesAvailable;
-				if (tail != 0)
-				{
-					subtle_trace("we have a tail: ", tail);
-				}
 			}
 			break;
 		}
 	}
+
+	AvRevertMmThreadCharacteristics(hTask);
 }
 
 std::vector<std::string> AudioRendererWASAPI::GetSoundRenderers()
