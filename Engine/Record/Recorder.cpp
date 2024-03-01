@@ -336,7 +336,7 @@ void Recorder::Send(const Transport::IPacket &packet_, const Transport::Address 
 				ts,
 				false);
 
-			ts += 20000000;
+			ts += 10000000;
 
 			if (!ok)
 			{
