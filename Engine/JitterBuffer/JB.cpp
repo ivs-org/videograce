@@ -36,12 +36,12 @@ JB::JB(Common::TimeMeter &timeMeter_)
     mutex(),
     buffer(),
 
-	packetDuration(10000),
+	frameDuration(10),
 	measureTime(0),
 	renderTime(0),
     overTimeCount(0),
 
-    prevRxTS(0), maxRxInterval(static_cast<uint32_t>(packetDuration / 1000)),
+    prevRxTS(0), maxRxInterval(frameDuration),
     stateRxTS(10.0), covarianceRxTS(0.1),
     checkTime(0),
 
@@ -62,15 +62,15 @@ void JB::Start(Mode mode_, std::string_view name_)
 	{
 		mode = mode_;
         name = name_;
-        packetDuration = (mode == Mode::sound ? 10000 : (packetDuration < 40000 ? 40000 : packetDuration));
+        frameDuration = (mode == Mode::sound ? 10 : (frameDuration < 40 ? 40 : frameDuration));
 
         renderTime = 0;
         overTimeCount = 0;
         prevSeq = 0;
 
         prevRxTS = static_cast<uint32_t>(timeMeter.Measure() / 1000);
-        maxRxInterval = static_cast<uint32_t>(packetDuration / 1000);
-        stateRxTS = (mode == Mode::sound ? 10.0 : 40.0);
+        maxRxInterval = frameDuration;
+        stateRxTS = frameDuration;
         covarianceRxTS = 0.1;
 
         checkTime = 0;
@@ -99,10 +99,10 @@ void JB::SetSlowRenderingCallback(std::function<void(void)> callback)
     slowRenderingCallback = callback;
 }
 
-void JB::SetFrameRate(uint32_t rate)
+void JB::SetFrameDuration(uint32_t ms)
 {
 	Stop();
-	packetDuration = (1000 / rate) * 1000;
+	frameDuration = ms;
 	Start(mode, name);
 }
 
@@ -126,7 +126,7 @@ void JB::Send(const Transport::IPacket &packet_, const Transport::Address *)
         }
         else
         {
-            sysLog->trace("{0}_JB[{1}] packet loss (prev_seq: {2}, current_seq: {3})", to_string(mode), name, prevSeq, packet.rtpHeader.seq);
+            sysLog->trace("{0}_JB[{1}] :: Packet loss (prev_seq: {2}, current_seq: {3})", to_string(mode), name, prevSeq, packet.rtpHeader.seq);
             prevRxTS = static_cast<uint32_t>(timeMeter.Measure() / 1000);
         }
 
@@ -142,19 +142,19 @@ void JB::GetFrame(Transport::OwnedRTPPacket& output)
     }
     
     std::lock_guard<std::mutex> lock(mutex);
-    if (checkTime == (packetDuration / 1000) * (mode == Mode::sound ? 600 : 150))
+    if (checkTime == frameDuration * (mode == Mode::sound ? 300 : 150))
     {
-        sysLog->trace("{0}_JB[{1}] clearing :: maxRxInterval: {2}, buffer size: {3}", to_string(mode), name, maxRxInterval, buffer.size());
+        sysLog->trace("{0}_JB[{1}] :: Check (rxInterval: {2}, buffer size: {3})", to_string(mode), name, maxRxInterval, buffer.size());
 
-        while (buffer.size() > 10 && maxRxInterval < buffer.size() * (packetDuration / 1000))
+        /*while (buffer.size() > 10 && maxRxInterval < buffer.size() * (frameDuration / 1000))
         {
             buffer.pop_front();
-        }
+        }*/
 
         checkTime = 0;
-        maxRxInterval = static_cast<uint32_t>(packetDuration / 1000);
+        //maxRxInterval = frameDuration;
     }
-    checkTime += static_cast<uint32_t>(packetDuration / 1000);
+    checkTime += frameDuration;
 
     if (!buffer.empty())
     {
@@ -164,18 +164,18 @@ void JB::GetFrame(Transport::OwnedRTPPacket& output)
             return buffer.pop_front();
         }
         
-        if (maxRxInterval > buffer.size() * (packetDuration / 1000))
+        if (maxRxInterval > buffer.size() * frameDuration)
         {
-            sysLog->trace("{0}_JB[{1}] buffering :: maxRxInterval: {2}, buffer size: {3}", to_string(mode), name, maxRxInterval, buffer.size());
+            sysLog->trace("{0}_JB[{1}] :: Buffering (rxInterval: {2}, buffer size: {3})", to_string(mode), name, maxRxInterval, buffer.size());
         }
         else
-        {    
+        {
             buffer.pop_front();
         }
     }
     else
     {
-        sysLog->trace("{0}_JB[{1}] empty :: maxRxInterval: {2}", to_string(mode), name, maxRxInterval);
+        sysLog->trace("{0}_JB[{1}] :: Empty (rxInterval: {2})", to_string(mode), name, maxRxInterval);
     }  
 }
 
@@ -189,9 +189,9 @@ void JB::GetFrame(Transport::OwnedRTPPacket& output)
         {
             std::lock_guard<std::mutex> lock(mutex);
 
-            if (checkTime == (packetDuration / 1000) * (mode == Mode::sound ? 300 : 150))
+            if (checkTime == (frameDuration / 1000) * (mode == Mode::sound ? 300 : 150))
             {
-                while (!buffer.empty() && maxRxInterval < buffer.size() * (packetDuration / 1000))
+                while (!buffer.empty() && maxRxInterval < buffer.size() * (frameDuration / 1000))
                 {
                     if (mode == Mode::video)
                     {
@@ -208,11 +208,11 @@ void JB::GetFrame(Transport::OwnedRTPPacket& output)
                 }
 
                 checkTime = 0;
-                maxRxInterval = static_cast<uint32_t>(packetDuration / 1000);
+                maxRxInterval = static_cast<uint32_t>(frameDuration / 1000);
             }
-            checkTime += static_cast<uint32_t>(packetDuration / 1000);
+            checkTime += static_cast<uint32_t>(frameDuration / 1000);
 
-            if (!buffer.empty() && maxRxInterval < buffer.size() * (packetDuration / 1000))
+            if (!buffer.empty() && maxRxInterval < buffer.size() * (frameDuration / 1000))
             {
                 packet = buffer.front();
                 buffer.pop_front();
@@ -247,7 +247,7 @@ void JB::GetFrame(Transport::OwnedRTPPacket& output)
 		
 		renderTime = timeMeter.Measure() - sendTime;
 
-		if (renderTime > packetDuration + 5000)
+		if (renderTime > frameDuration + 5000)
 		{
 			++overTimeCount;
 		}
@@ -266,7 +266,7 @@ void JB::GetFrame(Transport::OwnedRTPPacket& output)
 		}
 
         auto workDuration = timeMeter.Measure();
-        if (packetDuration > workDuration) Common::ShortSleep(packetDuration - workDuration - 1000);
+        if (frameDuration > workDuration) Common::ShortSleep(frameDuration - workDuration - 1000);
 	}
 }*/
 
@@ -279,13 +279,9 @@ void JB::CalcJitter(const Transport::RTPPacket::RTPHeader &header)
 
     auto correctedInterval = KalmanCorrectRxTS(interarrivalTime);
 
-    if (maxRxInterval < correctedInterval)
+    //if (maxRxInterval < correctedInterval)
     {
-        maxRxInterval = round((double)correctedInterval / 10) * 10; // rounded up to a whole packet (10 ms)
-        if (maxRxInterval > correctedInterval)
-        {
-            maxRxInterval = correctedInterval;
-        }
+        maxRxInterval = correctedInterval;
     }
 }
 

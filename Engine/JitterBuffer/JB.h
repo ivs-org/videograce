@@ -39,7 +39,7 @@ public:
 	JB(Common::TimeMeter &timeMeter);
 	~JB();
 
-    void SetFrameRate(uint32_t rate);
+    void SetFrameDuration(uint32_t ms);
 
 	void Start(Mode mode, std::string_view name);
 	void Stop();
@@ -64,7 +64,7 @@ private:
     std::mutex mutex;
     std::deque<std::shared_ptr<Transport::OwnedRTPPacket>> buffer;
 
-	uint64_t packetDuration;
+	uint32_t frameDuration;
 
     uint64_t measureTime;
 	uint64_t renderTime;

@@ -143,7 +143,7 @@ void RendererVideoSession::SetFrameRate(uint32_t rate)
 	if (frameRate != rate)
 	{
 		frameRate = rate;
-		jitterBuffer.SetFrameRate(rate);
+		jitterBuffer.SetFrameDuration(1000 / rate);
 	}
 }
 
@@ -446,7 +446,7 @@ void RendererVideoSession::SetRemoteFrameRate(uint32_t rate)
 	{
 		localCVS->SetFrameRate(rate);
 	}
-	jitterBuffer.SetFrameRate(rate);
+	jitterBuffer.SetFrameDuration(1000 / rate);
 }
 
 void RendererVideoSession::SlowRenderingCallback()
