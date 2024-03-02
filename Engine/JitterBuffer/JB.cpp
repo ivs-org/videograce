@@ -146,10 +146,10 @@ void JB::GetFrame(Transport::OwnedRTPPacket& output)
     {
         sysLog->trace("{0}_JB[{1}] :: Check (rxInterval: {2}, buffer size: {3})", to_string(mode), name, maxRxInterval, buffer.size());
 
-        /*while (buffer.size() > 10 && maxRxInterval < buffer.size() * (frameDuration / 1000))
+        while (buffer.size() > 10) // && maxRxInterval < buffer.size() * frameDuration)
         {
             buffer.pop_front();
-        }*/
+        }
 
         checkTime = 0;
         //maxRxInterval = frameDuration;
@@ -158,24 +158,20 @@ void JB::GetFrame(Transport::OwnedRTPPacket& output)
 
     if (!buffer.empty())
     {
-        output = std::move(*buffer.front());
-        if (mode == Mode::local)
+        if (mode == Mode::local ||
+            maxRxInterval < buffer.size() * frameDuration)
         {
-            return buffer.pop_front();
-        }
-        
-        if (maxRxInterval > buffer.size() * frameDuration)
-        {
-            sysLog->trace("{0}_JB[{1}] :: Buffering (rxInterval: {2}, buffer size: {3})", to_string(mode), name, maxRxInterval, buffer.size());
+            output = std::move(*buffer.front());
+            buffer.pop_front();
         }
         else
         {
-            buffer.pop_front();
+            sysLog->trace("{0}_JB[{1}] :: Buffering (rxInterval: {2}, buffer size: {3})", to_string(mode), name, maxRxInterval, buffer.size());
         }
     }
     else
     {
-        sysLog->trace("{0}_JB[{1}] :: Empty (rxInterval: {2})", to_string(mode), name, maxRxInterval);
+        sysLog->warn("{0}_JB[{1}] :: Empty (rxInterval: {2})", to_string(mode), name, maxRxInterval);
     }  
 }
 

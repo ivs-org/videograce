@@ -2,7 +2,7 @@
  * JitterBuffer.h - Contains the jitter buffer's header
  *
  * Author: Anton (ud) Golovkov, udattsk@gmail.com
- * Copyright (C), Infinity Video Soft LLC, 2018
+ * Copyright (C), Infinity Video Soft LLC, 2018, 2024
  */
 
 #pragma once

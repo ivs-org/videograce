@@ -156,7 +156,7 @@ bool VP8DecoderImpl::IsStarted()
 
 void VP8DecoderImpl::DecodeRGB32(const uint8_t *data, uint32_t length, const Transport::RTPPacket::RTPHeader& header)
 {
-	if (vpx_codec_decode(&codec, data, length, NULL, 0) != VPX_CODEC_OK)
+	if (!runned || vpx_codec_decode(&codec, data, length, NULL, 0) != VPX_CODEC_OK)
 	{
 		DieCodec(&codec, "vp8 decoder failed to decode frame");
 		return;
@@ -165,7 +165,7 @@ void VP8DecoderImpl::DecodeRGB32(const uint8_t *data, uint32_t length, const Tra
 	vpx_image_t *img = NULL;
 	vpx_codec_iter_t iter = NULL;
 
-	while ((img = vpx_codec_get_frame(&codec, &iter)))
+	while (runned && (img = vpx_codec_get_frame(&codec, &iter)))
 	{
 		if (bufferSize < img->d_w * img->d_h * colorQuantizer)
 		{
@@ -187,7 +187,7 @@ void VP8DecoderImpl::DecodeRGB32(const uint8_t *data, uint32_t length, const Tra
 
 void VP8DecoderImpl::DecodeRGB24(const uint8_t *data, uint32_t length, const Transport::RTPPacket::RTPHeader& header)
 {
-	if (vpx_codec_decode(&codec, data, length, NULL, 0) != VPX_CODEC_OK)
+	if (!runned || vpx_codec_decode(&codec, data, length, NULL, 0) != VPX_CODEC_OK)
 	{
 		DieCodec(&codec, "vp8 decoder failed to decode frame");
 		return;
@@ -196,7 +196,7 @@ void VP8DecoderImpl::DecodeRGB24(const uint8_t *data, uint32_t length, const Tra
 	vpx_image_t *img = NULL;
 	vpx_codec_iter_t iter = NULL;
 
-	while ((img = vpx_codec_get_frame(&codec, &iter)))
+	while (runned && (img = vpx_codec_get_frame(&codec, &iter)))
 	{
 		if (bufferSize < img->d_w * img->d_h * colorQuantizer)
 		{
@@ -219,7 +219,7 @@ void VP8DecoderImpl::DecodeRGB24(const uint8_t *data, uint32_t length, const Tra
 
 void VP8DecoderImpl::DecodeI420(const uint8_t *data, uint32_t length, const Transport::RTPPacket::RTPHeader& header)
 {
-	if (vpx_codec_decode(&codec, data, length, NULL, 0) != VPX_CODEC_OK)
+	if (!runned || vpx_codec_decode(&codec, data, length, NULL, 0) != VPX_CODEC_OK)
 	{
 		DieCodec(&codec, "vp8 decoder failed to decode frame");
 		return;
@@ -228,7 +228,7 @@ void VP8DecoderImpl::DecodeI420(const uint8_t *data, uint32_t length, const Tran
 	vpx_image_t *img = NULL;
 	vpx_codec_iter_t iter = NULL;
 
-	while ((img = vpx_codec_get_frame(&codec, &iter)))
+	while (runned && (img = vpx_codec_get_frame(&codec, &iter)))
 	{
 		if (bufferSize < img->d_w * img->d_h * colorQuantizer)
 		{
