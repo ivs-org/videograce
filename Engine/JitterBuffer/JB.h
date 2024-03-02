@@ -73,6 +73,8 @@ private:
     uint32_t prevRxTS, maxRxInterval;
     double stateRxTS, covarianceRxTS;
     uint32_t checkTime;
+
+    uint16_t prevSeq;
  
     std::shared_ptr<spdlog::logger> sysLog, errLog;
 

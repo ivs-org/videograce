@@ -11,6 +11,7 @@
 
 #include <Audio/IAudioDecoder.h>
 #include <Transport/ISocket.h>
+#include <Transport/RTP/RTPPacket.h>
 
 #include <opus/opus.h>
 
@@ -47,6 +48,6 @@ namespace Audio
 
 		OpusDecoder *opusDecoder;
 		
-		void DecodeFrame(const uint8_t *data, uint32_t length, uint32_t timeStamp, uint32_t ssrc);
+		void DecodeFrame(const uint8_t *data, uint32_t length, const Transport::RTPPacket::RTPHeader &);
 	};
 }

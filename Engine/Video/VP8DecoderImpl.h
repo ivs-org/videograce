@@ -11,6 +11,7 @@
 
 #include <Video/IVideoDecoder.h>
 #include <Transport/ISocket.h>
+#include <Transport/RTP/RTPPacket.h>
 
 #include <vpx/vpx_decoder.h>
 #include <vpx/vp8dx.h>
@@ -56,9 +57,9 @@ namespace Video
 		vpx_codec_ctx_t      codec;
 		vpx_codec_dec_cfg_t  cfg;
 
-		void DecodeRGB32(const uint8_t *data, uint32_t length, uint32_t seq);
-		void DecodeRGB24(const uint8_t *data, uint32_t length, uint32_t seq);
-		void DecodeI420(const uint8_t *data, uint32_t length, uint32_t seq);
+		void DecodeRGB32(const uint8_t *data, uint32_t length, const Transport::RTPPacket::RTPHeader&);
+		void DecodeRGB24(const uint8_t *data, uint32_t length, const Transport::RTPPacket::RTPHeader&);
+		void DecodeI420(const uint8_t *data, uint32_t length, const Transport::RTPPacket::RTPHeader&);
 
 		void ForceKeyFrame(uint32_t seq, uint32_t ts);
 

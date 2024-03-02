@@ -13,8 +13,7 @@ namespace Video
 {
 
 Encoder::Encoder()
-	: mutex(),
-	impl(),
+	: impl(),
 	receiver(nullptr),
 	type(CodecType::Undefined),
 	resolution(Video::rHD),
@@ -31,8 +30,6 @@ Encoder::~Encoder()
 
 void Encoder::SetReceiver(Transport::ISocket *receiver_)
 {
-	std::lock_guard<std::recursive_mutex> lock(mutex);
-
 	receiver = receiver_;
 	if (impl)
 	{
@@ -42,8 +39,6 @@ void Encoder::SetReceiver(Transport::ISocket *receiver_)
 
 void Encoder::SetResolution(Resolution resolution_)
 {
-	std::lock_guard<std::recursive_mutex> lock(mutex);
-
 	resolution = resolution_;
 	if (impl)
 	{
@@ -53,8 +48,6 @@ void Encoder::SetResolution(Resolution resolution_)
 
 void Encoder::SetBitrate(int bitrate_)
 {
-	std::lock_guard<std::recursive_mutex> lock(mutex);
-
 	bitrate = bitrate_;
 	if (impl)
 	{
@@ -64,8 +57,6 @@ void Encoder::SetBitrate(int bitrate_)
 
 void Encoder::SetScreenContent(bool yes)
 {
-	std::lock_guard<std::recursive_mutex> lock(mutex);
-
 	screenContent = yes;
 	if (impl)
 	{
@@ -80,8 +71,6 @@ int Encoder::GetBitrate()
 
 void Encoder::Start(CodecType type_, uint32_t ssrc)
 {
-	std::lock_guard<std::recursive_mutex> lock(mutex);
-
 	forceKFSeq = 0;
 
 	if (!impl)
@@ -92,7 +81,7 @@ void Encoder::Start(CodecType type_, uint32_t ssrc)
 		{
 			case CodecType::VP8:
 			{
-				impl = std::unique_ptr<IEncoder>(new VP8EncoderImpl());
+				impl = std::make_unique<VP8EncoderImpl>();
 			}
 			break;
 			case CodecType::H264:
@@ -122,15 +111,11 @@ void Encoder::Start(CodecType type_, uint32_t ssrc)
 
 void Encoder::Stop()
 {
-	std::lock_guard<std::recursive_mutex> lock(mutex);
-
 	impl.reset(nullptr);
 }
 
 bool Encoder::IsStarted()
 {
-	std::lock_guard<std::recursive_mutex> lock(mutex);
-
 	if (impl)
 	{
 		return impl->IsStarted();
@@ -140,8 +125,6 @@ bool Encoder::IsStarted()
 
 void Encoder::ForceKeyFrame(uint32_t lastRecvSeq)
 {
-	std::lock_guard<std::recursive_mutex> lock(mutex);
-	
 	if (lastRecvSeq == 0 || forceKFSeq != lastRecvSeq)
 	{
 		forceKFSeq = lastRecvSeq;
@@ -155,8 +138,6 @@ void Encoder::ForceKeyFrame(uint32_t lastRecvSeq)
 
 void Encoder::Send(const Transport::IPacket &packet_, const Transport::Address *)
 {
-	std::lock_guard<std::recursive_mutex> lock(mutex);
-
 	if (impl)
 	{
 		switch (type)

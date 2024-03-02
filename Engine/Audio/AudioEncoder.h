@@ -8,7 +8,6 @@
 #pragma once
 
 #include <memory>
-#include <mutex>
 
 #include <Audio/IAudioEncoder.h>
 #include <Transport/ISocket.h>
@@ -36,8 +35,6 @@ public:
 	virtual void Send(const Transport::IPacket &packet, const Transport::Address *address = nullptr) final;
 
 private:
-	mutable std::mutex mutex;
-
 	std::unique_ptr<IEncoder> impl;
 	Transport::ISocket *receiver;
 

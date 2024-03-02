@@ -22,6 +22,7 @@ const char* to_string(Mode mode)
     case Mode::sound: return "Sound";
     case Mode::video: return "Video";
     }
+    return "";
 }
 
 JB::JB(Common::TimeMeter &timeMeter_)
@@ -44,6 +45,8 @@ JB::JB(Common::TimeMeter &timeMeter_)
     stateRxTS(10.0), covarianceRxTS(0.1),
     checkTime(0),
 
+    prevSeq(0),
+
     sysLog(spdlog::get("System")), errLog(spdlog::get("Error"))
 {
 }
@@ -63,6 +66,7 @@ void JB::Start(Mode mode_, std::string_view name_)
 
         renderTime = 0;
         overTimeCount = 0;
+        prevSeq = 0;
 
         prevRxTS = static_cast<uint32_t>(timeMeter.Measure() / 1000);
         maxRxInterval = static_cast<uint32_t>(packetDuration / 1000);
@@ -116,7 +120,17 @@ void JB::Send(const Transport::IPacket &packet_, const Transport::Address *)
         std::lock_guard<std::mutex> lock(mutex);
         buffer.push_back(rtpPacket);
 
-        CalcJitter(packet.rtpHeader);
+        if (packet.rtpHeader.seq - 1 == prevSeq) /// Don't calc jitter on loses
+        {
+            CalcJitter(packet.rtpHeader);
+        }
+        else
+        {
+            sysLog->trace("{0}_JB[{1}] packet loss (prev_seq: {2}, current_seq: {3})", to_string(mode), name, prevSeq, packet.rtpHeader.seq);
+            prevRxTS = static_cast<uint32_t>(timeMeter.Measure() / 1000);
+        }
+
+        prevSeq = packet.rtpHeader.seq;
 	}
 }
 
@@ -149,14 +163,14 @@ void JB::GetFrame(Transport::OwnedRTPPacket& output)
         {
             return buffer.pop_front();
         }
-
-        if (round((double)maxRxInterval/10) * 10 <= buffer.size() * (packetDuration / 1000))
-        {
-            buffer.pop_front();
-        }
-        else
+        
+        if (maxRxInterval > buffer.size() * (packetDuration / 1000))
         {
             sysLog->trace("{0}_JB[{1}] buffering :: maxRxInterval: {2}, buffer size: {3}", to_string(mode), name, maxRxInterval, buffer.size());
+        }
+        else
+        {    
+            buffer.pop_front();
         }
     }
     else
@@ -267,7 +281,11 @@ void JB::CalcJitter(const Transport::RTPPacket::RTPHeader &header)
 
     if (maxRxInterval < correctedInterval)
     {
-        maxRxInterval = correctedInterval;
+        maxRxInterval = round((double)correctedInterval / 10) * 10; // rounded up to a whole packet (10 ms)
+        if (maxRxInterval > correctedInterval)
+        {
+            maxRxInterval = correctedInterval;
+        }
     }
 }
 

@@ -12,8 +12,7 @@ namespace Audio
 {
 
 Decoder::Decoder()
-	: mutex(),
-	impl(),
+	: impl(),
 	receiver(nullptr),
 	type(CodecType::Undefined),
 	sampleFreq(48000),
@@ -37,8 +36,6 @@ void Decoder::SetReceiver(Transport::ISocket *receiver_)
 
 bool Decoder::SetSampleFreq(int val)
 {
-	std::lock_guard<std::mutex> lock(mutex);
-
 	sampleFreq = val;
 	if (impl)
 	{
@@ -49,8 +46,6 @@ bool Decoder::SetSampleFreq(int val)
 
 bool Decoder::SetChannelsCount(int val)
 {
-	std::lock_guard<std::mutex> lock(mutex);
-
 	channels = val;
 	if (impl)
 	{
@@ -61,8 +56,6 @@ bool Decoder::SetChannelsCount(int val)
 
 void Decoder::Start(CodecType type_)
 {
-	std::lock_guard<std::mutex> lock(mutex);
-
 	if (!impl)
 	{
 		type = type_;
@@ -90,15 +83,11 @@ void Decoder::Start(CodecType type_)
 
 void Decoder::Stop()
 {
-	std::lock_guard<std::mutex> lock(mutex);
-
 	impl.reset(nullptr);
 }
 
 bool Decoder::IsStarted()
 {
-	std::lock_guard<std::mutex> lock(mutex);
-
 	if (impl)
 	{
 		return impl->IsStarted();
@@ -108,8 +97,6 @@ bool Decoder::IsStarted()
 
 void Decoder::Send(const Transport::IPacket &packet, const Transport::Address *)
 {
-	std::lock_guard<std::mutex> lock(mutex);
-
 	if (impl)
 	{
 		switch (type)

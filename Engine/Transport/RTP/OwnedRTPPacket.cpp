@@ -79,4 +79,27 @@ OwnedRTPPacket& OwnedRTPPacket::operator=(OwnedRTPPacket&& other) noexcept
     return *this;
 }
 
+OwnedRTPPacket& OwnedRTPPacket::operator=(OwnedRTPPacket& other) noexcept
+{
+    // Guard self assignment
+    if (this == &other)
+        return *this;
+
+    if (other.data)
+    {
+        if (size != other.size)
+        {
+            delete[] data;
+            data = new (std::nothrow) uint8_t[other.size];
+        }
+        memcpy(data, other.data, other.size);
+    }
+    size = other.size;
+    header = other.header;
+    payload_ms = other.payload_ms;
+    payload_type = other.payload_type;
+
+    return *this;
+}
+
 }

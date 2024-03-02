@@ -8,7 +8,6 @@
 #pragma once
 
 #include <memory>
-#include <mutex>
 
 #include <Video/IVideoDecoder.h>
 #include <Transport/ISocket.h>
@@ -33,8 +32,6 @@ namespace Video
 		virtual void Send(const Transport::IPacket &packet, const Transport::Address *address = nullptr) final;
 
 	private:
-		std::mutex mutex;
-
 		std::unique_ptr<IDecoder> impl;
 		Transport::ISocket *receiver;
 		IPacketLossCallback *callback;

@@ -154,7 +154,7 @@ bool VP8DecoderImpl::IsStarted()
 	return runned;
 }
 
-void VP8DecoderImpl::DecodeRGB32(const uint8_t *data, uint32_t length, uint32_t seq)
+void VP8DecoderImpl::DecodeRGB32(const uint8_t *data, uint32_t length, const Transport::RTPPacket::RTPHeader& header)
 {
 	if (vpx_codec_decode(&codec, data, length, NULL, 0) != VPX_CODEC_OK)
 	{
@@ -178,14 +178,14 @@ void VP8DecoderImpl::DecodeRGB32(const uint8_t *data, uint32_t length, uint32_t 
 		ippiYCbCr420ToBGR_8u_P3C4R(src, srcStep, produceBuffer.get(), img->d_w * 4, sz, 255);
 		
 		Transport::RTPPacket packet;
-		packet.rtpHeader.seq = seq;
+		packet.rtpHeader = header;
 		packet.payload = produceBuffer.get();
 		packet.payloadSize = img->d_w * img->d_h * 4;
 		receiver->Send(packet);
 	}
 }
 
-void VP8DecoderImpl::DecodeRGB24(const uint8_t *data, uint32_t length, uint32_t seq)
+void VP8DecoderImpl::DecodeRGB24(const uint8_t *data, uint32_t length, const Transport::RTPPacket::RTPHeader& header)
 {
 	if (vpx_codec_decode(&codec, data, length, NULL, 0) != VPX_CODEC_OK)
 	{
@@ -210,14 +210,14 @@ void VP8DecoderImpl::DecodeRGB24(const uint8_t *data, uint32_t length, uint32_t 
 		ippiYCbCr420ToRGB_8u_P3C3R(src, srcStep, produceBuffer.get(), img->d_w * 3, sz);
 		
 		Transport::RTPPacket packet;
-		packet.rtpHeader.seq = seq;
+		packet.rtpHeader = header;
 		packet.payload = produceBuffer.get();
 		packet.payloadSize = img->d_w * img->d_h * 3;
 		receiver->Send(packet);
 	}
 }
 
-void VP8DecoderImpl::DecodeI420(const uint8_t *data, uint32_t length, uint32_t seq)
+void VP8DecoderImpl::DecodeI420(const uint8_t *data, uint32_t length, const Transport::RTPPacket::RTPHeader& header)
 {
 	if (vpx_codec_decode(&codec, data, length, NULL, 0) != VPX_CODEC_OK)
 	{
@@ -253,7 +253,7 @@ void VP8DecoderImpl::DecodeI420(const uint8_t *data, uint32_t length, uint32_t s
 		}
 
 		Transport::RTPPacket packet;
-		packet.rtpHeader.seq = seq;
+		packet.rtpHeader = header;
 		packet.payload = produceBuffer.get();
 		packet.payloadSize = outframeSize;
 		receiver->Send(packet);
@@ -304,13 +304,13 @@ void VP8DecoderImpl::Send(const Transport::IPacket &packet_, const Transport::Ad
 	switch (outputType)
 	{
 		case Video::ColorSpace::I420:
-			DecodeI420(packet.payload, packet.payloadSize, packet.rtpHeader.seq);
+			DecodeI420(packet.payload, packet.payloadSize, packet.rtpHeader);
 		break;
 		case Video::ColorSpace::RGB24:
-			DecodeRGB24(packet.payload, packet.payloadSize, packet.rtpHeader.seq);
+			DecodeRGB24(packet.payload, packet.payloadSize, packet.rtpHeader);
 		break;
 		case Video::ColorSpace::RGB32:
-			DecodeRGB32(packet.payload, packet.payloadSize, packet.rtpHeader.seq);
+			DecodeRGB32(packet.payload, packet.payloadSize, packet.rtpHeader);
 		break;
 		default:
 		break;

@@ -9,7 +9,6 @@
 
 #include <Common/Common.h>
 
-#include <Transport/RTP/RTPPacket.h>
 #include <Transport/RTP/RTPPayloadType.h>
 
 namespace Audio
@@ -112,18 +111,16 @@ bool OpusDecoderImpl::IsStarted()
 	return runned;
 }
 
-void OpusDecoderImpl::DecodeFrame(const uint8_t *data, uint32_t length, uint32_t timeStamp, uint32_t ssrc)
+void OpusDecoderImpl::DecodeFrame(const uint8_t *data, uint32_t length, const Transport::RTPPacket::RTPHeader &header)
 {
-	int frame_size = (sample_freq / 100) * channels * 4;
+	int frame_size = (sample_freq / 100) * channels * 2;
 	int outframeSize = opus_decode(opusDecoder, data, length, reinterpret_cast<opus_int16*>(produceBuffer.get()), frame_size, 0);
 
 	if (outframeSize > 0)
 	{
 		Transport::RTPPacket packet;
 
-		packet.rtpHeader.ts = timeStamp;
-		packet.rtpHeader.ssrc = ssrc;
-		packet.rtpHeader.pt = static_cast<uint8_t>(Transport::RTPPayloadType::ptPCM);
+		packet.rtpHeader = header;
 		packet.payload = produceBuffer.get();
 		packet.payloadSize = outframeSize * channels * sizeof(opus_int16);
 
@@ -141,11 +138,12 @@ void OpusDecoderImpl::Send(const Transport::IPacket &packet_, const Transport::A
 
 	while (lastSeq != 0 && packet.rtpHeader.seq > lastSeq + 1) // we have a packet loss
 	{
-		DecodeFrame(nullptr, 0, 0, packet.rtpHeader.ssrc);
+		DecodeFrame(nullptr, 0, packet.rtpHeader);
+
 		++lastSeq;
 	}
 
-	DecodeFrame(packet.payload, packet.payloadSize, packet.rtpHeader.ts, packet.rtpHeader.ssrc);
+	DecodeFrame(packet.payload, packet.payloadSize, packet.rtpHeader);
 
 	lastSeq = packet.rtpHeader.seq;
 }
