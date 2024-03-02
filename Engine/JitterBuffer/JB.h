@@ -70,7 +70,7 @@ private:
 	uint64_t renderTime;
     int32_t overTimeCount;
 
-    uint32_t prevRxTS, maxRxInterval;
+    uint32_t prevRxTS, rxInterval;
     double stateRxTS, covarianceRxTS;
     uint32_t checkTime;
 

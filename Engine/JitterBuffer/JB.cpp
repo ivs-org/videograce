@@ -41,7 +41,7 @@ JB::JB(Common::TimeMeter &timeMeter_)
 	renderTime(0),
     overTimeCount(0),
 
-    prevRxTS(0), maxRxInterval(frameDuration),
+    prevRxTS(0), rxInterval(frameDuration),
     stateRxTS(10.0), covarianceRxTS(0.1),
     checkTime(0),
 
@@ -69,7 +69,7 @@ void JB::Start(Mode mode_, std::string_view name_)
         prevSeq = 0;
 
         prevRxTS = static_cast<uint32_t>(timeMeter.Measure() / 1000);
-        maxRxInterval = frameDuration;
+        rxInterval = frameDuration;
         stateRxTS = frameDuration;
         covarianceRxTS = 0.1;
 
@@ -144,127 +144,35 @@ void JB::GetFrame(Transport::OwnedRTPPacket& output)
     std::lock_guard<std::mutex> lock(mutex);
     if (checkTime == frameDuration * (mode == Mode::sound ? 300 : 150))
     {
-        sysLog->trace("{0}_JB[{1}] :: Check (rxInterval: {2}, buffer size: {3})", to_string(mode), name, maxRxInterval, buffer.size());
+        sysLog->trace("{0}_JB[{1}] :: Check (rxInterval: {2}, buffer size: {3})", to_string(mode), name, rxInterval, buffer.size());
 
-        while (buffer.size() > 10) // && maxRxInterval < buffer.size() * frameDuration)
+        /*while (buffer.size() > 1 && rxInterval > buffer.size() * frameDuration * 3) /// Prevent big delay
         {
             buffer.pop_front();
-        }
+        }*/
 
         checkTime = 0;
-        //maxRxInterval = frameDuration;
     }
     checkTime += frameDuration;
 
     if (!buffer.empty())
     {
         if (mode == Mode::local ||
-            maxRxInterval < buffer.size() * frameDuration)
+            rxInterval < buffer.size() * frameDuration)
         {
             output = std::move(*buffer.front());
             buffer.pop_front();
         }
         else
         {
-            sysLog->trace("{0}_JB[{1}] :: Buffering (rxInterval: {2}, buffer size: {3})", to_string(mode), name, maxRxInterval, buffer.size());
+            sysLog->trace("{0}_JB[{1}] :: Buffering (rxInterval: {2}, buffer size: {3})", to_string(mode), name, rxInterval, buffer.size());
         }
     }
     else
     {
-        sysLog->warn("{0}_JB[{1}] :: Empty (rxInterval: {2})", to_string(mode), name, maxRxInterval);
+        sysLog->warn("{0}_JB[{1}] :: Empty (rxInterval: {2})", to_string(mode), name, rxInterval);
     }  
 }
-
-/*void JB::run()
-{
-	while (runned)
-	{
-		auto startTime = timeMeter.Measure();
-                
-        std::shared_ptr<Transport::OwnedRTPPacket> packet;
-        {
-            std::lock_guard<std::mutex> lock(mutex);
-
-            if (checkTime == (frameDuration / 1000) * (mode == Mode::sound ? 300 : 150))
-            {
-                while (!buffer.empty() && maxRxInterval < buffer.size() * (frameDuration / 1000))
-                {
-                    if (mode == Mode::video)
-                    {
-                        packet = buffer.front();
-
-                        Transport::RTPPacket outputPacket;
-                        outputPacket.rtpHeader = packet->header;
-                        outputPacket.payload = packet->data;
-                        outputPacket.payloadSize = packet->size;
-                        receiver.Send(outputPacket);
-                    }
-                    
-                    buffer.pop_front();
-                }
-
-                checkTime = 0;
-                maxRxInterval = static_cast<uint32_t>(frameDuration / 1000);
-            }
-            checkTime += static_cast<uint32_t>(frameDuration / 1000);
-
-            if (!buffer.empty() && maxRxInterval < buffer.size() * (frameDuration / 1000))
-            {
-                packet = buffer.front();
-                buffer.pop_front();
-            }
-            else
-            {
-                sysLog->trace("JB buffering :: maxRxInterval: {0}", maxRxInterval);
-                if (mode == Mode::sound)
-                {
-                    packet = std::shared_ptr<Transport::OwnedRTPPacket>(new Transport::OwnedRTPPacket(
-                        {},
-                        0,
-                        0,
-                        Transport::RTPPayloadType::ptOpus)); // Send empty frames to the codec so it knows about lost frames
-                }
-                else
-                {
-                    continue;
-                }
-            }
-        }
-
-		auto sendTime = timeMeter.Measure();
-        
-        Transport::RTPPacket outputPacket;
-		outputPacket.rtpHeader = packet->header;
-		outputPacket.payload = packet->data;
-		outputPacket.payloadSize = packet->size;
-		receiver.Send(outputPacket);
-
-        packet.reset();
-		
-		renderTime = timeMeter.Measure() - sendTime;
-
-		if (renderTime > frameDuration + 5000)
-		{
-			++overTimeCount;
-		}
-		else if (overTimeCount > 0)
-		{
-			--overTimeCount;
-		}
-		if (overTimeCount == 100)
-		{
-			overTimeCount = 10000; // prevent duplicates
-
-            if (slowRenderingCallback)
-            {
-                slowRenderingCallback();
-            }
-		}
-
-        auto workDuration = timeMeter.Measure();
-        if (frameDuration > workDuration) Common::ShortSleep(frameDuration - workDuration - 1000);
-	}
-}*/
 
 void JB::CalcJitter(const Transport::RTPPacket::RTPHeader &header)
 {
@@ -273,12 +181,7 @@ void JB::CalcJitter(const Transport::RTPPacket::RTPHeader &header)
 
     prevRxTS = currentTime;
 
-    auto correctedInterval = KalmanCorrectRxTS(interarrivalTime);
-
-    //if (maxRxInterval < correctedInterval)
-    {
-        maxRxInterval = correctedInterval;
-    }
+    rxInterval = KalmanCorrectRxTS(interarrivalTime);
 }
 
 uint32_t JB::KalmanCorrectRxTS(uint32_t data)
