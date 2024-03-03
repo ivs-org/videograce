@@ -67,8 +67,6 @@ AudioRendererWASAPI::AudioRendererWASAPI(std::function<void(Transport::OwnedRTPP
 	playReadyEvent(0), closeEvent(0),
 	bufferFrameCount(0),
 	latency(0),
-	packet(480 * 2 * 4),
-	subFrame(0),
 	aecReceiver(nullptr),
     errorHandler(),
 	pcmSource(pcmSource_),
@@ -315,6 +313,9 @@ void AudioRendererWASAPI::Play()
 	HANDLE waitArray[2] = { closeEvent, playReadyEvent };
 
 	const uint32_t FRAMES_COUNT = sampleFreq / 100;
+
+	Transport::OwnedRTPPacket packet(480 * 2 * 4);
+	size_t subFrame = 0;
 
 	while (runned)
 	{

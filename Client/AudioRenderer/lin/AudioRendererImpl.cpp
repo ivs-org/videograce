@@ -27,8 +27,6 @@ AudioRendererImpl::AudioRendererImpl(std::function<void(Transport::OwnedRTPPacke
 	volume(wui::config::get_int("AudioRenderer", "Volume", 100)),
     mute(wui::config::get_int("AudioRenderer", "Enabled", 1) == 0),
 	s(nullptr),
-	packet(480 * 2 * 4),
-	subFrame(0),
 	aecReceiver(nullptr),
 	pcmSource(pcmSource_),
 	thread(),
@@ -153,6 +151,10 @@ void AudioRendererImpl::Play()
 {
 	using namespace std::chrono;
 	int64_t packetDuration = 40000;
+	
+	Transport::OwnedRTPPacket packet(480 * 2 * 4);
+	size_t subFrame = 0;
+
 	while (runned)
 	{
 		auto start = high_resolution_clock::now();

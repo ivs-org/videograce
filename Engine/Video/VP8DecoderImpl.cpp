@@ -119,7 +119,7 @@ void VP8DecoderImpl::Start(CodecType, Video::ColorSpace outputType_)
 
 	try
 	{
-		produceBuffer = std::unique_ptr<uint8_t[]>(new uint8_t[bufferSize]);
+		produceBuffer = std::make_unique<uint8_t[]>(bufferSize);
 	}
 	catch (std::bad_alloc &e)
 	{
