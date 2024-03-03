@@ -316,12 +316,6 @@ void AudioRendererWASAPI::Play()
 
 	while (runned)
 	{
-		if (mute)
-		{
-			std::this_thread::sleep_for(std::chrono::milliseconds(200));
-			continue;
-		}
-
 		DWORD waitResult = WaitForMultipleObjects(2, waitArray, FALSE, INFINITE);
 		switch (waitResult)
 		{
@@ -332,6 +326,8 @@ void AudioRendererWASAPI::Play()
 			{
 				Transport::OwnedRTPPacket packet(FRAMES_COUNT * 2);
 				pcmSource(packet);
+
+				if (mute) continue; /// We have to keep picking up packets from the jitter buffers
 
 				if (aecReceiver)
 				{
