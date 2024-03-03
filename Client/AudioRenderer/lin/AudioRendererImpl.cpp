@@ -27,6 +27,8 @@ AudioRendererImpl::AudioRendererImpl(std::function<void(Transport::OwnedRTPPacke
 	volume(wui::config::get_int("AudioRenderer", "Volume", 100)),
     mute(wui::config::get_int("AudioRenderer", "Enabled", 1) == 0),
 	s(nullptr),
+	subFrame(0),
+	packet(480 * 2 * 4),
 	aecReceiver(nullptr),
 	pcmSource(pcmSource_),
 	thread(),
@@ -108,7 +110,11 @@ bool AudioRendererImpl::SetMute(bool yes)
 {
     wui::config::set_int("AudioRenderer", "Enabled", yes ? 0 : 1);
     mute = yes;
+	
 	sysLog->info("AudioRenderer {0}", mute ? "muted" : "unmuted");
+	
+	packet.Clear();
+
     return true;
 }
 
@@ -153,8 +159,7 @@ void AudioRendererImpl::Play()
 	int64_t packetDuration = 40000;
 	
 	Transport::OwnedRTPPacket packet(480 * 2 * 4);
-	size_t subFrame = 0;
-
+	
 	while (runned)
 	{
 		auto start = high_resolution_clock::now();
@@ -166,29 +171,30 @@ void AudioRendererImpl::Play()
 			pcmSource(packet);
 		}
 
-		if (mute) /// We have to keep picking up packets from the jitter buffers
+		if (!mute) /// We have to keep picking up packets from the jitter buffers
+		{
+			if (aecReceiver)
+			{
+				Transport::RTPPacket rtp;
+				rtp.rtpHeader = packet.header;
+				rtp.payload = packet.data + (subFrame * 960);
+				rtp.payloadSize = FRAMES_COUNT * 2;
+				aecReceiver->Send(rtp);
+			}
+
+			int error = 0;
+			if (pa_simple_write(s, packet.data + (subFrame * 960), FRAMES_COUNT * 2, &error) < 0)
+			{
+				errLog->critical("pa_simple_write() failed: {0}", pa_strerror(error));
+			}
+
+			//int64_t duration = duration_cast<microseconds>(high_resolution_clock::now() - start).count();
+			//sysLog->trace("pd: {0}", duration);
+		}
+		else
 		{
 			Common::ShortSleep(packetDuration - duration_cast<microseconds>(high_resolution_clock::now() - start).count());
-			continue;
 		}
-
-		if (aecReceiver)
-		{
-			Transport::RTPPacket rtp;
-			rtp.rtpHeader = packet.header;
-			rtp.payload = packet.data + (subFrame * 960);
-			rtp.payloadSize = FRAMES_COUNT * 2;
-			aecReceiver->Send(rtp);
-		}
-
-		int error = 0;
-		if (pa_simple_write(s, packet.data + (subFrame * 960), FRAMES_COUNT * 2, &error) < 0)
-		{
-			errLog->critical("pa_simple_write() failed: {0}", pa_strerror(error));
-		}
-
-		//int64_t duration = duration_cast<microseconds>(high_resolution_clock::now() - start).count();
-		//sysLog->trace("pd: {0}", duration);
 
 		++subFrame;
 		if (subFrame > 3)

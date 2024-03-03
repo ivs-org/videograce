@@ -66,6 +66,8 @@ AudioRendererWASAPI::AudioRendererWASAPI(std::function<void(Transport::OwnedRTPP
 	audioVolume(),
 	playReadyEvent(0), closeEvent(0),
 	bufferFrameCount(0),
+	subFrame(0),
+	packet(480 * 2 * 4),
 	latency(0),
 	aecReceiver(nullptr),
     errorHandler(),
@@ -282,6 +284,7 @@ bool AudioRendererWASAPI::SetMute(bool yes)
 {
     wui::config::set_int("AudioRenderer", "Enabled", yes ? 0 : 1);
 	mute = yes;
+	packet.Clear();
 	return true;
 }
 
@@ -314,9 +317,6 @@ void AudioRendererWASAPI::Play()
 
 	const uint32_t FRAMES_COUNT = sampleFreq / 100;
 
-	Transport::OwnedRTPPacket packet(480 * 2 * 4);
-	size_t subFrame = 0;
-
 	while (runned)
 	{
 		DWORD waitResult = WaitForMultipleObjects(2, waitArray, FALSE, INFINITE);
@@ -332,32 +332,33 @@ void AudioRendererWASAPI::Play()
 					pcmSource(packet);
 				}
 
-				if (mute) continue; /// We have to keep picking up packets from the jitter buffers
-
-				if (aecReceiver)
+				if (!mute) /// We have to keep picking up packets from the jitter buffers
 				{
-					Transport::RTPPacket rtp;
-					rtp.rtpHeader = packet.header;
-					rtp.payload = packet.data + (subFrame * 960);
-					rtp.payloadSize = FRAMES_COUNT * 2;
-					aecReceiver->Send(rtp);
-				}
+					if (aecReceiver)
+					{
+						Transport::RTPPacket rtp;
+						rtp.rtpHeader = packet.header;
+						rtp.payload = packet.data + (subFrame * 960);
+						rtp.payloadSize = FRAMES_COUNT * 2;
+						aecReceiver->Send(rtp);
+					}
 
-				uint32_t framesPadding = 0;
-				HRESULT hr = audioClient->GetCurrentPadding(&framesPadding);
-				CHECK_HR(hr, "audioClient->GetCurrentPadding")
+					uint32_t framesPadding = 0;
+					HRESULT hr = audioClient->GetCurrentPadding(&framesPadding);
+					CHECK_HR(hr, "audioClient->GetCurrentPadding")
 
-				uint32_t framesAvailable = bufferFrameCount - framesPadding;
-				uint32_t writeFrames = framesAvailable > FRAMES_COUNT ? FRAMES_COUNT : framesAvailable;
+					uint32_t framesAvailable = bufferFrameCount - framesPadding;
+					uint32_t writeFrames = framesAvailable > FRAMES_COUNT ? FRAMES_COUNT : framesAvailable;
 				
-				BYTE* pData = nullptr;
-				hr = audioRenderClient->GetBuffer(writeFrames, &pData);
-				CHECK_HR(hr, "audioClient->GetBuffer")
+					BYTE* pData = nullptr;
+					hr = audioRenderClient->GetBuffer(writeFrames, &pData);
+					CHECK_HR(hr, "audioClient->GetBuffer")
 
-				memcpy(pData, packet.data + (subFrame * 960), writeFrames * 2);
+					memcpy(pData, packet.data + (subFrame * 960), writeFrames * 2);
 
-				hr = audioRenderClient->ReleaseBuffer(writeFrames, 0);
-				CHECK_HR(hr, "audioRenderClient->ReleaseBuffer")
+					hr = audioRenderClient->ReleaseBuffer(writeFrames, 0);
+					CHECK_HR(hr, "audioRenderClient->ReleaseBuffer")
+				}
 
 				++subFrame;
 				if (subFrame > 3)

@@ -67,6 +67,9 @@ private:
 
 	uint32_t latency;
 
+	size_t subFrame;
+    Transport::OwnedRTPPacket packet;
+
 	Transport::ISocket* aecReceiver;
 
 	std::function<void(Transport::OwnedRTPPacket&)> pcmSource;

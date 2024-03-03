@@ -55,6 +55,9 @@ private:
 
     pa_simple *s;
 
+    size_t subFrame;
+    Transport::OwnedRTPPacket packet;
+
     Transport::ISocket* aecReceiver;
     std::function<void(Transport::OwnedRTPPacket&)> pcmSource;
 
