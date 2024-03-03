@@ -144,7 +144,8 @@ void JB::GetFrame(Transport::OwnedRTPPacket& output)
 
     if (buffering)
     {
-        if (buffer.size() < reserveCount)
+        if (buffer.size() < reserveCount ||
+            buffer.size() < (floor((double)rxInterval / frameDuration)))
         {
             return;
         }
