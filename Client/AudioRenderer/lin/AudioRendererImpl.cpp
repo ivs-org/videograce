@@ -11,6 +11,8 @@
 
 #include <Transport/RTP/RTPPacket.h>
 
+#include <Common/ShortSleep.h>
+
 #include <wui/config/config.hpp>
 
 #include <Version.h>
@@ -50,6 +52,8 @@ void AudioRendererImpl::Start(int32_t sampleFreq_)
 		return;
 	}
 
+	setenv("PULSE_PROP_media.role", "phone", 1);
+
 	sampleFreq = sampleFreq_;
 
 	static const pa_sample_spec ss = {
@@ -61,7 +65,7 @@ void AudioRendererImpl::Start(int32_t sampleFreq_)
 	int error = 0;
 
 	pa_buffer_attr ba = {
-		.maxlength = static_cast<uint32_t>((sampleFreq / 25) * 2)
+		.maxlength = static_cast<uint32_t>((sampleFreq / 100) * 4)
 	};
 	// Create a new playback stream
 	if (!(s = pa_simple_new(NULL, SYSTEM_NAME "Client", PA_STREAM_PLAYBACK, NULL, "playback", &ss, NULL, &ba, &error)))
@@ -145,13 +149,11 @@ void AudioRendererImpl::SetErrorHandler(std::function<void(uint32_t code, std::s
 
 void AudioRendererImpl::Play()
 {
+	using namespace std::chrono;
+	int64_t packetDuration = 10000;
 	while (runned)
 	{
-		if (mute)
-		{
-			std::this_thread::sleep_for(std::chrono::milliseconds(200));
-			continue;
-		}
+		auto start = high_resolution_clock::now();
 
 		const uint32_t FRAMES_COUNT = sampleFreq / 100;
 
@@ -167,11 +169,22 @@ void AudioRendererImpl::Play()
 			aecReceiver->Send(rtp);
 		}
 
+		if (mute)
+		{
+			Common::ShortSleep(packetDuration - duration_cast<microseconds>(high_resolution_clock::now() - start).count());
+			continue;
+		}
+
 		int error = 0;
 		if (pa_simple_write(s, packet.data, packet.size, &error) < 0)
 		{
 			errLog->critical("pa_simple_write() failed: {0}", pa_strerror(error));
 		}
+
+		int64_t duration = duration_cast<microseconds>(high_resolution_clock::now() - start).count();
+		//sysLog->trace("pd: {0}", duration);
+
+		//if (packetDuration > duration) Common::ShortSleep(packetDuration - duration);
 	}
 }
 
