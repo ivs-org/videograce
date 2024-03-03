@@ -27,6 +27,8 @@ AudioRendererImpl::AudioRendererImpl(std::function<void(Transport::OwnedRTPPacke
 	volume(wui::config::get_int("AudioRenderer", "Volume", 100)),
     mute(wui::config::get_int("AudioRenderer", "Enabled", 1) == 0),
 	s(nullptr),
+	packet(480 * 2 * 4),
+	subFrame(0),
 	aecReceiver(nullptr),
 	pcmSource(pcmSource_),
 	thread(),
@@ -150,41 +152,48 @@ void AudioRendererImpl::SetErrorHandler(std::function<void(uint32_t code, std::s
 void AudioRendererImpl::Play()
 {
 	using namespace std::chrono;
-	int64_t packetDuration = 10000;
+	int64_t packetDuration = 40000;
 	while (runned)
 	{
 		auto start = high_resolution_clock::now();
 
 		const uint32_t FRAMES_COUNT = sampleFreq / 100;
 
-		Transport::OwnedRTPPacket packet(FRAMES_COUNT * 2);
-		pcmSource(packet);
-
-		if (aecReceiver)
+		if (subFrame == 0)
 		{
-			Transport::RTPPacket rtp;
-			rtp.rtpHeader = packet.header;
-			rtp.payload = packet.data;
-			rtp.payloadSize = packet.size;
-			aecReceiver->Send(rtp);
+			pcmSource(packet);
 		}
 
-		if (mute)
+		if (mute) /// We have to keep picking up packets from the jitter buffers
 		{
 			Common::ShortSleep(packetDuration - duration_cast<microseconds>(high_resolution_clock::now() - start).count());
 			continue;
 		}
 
+		if (aecReceiver)
+		{
+			Transport::RTPPacket rtp;
+			rtp.rtpHeader = packet.header;
+			rtp.payload = packet.data + (subFrame * 960);
+			rtp.payloadSize = FRAMES_COUNT * 2;
+			aecReceiver->Send(rtp);
+		}
+
 		int error = 0;
-		if (pa_simple_write(s, packet.data, packet.size, &error) < 0)
+		if (pa_simple_write(s, packet.data + (subFrame * 960), FRAMES_COUNT * 2, &error) < 0)
 		{
 			errLog->critical("pa_simple_write() failed: {0}", pa_strerror(error));
 		}
 
-		int64_t duration = duration_cast<microseconds>(high_resolution_clock::now() - start).count();
+		//int64_t duration = duration_cast<microseconds>(high_resolution_clock::now() - start).count();
 		//sysLog->trace("pd: {0}", duration);
 
-		//if (packetDuration > duration) Common::ShortSleep(packetDuration - duration);
+		++subFrame;
+		if (subFrame > 3)
+		{
+			subFrame = 0;
+			packet.Clear();
+		}
 	}
 }
 
