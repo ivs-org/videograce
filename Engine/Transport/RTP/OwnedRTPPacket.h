@@ -34,6 +34,8 @@ public:
     
     ~OwnedRTPPacket();
 
+    void Clear();
+
     OwnedRTPPacket& operator=(OwnedRTPPacket&& other) noexcept;
     OwnedRTPPacket& operator=(OwnedRTPPacket& other) noexcept;
 };

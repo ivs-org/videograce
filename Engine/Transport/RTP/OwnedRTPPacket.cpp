@@ -60,6 +60,14 @@ OwnedRTPPacket::~OwnedRTPPacket()
     }
 }
 
+void OwnedRTPPacket::Clear()
+{
+    if (data)
+    {
+        memset(data, 0, size);
+    }
+}
+
 OwnedRTPPacket& OwnedRTPPacket::operator=(OwnedRTPPacket&& other) noexcept
 {
     // Guard self assignment

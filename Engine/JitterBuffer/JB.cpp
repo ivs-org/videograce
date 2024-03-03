@@ -36,13 +36,14 @@ JB::JB(Common::TimeMeter &timeMeter_)
     mutex(),
     buffer(),
 
-	frameDuration(10),
-	measureTime(0),
-	renderTime(0),
-    overTimeCount(0),
+	frameDuration(40),
+
+    buffering(true),
+    reserveCount(4), // 160 ms delay
 
     prevRxTS(0), rxInterval(frameDuration),
-    stateRxTS(10.0), covarianceRxTS(0.1),
+    rxIntervals(),
+    stateRxTS(40.0), covarianceRxTS(0.1),
     checkTime(0),
 
     prevSeq(0),
@@ -62,10 +63,9 @@ void JB::Start(Mode mode_, std::string_view name_)
 	{
 		mode = mode_;
         name = name_;
-        frameDuration = (mode == Mode::sound ? 10 : (frameDuration < 40 ? 40 : frameDuration));
+        frameDuration = 40;
+        reserveCount = 4; /// 160 ms delay
 
-        renderTime = 0;
-        overTimeCount = 0;
         prevSeq = 0;
 
         prevRxTS = static_cast<uint32_t>(timeMeter.Measure() / 1000);
@@ -75,9 +75,8 @@ void JB::Start(Mode mode_, std::string_view name_)
 
         checkTime = 0;
 
-		measureTime = timeMeter.Measure();
-
 		runned = true;
+        buffering = true;
 	}
 }
 
@@ -140,16 +139,31 @@ void JB::GetFrame(Transport::OwnedRTPPacket& output)
     {
         return;
     }
-    
+
     std::lock_guard<std::mutex> lock(mutex);
+
+    if (buffering)
+    {
+        if (buffer.size() < reserveCount)
+        {
+            return;
+        }
+        else
+        {
+            buffering = false;
+        }
+    }
+    
     if (checkTime == frameDuration * (mode == Mode::sound ? 300 : 150))
     {
-        sysLog->trace("{0}_JB[{1}] :: Check (rxInterval: {2}, buffer size: {3})", to_string(mode), name, rxInterval, buffer.size());
+        auto bufferSize = buffer.size();
 
-        /*while (buffer.size() > 1 && rxInterval > buffer.size() * frameDuration * 3) /// Prevent big delay
+        while (buffer.size() > reserveCount && rxInterval < buffer.size() * frameDuration) /// Prevent big delay
         {
             buffer.pop_front();
-        }*/
+        }
+
+        sysLog->trace("{0}_JB[{1}] :: Check (rxInterval: {2}, buffer size: {3}, removed: {4})", to_string(mode), name, rxInterval, buffer.size(), bufferSize - buffer.size());
 
         checkTime = 0;
     }
@@ -158,18 +172,20 @@ void JB::GetFrame(Transport::OwnedRTPPacket& output)
     if (!buffer.empty())
     {
         if (mode == Mode::local ||
-            rxInterval < buffer.size() * frameDuration)
+            rxInterval <= (buffer.size() + 1) * frameDuration)
         {
             output = std::move(*buffer.front());
             buffer.pop_front();
         }
         else
         {
+            buffering = true;
             sysLog->trace("{0}_JB[{1}] :: Buffering (rxInterval: {2}, buffer size: {3})", to_string(mode), name, rxInterval, buffer.size());
         }
     }
     else
     {
+        buffering = true;
         sysLog->warn("{0}_JB[{1}] :: Empty (rxInterval: {2})", to_string(mode), name, rxInterval);
     }  
 }
@@ -181,7 +197,12 @@ void JB::CalcJitter(const Transport::RTPPacket::RTPHeader &header)
 
     prevRxTS = currentTime;
 
-    rxInterval = KalmanCorrectRxTS(interarrivalTime);
+    auto actualrxInterval = KalmanCorrectRxTS(interarrivalTime);
+    rxIntervals.push_back(actualrxInterval);
+
+    if (rxIntervals.size() > 100) rxIntervals.pop_front();
+
+    rxInterval = CalcAvgRX();
 }
 
 uint32_t JB::KalmanCorrectRxTS(uint32_t data)
@@ -198,6 +219,18 @@ uint32_t JB::KalmanCorrectRxTS(uint32_t data)
     covarianceRxTS = (1 - k * h) * p0;
 
     return static_cast<uint32_t>(stateRxTS);
+}
+
+uint32_t JB::CalcAvgRX()
+{
+    uint32_t sum = 0;
+
+    for (auto v : rxIntervals)
+    {
+        sum += v;
+    }
+    
+    return (uint32_t)round(static_cast<double>(sum) / rxIntervals.size());
 }
 
 }

@@ -300,7 +300,7 @@ HRESULT MicrophoneDMO::Run()
     cOutputBufLen = wfxOut.nSamplesPerSec * wfxOut.nBlockAlign;
     pbOutputBuffer = new BYTE[cOutputBufLen];
 
-    const uint64_t PACKET_DURATION = 10000;
+    const uint64_t PACKET_DURATION = 40000;
 
     using namespace std::chrono;
 

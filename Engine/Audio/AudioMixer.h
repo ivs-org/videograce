@@ -39,8 +39,7 @@ public:
 	void GetSound(Transport::OwnedRTPPacket& outputBuffer);
 
 private:
-	static const uint16_t FRAME_SIZE = 960;
-	static const uint64_t FRAME_DURATION = 10000;
+	static const uint16_t FRAME_SIZE = 480 * 2 * 4; // 4 frames of 48 k mono
 
 	struct Input
 	{

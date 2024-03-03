@@ -20,7 +20,6 @@ SoundIndicator::SoundIndicator()
     : parent_(),
     position_(),
     count(256),
-    iteration(0),
     mutex(),
     data()
 {
@@ -129,7 +128,7 @@ void SoundIndicator::Send(const Transport::IPacket &packet_, const Transport::Ad
 {
     std::lock_guard<std::mutex> lock(mutex);
 
-    static uint64_t value = 0;
+    uint64_t value = 0;
 
     auto &packet = *static_cast<const Transport::RTPPacket*>(&packet_);
 
@@ -138,28 +137,21 @@ void SoundIndicator::Send(const Transport::IPacket &packet_, const Transport::Ad
         auto sample = *reinterpret_cast<const int16_t*>(packet.payload + i);
         if (sample > 500)
         {
-            value += sample / 2;
+            value += sample;
         }
     }
 
-    ++iteration;
-    if (iteration == 4)
+    data.push_back(value);
+
+    if (data.size() > count)
     {
-        data.push_back(value);
+        data.pop_front();
+    }
 
-        iteration = 0;
-        value = 0;
-
-        if (data.size() > count)
-        {
-            data.pop_front();
-        }
-
-        auto parent__ = parent_.lock();
-        if (parent__)
-        {
-            parent__->redraw(position());
-        }
+    auto parent__ = parent_.lock();
+    if (parent__)
+    {
+        parent__->redraw(position());
     }
 }
 

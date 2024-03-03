@@ -61,7 +61,6 @@ private:
     wui::rect position_;
 
     uint16_t count;
-    int32_t iteration;
 
     std::mutex mutex;
     std::deque<uint64_t> data;

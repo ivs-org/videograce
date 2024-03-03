@@ -67,6 +67,8 @@ AudioRendererWASAPI::AudioRendererWASAPI(std::function<void(Transport::OwnedRTPP
 	playReadyEvent(0), closeEvent(0),
 	bufferFrameCount(0),
 	latency(0),
+	packet(480 * 2 * 4),
+	subFrame(0),
 	aecReceiver(nullptr),
     errorHandler(),
 	pcmSource(pcmSource_),
@@ -324,8 +326,10 @@ void AudioRendererWASAPI::Play()
 			break;
 			case WAIT_OBJECT_0 + 1:
 			{
-				Transport::OwnedRTPPacket packet(FRAMES_COUNT * 2);
-				pcmSource(packet);
+				if (subFrame == 0)
+				{
+					pcmSource(packet);
+				}
 
 				if (mute) continue; /// We have to keep picking up packets from the jitter buffers
 
@@ -333,8 +337,8 @@ void AudioRendererWASAPI::Play()
 				{
 					Transport::RTPPacket rtp;
 					rtp.rtpHeader = packet.header;
-					rtp.payload = packet.data;
-					rtp.payloadSize = packet.size;
+					rtp.payload = packet.data + (subFrame * 960);
+					rtp.payloadSize = FRAMES_COUNT * 2;
 					aecReceiver->Send(rtp);
 				}
 
@@ -349,10 +353,17 @@ void AudioRendererWASAPI::Play()
 				hr = audioRenderClient->GetBuffer(writeFrames, &pData);
 				CHECK_HR(hr, "audioClient->GetBuffer")
 
-				memcpy(pData, packet.data, writeFrames * 2);
+				memcpy(pData, packet.data + (subFrame * 960), writeFrames * 2);
 
 				hr = audioRenderClient->ReleaseBuffer(writeFrames, 0);
 				CHECK_HR(hr, "audioRenderClient->ReleaseBuffer")
+
+				++subFrame;
+				if (subFrame > 3)
+				{
+					subFrame = 0;
+					packet.Clear();
+				}
 			}
 			break;
 		}

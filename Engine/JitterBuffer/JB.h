@@ -66,11 +66,11 @@ private:
 
 	uint32_t frameDuration;
 
-    uint64_t measureTime;
-	uint64_t renderTime;
-    int32_t overTimeCount;
+    bool buffering;
+    uint32_t reserveCount;
 
     uint32_t prevRxTS, rxInterval;
+    std::deque<uint32_t> rxIntervals;
     double stateRxTS, covarianceRxTS;
     uint32_t checkTime;
 
@@ -79,6 +79,7 @@ private:
     std::shared_ptr<spdlog::logger> sysLog, errLog;
 
     uint32_t KalmanCorrectRxTS(uint32_t interarrivalTime);
+    uint32_t CalcAvgRX();
 
     void CalcJitter(const Transport::RTPPacket::RTPHeader &header);
 };
