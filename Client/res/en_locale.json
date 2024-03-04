@@ -357,7 +357,9 @@
       "conference_link_copied": "The link to connect to the conference has been copied to the clipboard",
       "new_message_received": "New messages received: ",
       "no_contacts_selected": "No contact selected",
-      "record_denied": "Recording of the conference is forbidden"
+      "record_denied": "Recording of the conference is forbidden",
+      "system_sample_freq_different1": "The sampling frequency of the sound card: ",
+      "system_sample_freq_different2": "Hz is not a multiple of 16000.\nThis may cause sound distortion and echo cancellation failures.\n\nWe recommend that in the settings of the sound output device (speakers, headphones)\nset the sampling frequency to a multiple of 16000: 48000, 96000, 192000 Hz\n\nOpen settings?"
     },
     {
       "type": "menu",
