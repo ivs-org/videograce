@@ -359,7 +359,9 @@
       "no_contacts_selected": "No contact selected",
       "record_denied": "Recording of the conference is forbidden",
       "system_sample_freq_different1": "The sampling frequency of the sound card: ",
-      "system_sample_freq_different2": "Hz is not a multiple of 16000.\nThis may cause sound distortion and echo cancellation failures.\n\nWe recommend that in the settings of the sound output device (speakers, headphones)\nset the sampling frequency to a multiple of 16000: 48000, 96000, 192000 Hz\n\nOpen settings?"
+      "system_sample_freq_different2": "Hz is not a multiple of 16000.\nThis may cause sound distortion and echo cancellation failures.\n\nWe recommend that in the settings of the sound output device (speakers, headphones)\nset the sampling frequency to a multiple of 16000: 48000, 96000, 192000 Hz\n\nOpen settings?",
+      "sound_card_error1": "An error occurred with the sound card\nError code: ",
+      "sound_card_error2": "\n\nSystem message:\n"
     },
     {
       "type": "menu",

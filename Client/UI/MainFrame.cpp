@@ -2703,6 +2703,15 @@ void MainFrame::AudioRendererErrorCallback(uint32_t code, std::string_view msg)
                 }
             });
     }
+    else
+    {
+        messageBox->show(wui::locale("message", "sound_card_error1") +
+            std::to_string(code) +
+            wui::locale("message", "sound_card_error2"),
+            wui::locale("message", "title_error"),
+            wui::message_icon::alert,
+            wui::message_button::ok);
+    }
 }
 
 void MainFrame::VolumeBoxChangeCallback(int32_t value, VolumeBoxMode mode, bool enabled)
