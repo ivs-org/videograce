@@ -2687,9 +2687,21 @@ void MainFrame::AudioRendererErrorCallback(uint32_t code, std::string_view msg)
 {
     errLog->warn("Audio renderer error: code: {0}, msg: {1}", code, msg);
 
-    if (code == 110110110)
+    if (msg == "sysfreq_another")
     {
-        // FREQ_NOT_OPTIMAL
+        messageBox->show(wui::locale("message", "system_sample_freq_different1") +
+                std::to_string(code) +
+                wui::locale("message", "system_sample_freq_different2"),
+            wui::locale("message", "title_notification"),
+            wui::message_icon::alert,
+            wui::message_button::yes_no, [this](wui::message_result r) {
+                if (r == wui::message_result::yes)
+                {
+#ifdef _WIN32
+                    ShellExecute(NULL, L"open", L"control.exe", L"mmsys.cpl", L"c:\\windows\\system32\\", SW_NORMAL);
+#endif
+                }
+            });
     }
 }
 

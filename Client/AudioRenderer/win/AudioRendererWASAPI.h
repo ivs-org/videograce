@@ -19,6 +19,8 @@
 
 #include <atlcomcli.h>
 
+#include <spdlog/spdlog.h>
+
 struct IMMDeviceEnumerator;
 struct IMMDevice;
 struct IAudioClient;
@@ -76,6 +78,9 @@ private:
     std::function<void(uint32_t code, std::string_view msg)> errorHandler;
 
 	std::thread thread;
+	
+	std::shared_ptr<spdlog::logger> sysLog, errLog;
+
 	void Play();
 };
 

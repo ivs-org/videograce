@@ -7,6 +7,7 @@
 
 #include <atlbase.h>
 
+#include <initguid.h>
 #include <mmdeviceapi.h>
 #include <audioclient.h>
 #include <avrt.h>
@@ -27,8 +28,6 @@
 
 #include <boost/nowide/convert.hpp>
 
-#include <spdlog/spdlog.h>
-
 #ifndef AUDCLNT_STREAMFLAGS_AUTOCONVERTPCM
 #define AUDCLNT_STREAMFLAGS_AUTOCONVERTPCM 0x80000000
 #endif
@@ -41,16 +40,7 @@ const IID IID_IMMDeviceEnumerator = __uuidof(IMMDeviceEnumerator);
 const IID IID_IAudioClient = __uuidof(IAudioClient);
 const IID IID_IAudioRenderClient = __uuidof(IAudioRenderClient);
 
-template <class T> inline void SafeRelease(T*& p)
-{
-	if (p)
-	{
-		p->Release();
-		p = nullptr;
-	}
-}
-
-#define CHECK_HR(hr, msg) if (!SUCCEEDED(hr)) { if (errorHandler) { errorHandler(hr, msg); } runned = false; return; }
+#define CHECK_HR(hr, msg) if (!SUCCEEDED(hr)) { errLog->error("AudioRendererWASAPI :: (hr: {0}, msg:{1})", hr, msg); if (errorHandler) { errorHandler(hr, msg); } runned = false; return; }
 
 namespace AudioRenderer
 {
@@ -72,7 +62,8 @@ AudioRendererWASAPI::AudioRendererWASAPI(std::function<void(Transport::OwnedRTPP
 	aecReceiver(nullptr),
     errorHandler(),
 	pcmSource(pcmSource_),
-	thread()
+	thread(),
+	sysLog(spdlog::get("System")), errLog(spdlog::get("Error"))
 {
 }
 
@@ -167,6 +158,29 @@ void AudioRendererWASAPI::Start(int32_t sampleFreq_)
 		CHECK_HR(hr, "MMDeviceEnumerator GetDefaultAudioEndpoint")
 	}
 
+	CComPtr<IPropertyStore> store;
+	hr = mmDevice->OpenPropertyStore(STGM_READ, &store);
+	CHECK_HR(hr, "mmDevice->OpenPropertyStore")
+
+	PROPVARIANT prop;
+	hr = store->GetValue(PKEY_AudioEngine_DeviceFormat, &prop);
+	CHECK_HR(hr, "store->GetValue(PKEY_AudioEngine_DeviceFormat,...)")
+
+	auto deviceFormatProperties = (PWAVEFORMATEX)prop.blob.pBlobData;
+	sysLog->info("AudioRendererWASAPI :: System preferences: (Channels: {0}, Sample rate: {1}, Bit depth: {2})",
+		deviceFormatProperties->nChannels,
+		deviceFormatProperties->nSamplesPerSec,
+		deviceFormatProperties->wBitsPerSample);
+
+	if (deviceFormatProperties->nSamplesPerSec % 16000 != 0)
+	{
+		sysLog->warn("AudioRendererWASAPI :: System freq {0} != Player req: {1}", deviceFormatProperties->nSamplesPerSec, sampleFreq);
+		if (errorHandler)
+		{
+			errorHandler(deviceFormatProperties->nSamplesPerSec, "sysfreq_another");
+		}
+	}
+
 	// Get its IAudioClient (used to set audio format, latency, and start/stop)
 	hr = mmDevice->Activate(IID_IAudioClient, CLSCTX_ALL, nullptr, (void **)&audioClient);
 	CHECK_HR(hr, "mmDevice->Activate")
@@ -247,6 +261,8 @@ void AudioRendererWASAPI::Start(int32_t sampleFreq_)
 	thread = std::thread(std::bind(&AudioRendererWASAPI::Play, this));
 
 	mt::set_thread_priority(thread, mt::priority_type::real_time);
+
+	sysLog->info("AudioRendererWASAPI :: Success started");
 }
 
 void AudioRendererWASAPI::Stop()
@@ -278,13 +294,19 @@ void AudioRendererWASAPI::Stop()
 	audioClient.Release();
 	mmDevice.Release();
 	enumerator.Release();
+
+	sysLog->info("AudioRendererWASAPI :: Was stopped");
 }
 
 bool AudioRendererWASAPI::SetMute(bool yes)
 {
     wui::config::set_int("AudioRenderer", "Enabled", yes ? 0 : 1);
+	
 	mute = yes;
 	packet.Clear();
+
+	sysLog->info("AudioRendererWASAPI :: {0}", yes ? "Muted" : "Unmuted");
+
 	return true;
 }
 
