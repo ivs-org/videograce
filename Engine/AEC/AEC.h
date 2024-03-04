@@ -15,6 +15,8 @@
 
 #include <Transport/ISocket.h>
 
+#include <spdlog/spdlog.h>
+
 namespace webrtc
 {
 	class SplittingFilter;
@@ -100,6 +102,8 @@ private:
 	void *agcInst;
 
 	Transport::ISocket *resultReceiver;
+
+	std::shared_ptr<spdlog::logger> sysLog, errLog;
 };
 
 }

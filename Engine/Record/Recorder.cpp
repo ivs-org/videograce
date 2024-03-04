@@ -2,7 +2,7 @@
  * Recorder.cpp - Contains media recorder impl
  *
  * Author: Anton (ud) Golovkov, udattsk@gmail.com
- * Copyright (C), Infinity Video Soft LLC, 2014, 2019
+ * Copyright (C), Infinity Video Soft LLC, 2014, 2019, 2024
  */
 
 #include <cstdint>
@@ -191,7 +191,7 @@ void Recorder::Stop()
 	}
 }
 
-void Recorder::AddVideo(uint32_t ssrc, int64_t clientId, int32_t priority, Video::Resolution resolution, Video::IPacketLossCallback *packetLossCallback)
+void Recorder::AddVideo(ssrc_t ssrc, int64_t clientId, int32_t priority, Video::Resolution resolution, Video::IPacketLossCallback *packetLossCallback)
 {
 	if (mp3Mode)
 	{
@@ -220,7 +220,7 @@ void Recorder::AddVideo(uint32_t ssrc, int64_t clientId, int32_t priority, Video
 	}
 }
 
-void Recorder::ChangeVideoResolution(uint32_t ssrc, Video::Resolution resolution)
+void Recorder::ChangeVideoResolution(ssrc_t ssrc, Video::Resolution resolution)
 {
 	if (mp3Mode)
 	{
@@ -242,7 +242,7 @@ void Recorder::ChangeVideoResolution(uint32_t ssrc, Video::Resolution resolution
 	}
 }
 
-void Recorder::DeleteVideo(uint32_t ssrc)
+void Recorder::DeleteVideo(ssrc_t ssrc)
 {
 	if (mp3Mode)
 	{
@@ -271,12 +271,12 @@ void Recorder::DeleteVideo(uint32_t ssrc)
 	SpeakerChanged(clientId);
 }
 
-void Recorder::AddAudio(uint32_t ssrc, int64_t clientId)
+void Recorder::AddAudio(ssrc_t ssrc, int64_t clientId)
 {
 	//audioMixer->AddInput(ssrc, clientId);
 }
 
-void Recorder::DeleteAudio(uint32_t ssrc)
+void Recorder::DeleteAudio(ssrc_t ssrc)
 {
 	audioMixer.DeleteInput(ssrc);
 }

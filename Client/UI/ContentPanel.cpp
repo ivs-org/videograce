@@ -318,7 +318,7 @@ int32_t ContentPanel::Left() const
 
 void ContentPanel::SetUser(const int64_t id, std::string_view name)
 {
-    if (id == 0 || userId == id)
+    if (window && window->context().valid() && id == 0 || userId == id)
     {
         return;
     }
@@ -341,7 +341,7 @@ void ContentPanel::SetUser(const int64_t id, std::string_view name)
     list->set_item_count(count);
     list->scroll_to_end();
     
-    if (count != 0 && window->context().valid())
+    if (count != 0)
     {
         window->emit_event(static_cast<int32_t>(CPEvent::SendReaded), 0);
     }
@@ -349,7 +349,7 @@ void ContentPanel::SetUser(const int64_t id, std::string_view name)
 
 void ContentPanel::SetConference(std::string_view tag, std::string_view name)
 {
-    if (tag.empty() || conferenceTag == tag)
+    if (window && window->context().valid() && tag.empty() || conferenceTag == tag)
     {
         return;
     }
@@ -372,7 +372,7 @@ void ContentPanel::SetConference(std::string_view tag, std::string_view name)
     list->set_item_count(count);
     list->scroll_to_end();
 
-    if (count != 0 && window->context().valid())
+    if (count != 0)
     {
         window->emit_event(static_cast<int32_t>(CPEvent::SendReaded), 0);
     }

@@ -63,7 +63,7 @@ void JB::Start(Mode mode_, std::string_view name_)
 		mode = mode_;
         name = name_;
         frameDuration = 40;
-        reserveCount = 4; /// 160 ms delay
+        reserveCount = (mode == Mode::Sound ? 4 : 1); /// 160 ms delay for sound, 40 ms for video
 
         prevSeq = 0;
 

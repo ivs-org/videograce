@@ -1202,6 +1202,9 @@
     <ClInclude Include="Video\Resizer.h">
       <Filter>Header Files\Video</Filter>
     </ClInclude>
+    <ClInclude Include="Common\Types.h">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Video\Resolution.cpp">

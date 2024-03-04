@@ -2,7 +2,7 @@
  * Recorder.h - Contains media recorder header
  *
  * Author: Anton (ud) Golovkov, udattsk@gmail.com
- * Copyright (C), Infinity Video Soft LLC, 2014, 2019
+ * Copyright (C), Infinity Video Soft LLC, 2014, 2019, 2024
  */
 
 #pragma once
@@ -25,6 +25,8 @@
 
 #include <Video/IPacketLossCallback.h>
 
+#include <JitterBuffer/JB.h>
+
 #include <Record/MP3Writer.h>
 
 // libwebm muxer includes
@@ -43,12 +45,12 @@ namespace Recorder
 		virtual void Start(std::string_view fileName, bool mp3Mode) final;
 		virtual void Stop() final;
 
-		virtual void AddVideo(uint32_t ssrc, int64_t clientId, int32_t priority, Video::Resolution resolution, Video::IPacketLossCallback *packetLossCallback);
-		virtual void ChangeVideoResolution(uint32_t ssrc, Video::Resolution resolution);
-		virtual void DeleteVideo(uint32_t ssrc);
+		virtual void AddVideo(ssrc_t ssrc, int64_t clientId, int32_t priority, Video::Resolution resolution, Video::IPacketLossCallback *packetLossCallback);
+		virtual void ChangeVideoResolution(ssrc_t ssrc, Video::Resolution resolution);
+		virtual void DeleteVideo(ssrc_t ssrc);
 
-		virtual void AddAudio(uint32_t ssrc, int64_t clientId);
-		virtual void DeleteAudio(uint32_t ssrc);
+		virtual void AddAudio(ssrc_t ssrc, int64_t clientId);
+		virtual void DeleteAudio(ssrc_t ssrc);
 
         virtual void SpeakerChanged(int64_t clientId);
 
@@ -84,7 +86,7 @@ namespace Recorder
 		};
 
 		mt::rw_lock videosRWLock;
-		std::map<uint32_t /* ssrc */, VideoChannel> videos;
+		std::map<ssrc_t, VideoChannel> videos;
 
 		VideoChannel fakeVideoChannel;
 
@@ -95,6 +97,7 @@ namespace Recorder
 
 		Audio::Encoder audioEncoder;
 		Audio::AudioMixer audioMixer;
+		std::map<ssrc_t, JB::JB> jBufs;
 
 		std::unique_ptr<uint8_t[]> fakeVideoSource;
 		std::unique_ptr<uint8_t[]> buffer0, buffer1, buffer2;

@@ -228,7 +228,8 @@ AEC::AEC()
 	aecInst(nullptr),
 	nsInst(nullptr),
 	agcInst(nullptr),
-	resultReceiver(nullptr)
+	resultReceiver(nullptr),
+	sysLog(spdlog::get("System")), errLog(spdlog::get("Error"))
 {
 }
 
@@ -262,13 +263,13 @@ void AEC::Start()
 		aecInst = webrtc::WebRtcAec_Create();
 		if (aecInst == nullptr)
 		{
-			DBGTRACE("WebRTC AEC creating fail \n");
+			errLog->error("AEC :: WebRtcAec_Create() fail");
 		}
 		
 		int32_t ret = webrtc::WebRtcAec_Init(aecInst, SAMPLING_FREQ, SAMPLING_FREQ);
 		if (ret != 0)
 		{
-			DBGTRACE("WebRTC AEC init fail \n");
+			errLog->error("AEC :: WebRtcAec_Init() fail, errcode: {0}", ret);
 		}
 
 		webrtc::WebRtcAec_InitAec_SSE2();
@@ -282,32 +283,32 @@ void AEC::Start()
 		nsInst = WebRtcNsx_Create();
 		if (nsInst == nullptr)
 		{
-			DBGTRACE("WebRTC NS create fail \n");
+			errLog->error("AEC :: WebRtcNsx_Create() fail");
 		}
 
 		ret = WebRtcNsx_Init(static_cast<NsxHandle*>(nsInst), SAMPLING_FREQ);
 		if (ret != 0)
 		{
-			DBGTRACE("WebRTC NS init fail \n");
+			errLog->error("AEC :: WebRtcNsx_Init() fail, errcode: {0}", ret);
 		}
 
 		ret = WebRtcNsx_set_policy(static_cast<NsxHandle*>(nsInst), 2);
 		if (ret != 0)
 		{
-			DBGTRACE("WebRTC NS set policy fail \n");
+			errLog->error("AEC :: WebRtcNsx_set_policy() fail, errcode: {0}", ret);
 		}
 
 		/// Creating AGC
 		agcInst = WebRtcAgc_Create();
 		if (agcInst == nullptr)
 		{
-			DBGTRACE("WebRTC AGC create fail \n");
+			errLog->error("AEC :: WebRtcAgc_Create() fail");
 		}
 
 		ret = WebRtcAgc_Init(agcInst, 0, 100, kAgcModeFixedDigital, SAMPLING_FREQ);
 		if (ret != 0)
 		{
-			DBGTRACE("WebRTC AGC init fail \n");
+			errLog->error("AEC :: WebRtcAgc_Init() fail, errcode: {0}", ret);
 		}
 
 		WebRtcAgcConfig agcConfig;
@@ -317,11 +318,13 @@ void AEC::Start()
 		ret = WebRtcAgc_set_config(agcInst, agcConfig);
 		if (ret != 0)
 		{
-			DBGTRACE("WebRTC AGC set config fail \n");
+			errLog->error("AEC :: WebRtcAgc_set_config() fail, errcode: {0}", ret);
 		}
 
 		speakerSource.Start();
 		microphoneSource.Start();
+
+		sysLog->info("AEC started");
 	}
 }
 
@@ -342,6 +345,8 @@ void AEC::Stop()
 
 		WebRtcAgc_Free(agcInst);
 		agcInst = nullptr;
+
+		sysLog->info("AEC stopped");
 	}
 }
 

@@ -232,6 +232,7 @@
     <ClInclude Include="Common\ShortSleep.h" />
     <ClInclude Include="Common\TimeMeter.h" />
     <ClInclude Include="Common\ToDigit.h" />
+    <ClInclude Include="Common\Types.h" />
     <ClInclude Include="Common\URLDecode.h" />
     <ClInclude Include="Common\URLEncode.h" />
     <ClInclude Include="Common\VectorContainer.h" />
