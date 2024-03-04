@@ -170,7 +170,7 @@ void AudioRendererImpl::Play()
 		{
 			pcmSource(packet);
 
-			if (aecReceiver)
+			if (!mute && aecReceiver)
 			{
 				Transport::RTPPacket rtp;
 				rtp.rtpHeader = packet.header;
