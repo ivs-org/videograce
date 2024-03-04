@@ -42,7 +42,7 @@ OwnedRTPPacket::OwnedRTPPacket(const Transport::RTPPacket::RTPHeader &header_,
         : header(header_),
         data(size_ ? new (std::nothrow) uint8_t[size_] : nullptr),
         size(size_),
-        payload_ms(payload_type_ == Transport::RTPPayloadType::ptVP8 ? 40 : 20),
+        payload_ms(payload_type_ == Transport::RTPPayloadType::ptVP8 ? 40 : 40),
         payload_type(payload_type_)
 {
     if (data && payload)

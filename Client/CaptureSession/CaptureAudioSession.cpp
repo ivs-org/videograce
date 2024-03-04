@@ -253,17 +253,17 @@ void CaptureAudioSession::Stop()
 	}
 	runned = false;
 
-	if (audioRenderer)
-	{
-		audioRenderer->SetAECReceiver(nullptr);
-	}
-	
 	microphone.Stop();
 	aec.Stop();
 	encoder.Stop();
 	encryptor.Stop();
 	rtpSocket.Stop();
 	wsmSocket.Stop();
+
+	if (audioRenderer)
+	{
+		audioRenderer->SetAECReceiver(nullptr);
+	}
 	
 	sysLog->info("Stoped microphone session, device id: {0:d}, ssrc: {1:d}", deviceId, ssrc);
 }

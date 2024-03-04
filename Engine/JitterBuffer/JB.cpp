@@ -155,11 +155,11 @@ void JB::GetFrame(Transport::OwnedRTPPacket& output)
         }
     }
     
-    if (checkTime == frameDuration * (mode == Mode::sound ? 300 : 150))
+    if (checkTime == 4000) // 4 seconds check interval
     {
         auto bufferSize = buffer.size();
 
-        while (buffer.size() > reserveCount && rxInterval < buffer.size() * frameDuration) /// Prevent big delay
+        while (buffer.size() + 1 > reserveCount && rxInterval > buffer.size() * frameDuration) /// Prevent big delay
         {
             buffer.pop_front();
         }
@@ -199,11 +199,11 @@ void JB::CalcJitter(const Transport::RTPPacket::RTPHeader &header)
     prevRxTS = currentTime;
 
     auto actualrxInterval = KalmanCorrectRxTS(interarrivalTime);
-    rxIntervals.push_back(actualrxInterval);
+    rxIntervals.push_front(actualrxInterval);
 
-    if (rxIntervals.size() > 100) rxIntervals.pop_front();
+    if (rxIntervals.size() > 100) rxIntervals.pop_back();
 
-    rxInterval = CalcAvgRX();
+    rxInterval = GetMaxRX();
 }
 
 uint32_t JB::KalmanCorrectRxTS(uint32_t data)
@@ -222,16 +222,19 @@ uint32_t JB::KalmanCorrectRxTS(uint32_t data)
     return static_cast<uint32_t>(stateRxTS);
 }
 
-uint32_t JB::CalcAvgRX()
+uint32_t JB::GetMaxRX()
 {
-    uint32_t sum = 0;
+    uint32_t max_ = 0;
 
     for (auto v : rxIntervals)
     {
-        sum += v;
+        if (v > max_)
+        {
+            max_ = v;
+        }
     }
-    
-    return (uint32_t)round(static_cast<double>(sum) / rxIntervals.size());
+
+    return max_;
 }
 
 }

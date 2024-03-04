@@ -28,7 +28,7 @@ enum
 {
 	SAMPLING_FREQ = 48000,
 
-	FRAMES_COUNT = 1, /// Two 10 ms frames in one input / output packet
+	FRAMES_COUNT = 4, /// Two 10 ms frames in one input / output packet
 	BANDS_COUNT = 3,  /// Three bands of 16 kHz (16 + 16 + 16 = 48)
 	BAND_SIZE = 160   /// One 16KHz band has 160 samples (duration 10 ms)
 };
@@ -183,7 +183,7 @@ void AEC::SpeakerReceiver::Send(const Transport::IPacket &packet_, const Transpo
 	{
 		const auto &packet = *static_cast<const Transport::RTPPacket*>(&packet_);
 
-		memcpy(splittingFilterIn->ibuf()->bands(0)[0], packet.payload, FRAMES_COUNT * BANDS_COUNT * BAND_SIZE * sizeof(int16_t));
+		memcpy(splittingFilterIn->ibuf()->bands(0)[0], packet.payload, BANDS_COUNT * BAND_SIZE * sizeof(int16_t));
 		splittingFilter->Analysis(splittingFilterIn.get(), splittingFilterOut.get());
 
 		for (int i = 0; i != FRAMES_COUNT; ++i)

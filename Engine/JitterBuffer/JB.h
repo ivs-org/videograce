@@ -79,7 +79,7 @@ private:
     std::shared_ptr<spdlog::logger> sysLog, errLog;
 
     uint32_t KalmanCorrectRxTS(uint32_t interarrivalTime);
-    uint32_t CalcAvgRX();
+    uint32_t GetMaxRX();
 
     void CalcJitter(const Transport::RTPPacket::RTPHeader &header);
 };
