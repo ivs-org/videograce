@@ -1,5 +1,5 @@
 /**
- * AudioRendererWASAPI.cpp - Contains Windows 7 audio renderer's impl
+ * AudioRendererWASAPI.cpp - Contains Windows 7+ audio renderer's impl
  *
  * Author: Anton (ud) Golovkov, udattsk@gmail.com
  * Copyright (C), Infinity Video Soft LLC, 2019, 2024
@@ -330,19 +330,19 @@ void AudioRendererWASAPI::Play()
 				if (subFrame == 0)
 				{
 					pcmSource(packet);
+
+					if (!mute && aecReceiver)
+					{
+						Transport::RTPPacket rtp;
+						rtp.rtpHeader = packet.header;
+						rtp.payload = packet.data;
+						rtp.payloadSize = packet.size;
+						aecReceiver->Send(rtp);
+					}
 				}
 
 				if (!mute) /// We have to keep picking up packets from the jitter buffers
 				{
-					if (aecReceiver)
-					{
-						Transport::RTPPacket rtp;
-						rtp.rtpHeader = packet.header;
-						rtp.payload = packet.data + (subFrame * 960);
-						rtp.payloadSize = FRAMES_COUNT * 2;
-						aecReceiver->Send(rtp);
-					}
-
 					uint32_t framesPadding = 0;
 					HRESULT hr = audioClient->GetCurrentPadding(&framesPadding);
 					CHECK_HR(hr, "audioClient->GetCurrentPadding")

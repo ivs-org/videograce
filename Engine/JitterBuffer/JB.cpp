@@ -18,9 +18,8 @@ const char* to_string(Mode mode)
 {
     switch (mode)
     {
-    case Mode::local: return "Local";
-    case Mode::sound: return "Sound";
-    case Mode::video: return "Video";
+    case Mode::Sound: return "Sound";
+    case Mode::Video: return "Video";
     }
     return "";
 }
@@ -29,7 +28,7 @@ JB::JB(Common::TimeMeter &timeMeter_)
 	: timeMeter(timeMeter_),
     slowRenderingCallback(),
 
-    mode(Mode::video),
+    mode(Mode::Video),
     name(),
     runned(false),
 
@@ -114,7 +113,7 @@ void JB::Send(const Transport::IPacket &packet_, const Transport::Address *)
         auto rtpPacket = std::make_shared<Transport::OwnedRTPPacket>(packet.rtpHeader,
             packet.payload,
             packet.payloadSize,
-            mode == Mode::sound ? Transport::RTPPayloadType::ptOpus : Transport::RTPPayloadType::ptVP8);
+            mode == Mode::Sound ? Transport::RTPPayloadType::ptOpus : Transport::RTPPayloadType::ptVP8);
 
         std::lock_guard<std::mutex> lock(mutex);
         buffer.push_back(rtpPacket);
@@ -172,7 +171,7 @@ void JB::GetFrame(Transport::OwnedRTPPacket& output)
 
     if (!buffer.empty())
     {
-        if (mode == Mode::local ||
+        if (mode == Mode::Video ||
             rxInterval <= (buffer.size() + 1) * frameDuration)
         {
             output = std::move(*buffer.front());

@@ -2,7 +2,7 @@
 * AudioRendererImpl.cpp - Contains audio renderer's impl
 *
 * Author: Anton (ud) Golovkov, udattsk@gmail.com
-* Copyright (C), Infinity Video Soft LLC, 2014, 2015, 2022
+* Copyright (C), Infinity Video Soft LLC, 2014, 2015, 2022, 2024
 */
 
 #include <AudioRenderer/lin/AudioRendererImpl.h>
@@ -169,19 +169,19 @@ void AudioRendererImpl::Play()
 		if (subFrame == 0)
 		{
 			pcmSource(packet);
-		}
 
-		if (!mute) /// We have to keep picking up packets from the jitter buffers
-		{
 			if (aecReceiver)
 			{
 				Transport::RTPPacket rtp;
 				rtp.rtpHeader = packet.header;
-				rtp.payload = packet.data + (subFrame * 960);
-				rtp.payloadSize = FRAMES_COUNT * 2;
+				rtp.payload = packet.data;
+				rtp.payloadSize = packet.size;
 				aecReceiver->Send(rtp);
 			}
+		}
 
+		if (!mute) /// We have to keep picking up packets from the jitter buffers
+		{
 			int error = 0;
 			if (pa_simple_write(s, packet.data + (subFrame * 960), FRAMES_COUNT * 2, &error) < 0)
 			{

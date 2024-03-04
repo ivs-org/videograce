@@ -183,7 +183,7 @@ void AEC::SpeakerReceiver::Send(const Transport::IPacket &packet_, const Transpo
 	{
 		const auto &packet = *static_cast<const Transport::RTPPacket*>(&packet_);
 
-		memcpy(splittingFilterIn->ibuf()->bands(0)[0], packet.payload, BANDS_COUNT * BAND_SIZE * sizeof(int16_t));
+		memcpy(splittingFilterIn->ibuf()->bands(0)[0], packet.payload, FRAMES_COUNT * BANDS_COUNT * BAND_SIZE * sizeof(int16_t));
 		splittingFilter->Analysis(splittingFilterIn.get(), splittingFilterOut.get());
 
 		for (int i = 0; i != FRAMES_COUNT; ++i)

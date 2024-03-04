@@ -28,9 +28,8 @@ namespace JB
 
 enum class Mode
 {
-    video,
-    sound,
-    local
+    Video,
+    Sound
 };
 
 class JB : public Transport::ISocket
