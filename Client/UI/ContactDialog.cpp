@@ -188,7 +188,7 @@ void ContactDialog::Add()
         if (!hasSelected)
         {
             auto selectedItem = list->selected_item();
-            if (selectedItem < items.size())
+            if (selectedItem < static_cast<int32_t>(items.size()))
             {
                 if (items[selectedItem].type != ItemType::Group)
                 {
