@@ -8,6 +8,8 @@
 #include <Audio/AudioEncoder.h>
 #include <Audio/OpusEncoderImpl.h>
 
+#include <wui/config/config.hpp>
+
 namespace Audio
 {
 
@@ -15,7 +17,7 @@ Encoder::Encoder()
 	: impl(),
 	receiver(nullptr),
 	type(CodecType::Undefined),
-	sampleFreq(48000),
+	sampleFreq(wui::config::get_int("SoundSystem", "SampleFreq", 48000)),
 	quality(10),
 	bitrate(30),
 	packetLoss(0)
@@ -54,6 +56,15 @@ void Encoder::SetBitrate(int32_t bitrate_)
 	}
 }
 
+void Encoder::SetSampleFreq(int32_t freq)
+{
+	sampleFreq = freq;
+	if (impl)
+	{
+		impl->SetSampleFreq(freq);
+	}
+}
+
 int32_t Encoder::GetBitrate() const
 {
 	return bitrate;
@@ -81,6 +92,7 @@ void Encoder::Start(CodecType type_, uint32_t ssrc)
 			impl->SetReceiver(receiver);
 			impl->SetQuality(quality);
 			impl->SetBitrate(bitrate);
+			impl->SetSampleFreq(sampleFreq);
 			impl->Start(type, ssrc);
 		}
 	}

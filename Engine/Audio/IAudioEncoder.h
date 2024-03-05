@@ -25,6 +25,7 @@ public:
 
 	virtual void SetQuality(int32_t val) = 0;
 	virtual void SetBitrate(int32_t bitrate) = 0;
+	virtual void SetSampleFreq(int32_t freq) = 0;
 
 	virtual int32_t GetBitrate() const = 0;
 

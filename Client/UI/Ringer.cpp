@@ -147,6 +147,11 @@ bool Ringer::Runned() const
     return runned;
 }
 
+void Ringer::SetSampleFreq(int32_t freq)
+{
+	resampler.SetSampleFreq(48000, freq);
+}
+
 void Ringer::GetFrame(Transport::OwnedRTPPacket &output)
 {
 	if (!runned || snd.empty())
@@ -154,9 +159,20 @@ void Ringer::GetFrame(Transport::OwnedRTPPacket &output)
 		return;
 	}
 
+	Transport::RTPPacket snd48;
+	snd48.payload = (uint8_t*)snd.c_str() + playPosition;
+	snd48.payloadSize = FRAME_SIZE;
+
+	Transport::RTPPacket sndOut;
+	resampler.Resample(snd48, sndOut);
+	
 	output.header.ssrc = OUT_SSRC;
-	memcpy(output.data, (uint8_t*)snd.c_str() + playPosition, FRAME_SIZE);
-	output.size = FRAME_SIZE;
+	memcpy(output.data, sndOut.payload, sndOut.payloadSize);
+	output.size = sndOut.payloadSize;
+
+	//output.header.ssrc = OUT_SSRC;
+	//memcpy(output.data, (uint8_t*)snd.c_str() + playPosition, FRAME_SIZE);
+	//output.size = FRAME_SIZE;
 	
 	playPosition += FRAME_SIZE;
 

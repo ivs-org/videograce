@@ -228,7 +228,8 @@ MainFrame::MainFrame()
         ringer,
         std::bind(&MainFrame::DetermineNetSpeed, this, std::placeholders::_1),
         std::bind(&MainFrame::CheckConnectivity, this, std::placeholders::_1),
-        std::bind(&MainFrame::SettingsReadyCallback, this)),
+        std::bind(&MainFrame::SettingsReadyCallback, this),
+        std::bind(&MainFrame::ChangeSampleRateCallback, this, std::placeholders::_1)),
 
     showConnectivityResult(false),
     actionQuested(false), useWSMedia(false),
@@ -2121,6 +2122,7 @@ void MainFrame::ProcessControllerEvent()
                         {
                             auto ras = std::make_shared<RendererSession::RendererAudioSession>(timeMeter, audioMixer);
                             ras->SetVolume(wui::config::get_int("Volumes", renderer.name, 100));
+                            ras->SetSampleFreq(wui::config::get_int("SoundSystem", "SampleFreq", 48000));
                             ras->SetDecoderType(Audio::CodecType::Opus);
                             ras->SetName(renderer.name);
                             ras->SetClientId(renderer.clientId);
@@ -2504,8 +2506,10 @@ void MainFrame::InitAudio()
 
     audioMixer.Stop();
     audioRenderer.Stop();
-    audioRenderer.Start(wui::config::get_int("AudioRenderer", "SampleFreq", 48000));
-    audioMixer.Start();
+    audioRenderer.Start(wui::config::get_int("SoundSystem", "SampleFreq", 48000));
+    audioMixer.Start(wui::config::get_int("SoundSystem", "SampleFreq", 48000));
+
+    ringer.SetSampleFreq(wui::config::get_int("SoundSystem", "SampleFreq", 48000));
 
     audioRenderer.SetMute(wui::config::get_int("AudioRenderer", "Enabled", 1) == 0);
 }
@@ -2790,7 +2794,7 @@ void MainFrame::SettingsReadyCallback()
 
         if (captureAudioSession)
         {
-            captureAudioSession->SetSampleFreq(wui::config::get_int("CaptureDevices", "MicrophoneSampleFreq", 48000));
+            captureAudioSession->SetSampleFreq(wui::config::get_int("SoundSystem", "SampleFreq", 48000));
             if (captureAudioSession->GetName() != wui::config::get_string("CaptureDevices", "MicrophoneName", ""))
             {
                 StopMicrophone();
@@ -2868,6 +2872,19 @@ void MainFrame::SettingsReadyCallback()
     }
 #else
 #endif
+}
+
+void MainFrame::ChangeSampleRateCallback(int32_t freq)
+{
+    if (captureAudioSession)
+    {
+        captureAudioSession->SetSampleFreq(freq);
+    }
+
+    for (auto& ras : renderersAudio)
+    {
+        ras.second->SetSampleFreq(freq);
+    }
 }
 
 void MainFrame::TrayIconCallback(wui::tray_icon_action action)

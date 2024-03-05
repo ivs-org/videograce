@@ -14,6 +14,8 @@
 
 #include <Transport/RTP/RTCPPacket.h>
 
+#include <wui/config/config.hpp>
+
 #include <Common/Common.h>
 
 namespace RendererSession
@@ -37,6 +39,7 @@ RendererAudioSession::RendererAudioSession(Common::TimeMeter &timeMeter_, Audio:
 	name(),
 	metadata(),
 	decoderType(Audio::CodecType::Opus),
+	sampleFreq(wui::config::get_int("SoundSystem", "SampleFreq", 48000)),
 	receiverSSRC(0), authorSSRC(0),
 	clientId(0), deviceId(0),
 	secureKey(),
@@ -82,6 +85,14 @@ bool RendererAudioSession::GetMute()
 void RendererAudioSession::SetDecoderType(Audio::CodecType dt)
 {
 	decoderType = dt;
+}
+
+void RendererAudioSession::SetSampleFreq(int32_t freq)
+{
+	sampleFreq = freq;
+	jitterBuffer.Stop();
+	decoder.SetSampleFreq(freq);
+	jitterBuffer.Start(JB::Mode::Sound, name);
 }
 
 void RendererAudioSession::SetName(std::string_view name_)
@@ -197,6 +208,7 @@ void RendererAudioSession::Start(uint32_t receiverSSRC_, uint32_t authorSSRC_, u
 		recorder->AddAudio(authorSSRC, clientId);
 	}
 
+	decoder.SetSampleFreq(sampleFreq);
 	decoder.Start(decoderType);
 	if (!decoder.IsStarted())
 	{

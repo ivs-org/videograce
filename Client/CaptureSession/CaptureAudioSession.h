@@ -4,11 +4,11 @@
  * Author: Anton (ud) Golovkov, udattsk@gmail.com
  * Copyright (C), Infinity Video Soft LLC, 2014, 2024
  * 
- *                                                                                                       ,-> [Encryptor] -> [NetSocket]
- *                                                            ,-> [Encoder] -> [LocalReceiverSplitter] -<
- * [Microphone] -> [Resampler] -> [AEC] -> [SilentSplitter] -<                                           '-> [LocalRenderer]
- *                                  ^                         '-> [SilentDetector]
- *                                  '- [AudioRenderer]
+ *                                                                           ,-> [Encoder] -> [Encryptor] -> [NetSocket]
+ *                                                    ,-> [SilentSplitter] -<
+ * [Microphone] -> [AEC] -> [LocalReceiverSplitter] -<                       '-> [SilentDetector]
+ *                   ^                                '-> [LocalRenderer]
+ *                   '- [AudioRenderer]
  */
 
 #pragma once
@@ -28,7 +28,6 @@
 #include <Audio/AudioEncoder.h>
 #include <AudioRenderer/AudioRenderer.h>
 #include <Audio/SilentDetector.h>
-#include <Audio/Resampler.h>
 #include <AEC/AEC.h>
 
 #include <Crypto/Encryptor.h>
@@ -76,15 +75,16 @@ namespace CaptureSession
 	private:
         Client::DeviceNotifyCallback deviceNotifyCallback;
 		AudioRenderer::AudioRenderer *audioRenderer;
+		
 		Transport::RTPSocket rtpSocket;
 		Transport::WSMSocket wsmSocket;
-		Transport::SocketSplitter localReceiverSplitter;
+		
 		Crypto::Encryptor encryptor;
 		Audio::Encoder encoder;
 		Audio::SilentDetector silentDetector;
 		Transport::SocketSplitter silentSplitter;
+		Transport::SocketSplitter localReceiverSplitter;
 		AEC::AEC aec;
-        Audio::Resampler resampler;
 		MicrophoneNS::Microphone microphone;
 
 		bool runned;

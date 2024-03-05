@@ -95,15 +95,15 @@ void OpusDecoderImpl::Start(CodecType)
 
 void OpusDecoderImpl::Stop()
 {
+	runned = false;
+
 	if (opusDecoder)
 	{
 		opus_decoder_destroy(opusDecoder);
 		opusDecoder = nullptr;
 	}
 
-	produceBuffer.reset(nullptr);
-	
-	runned = false;
+	produceBuffer.reset(nullptr);	
 }
 
 bool OpusDecoderImpl::IsStarted()

@@ -93,7 +93,7 @@ AudioRendererWave::AudioRendererWave(std::function<void(Transport::OwnedRTPPacke
 	thread(),
 	deviceName(),
 	devices(),
-    sampleFreq(wui::config::get_int("AudioRenderer", "SampleFreq", 48000)),
+    sampleFreq(wui::config::get_int("SoundSystem", "SampleFreq", 48000)),
 	volume(static_cast<uint16_t>((static_cast<float>(wui::config::get_int("AudioRenderer", "Volume", 100)) / 100) * 65535)),
 	mute(wui::config::get_int("AudioRenderer", "Enabled", 1) == 0),
 	m_hSem(NULL),

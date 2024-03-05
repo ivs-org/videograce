@@ -54,10 +54,12 @@ SettingsDialog::SettingsDialog(std::weak_ptr<wui::window> transientWindow_,
     Ringer &ringer_,
     std::function<void(bool)> netSpeedDeterminer_,
     std::function<void(bool)> connectivityDeterminer_,
-    std::function<void()> readyCallback_)
-    : readyCallback(readyCallback_),
-    netSpeedDeterminer(netSpeedDeterminer_),
+    std::function<void()> readyCallback_,
+    std::function<void(int32_t)> changeSampleRateCallback_)
+    : netSpeedDeterminer(netSpeedDeterminer_),
     connectivityDeterminer(connectivityDeterminer_),
+    changeSampleRateCallback(changeSampleRateCallback_),
+    readyCallback(readyCallback_),
     controller(controller_),
     transientWindow(transientWindow_),
     window(std::make_shared<wui::window>()),
@@ -92,8 +94,6 @@ SettingsDialog::SettingsDialog(std::weak_ptr<wui::window> transientWindow_,
     microphoneAECCheck(std::make_shared<wui::button>(wui::locale("settings", "microphone_aec"), []() {}, wui::button_view::switcher)),
     microphoneNSCheck(std::make_shared<wui::button>(wui::locale("settings", "microphone_ns"), []() {}, wui::button_view::switcher)),
     microphoneAGCCheck(std::make_shared<wui::button>(wui::locale("settings", "microphone_agc"), []() {}, wui::button_view::switcher)),
-    microphone16SampleRateCheck(std::make_shared<wui::button>(wui::locale("settings", "microphone_16_sample_rate"), [this]() { microphone48SampleRateCheck->turn(!microphone48SampleRateCheck->turned()); }, wui::button_view::radio)),
-    microphone48SampleRateCheck(std::make_shared<wui::button>(wui::locale("settings", "microphone_48_sample_rate"), [this]() { microphone16SampleRateCheck->turn(!microphone16SampleRateCheck->turned()); }, wui::button_view::radio)),
     soundIndicator(std::make_shared<SoundIndicator>()),
     microphone(timeMeter, *soundIndicator),
     currentMicrophoneId(-1),
@@ -178,12 +178,10 @@ SettingsDialog::SettingsDialog(std::weak_ptr<wui::window> transientWindow_,
     microphoneAECCheck->turn(wui::config::get_int("CaptureDevices", "MicrophoneAEC", 1) != 0);
     microphoneNSCheck->turn(wui::config::get_int("CaptureDevices", "MicrophoneNS", 1) != 0);
     microphoneAGCCheck->turn(wui::config::get_int("CaptureDevices", "MicrophoneAGC", 1) != 0);
-    microphone16SampleRateCheck->turn(wui::config::get_int("CaptureDevices", "MicrophoneSampleFreq", 48000) == 16000);
-    microphone48SampleRateCheck->turn(wui::config::get_int("CaptureDevices", "MicrophoneSampleFreq", 48000) == 48000);
-
+    
     loudspeakerSelect->set_change_callback(std::bind(&SettingsDialog::ChangeLoudspeaker, this, std::placeholders::_1, std::placeholders::_2));
-    loudspeaker16SampleRateCheck->turn(wui::config::get_int("AudioRenderer", "SampleFreq", 48000) == 16000);
-    loudspeaker48SampleRateCheck->turn(wui::config::get_int("AudioRenderer", "SampleFreq", 48000) == 48000);
+    loudspeaker16SampleRateCheck->turn(wui::config::get_int("SoundSystem", "SampleFreq", 48000) == 16000);
+    loudspeaker48SampleRateCheck->turn(wui::config::get_int("SoundSystem", "SampleFreq", 48000) == 48000);
 
     userNameInput->set_change_callback([this](std::string_view v) { userName = rtc::string_trim(std::string(v)); });
     userLoginInput->set_change_callback([this](std::string_view v) { userLogin = rtc::string_trim(std::string(v)); });
@@ -262,8 +260,6 @@ void SettingsDialog::Run(SettingsSection section_)
         microphoneAECCheck->turn(wui::config::get_int("CaptureDevices", "MicrophoneAEC", 1) != 0);
         microphoneNSCheck->turn(wui::config::get_int("CaptureDevices", "MicrophoneNS", 1) != 0);
         microphoneAGCCheck->turn(wui::config::get_int("CaptureDevices", "MicrophoneAGC", 1) != 0);
-        microphone16SampleRateCheck->turn(wui::config::get_int("CaptureDevices", "MicrophoneSampleFreq", 48000) == 16000);
-        microphone48SampleRateCheck->turn(wui::config::get_int("CaptureDevices", "MicrophoneSampleFreq", 48000) == 48000);
 
         currentLoudspeakerId = -1;
 
@@ -699,14 +695,10 @@ void SettingsDialog::ShowMicrophone()
     microphoneAECCheck->update_theme();
     microphoneNSCheck->update_theme();
     microphoneAGCCheck->update_theme();
-    microphone16SampleRateCheck->update_theme();
-    microphone48SampleRateCheck->update_theme();
 
     microphoneAECCheck->turn(wui::config::get_int("CaptureDevices", "MicrophoneAEC", 1) != 0);
     microphoneNSCheck->turn(wui::config::get_int("CaptureDevices", "MicrophoneNS", 1) != 0);
     microphoneAGCCheck->turn(wui::config::get_int("CaptureDevices", "MicrophoneAGC", 1) != 0);
-    microphone16SampleRateCheck->turn(wui::config::get_int("CaptureDevices", "MicrophoneSampleFreq", 48000) == 16000);
-    microphone48SampleRateCheck->turn(wui::config::get_int("CaptureDevices", "MicrophoneSampleFreq", 48000) == 48000);
 
     wui::rect pos = { 210, 30, WND_WIDTH - 10, 130 };
     window->add_control(soundIndicator, pos);
@@ -724,11 +716,7 @@ void SettingsDialog::ShowMicrophone()
     wui::line_up_top_bottom(pos, 20, 10);
     window->add_control(microphoneNSCheck, pos);
     wui::line_up_top_bottom(pos, 20, 10);
-    window->add_control(microphoneAGCCheck, pos);
-    wui::line_up_top_bottom(pos, 20, 20);
-    window->add_control(microphone16SampleRateCheck, pos);
-    wui::line_up_top_bottom(pos, 20, 10);
-    window->add_control(microphone48SampleRateCheck, pos);
+    window->add_control(microphoneAGCCheck, pos);   
 
     window->set_focused(microphoneSelect);
 }
@@ -744,8 +732,6 @@ void SettingsDialog::HideMicrophone()
     window->remove_control(microphoneAECCheck);
     window->remove_control(microphoneNSCheck);
     window->remove_control(microphoneAGCCheck);
-    window->remove_control(microphone16SampleRateCheck);
-    window->remove_control(microphone48SampleRateCheck);
 }
 
 void SettingsDialog::ChangeMicrophone(int32_t nItem, int64_t id)
@@ -773,7 +759,6 @@ bool SettingsDialog::UpdateMicrophone()
         wui::config::set_int("CaptureDevices", "MicrophoneAEC", microphoneAECCheck->turned());
         wui::config::set_int("CaptureDevices", "MicrophoneNS", microphoneNSCheck->turned());
         wui::config::set_int("CaptureDevices", "MicrophoneAGC", microphoneAGCCheck->turned());
-        wui::config::set_int("CaptureDevices", "MicrophoneSampleFreq", microphone16SampleRateCheck->turned() ? 16000 : 48000);
     }
 
     return true;
@@ -858,10 +843,14 @@ void SettingsDialog::ChangeLoudspeakerSampleRate(int32_t sampleRate)
 {
     audioMixer.Stop();
     audioRenderer.Stop();
-    audioRenderer.Start(sampleRate);
-    audioMixer.Start();
 
-    wui::config::set_int("AudioRenderer", "SampleFreq", sampleRate);
+    changeSampleRateCallback(sampleRate);
+    
+    audioRenderer.Start(sampleRate);
+    ringer.SetSampleFreq(sampleRate);
+    audioMixer.Start(sampleRate);
+
+    wui::config::set_int("SoundSystem", "SampleFreq", sampleRate);
 }
 
 bool SettingsDialog::UpdateLoudspeaker()

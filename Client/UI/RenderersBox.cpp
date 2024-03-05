@@ -85,8 +85,8 @@ void RenderersBox::Update()
     else
     {
         auto screenSize = wui::get_screen_size(parent_->context());
-        screenSize.right *= 0.9;
-        screenSize.bottom *= 0.9;
+        screenSize.right -= screenSize.right / 10;
+        screenSize.bottom -= screenSize.bottom / 10;
 
         showedRenderers.clear();
 

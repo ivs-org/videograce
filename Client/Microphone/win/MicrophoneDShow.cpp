@@ -27,7 +27,7 @@ MicrophoneDShow::MicrophoneDShow(Common::TimeMeter &timeMeter_, Transport::ISock
     deviceNotifyCallback(),
 	deviceName(),
 	deviceId(0),
-    frequency(wui::config::get_int("CaptureDevices", "MicrophoneSampleFreq", 48000)),
+    frequency(wui::config::get_int("SoundSystem", "SampleFreq", 48000)),
 	gain(wui::config::get_int("CaptureDevices", "MicrophoneGain", 80)),
 	mute(false),
 	runned(false),

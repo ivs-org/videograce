@@ -15,7 +15,7 @@ namespace MicrophoneNS
 {
 
 MicrophoneImpl::MicrophoneImpl(Common::TimeMeter &timeMeter, Transport::ISocket &receiver)
-	: frequency(wui::config::get_int("CaptureDevices", "MicrophoneSampleFreq", 48000)),
+	: frequency(wui::config::get_int("SoundSystem", "SampleFreq", 48000)),
     use_dmo(frequency == 16000 && Common::IsWindowsVistaOrGreater()),
     dmo(timeMeter, receiver),
     dshow(timeMeter, receiver)

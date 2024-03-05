@@ -66,7 +66,7 @@ MicrophoneDMO::MicrophoneDMO(Common::TimeMeter &timeMeter_, Transport::ISocket &
 	: timeMeter(timeMeter_),
     receiver(receiver_),
     deviceNotifyCallback(),
-	deviceName(),
+    deviceName(),
 	deviceId(0),
     dmoDeviceID(),
     gain(wui::config::get_int("CaptureDevices", "MicrophoneGain", 80)),
@@ -334,9 +334,7 @@ HRESULT MicrophoneDMO::Run()
             if (cbProduced != 0)
             {
                 Transport::RTPPacket packet;
-
                 packet.rtpHeader.ts = static_cast<uint32_t>(timeMeter.Measure());
-
                 packet.payload = pbOutputBuffer;
                 packet.payloadSize = cbProduced;
 
@@ -345,9 +343,9 @@ HRESULT MicrophoneDMO::Run()
         }
         while (OutputBufferStruct.dwStatus & DMO_OUTPUT_DATA_BUFFERF_INCOMPLETE);
 
-        int64_t playDuration = duration_cast<microseconds>(high_resolution_clock::now() - start).count();
+        int64_t captureDuration = duration_cast<microseconds>(high_resolution_clock::now() - start).count();
 
-        if (PACKET_DURATION > playDuration) Common::ShortSleep(PACKET_DURATION - playDuration - 500);
+        if (PACKET_DURATION > captureDuration) Common::ShortSleep(PACKET_DURATION - captureDuration - 500);
     }
 
     SAFE_ARRAYDELETE(pbOutputBuffer);

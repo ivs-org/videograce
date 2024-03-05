@@ -23,6 +23,7 @@ OpusEncoderImpl::OpusEncoderImpl()
 	: receiver(nullptr),
 	runned(false),
 	ssrc(0),
+	sampleFreq(48000),
 	quality(10),
 	bitrate(30),
 	packetLoss(0),
@@ -60,6 +61,16 @@ void OpusEncoderImpl::SetBitrate(int32_t bitrate_)
 	}
 }
 
+void OpusEncoderImpl::SetSampleFreq(int32_t freq)
+{
+	sampleFreq = freq;
+	if (runned)
+	{
+		Stop();
+		Start(CodecType::Opus, ssrc);
+	}
+}
+
 int32_t OpusEncoderImpl::GetBitrate() const
 {
 	return bitrate;
@@ -86,7 +97,7 @@ void OpusEncoderImpl::Start(CodecType, uint32_t ssrc_)
 	}
 
 	int opus_err = 0;
-	opusEncoder = opus_encoder_create(48000, 1, OPUS_APPLICATION_VOIP, &opus_err);
+	opusEncoder = opus_encoder_create(sampleFreq, 1, OPUS_APPLICATION_VOIP, &opus_err);
 	if (opus_err != OPUS_OK)
 	{
 		return;

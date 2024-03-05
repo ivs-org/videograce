@@ -60,6 +60,11 @@ void JB::Start(Mode mode_, std::string_view name_)
 {
 	if (!runned)
 	{
+        while (!buffer.empty())
+        {
+            buffer.pop_front();
+        }
+
 		mode = mode_;
         name = name_;
         frameDuration = 40;
@@ -84,6 +89,10 @@ void JB::Stop()
 	if (runned)
 	{
 		runned = false;
+        while (!buffer.empty())
+        {
+            buffer.pop_front();
+        }
 	}
 }
 

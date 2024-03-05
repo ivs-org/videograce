@@ -58,6 +58,7 @@ namespace RendererSession
 		virtual void SetMute(bool yes);
 		virtual bool GetMute();
 		virtual void SetDecoderType(Audio::CodecType dt);
+		virtual void SetSampleFreq(int32_t freq);
 		virtual void SetRTPParams(std::string_view recvFromAddr, uint16_t recvFromRTPPort);
 		virtual void SetWSMParams(std::string_view addr, std::string_view acessToken, std::string_view wsDestAddr);
 		virtual void SetClientId(int64_t clientId);
@@ -95,6 +96,8 @@ namespace RendererSession
 		std::string metadata;
 
 		Audio::CodecType decoderType;
+
+		int32_t sampleFreq;
 
 		uint32_t receiverSSRC, authorSSRC;
 		int64_t clientId;

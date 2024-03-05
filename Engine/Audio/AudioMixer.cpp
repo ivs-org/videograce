@@ -32,7 +32,8 @@ namespace Audio
 using namespace std::chrono;
 
 AudioMixer::AudioMixer()
-    : inputs(),
+    : frameSize(0),
+    inputs(),
     runned(false)
 {
 }
@@ -71,10 +72,11 @@ void AudioMixer::DeleteInput(uint32_t ssrc)
     }
 }
 
-void AudioMixer::Start()
+void AudioMixer::Start(uint32_t sampleFreq)
 {
     if (!runned)
     {
+        frameSize = (sampleFreq / 100) * 2 * 4; /// 40 ms frame
         runned = true;
     }
 }
@@ -91,12 +93,12 @@ void AudioMixer::GetSound(Transport::OwnedRTPPacket& outputBuffer)
 {
     for (auto& input : inputs)
     {
-        Transport::OwnedRTPPacket inputPacket(FRAME_SIZE);
+        Transport::OwnedRTPPacket inputPacket(frameSize);
         input.pcmCallback(inputPacket);
 
         if (inputPacket.size == 0) continue;
 
-        for (uint16_t i = 0; i != FRAME_SIZE; i += 2)
+        for (uint16_t i = 0; i != frameSize; i += 2)
         {
             const auto availableFrame = *reinterpret_cast<const int16_t*>(outputBuffer.data + i);
             const auto addingFrame = *reinterpret_cast<const int16_t*>(inputPacket.data + i);

@@ -10,7 +10,6 @@
 #include <AudioRenderer/AudioRenderer.h>
 
 #include <Transport/ISocket.h>
-#include <Audio/SoundBlock.h>
 
 #include <memory>
 #include <thread>

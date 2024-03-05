@@ -8,6 +8,7 @@
 #pragma once
 
 #include <Audio/AudioMixer.h>
+#include <Audio/Resampler.h>
 #include <Transport/RTP/OwnedRTPPacket.h>
 
 #include <atomic>
@@ -46,10 +47,13 @@ public:
     void Stop();
     bool Runned() const;
 
+	void SetSampleFreq(int32_t freq);
+
 	void GetFrame(Transport::OwnedRTPPacket&);
 
 private:
 	Audio::AudioMixer &mixer;
+	Audio::Resampler resampler;
 	RingType ringType;
 
     std::function<void(RingType)> endCallback;

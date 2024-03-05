@@ -4,11 +4,11 @@
  * Author: Anton (ud) Golovkov, udattsk@gmail.com
  * Copyright (C), Infinity Video Soft LLC, 2014, 2024
  *
- *                                                                                                       ,-> [Encryptor] -> [NetSocket]
- *                                                            ,-> [Encoder] -> [LocalReceiverSplitter] -<
- * [Microphone] -> [Resampler] -> [AEC] -> [SilentSplitter] -<                                           '-> [LocalRenderer]
- *                                  ^                         '-> [SilentDetector]
- *                                  '- [AudioRenderer]
+ *                                                                           ,-> [Encoder] -> [Encryptor] -> [NetSocket]
+ *                                                    ,-> [SilentSplitter] -<
+ * [Microphone] -> [AEC] -> [LocalReceiverSplitter] -<                       '-> [SilentDetector]
+ *                   ^                                '-> [LocalRenderer]
+ *                   '- [AudioRenderer]
  */
 
 #include <wui/config/config.hpp>
@@ -33,8 +33,7 @@ CaptureAudioSession::CaptureAudioSession(Common::TimeMeter &timeMeter_)
 	silentDetector(*this),
 	silentSplitter(),
 	aec(),
-    resampler(*aec.GetMicrophoneReceiver()),
-	microphone(timeMeter_, resampler),
+	microphone(timeMeter_, *aec.GetMicrophoneReceiver()),
 	runned(false),
 	ssrc(0), deviceId(0),
 	name(),
@@ -42,11 +41,11 @@ CaptureAudioSession::CaptureAudioSession(Common::TimeMeter &timeMeter_)
 	wsAddr(), accessToken(), wsDestAddr(),
 	sysLog(spdlog::get("System")), errLog(spdlog::get("Error"))
 {
-    aec.SetReceiver(&silentSplitter);
+    aec.SetReceiver(&localReceiverSplitter);
+	localReceiverSplitter.SetReceiver0(&silentSplitter);
 	silentSplitter.SetReceiver0(&encoder);
 	silentSplitter.SetReceiver1(&silentDetector);
-	encoder.SetReceiver(&localReceiverSplitter);
-	localReceiverSplitter.SetReceiver0(&encryptor);
+	encoder.SetReceiver(&encryptor);
 	encryptor.SetReceiver(&rtpSocket);
 	rtpSocket.SetReceiver(nullptr, this);
 	wsmSocket.SetReceiver(nullptr, this);
@@ -117,8 +116,9 @@ void CaptureAudioSession::SetSampleFreq(int32_t freq)
         microphone.Stop();
     }
 
-    resampler.SetSampleFreq(freq, 48000);
     microphone.SetSampleFreq(freq);
+	encoder.SetSampleFreq(freq);
+	//aec.SetSampleFreq(freq);
 
     if (runned)
     {
@@ -197,8 +197,6 @@ void CaptureAudioSession::Start(uint32_t ssrc_, uint32_t deviceId_, std::string_
 
 	ssrc = ssrc_;
 	deviceId = deviceId_;
-
-    resampler.SetSampleFreq(wui::config::get_int("CaptureDevices", "MicrophoneSampleFreq", 48000), 48000);
 
 	if (audioRenderer)
 	{

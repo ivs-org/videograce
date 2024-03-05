@@ -8,6 +8,8 @@
 #include <Audio/AudioDecoder.h>
 #include <Audio/OpusDecoderImpl.h>
 
+#include <wui/config/config.hpp>
+
 namespace Audio
 {
 
@@ -15,7 +17,7 @@ Decoder::Decoder()
 	: impl(),
 	receiver(nullptr),
 	type(CodecType::Undefined),
-	sampleFreq(48000),
+	sampleFreq(wui::config::get_int("SoundSystem", "SampleFreq", 48000)),
 	channels(1)
 {
 }

@@ -10,6 +10,8 @@
 #include <Device/DS/DSCommon.h>
 #include <Device/DS/SampleGrabber.h>
 
+#include <Audio/Resampler.h>
+
 struct IFilterGraph2;
 typedef CComQIPtr<IAMStreamConfig, &IID_IAMStreamConfig> StreamConfigMicroPtr;
 typedef CComQIPtr<IAMAudioInputMixer, &IID_IAMAudioInputMixer> MicroMixerPtr;

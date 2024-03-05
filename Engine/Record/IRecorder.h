@@ -29,6 +29,7 @@ namespace Recorder
 		virtual void DeleteVideo(ssrc_t ssrc) = 0;
 
 		virtual void AddAudio(ssrc_t ssrc, int64_t clientId) = 0;
+		virtual void SetSampleFreq(int32_t sampleFreq) = 0;
 		virtual void DeleteAudio(ssrc_t ssrc) = 0;
 
         virtual void SpeakerChanged(int64_t clientId) = 0;

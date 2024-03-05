@@ -14,17 +14,7 @@
 
 #include <Transport/ISocket.h>
 
-#include <Common/TimeMeter.h>
-
-#include <Audio/SoundBlock.h>
-
 #include <UI/DeviceNotifies.h>
-
-#include <thread>
-#include <atomic>
-#include <string>
-
-#include <spdlog/spdlog.h>
 
 namespace MicrophoneNS
 {

@@ -58,7 +58,8 @@ public:
         Ringer &ringer,
         std::function<void(bool)> netSpeedDeterminer,
         std::function<void(bool)> connectivityDeterminer,
-        std::function<void()> readyCallback);
+        std::function<void()> readyCallback,
+        std::function<void(int32_t)> changeSampleRateCallback);
     ~SettingsDialog();
 
     void Run(SettingsSection section);
@@ -78,9 +79,10 @@ private:
     static const int32_t WND_WIDTH = 700, WND_HEIGHT = 460;
     static const int32_t XBITMAP = 48;
 
-    std::function<void()> readyCallback;
     std::function<void(bool)> netSpeedDeterminer;
     std::function<void(bool)> connectivityDeterminer;
+    std::function<void()> readyCallback;
+    std::function<void(int32_t)> changeSampleRateCallback;
 
     Controller::IController &controller;
 
@@ -111,7 +113,6 @@ private:
     std::shared_ptr<wui::text> microphoneSensitivityText;
     std::shared_ptr<wui::slider> microphoneSensitivitySlider;
     std::shared_ptr<wui::button> microphoneAECCheck, microphoneNSCheck, microphoneAGCCheck;
-    std::shared_ptr<wui::button> microphone16SampleRateCheck, microphone48SampleRateCheck;
     std::vector<Device> microphoneDevices;
     std::shared_ptr<SoundIndicator> soundIndicator;
     MicrophoneNS::Microphone microphone;

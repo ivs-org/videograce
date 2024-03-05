@@ -49,7 +49,7 @@ AudioRendererWASAPI::AudioRendererWASAPI(std::function<void(Transport::OwnedRTPP
 	: runned(false), mute(wui::config::get_int("AudioRenderer", "Enabled", 1) == 0),
 	volume(static_cast<float>(wui::config::get_int("AudioRenderer", "Volume", 100)) / 100),
 	deviceName(),
-    sampleFreq(wui::config::get_int("AudioRenderer", "SampleFreq", 48000)),
+    sampleFreq(wui::config::get_int("SoundSystem", "SampleFreq", 48000)),
 	enumerator(),
 	audioClient(),
 	audioRenderClient(),
@@ -143,6 +143,7 @@ void AudioRendererWASAPI::Start(int32_t sampleFreq_)
 	}
 
     sampleFreq = sampleFreq_;
+	packet.size = (sampleFreq / 100) * 2 * 4;
 
 	HRESULT hr = CoCreateInstance(CLSID_MMDeviceEnumerator, 0, CLSCTX_ALL, IID_IMMDeviceEnumerator, (void**)&enumerator);
 	CHECK_HR(hr, "MMDeviceEnumerator creating instance")
@@ -262,7 +263,7 @@ void AudioRendererWASAPI::Start(int32_t sampleFreq_)
 
 	mt::set_thread_priority(thread, mt::priority_type::real_time);
 
-	sysLog->info("AudioRendererWASAPI :: Success started");
+	sysLog->info("AudioRendererWASAPI :: Success started, sample freq: {0}", sampleFreq);
 }
 
 void AudioRendererWASAPI::Stop()
@@ -376,7 +377,7 @@ void AudioRendererWASAPI::Play()
 					hr = audioRenderClient->GetBuffer(writeFrames, &pData);
 					CHECK_HR(hr, "audioClient->GetBuffer")
 
-					memcpy(pData, packet.data + (subFrame * 960), writeFrames * 2);
+					memcpy(pData, packet.data + (subFrame * writeFrames * 2), writeFrames * 2);
 
 					hr = audioRenderClient->ReleaseBuffer(writeFrames, 0);
 					CHECK_HR(hr, "audioRenderClient->ReleaseBuffer")

@@ -50,6 +50,7 @@ namespace Recorder
 		virtual void DeleteVideo(ssrc_t ssrc);
 
 		virtual void AddAudio(ssrc_t ssrc, int64_t clientId);
+		virtual void SetSampleFreq(int32_t sampleFreq);
 		virtual void DeleteAudio(ssrc_t ssrc);
 
         virtual void SpeakerChanged(int64_t clientId);
@@ -95,6 +96,7 @@ namespace Recorder
 
 		MP3Writer mp3Writer;
 
+		int32_t sampleFreq;
 		Audio::Encoder audioEncoder;
 		Audio::AudioMixer audioMixer;
 		std::map<ssrc_t, JB::JB> jBufs;

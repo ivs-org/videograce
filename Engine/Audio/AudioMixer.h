@@ -32,14 +32,14 @@ public:
 	void SetInputVolume(uint32_t ssrc, int32_t volume);
 	void DeleteInput(uint32_t ssrc);
 
-	void Start();
+	void Start(uint32_t sampleFreq);
 	void Stop();
 
 	/// Return PCM data 48000, 16, 1 
 	void GetSound(Transport::OwnedRTPPacket& outputBuffer);
 
 private:
-	static const uint16_t FRAME_SIZE = 480 * 2 * 4; // 4 frames of 48 k mono
+	uint16_t frameSize; // 4 frames of 48 k mono
 
 	struct Input
 	{

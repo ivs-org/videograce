@@ -259,6 +259,8 @@ private:
 
     void SettingsReadyCallback();
 
+    void ChangeSampleRateCallback(int32_t freq);
+
     void TrayIconCallback(wui::tray_icon_action action);
 
     void CredentialsCloseCallback();
