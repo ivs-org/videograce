@@ -76,11 +76,15 @@ void MicrophoneImpl::Start(ssrc_t ssrc_)
 
 	int error = 0;
 
-	/*pa_buffer_attr ba = {
-		.maxlength = static_cast<uint32_t>((sampleFreq / 100) * 4)
-	};*/
+	pa_buffer_attr ba = {
+		.maxlength = (uint32_t) -1,
+    	.tlength = (uint32_t) -1,
+    	.prebuf = (uint32_t) -1,
+    	.minreq = (uint32_t) -1,
+    	.fragsize = static_cast<uint32_t>((sampleFreq / 100) * 2)
+	};
 	// Create a new record stream
-	if (!(s = pa_simple_new(NULL, SYSTEM_NAME "Client", PA_STREAM_RECORD, NULL, "record", &ss, NULL, NULL, &error)))
+	if (!(s = pa_simple_new(NULL, SYSTEM_NAME "Client", PA_STREAM_RECORD, NULL, "record", &ss, NULL, &ba, &error)))
 	{
 		return errLog->critical("MicrophoneImpl :: pa_simple_new() failed: {0}", pa_strerror(error));
 	}
@@ -101,11 +105,6 @@ void MicrophoneImpl::Stop()
 	runned = false;
 	if (thread.joinable()) thread.join();
 	
-	int error = 0;
-	if (pa_simple_drain(s, &error) < 0)
-	{
-		errLog->critical("MicrophoneImpl :: pa_simple_drain() failed: {0}", pa_strerror(error));
-	}
 	pa_simple_free(s);
 
 	sysLog->info("Microphone {0} was stoped", deviceName);
