@@ -29,7 +29,6 @@ RendererVideoSession::RendererVideoSession(Common::TimeMeter &timeMeter)
 	rtpSocket(),
 	outSocket(&rtpSocket),
 	wsmSocket(),
-	pinger(),
 	localCVS(),
 	deviceNotifyCallback(),
 	runned(false), my(false),
@@ -41,7 +40,6 @@ RendererVideoSession::RendererVideoSession(Common::TimeMeter &timeMeter)
 	frameRate(25),
 	order(0),
 	resolution(Video::rVGA),
-	pingCnt(0),
 	wsAddr(), accessToken(), wsDestAddr(),
 	sysLog(spdlog::get("System")), errLog(spdlog::get("Error"))
 {
@@ -270,9 +268,7 @@ void RendererVideoSession::Start(uint32_t receiverSSRC_, uint32_t authorSSRC_, u
 		recordSplitter.SetReceiver0(&decoder);
         
         StartRemote();
-
-		pingCnt = 80;
-		pinger = std::thread(&RendererVideoSession::EstablishConnection, this);
+		Ping();
 	}
 
 	ForceKeyFrame(0);
@@ -293,8 +289,6 @@ void RendererVideoSession::Stop()
 	}
 
 	runned = false;
-
-	if (pinger.joinable()) pinger.join();
 
 	StopRemote();
 
@@ -411,20 +405,14 @@ void RendererVideoSession::ForceKeyFrame(uint32_t lastRecvSeq)
 	}
 }
 
-void RendererVideoSession::EstablishConnection()
+void RendererVideoSession::Ping()
 {
-	while (runned)
+	if (runned && !my && wsAddr.empty())
 	{
-		if (pingCnt++ >= 80)
-		{
-			Transport::RTPPacket packet;
-			packet.rtpHeader.ssrc = receiverSSRC;
+		Transport::RTPPacket packet;
+		packet.rtpHeader.ssrc = receiverSSRC;
 
-			outSocket->Send(packet);
-
-			pingCnt = 0;
-		}
-		std::this_thread::sleep_for(std::chrono::milliseconds(50));
+		rtpSocket.Send(packet);
 	}
 }
 

@@ -1369,6 +1369,7 @@ void Controller::OnWebSocket(Transport::WSMethod method, std::string_view messag
                 break;
                 case Proto::CommandType::Ping:
                     SendCommand(Proto::PING::Command().Serialize());
+                    eventHandler(Event(Event::Type::Ping));
                 break;
                 default: break;
             }

@@ -2292,6 +2292,16 @@ void MainFrame::ProcessControllerEvent()
                 });
             }
             break;
+            case Controller::Event::Type::Ping:
+                for (auto& rvs : renderersVideo)
+                {
+                    rvs->Ping();
+                }
+                for (auto& ras : renderersAudio)
+                {
+                    ras.second->Ping();
+                }
+            break;
         }
     }
 }

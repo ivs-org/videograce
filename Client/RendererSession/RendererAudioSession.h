@@ -12,8 +12,6 @@
 
 #pragma once
 
-#include <thread>
-
 #include "IRendererAudioSession.h"
 
 #include <Transport/RTPSocket.h>
@@ -73,6 +71,8 @@ namespace RendererSession
 
 		virtual void Pause();
 		virtual void Resume();
+
+		virtual void Ping();
 	private:
         Client::DeviceNotifyCallback deviceNotifyCallback;
 		Audio::AudioMixer &audioMixer;
@@ -87,8 +87,6 @@ namespace RendererSession
 		Transport::WSMSocket wsmSocket;
 		Transport::ISocket* outSocket;
 		
-		std::thread pinger;
-
 		bool runned, my, mute;
 
 		int32_t volume;
@@ -103,14 +101,11 @@ namespace RendererSession
 		uint32_t deviceId;
 		std::string secureKey;
 
-		uint16_t pingCnt;
 		uint32_t lastPacketLoss;
 
 		std::string wsAddr, accessToken, wsDestAddr;
 		
 		std::shared_ptr<spdlog::logger> sysLog, errLog;
-
-		void EstablishConnection();
 	};
 
 	typedef std::shared_ptr<RendererAudioSession> RendererAudioSessionPtr_t;

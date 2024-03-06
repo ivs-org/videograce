@@ -61,6 +61,9 @@ namespace RendererSession
 
 		virtual void Pause() = 0;
 		virtual void Resume() = 0;
+
+		/// Need to ping source
+		virtual void Ping() = 0;
 	protected:
 		~IRendererAudioSession() {}
 	};

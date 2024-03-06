@@ -76,6 +76,8 @@ namespace RendererSession
 		
 		virtual void Pause() = 0;
 		virtual void Resume() = 0;
+
+		virtual void Ping() = 0;
 	protected:
 		~IRendererVideoSession() {}
 	};

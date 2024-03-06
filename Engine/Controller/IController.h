@@ -196,7 +196,9 @@ namespace Controller
 			UpdateRTPAddress,
 			ReadyToMakeMediaTest,
 
-			UpdateMembers
+			UpdateMembers,
+
+			Ping
 		};
 
 		Type type;

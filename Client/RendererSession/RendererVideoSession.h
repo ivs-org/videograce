@@ -13,7 +13,6 @@
 #pragma once
 
 #include <memory>
-#include <thread>
 
 #include <RendererSession/IRendererVideoSession.h>
 #include <RendererSession/IActionReceiver.h>
@@ -90,6 +89,7 @@ public:
 	virtual void Stop();
 	virtual void Pause();
 	virtual void Resume();
+	virtual void Ping();
 
 	/// Derived from Video::IPacketLossCallback
 	virtual void ForceKeyFrame(uint32_t lastRecvSeq);
@@ -124,7 +124,6 @@ private:
 	Transport::RTPSocket rtpSocket;
 	Transport::WSMSocket wsmSocket;
 	Transport::ISocket *outSocket;
-	std::thread pinger;
 	CaptureSession::CaptureVideoSessionPtr_t localCVS;
     Client::DeviceNotifyCallback deviceNotifyCallback;
 
@@ -140,14 +139,10 @@ private:
 
 	Video::Resolution resolution;
 
-	uint16_t pingCnt;
-
 	std::string wsAddr, accessToken, wsDestAddr;
 
 	std::shared_ptr<spdlog::logger> sysLog, errLog;
 	
-	void EstablishConnection();
-
 	void StartRemote();
 	void StopRemote();
 

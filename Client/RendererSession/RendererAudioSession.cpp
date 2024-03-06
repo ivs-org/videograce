@@ -32,7 +32,6 @@ RendererAudioSession::RendererAudioSession(Common::TimeMeter &timeMeter_, Audio:
 	rtpSocket(),
 	wsmSocket(),
 	outSocket(&rtpSocket),
-	pinger(),
 	runned(false), my(false), mute(false),
 	volume(100),
 	name(),
@@ -41,7 +40,6 @@ RendererAudioSession::RendererAudioSession(Common::TimeMeter &timeMeter_, Audio:
 	receiverSSRC(0), authorSSRC(0),
 	clientId(0), deviceId(0),
 	secureKey(),
-	pingCnt(0),
 	lastPacketLoss(0),
 	wsAddr(), accessToken(), wsDestAddr(),
 	sysLog(spdlog::get("System")), errLog(spdlog::get("Error"))
@@ -231,8 +229,7 @@ void RendererAudioSession::Start(uint32_t receiverSSRC_, uint32_t authorSSRC_, u
 			return;
 		}
 
-		pingCnt = 80;
-		pinger = std::thread(&RendererAudioSession::EstablishConnection, this);
+		Ping();
 
 		audioMixer.AddInput(authorSSRC, clientId, std::bind(&JB::JB::GetFrame, &jitterBuffer, std::placeholders::_1));
 	}
@@ -252,8 +249,6 @@ void RendererAudioSession::Stop()
 		return;
 	}
 	runned = false;
-
-	if (pinger.joinable()) pinger.join();
 
     rtpSocket.Stop();
 	wsmSocket.Stop();
@@ -315,20 +310,13 @@ void RendererAudioSession::Resume()
 	lastPacketLoss = packetLoss;
 }*/
 
-void RendererAudioSession::EstablishConnection()
+void RendererAudioSession::Ping()
 {
-	while (runned)
+	if (runned && !my && wsAddr.empty())
 	{
-		if (pingCnt++ >= 80)
-		{
-			Transport::RTPPacket packet;
-			packet.rtpHeader.ssrc = receiverSSRC;
-
-			outSocket->Send(packet);
-
-			pingCnt = 0;
-		}
-		std::this_thread::sleep_for(std::chrono::milliseconds(50));
+		Transport::RTPPacket packet;
+		packet.rtpHeader.ssrc = receiverSSRC;
+		rtpSocket.Send(packet);
 	}
 }
 
