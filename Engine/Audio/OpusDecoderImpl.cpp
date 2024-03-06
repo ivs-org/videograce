@@ -111,7 +111,7 @@ bool OpusDecoderImpl::IsStarted()
 	return runned;
 }
 
-void OpusDecoderImpl::DecodeFrame(const uint8_t *data, uint32_t length, const Transport::RTPPacket::RTPHeader &header)
+void OpusDecoderImpl::DecodeFrame(const uint8_t *data, int32_t length, const Transport::RTPPacket::RTPHeader& header)
 {
 	int32_t frameSize = (sample_freq / 100) * channels * 2 * 4;
 	int outframeSize = opus_decode(opusDecoder, data, length, reinterpret_cast<opus_int16*>(produceBuffer.get()), frameSize, 0);
@@ -120,18 +120,15 @@ void OpusDecoderImpl::DecodeFrame(const uint8_t *data, uint32_t length, const Tr
 	{
 		int32_t outSize = outframeSize * channels * sizeof(opus_int16);
 
-		int32_t i = 0;
-		//while (frameSize * i < outSize)
-		{
-			Transport::RTPPacket packet;
+		Transport::RTPPacket packet;
 
-			packet.rtpHeader = header;
-			packet.payload = produceBuffer.get();// +(frameSize * i);
-			packet.payloadSize = frameSize;
+		packet.rtpHeader = header;
+		packet.rtpHeader.pt = static_cast<uint32_t>(Transport::RTPPayloadType::ptPCM);
+		packet.payload = produceBuffer.get();
+		packet.payloadSize = frameSize;
 
-			receiver->Send(packet);
-			//++i;
-		}
+		receiver->Send(packet);
+		
 	}
 }
 

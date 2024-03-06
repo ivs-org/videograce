@@ -48,6 +48,6 @@ namespace Audio
 
 		OpusDecoder *opusDecoder;
 		
-		void DecodeFrame(const uint8_t *data, uint32_t length, const Transport::RTPPacket::RTPHeader &);
+		void DecodeFrame(const uint8_t *data, int32_t length, const Transport::RTPPacket::RTPHeader &);
 	};
 }

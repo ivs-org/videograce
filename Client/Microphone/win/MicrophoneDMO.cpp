@@ -8,6 +8,7 @@
 #include <Microphone/win/MicrophoneDMO.h>
 
 #include <Transport/RTP/RTPPacket.h>
+#include <Transport/RTP/RTPPayloadType.h>
 
 #include <Common/Common.h>
 #include <wui/config/config.hpp>
@@ -335,6 +336,7 @@ HRESULT MicrophoneDMO::Run()
             {
                 Transport::RTPPacket packet;
                 packet.rtpHeader.ts = static_cast<uint32_t>(timeMeter.Measure());
+                packet.rtpHeader.pt = static_cast<uint32_t>(Transport::RTPPayloadType::ptPCM);
                 packet.payload = pbOutputBuffer;
                 packet.payloadSize = cbProduced;
 

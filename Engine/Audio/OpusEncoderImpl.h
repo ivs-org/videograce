@@ -11,6 +11,7 @@
 
 #include <Audio/IAudioEncoder.h>
 #include <Transport/ISocket.h>
+#include <Transport/RTP/RTPPacket.h>
 
 #include <opus/opus.h>
 
@@ -55,6 +56,6 @@ namespace Audio
 
 		OpusEncoder *opusEncoder;
 
-		void EncodeFrame(const uint8_t* data, int len, uint32_t timestamp);
+		void EncodeFrame(const uint8_t* data, int32_t len, const Transport::RTPPacket::RTPHeader& header);
 	};
 }

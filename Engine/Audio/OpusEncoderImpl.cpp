@@ -169,7 +169,7 @@ void OpusEncoderImpl::SetPacketLoss(int val)
 	}
 }
 
-void OpusEncoderImpl::EncodeFrame(const uint8_t* data, int len, uint32_t timestamp)
+void OpusEncoderImpl::EncodeFrame(const uint8_t* data, int32_t len, const Transport::RTPPacket::RTPHeader& header)
 {
 	int32_t frameSize = len / (1 * sizeof(opus_int16));
     int32_t compressedSize = opus_encode(opusEncoder, (const opus_int16*)data, frameSize, produceBuffer.get(), BUFFER_SIZE);
@@ -178,7 +178,7 @@ void OpusEncoderImpl::EncodeFrame(const uint8_t* data, int len, uint32_t timesta
 	{
 		Transport::RTPPacket packet;
 
-		packet.rtpHeader.ts = timestamp;
+		packet.rtpHeader = header;
 		packet.rtpHeader.pt = static_cast<uint8_t>(Transport::RTPPayloadType::ptOpus);
 		packet.rtpHeader.seq = ++frameCount;
 		packet.rtpHeader.ssrc = ssrc;
@@ -201,7 +201,7 @@ void OpusEncoderImpl::Send(const Transport::IPacket &packet_, const Transport::A
 	}
 	const Transport::RTPPacket &packet = *static_cast<const Transport::RTPPacket*>(&packet_);
 
-	EncodeFrame(packet.payload, packet.payloadSize, packet.rtpHeader.ts);
+	EncodeFrame(packet.payload, packet.payloadSize, packet.rtpHeader);
 }
 
 }

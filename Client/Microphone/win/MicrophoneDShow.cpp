@@ -8,6 +8,7 @@
 #include <Microphone/win/MicrophoneDShow.h>
 
 #include <Transport/RTP/RTPPacket.h>
+#include <Transport/RTP/RTPPayloadType.h>
 
 #include <Common/Common.h>
 #include <wui/config/config.hpp>
@@ -216,6 +217,7 @@ void CALLBACK MicrophoneDShow::OutputCallback(unsigned char* data, int len, void
 
     Transport::RTPPacket packet;
     packet.rtpHeader.ts = static_cast<uint32_t>(instance.timeMeter.Measure() / 1000);
+	packet.rtpHeader.pt = static_cast<uint32_t>(Transport::RTPPayloadType::ptPCM);
     packet.payload = data;
     packet.payloadSize = len;
 

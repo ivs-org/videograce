@@ -6,7 +6,9 @@
 */
 
 #include <Microphone/lin/MicrophoneImpl.h>
+
 #include <Transport/RTP/RTPPacket.h>
+#include <Transport/RTP/RTPPayloadType.h>
 
 #include <assert.h>
 
@@ -189,6 +191,7 @@ void MicrophoneImpl::run()
 
 		Transport::RTPPacket packet;
 		packet.rtpHeader.ts = timeMeter.Measure() / 1000;
+		packet.rtpHeader.pt = static_cast<uint32_t>(Transport::RTPPayloadType::ptPCM);
 		packet.payload = reinterpret_cast<uint8_t*>(buffer);
 		packet.payloadSize = bufSize;
 		receiver.Send(packet);

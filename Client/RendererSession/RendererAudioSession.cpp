@@ -3,11 +3,11 @@
  *
  * Author: Anton (ud) Golovkov, udattsk@gmail.com
  * Copyright (C), Infinity Video Soft LLC, 2014 - 2024
- * 
- *                                                  ,-> [Decoder] -> [JitterBuffer] <-> [AudioMixer] <- [AudioRenderer]
- * [NetSocket] -> [Decryptor] -> [RecordSplitter] -<
- *                                       ^          `-> [Recorder]
- *                                       '- <- [Local Capturer]
+ *
+ *                                                               ,-> [JitterBuffer] <-> [AudioMixer] <- [AudioRenderer]
+ * [NetSocket] -> [Decryptor] -> [Decoder] -> [RecordSplitter] -<
+ *                                                  ^            `-> [Recorder]
+ *                                                  '- <- [Local Capturer]
  */
 
 #include "RendererAudioSession.h"
@@ -25,11 +25,10 @@ RendererAudioSession::RendererAudioSession(Common::TimeMeter &timeMeter_, Audio:
 	: deviceNotifyCallback(),
 	audioMixer(audioMixer_),
 	recorder(nullptr),
-	videoRecorder(nullptr),
-	recordSplitter(),
-	decryptor(),
-	decoder(),
 	jitterBuffer(timeMeter_),
+	recordSplitter(),
+	decoder(),
+	decryptor(),
 	rtpSocket(),
 	wsmSocket(),
 	outSocket(&rtpSocket),
@@ -49,9 +48,9 @@ RendererAudioSession::RendererAudioSession(Common::TimeMeter &timeMeter_, Audio:
 {
     rtpSocket.SetReceiver(&decryptor, nullptr);
 	wsmSocket.SetReceiver(&decryptor, nullptr);
-	decryptor.SetReceiver(&recordSplitter);
-	recordSplitter.SetReceiver0(&decoder);
-	decoder.SetReceiver(&jitterBuffer);
+	decryptor.SetReceiver(&decoder);
+	decoder.SetReceiver(&recordSplitter);
+	recordSplitter.SetReceiver0(&jitterBuffer);
 }
 
 RendererAudioSession::~RendererAudioSession()
@@ -199,17 +198,6 @@ void RendererAudioSession::Start(uint32_t receiverSSRC_, uint32_t authorSSRC_, u
 		recorder->AddAudio(authorSSRC, clientId);
 	}
 
-	decoder.Start(decoderType);
-	if (!decoder.IsStarted())
-	{
-		errLog->info("Can't start audio renderer session because no memory to decoder, client id: {0:d}, device id: {0:1}, receiver ssrc: {2:d}, author ssrc: {3:d}", clientId, deviceId, receiverSSRC, authorSSRC);
-		if (deviceNotifyCallback)
-		{
-			deviceNotifyCallback(name, Client::DeviceNotifyType::MemoryError, Proto::DeviceType::AudioRenderer, deviceId, 0);
-		}
-		return;
-	}
-
 	if (!my)
 	{
 		if (wsAddr.empty())
@@ -228,6 +216,17 @@ void RendererAudioSession::Start(uint32_t receiverSSRC_, uint32_t authorSSRC_, u
 			if (deviceNotifyCallback)
 			{
 				deviceNotifyCallback(name, Client::DeviceNotifyType::MemoryError, Proto::DeviceType::VideoRenderer, deviceId, 0);
+			}
+			return;
+		}
+
+		decoder.Start(decoderType);
+		if (!decoder.IsStarted())
+		{
+			errLog->info("Can't start audio renderer session because no memory to decoder, client id: {0:d}, device id: {0:1}, receiver ssrc: {2:d}, author ssrc: {3:d}", clientId, deviceId, receiverSSRC, authorSSRC);
+			if (deviceNotifyCallback)
+			{
+				deviceNotifyCallback(name, Client::DeviceNotifyType::MemoryError, Proto::DeviceType::AudioRenderer, deviceId, 0);
 			}
 			return;
 		}

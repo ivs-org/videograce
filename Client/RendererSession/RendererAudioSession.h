@@ -4,10 +4,10 @@
  * Author: Anton (ud) Golovkov, udattsk@gmail.com
  * Copyright (C), Infinity Video Soft LLC, 2014, 2024
  *  
- *                                                  ,-> [Decoder] -> [JitterBuffer] <-> [AudioMixer] <- [AudioRenderer]
- * [NetSocket] -> [Decryptor] -> [RecordSplitter] -<
- *                                       ^          `-> [Recorder]
- *                                       '- <- [Local Capturer] 
+ *                                                               ,-> [JitterBuffer] <-> [AudioMixer] <- [AudioRenderer]
+ * [NetSocket] -> [Decryptor] -> [Decoder] -> [RecordSplitter] -<
+ *                                                  ^            `-> [Recorder]
+ *                                                  '- <- [Local Capturer] 
  */
 
 #pragma once
@@ -77,14 +77,16 @@ namespace RendererSession
         Client::DeviceNotifyCallback deviceNotifyCallback;
 		Audio::AudioMixer &audioMixer;
 		Recorder::Recorder *recorder;
-		Transport::ISocket* videoRecorder;
+
+		JB::JB jitterBuffer;
 		Transport::SocketSplitter recordSplitter;
-		Crypto::Decryptor decryptor;
 		Audio::Decoder decoder;
-        JB::JB jitterBuffer;
+		Crypto::Decryptor decryptor;      
+
 		Transport::RTPSocket rtpSocket;
 		Transport::WSMSocket wsmSocket;
 		Transport::ISocket* outSocket;
+		
 		std::thread pinger;
 
 		bool runned, my, mute;
