@@ -72,7 +72,7 @@ void AudioRendererImpl::Start(int32_t sampleFreq_)
 	// Create a new playback stream
 	if (!(s = pa_simple_new(NULL, SYSTEM_NAME "Client", PA_STREAM_PLAYBACK, NULL, "playback", &ss, NULL, NULL, &error)))
 	{
-		return errLog->critical("pa_simple_new() failed: {0}", pa_strerror(error));
+		return errLog->critical("AudioRendererImpl :: pa_simple_new() failed: {0}", pa_strerror(error));
 	}
 
 	runned = true;
@@ -94,7 +94,7 @@ void AudioRendererImpl::Stop()
 	int error = 0;
 	if (pa_simple_drain(s, &error) < 0)
 	{
-		errLog->critical("pa_simple_drain() failed: {0}", pa_strerror(error));
+		errLog->critical("AudioRendererImpl :: pa_simple_drain() failed: {0}", pa_strerror(error));
 	}
 	pa_simple_free(s);
 
@@ -157,14 +157,13 @@ void AudioRendererImpl::Play()
 {
 	using namespace std::chrono;
 	int64_t packetDuration = 40000;
+
+	const uint32_t writeCount = (sampleFreq / 100) * 2; // 10 ms frame
 	
-	Transport::OwnedRTPPacket packet(480 * 2 * 4);
-	
+	Transport::OwnedRTPPacket packet(writeCount);	
 	while (runned)
 	{
-		auto start = high_resolution_clock::now();
-
-		const uint32_t FRAMES_COUNT = sampleFreq / 100;
+		auto start = high_resolution_clock::now();		
 
 		if (subFrame == 0)
 		{
@@ -183,9 +182,9 @@ void AudioRendererImpl::Play()
 		if (!mute) /// We have to keep picking up packets from the jitter buffers
 		{
 			int error = 0;
-			if (pa_simple_write(s, packet.data + (subFrame * 960), FRAMES_COUNT * 2, &error) < 0)
+			if (pa_simple_write(s, packet.data + (subFrame * writeCount), writeCount, &error) < 0)
 			{
-				errLog->critical("pa_simple_write() failed: {0}", pa_strerror(error));
+				return errLog->critical("AudioRendererImpl :: pa_simple_write() failed: {0}", pa_strerror(error));
 			}
 
 			//int64_t duration = duration_cast<microseconds>(high_resolution_clock::now() - start).count();

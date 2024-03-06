@@ -10,11 +10,13 @@
 #include <Transport/RTP/RTPPacket.h>
 #include <Transport/RTP/RTPPayloadType.h>
 
+#include <Common/ShortSleep.h>
+
+#include <Version.h>
+
 #include <assert.h>
 
 #include <wui/config/config.hpp>
-
-#include <alsa/asoundlib.h>
 
 namespace MicrophoneNS
 {
@@ -26,12 +28,12 @@ MicrophoneImpl::MicrophoneImpl(Common::TimeMeter &timeMeter_, Transport::ISocket
 	deviceId(0),
 	ssrc(0),
 	seq(0),
-	freq(wui::config::get_int("SoundSystem", "SampleFreq", 48000)),
+	sampleFreq(wui::config::get_int("SoundSystem", "SampleFreq", 48000)),
     gain(wui::config::get_int("CaptureDevices", "MicrophoneGain", 100)),
 	mute(false),
 	runned(false),
 	thread(),
-	processTime(0),
+	s(nullptr),
 	sysLog(spdlog::get("System")), errLog(spdlog::get("Error"))
 {
 }
@@ -58,23 +60,55 @@ void MicrophoneImpl::SetDeviceId(uint32_t id)
 
 void MicrophoneImpl::Start(ssrc_t ssrc_)
 {
-	if (!runned)
+	if (runned)
 	{
-		ssrc = ssrc_;
-		seq = 0;
-
-		runned = true;
-		thread = std::thread(&MicrophoneImpl::run, this);
+		return;
 	}
+
+	ssrc = ssrc_;
+	seq = 0;
+
+	static const pa_sample_spec ss = {
+			.format = PA_SAMPLE_S16LE,
+			.rate = static_cast<uint32_t>(sampleFreq),
+			.channels = 1
+	};
+
+	int error = 0;
+
+	/*pa_buffer_attr ba = {
+		.maxlength = static_cast<uint32_t>((sampleFreq / 100) * 4)
+	};*/
+	// Create a new record stream
+	if (!(s = pa_simple_new(NULL, SYSTEM_NAME "Client", PA_STREAM_RECORD, NULL, "record", &ss, NULL, NULL, &error)))
+	{
+		return errLog->critical("MicrophoneImpl :: pa_simple_new() failed: {0}", pa_strerror(error));
+	}
+
+	runned = true;
+	thread = std::thread(&MicrophoneImpl::run, this);
+
+	sysLog->info("Microphone {0} was started", deviceName);
 }
 
 void MicrophoneImpl::Stop()
 {
-	if (runned)
+	if (!runned)
 	{
-		runned = false;
-		if (thread.joinable()) thread.join();
+		return;
 	}
+
+	runned = false;
+	if (thread.joinable()) thread.join();
+	
+	int error = 0;
+	if (pa_simple_drain(s, &error) < 0)
+	{
+		errLog->critical("MicrophoneImpl :: pa_simple_drain() failed: {0}", pa_strerror(error));
+	}
+	pa_simple_free(s);
+
+	sysLog->info("Microphone {0} was stoped", deviceName);
 }
 
 void MicrophoneImpl::SetGain(uint16_t gain_)
@@ -101,7 +135,7 @@ bool MicrophoneImpl::GetMute() const
 
 void MicrophoneImpl::SetSampleFreq(int32_t freq_)
 {
-    freq = freq_;
+    sampleFreq = freq_;
     if (runned)
     {
         Stop();
@@ -111,7 +145,7 @@ void MicrophoneImpl::SetSampleFreq(int32_t freq_)
 
 int32_t MicrophoneImpl::GetSampleFreq() const
 {
-    return freq;
+    return sampleFreq;
 }
 
 void MicrophoneImpl::SetDeviceNotifyCallback(Client::DeviceNotifyCallback deviceNotifyCallback)
@@ -121,90 +155,42 @@ void MicrophoneImpl::SetDeviceNotifyCallback(Client::DeviceNotifyCallback device
 
 void MicrophoneImpl::run()
 {
-	snd_pcm_t *capture_handle;
-	snd_pcm_hw_params_t *hw_params;
+	using namespace std::chrono;
+	int64_t packetDuration = 40000;
+	
+	const uint32_t readCount = (sampleFreq / 100) * 2; // 10 ms frame
 
-	int ret = snd_pcm_open(&capture_handle, deviceName.c_str(), SND_PCM_STREAM_CAPTURE, 0);
-	if (ret < 0)
-	{
-		return errLog->critical("Microphone {0} cannot open audio device ({1})", deviceName, snd_strerror(ret));
-	}
+	int error = 0;
 
-	ret = snd_pcm_hw_params_malloc(&hw_params);
-	if (ret < 0)
-	{
-		return errLog->critical("Microphone {0} cannot allocate hardware parameter structure ({1})", deviceName, snd_strerror(ret));
-	}
-
-	ret = snd_pcm_hw_params_any(capture_handle, hw_params);
-	if (ret < 0)
-	{
-		return errLog->critical("Microphone {0} cannot initialize hardware parameter structure ({1})", deviceName, snd_strerror(ret));
-	}
-
-	ret = snd_pcm_hw_params_set_access(capture_handle, hw_params, SND_PCM_ACCESS_RW_INTERLEAVED);
-	if (ret < 0)
-	{
-		return errLog->critical("Microphone {0} cannot set access type ({1})", deviceName, snd_strerror(ret));
-	}
-
-	ret = snd_pcm_hw_params_set_format (capture_handle, hw_params, SND_PCM_FORMAT_S16_LE);
-	if (ret < 0)
-	{
-		return errLog->critical("Microphone {0} cannot set sample format ({1})", deviceName, snd_strerror(ret));
-	}
-
-	ret = snd_pcm_hw_params_set_rate_near (capture_handle, hw_params, reinterpret_cast<uint32_t*>(&freq), 0);
-	if (ret < 0)
-	{
-		return errLog->critical("Microphone {0} cannot set sample rate ({1})", deviceName, snd_strerror(ret));
-	}
-
-	ret = snd_pcm_hw_params_set_channels (capture_handle, hw_params, 1);
-	if (ret < 0)
-	{
-		return errLog->critical("Microphone {0} cannot set channel count ({1})", deviceName, snd_strerror(ret));
-	}
-
-	ret = snd_pcm_hw_params (capture_handle, hw_params);
-	if (ret < 0)
-	{
-		return errLog->critical("Microphone {0} cannot set parameters ({1})", deviceName, snd_strerror(ret));
-	}
-
-	snd_pcm_hw_params_free (hw_params);
-
-	ret = snd_pcm_prepare (capture_handle);
-	if (ret < 0)
-	{
-		return errLog->critical("Microphone {0} cannot prepare audio interface for use ({1})", deviceName, snd_strerror(ret));
-	}
-
-	const int samplesCount = freq == 48000 ? 480 * 4 : 160 * 4;
-	const int bufSize = samplesCount;
-
-	char buffer[bufSize * 2] = { 0 };
-
+	uint8_t buf[readCount * 4] = { 0 };
+	int32_t subFrame = 0;
 	while (runned)
 	{
-		ret = snd_pcm_readi(capture_handle, buffer, samplesCount);
-		if (ret != samplesCount)
+		auto start = high_resolution_clock::now();
+
+		if (pa_simple_read(s, buf + (subFrame * readCount), readCount, &error) < 0)
 		{
-			errLog->critical("Microphone {0} read from audio interface failed ret ({1}) != samplesCount ({2}) ({3})", deviceName, ret, samplesCount, snd_strerror(ret));
-			break;
+        	return errLog->critical("MicrophoneImpl :: pa_simple_read() failed: {0}", pa_strerror(error));
 		}
 
-		Transport::RTPPacket packet;
-		packet.rtpHeader.ts = timeMeter.Measure() / 1000;
-		packet.rtpHeader.ssrc = ssrc;
-		packet.rtpHeader.seq = ++seq;
-		packet.rtpHeader.pt = static_cast<uint32_t>(Transport::RTPPayloadType::ptPCM);
-		packet.payload = reinterpret_cast<uint8_t*>(buffer);
-		packet.payloadSize = bufSize;
-		receiver.Send(packet);
+		++subFrame;
+		if (subFrame > 3)
+		{
+			if (!mute)
+			{
+				Transport::RTPPacket packet;
+				packet.rtpHeader.ts = timeMeter.Measure() / 1000;
+				packet.rtpHeader.ssrc = ssrc;
+				packet.rtpHeader.seq = ++seq;
+				packet.rtpHeader.pt = static_cast<uint32_t>(Transport::RTPPayloadType::ptPCM);
+				packet.payload = buf;
+				packet.payloadSize = readCount;
+				receiver.Send(packet);
+			}
+			subFrame = 0;
+			memset(buf, 0, readCount);
+		}
 	}
-
-	snd_pcm_close(capture_handle);
 }
 
 }

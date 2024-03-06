@@ -17,6 +17,9 @@
 #include <atomic>
 #include <string>
 
+#include <pulse/simple.h>
+#include <pulse/error.h>
+
 #include <spdlog/spdlog.h>
 
 namespace MicrophoneNS
@@ -55,13 +58,13 @@ private:
     ssrc_t ssrc;
     uint32_t seq;
 
-    int32_t freq, gain;
+    int32_t sampleFreq, gain;
     bool mute;
 
-    std::atomic<bool> runned;
+    std::atomic_bool runned;
     std::thread thread;
 
-    uint32_t processTime;
+    pa_simple *s;
 
     std::shared_ptr<spdlog::logger> sysLog, errLog;
 
