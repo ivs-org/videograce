@@ -160,7 +160,7 @@ void AudioRendererImpl::Play()
 
 	const uint32_t writeCount = (sampleFreq / 100) * 2; // 10 ms frame
 	
-	Transport::OwnedRTPPacket packet(writeCount);	
+	Transport::OwnedRTPPacket packet(writeCount * 4);	
 	while (runned)
 	{
 		auto start = high_resolution_clock::now();		
