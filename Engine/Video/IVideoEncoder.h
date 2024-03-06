@@ -25,13 +25,13 @@ class IEncoder
 		virtual void SetReceiver(Transport::ISocket *receiver) = 0;
 
 		virtual void SetResolution(Resolution resolution) = 0;
-		virtual void SetBitrate(int bitrate) = 0;
+		virtual void SetBitrate(int32_t bitrate) = 0;
 
 		virtual void SetScreenContent(bool yes) = 0;
 
 		virtual int GetBitrate() = 0;
 		
-		virtual void Start(CodecType type, uint32_t ssrc) = 0;
+		virtual void Start(CodecType type) = 0;
 		virtual void Stop() = 0;
 		virtual bool IsStarted() = 0;
 

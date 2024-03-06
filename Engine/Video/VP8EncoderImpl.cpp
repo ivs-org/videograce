@@ -38,13 +38,10 @@ static uint32_t MaxIntraTarget(uint32_t optimalBuffersize, uint32_t frameRate)
 VP8EncoderImpl::VP8EncoderImpl()
 	: receiver(nullptr),
 	runned(false),
-	ssrc(0),
 	forceKF(false),
 	resolution(Video::rHD),
 	bitrate(1024),
 	screenContent(false),
-	frameCount(0),
-	prevFrameHash(0),
 	codec(),
 	cfg(),
 	raw()
@@ -67,7 +64,7 @@ void VP8EncoderImpl::SetResolution(Resolution resolution_)
 	if (runned)
 	{
 		Stop();
-		Start(CodecType::VP8, ssrc);
+		Start(CodecType::VP8);
 	}
 }
 
@@ -95,18 +92,13 @@ int VP8EncoderImpl::GetBitrate()
 	return bitrate;
 }
 
-void VP8EncoderImpl::Start(CodecType, uint32_t ssrc_)
+void VP8EncoderImpl::Start(CodecType)
 {
 	if (runned)
 	{
 		return;
 	}
 	
-	ssrc = ssrc_;
-
-	frameCount = 0;
-	prevFrameHash = 0;
-
 	/* Populate encoder configuration */
 	vpx_codec_err_t res = vpx_codec_enc_config_default(vpx_codec_vp8_cx(), &cfg, 0);
 	if (res)
@@ -218,10 +210,10 @@ void VP8EncoderImpl::Send(const Transport::IPacket &packet_, const Transport::Ad
 	raw.planes[1] = const_cast<uint8_t*>(packet.payload + chromaPlaneSize);
 	raw.planes[2] = const_cast<uint8_t*>(packet.payload + chromaPlaneSize + colorPlaneSize);
 
-	EncodeFrame(&raw, frameCount++, packet.rtpHeader.ts);
+	EncodeFrame(&raw, packet.rtpHeader);
 }
 
-void VP8EncoderImpl::EncodeFrame(vpx_image_t *img, int frameIndex, int timestamp)
+void VP8EncoderImpl::EncodeFrame(vpx_image_t *img, const Transport::RTPPacket::RTPHeader &header)
 {
 	int flags = 0;
 
@@ -233,7 +225,7 @@ void VP8EncoderImpl::EncodeFrame(vpx_image_t *img, int frameIndex, int timestamp
 	}
 
 	const vpx_codec_cx_pkt_t *pkt = NULL;
-	const vpx_codec_err_t res = vpx_codec_encode(&codec, img, frameIndex, 1, flags, VPX_DL_REALTIME);
+	const vpx_codec_err_t res = vpx_codec_encode(&codec, img, header.seq, 1, flags, VPX_DL_REALTIME);
 
 	if (res != VPX_CODEC_OK)
 	{
@@ -248,12 +240,8 @@ void VP8EncoderImpl::EncodeFrame(vpx_image_t *img, int frameIndex, int timestamp
 			//const int keyframe = (pkt->data.frame.flags & VPX_FRAME_IS_KEY) != 0;
 
 			Transport::RTPPacket packet;
-
-			packet.rtpHeader.ts = timestamp;
+			packet.rtpHeader = header;
 			packet.rtpHeader.pt = static_cast<uint8_t>(Transport::RTPPayloadType::ptVP8);
-			packet.rtpHeader.seq = frameIndex;
-			packet.rtpHeader.ssrc = ssrc;
-
 			packet.payload = (uint8_t*)pkt->data.frame.buf;
 			packet.payloadSize = (uint32_t)pkt->data.frame.sz;
 

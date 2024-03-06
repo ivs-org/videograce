@@ -159,7 +159,7 @@ void Recorder::Start(std::string_view name, bool mp3Mode_)
 		audioMixer.Start();
 
 		// Start the fake video encoder
-		fakeVideoEncoder.Start(Video::CodecType::VP8, 0);
+		fakeVideoEncoder.Start(Video::CodecType::VP8);
 
 		runned = true;
 

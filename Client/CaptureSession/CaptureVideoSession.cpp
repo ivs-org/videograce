@@ -97,7 +97,7 @@ void CaptureVideoSession::SetResolution(Video::Resolution resolution_)
 
 	if (runned)
 	{
-		camera->Start(colorSpace);
+		camera->Start(colorSpace, ssrc);
 	}
 }
 
@@ -121,7 +121,7 @@ void CaptureVideoSession::SetEncoderType(Video::CodecType et)
 	if (runned)
 	{
 		encoder.Stop();
-		encoder.Start(et, ssrc);
+		encoder.Start(et);
 	}
 }
 
@@ -240,10 +240,10 @@ void CaptureVideoSession::Start(uint32_t ssrc_, Video::ColorSpace colorSpace_, u
 		encryptor.Start(secureKey);
 	}
 
-	encoder.Start(encoderType, ssrc);
+	encoder.Start(encoderType);
 	if (!encoder.IsStarted())
 	{
-		errLog->info("Can't start camera session because no memory, device id: {0:d}, ssrc: {1:d}", deviceId, ssrc);
+		errLog->info("Can't start camera encoder because no memory, device id: {0:d}, ssrc: {1:d}", deviceId, ssrc);
 		if (deviceNotifyCallback)
 		{
             deviceNotifyCallback(name, Client::DeviceNotifyType::MemoryError, Proto::DeviceType::Camera, deviceId, 0);
@@ -251,7 +251,7 @@ void CaptureVideoSession::Start(uint32_t ssrc_, Video::ColorSpace colorSpace_, u
 		return;
 	}
 
-	camera->Start(colorSpace);
+	camera->Start(colorSpace, ssrc);
 	
 	sysLog->trace("Started camera session, device id: {0:d}, ssrc: {1:d}", deviceId, ssrc);
 }
@@ -289,7 +289,7 @@ void CaptureVideoSession::Resume()
 {
 	if (runned)
 	{
-		camera->Start(colorSpace);
+		camera->Start(colorSpace, ssrc);
 	}
 }
 

@@ -69,7 +69,7 @@ int Encoder::GetBitrate()
 	return bitrate;
 }
 
-void Encoder::Start(CodecType type_, uint32_t ssrc)
+void Encoder::Start(CodecType type_)
 {
 	forceKFSeq = 0;
 
@@ -104,7 +104,7 @@ void Encoder::Start(CodecType type_, uint32_t ssrc)
 			impl->SetResolution(resolution);
 			impl->SetBitrate(bitrate);
 			impl->SetScreenContent(screenContent);
-			impl->Start(type, ssrc);
+			impl->Start(type);
 		}
 	}
 }

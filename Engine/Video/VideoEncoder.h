@@ -23,10 +23,10 @@ namespace Video
 		/// Derived from IEncoder
 		virtual void SetReceiver(Transport::ISocket *receiver);
 		virtual void SetResolution(Resolution resolution);
-		virtual void SetBitrate(int bitrate);
+		virtual void SetBitrate(int32_t bitrate);
 		virtual void SetScreenContent(bool yes);
 		virtual int GetBitrate();
-		virtual void Start(CodecType type, uint32_t ssrc);
+		virtual void Start(CodecType type);
 		virtual void Stop();
 		virtual bool IsStarted();
 		virtual void ForceKeyFrame(uint32_t lastRecvSeq);

@@ -50,9 +50,9 @@ void ScreenCapturer::SetRCMode(bool yes)
     impl->SetRCMode(yes);
 }
 
-void ScreenCapturer::Start(Video::ColorSpace cs)
+void ScreenCapturer::Start(Video::ColorSpace cs, ssrc_t ssrc)
 {
-    impl->Start(cs);
+    impl->Start(cs, ssrc);
 }
 
 void ScreenCapturer::Stop()

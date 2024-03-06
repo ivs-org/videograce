@@ -9,6 +9,7 @@
 
 #include <Video/IVideoEncoder.h>
 #include <Transport/ISocket.h>
+#include <Transport/RTP/RTPPacket.h>
 
 #include <vpx/vpx_encoder.h>
 #include <vpx/vp8cx.h>
@@ -29,10 +30,10 @@ public:
 		
 	/// Derived from IEncoder
 	virtual void SetResolution(Resolution resolution);
-	virtual void SetBitrate(int bitrate);
+	virtual void SetBitrate(int32_t bitrate);
 	virtual void SetScreenContent(bool yes);
 	virtual int GetBitrate();
-	virtual void Start(CodecType et, uint32_t ssrc);
+	virtual void Start(CodecType);
 	virtual void Stop();
 	virtual bool IsStarted();
 	virtual void ForceKeyFrame(uint32_t);
@@ -45,24 +46,18 @@ private:
 
 	bool runned;
 
-	uint32_t ssrc;
-
 	bool forceKF;
 
 	Video::Resolution resolution;
-	int bitrate;
+	int32_t bitrate;
 
 	bool screenContent;
-
-	int frameCount;
-
-	size_t prevFrameHash;
 
 	vpx_codec_ctx_t codec;
 	vpx_codec_enc_cfg_t cfg;
 	vpx_image_t raw;
 	
-	void EncodeFrame(vpx_image_t *img, int frameIndex, int timestamp);
+	void EncodeFrame(vpx_image_t *img, const Transport::RTPPacket::RTPHeader&);
 	void DieCodec(vpx_codec_ctx_t *ctx, const char *s);
 };
 

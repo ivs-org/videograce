@@ -11,6 +11,7 @@
 
 #include <Video/Resolution.h>
 #include <Video/ColorSpace.h>
+#include <Common/Types.h>
 
 #include <UI/DeviceNotifies.h>
 
@@ -35,7 +36,7 @@ public:
 	virtual void SetName(std::string_view name) = 0;
 	virtual void SetDeviceId(uint32_t id) = 0;
 
-	virtual void Start(Video::ColorSpace colorSpace) = 0;
+	virtual void Start(Video::ColorSpace colorSpace, ssrc_t ssrc) = 0;
 	virtual void Stop() = 0;
 
 	virtual bool SetResolution(Video::Resolution resolution = Video::rVGA) = 0;

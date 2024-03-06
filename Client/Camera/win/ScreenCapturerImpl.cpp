@@ -38,6 +38,7 @@ ScreenCapturerImpl::ScreenCapturerImpl(Common::TimeMeter &timeMeter_, Transport:
 	buffer(nullptr),
 	packetDuration(40000),
 	deviceId(0),
+	ssrc(0), seq(0),
 	curMonNo(0),
 	screenScale(100),
 	captureWnd(0),
@@ -81,10 +82,13 @@ void ScreenCapturerImpl::SetRCMode(bool yes)
 	rcMode = yes;
 }
 
-void ScreenCapturerImpl::Start(Video::ColorSpace)
+void ScreenCapturerImpl::Start(Video::ColorSpace, ssrc_t ssrc_)
 {
 	if (!runned)
 	{
+		ssrc = ssrc_;
+		seq = 0;
+
 		try
 		{
 			buffer = std::unique_ptr<uint8_t[]>(new uint8_t[4096 * 3072 * 4]);
@@ -338,6 +342,8 @@ void ScreenCapturerImpl::CaptureTheScreen()
 
 	// Sending the packet to receiver
 	packet.rtpHeader.ts = (uint32_t)(timeMeter.Measure() / 1000);
+	packet.rtpHeader.ssrc = ssrc;
+	packet.rtpHeader.seq = ++seq;
 	ConvertFromRGB32(&lpbitmap, &bmpSize);
 	packet.payload = lpbitmap;
 	packet.payloadSize = bmpSize;

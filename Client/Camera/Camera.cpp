@@ -45,9 +45,9 @@ void Camera::SetDeviceId(uint32_t id)
     impl->SetDeviceId(id);
 }
 
-void Camera::Start(Video::ColorSpace colorSpace_)
+void Camera::Start(Video::ColorSpace colorSpace_, ssrc_t ssrc)
 {
-    impl->Start(colorSpace_);
+    impl->Start(colorSpace_, ssrc);
 }
 
 void Camera::Stop()

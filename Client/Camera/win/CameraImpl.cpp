@@ -42,6 +42,7 @@ CameraImpl::CameraImpl(Common::TimeMeter &timeMeter_, Transport::ISocket &receiv
 	deviceId(0),
 	resolution(Video::rVGA),
 	colorSpace(Video::ColorSpace::I420),
+	ssrc(0), seq(0),
 	runned(false),
 	restarting(false),
 	captureThread(), sendThread(),
@@ -150,7 +151,7 @@ void CameraImpl::SetName(std::string_view name_)
 	if (runned)
 	{
 		Stop();
-		Start(colorSpace);
+		Start(colorSpace, ssrc);
 	}
 }
 
@@ -159,11 +160,13 @@ void CameraImpl::SetDeviceId(uint32_t id)
 	deviceId = id;
 }
 
-void CameraImpl::Start(Video::ColorSpace colorSpace_)
+void CameraImpl::Start(Video::ColorSpace colorSpace_, ssrc_t ssrc_)
 {
 	if (!runned)
 	{
 		colorSpace = colorSpace_;
+		ssrc = ssrc_;
+		seq = 0;
 
 		Video::ResolutionValues rv = Video::GetValues(resolution);
 
@@ -311,7 +314,7 @@ bool CameraImpl::SetResolution(Video::Resolution resolution_)
 	{
 		Stop();
 		resolution = resolution_;
-		Start(colorSpace);
+		Start(colorSpace, ssrc);
 	}
 	else
 	{
@@ -521,6 +524,8 @@ void CameraImpl::send()
 		Transport::RTPPacket packet;
 
 		packet.rtpHeader.ts = (uint32_t)(start / 1000);
+		packet.rtpHeader.ssrc = ssrc;
+		packet.rtpHeader.seq = ++seq;
 		packet.payload = outputBuffer.get();
 		packet.payloadSize = length;
 

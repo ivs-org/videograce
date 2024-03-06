@@ -27,7 +27,7 @@ public:
     /// Impl of ICamera
     virtual void SetName(std::string_view name) final;
     virtual void SetDeviceId(uint32_t id) final;
-    virtual void Start(Video::ColorSpace colorSpace) final;
+    virtual void Start(Video::ColorSpace colorSpace, ssrc_t ssrc) final;
     virtual void Stop() final;
     virtual bool SetResolution(Video::Resolution resolution = Video::rVGA) final;
     virtual void SetFrameRate(uint32_t rate) final;
