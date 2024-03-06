@@ -29,7 +29,7 @@ public:
 	/// Impl of ICamera
 	virtual void SetName(std::string_view name);
 	virtual void SetDeviceId(uint32_t id);
-	virtual void Start(Video::ColorSpace colorSpace);
+	virtual void Start(Video::ColorSpace colorSpace, ssrc_t ssrc);
 	virtual void Stop();
 	virtual bool SetResolution(Video::Resolution resolution = Video::rVGA);
     virtual void SetFrameRate(uint32_t rate);
@@ -50,6 +50,9 @@ private:
 	std::string name;
 	uint32_t deviceId;
 	Video::Resolution resolution;
+
+	ssrc_t ssrc;
+	uint32_t seq;
 
 	std::atomic<bool> runned;
 	std::thread thread;

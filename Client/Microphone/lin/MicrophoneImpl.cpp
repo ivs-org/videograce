@@ -24,7 +24,9 @@ MicrophoneImpl::MicrophoneImpl(Common::TimeMeter &timeMeter_, Transport::ISocket
     receiver(receiver_),
 	deviceName(),
 	deviceId(0),
-	freq(wui::config::get_int("CaptureDevices", "MicrophoneSampleFreq", 48000)),
+	ssrc(0),
+	seq(0),
+	freq(wui::config::get_int("SoundSystem", "SampleFreq", 48000)),
     gain(wui::config::get_int("CaptureDevices", "MicrophoneGain", 100)),
 	mute(false),
 	runned(false),
@@ -45,7 +47,7 @@ void MicrophoneImpl::SetDeviceName(std::string_view name)
 	if (runned)
 	{
 		Stop();
-		Start();
+		Start(ssrc);
 	}
 }
 
@@ -54,10 +56,13 @@ void MicrophoneImpl::SetDeviceId(uint32_t id)
 	deviceId = id;
 }
 
-void MicrophoneImpl::Start()
+void MicrophoneImpl::Start(ssrc_t ssrc_)
 {
 	if (!runned)
 	{
+		ssrc = ssrc_;
+		seq = 0;
+
 		runned = true;
 		thread = std::thread(&MicrophoneImpl::run, this);
 	}
@@ -100,7 +105,7 @@ void MicrophoneImpl::SetSampleFreq(int32_t freq_)
     if (runned)
     {
         Stop();
-        Start();
+        Start(ssrc);
     }
 }
 
@@ -191,6 +196,8 @@ void MicrophoneImpl::run()
 
 		Transport::RTPPacket packet;
 		packet.rtpHeader.ts = timeMeter.Measure() / 1000;
+		packet.rtpHeader.ssrc = ssrc;
+		packet.rtpHeader.seq = ++seq;
 		packet.rtpHeader.pt = static_cast<uint32_t>(Transport::RTPPayloadType::ptPCM);
 		packet.payload = reinterpret_cast<uint8_t*>(buffer);
 		packet.payloadSize = bufSize;

@@ -52,6 +52,8 @@ private:
 
     std::string deviceName;
     uint32_t deviceId;
+    ssrc_t ssrc;
+    uint32_t seq;
 
     int32_t freq, gain;
     bool mute;

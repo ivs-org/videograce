@@ -43,6 +43,7 @@ CameraImpl::CameraImpl(Common::TimeMeter &timeMeter_, Transport::ISocket &receiv
 	name(),
 	deviceId(0),
 	resolution(Video::rVGA),
+	ssrc(0), seq(0),
 	runned(false),
 	thread(),
 	processTime(0),
@@ -72,7 +73,7 @@ void CameraImpl::SetName(std::string_view name_)
 	if (runned)
 	{
 		Stop();
-		Start(Video::ColorSpace::YUY2);
+		Start(Video::ColorSpace::YUY2, ssrc);
 	}
 }
 
@@ -91,10 +92,13 @@ void CameraImpl::Zoom(int value)
 
 }
 
-void CameraImpl::Start(Video::ColorSpace)
+void CameraImpl::Start(Video::ColorSpace, ssrc_t ssrc_)
 {
 	if (!runned)
 	{
+		ssrc = ssrc_;
+		seq = 0;
+
 		flipHorizontal = wui::config::get_int("Camera", "FlipHorizontal", 0) != 0;
 
 		Video::ResolutionValues rv = Video::GetValues(resolution);
@@ -131,7 +135,7 @@ bool CameraImpl::SetResolution(Video::Resolution resolution_)
 
 		resolution = resolution_;
 
-		Start(Video::ColorSpace::YUY2);
+		Start(Video::ColorSpace::YUY2, ssrc);
 	}
 
 	resolution = resolution_;
@@ -208,6 +212,8 @@ void CameraImpl::run()
 			Postprocess((uint8_t*)buffers[idx].data, rv.width * rv.height * 2);
 			Transport::RTPPacket packet;
 			packet.rtpHeader.ts = timeMeter.Measure() / 1000;
+			packet.rtpHeader.ssrc = ssrc;
+			packet.rtpHeader.seq = ++seq;
             packet.payload = buffer.get();
             packet.payloadSize = (rv.width * rv.height) + ((rv.width * rv.height) / 2);
             receiver.Send(packet);
