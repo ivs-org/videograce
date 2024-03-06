@@ -196,9 +196,6 @@ void Recorder::Stop()
 
 		writer.reset(nullptr);
 
-		videos.clear();
-		jBufs.clear();
-
 		sysLog->info("Recorder ended (normal mode)");
 	}
 }

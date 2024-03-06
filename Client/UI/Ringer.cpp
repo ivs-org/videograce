@@ -55,6 +55,9 @@ void Ringer::Ring(RingType ringType_)
 
     Stop();
 
+	auto autoAnswerRingingCount = wui::config::get_int("User", "AutoAnswerRinging", 1);
+	bool autoAnswer = wui::config::get_int("User", "CallAutoAnswer", 0) != 0;
+
     ringType = ringType_;
     snd.clear();
     
@@ -65,7 +68,7 @@ void Ringer::Ring(RingType ringType_)
 	{
 	case RingType::CallIn:
 	{
-		targetRingCount = 10;
+		targetRingCount = !autoAnswer ? 10 : autoAnswerRingingCount;
 #ifdef _WIN32
 		Load(SND_CALLIN);
 #else
@@ -169,6 +172,10 @@ void Ringer::GetFrame(Transport::OwnedRTPPacket &output)
 	if (currentRingCount >= targetRingCount)
 	{
 		runned = false;
+		if (endCallback)
+		{
+			endCallback(ringType);
+		}
 	}
 }
 

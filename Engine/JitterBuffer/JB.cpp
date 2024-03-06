@@ -81,6 +81,8 @@ void JB::Start(Mode mode_, std::string_view name_)
 
 		runned = true;
         buffering = true;
+
+        sysLog->info("{0}_JB[{1}] :: Started (frameDuration: {2}, reserveCount: {3})", to_string(mode), name, frameDuration, reserveCount);
 	}
 }
 
@@ -93,6 +95,8 @@ void JB::Stop()
         {
             buffer.pop_front();
         }
+
+        sysLog->info("{0}_JB[{1}] :: Stopped", to_string(mode), name);
 	}
 }
 
@@ -110,6 +114,7 @@ void JB::SetFrameDuration(uint32_t ms)
 {
 	Stop();
 	frameDuration = ms;
+    sysLog->info("{0}_JB[{1}] :: Change frame duration (frameDuration: {2})", to_string(mode), name, frameDuration);
 	Start(mode, name);
 }
 
@@ -167,7 +172,7 @@ void JB::GetFrame(Transport::OwnedRTPPacket& output)
     {
         auto bufferSize = buffer.size();
 
-        while (buffer.size() + 1 > reserveCount && rxInterval > buffer.size() * frameDuration) /// Prevent big delay
+        while (buffer.size() > reserveCount && rxInterval < (buffer.size() * frameDuration)) /// Prevent big delay
         {
             buffer.pop_front();
         }
