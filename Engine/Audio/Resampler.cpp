@@ -17,7 +17,7 @@ Resampler::Resampler()
     outFreq(16000),
     resamplingState16_48(), resamplingState48_16(),
     tmpMem(static_cast<int32_t*>(malloc(3 * 336 * sizeof(int32_t)))),
-    resampledOut(static_cast<int16_t*>(malloc(480 * 2 * sizeof(int16_t) * 2)))
+    resampledOut(static_cast<int16_t*>(malloc(480 * sizeof(int16_t) * 4)))
 {
 }
 

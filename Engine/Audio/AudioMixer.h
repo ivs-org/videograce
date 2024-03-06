@@ -32,7 +32,7 @@ public:
 	void SetInputVolume(uint32_t ssrc, int32_t volume);
 	void DeleteInput(uint32_t ssrc);
 
-	void Start(uint32_t sampleFreq);
+	void Start(uint32_t sampleFreq = 48000);
 	void Stop();
 
 	/// Return PCM data 48000, 16, 1 

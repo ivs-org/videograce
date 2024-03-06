@@ -37,7 +37,6 @@ Recorder::Recorder()
 	fakeVideoChannel{ 0, 0, -1, Video::GetResolution(Video::ResolutionValues(1280, 720)), this },
 	hasKeyFrame(false),
 	currentVideoChannel(fakeVideoChannel),
-	sampleFreq(wui::config::get_int("SoundSystem", "SampleFreq", 48000)),
 	audioEncoder(), audioMixer(),
 	jBufs(),
 	fakeVideoSource(new uint8_t[static_cast<size_t>(1280 * 720 * 1.5)]),
@@ -67,14 +66,14 @@ void Recorder::Start(std::string_view name, bool mp3Mode_)
 		{
 			mp3Writer.Start(name);
 
-			audioMixer.Start(sampleFreq);
+			audioMixer.Start();
 
 			runned = true;
 
 			return sysLog->info("Recorder start in mp3 only mode, writing file: {0}", name);
 		}
 
-		audioMixer.Start(sampleFreq);
+		audioMixer.Start();
 
 		ts = 0;
 		hasKeyFrame = false;
@@ -157,7 +156,7 @@ void Recorder::Start(std::string_view name, bool mp3Mode_)
 
 		// Start the audio encoder and mixer
 		audioEncoder.Start(Audio::CodecType::Opus, 0);
-		audioMixer.Start(sampleFreq);
+		audioMixer.Start();
 
 		// Start the fake video encoder
 		fakeVideoEncoder.Start(Video::CodecType::VP8, 0);
@@ -277,12 +276,7 @@ void Recorder::DeleteVideo(ssrc_t ssrc)
 
 void Recorder::AddAudio(ssrc_t ssrc, int64_t clientId)
 {
-	//audioMixer->AddInput(ssrc, clientId);
-}
-
-void Recorder::SetSampleFreq(int32_t sampleFreq_)
-{
-	sampleFreq = sampleFreq_;
+	//audioMixer.AddInput(ssrc, clientId);
 }
 
 void Recorder::DeleteAudio(ssrc_t ssrc)

@@ -9,6 +9,8 @@
 
 #include <AudioRenderer/AudioRenderer.h>
 
+#include <Audio/Resampler.h>
+
 #include <Transport/ISocket.h>
 
 #include <memory>
@@ -55,6 +57,8 @@ private:
 
 	std::string deviceName;
     int32_t sampleFreq;
+
+	Audio::Resampler resampler;
 
 	CComPtr<IMMDeviceEnumerator> enumerator;
 	CComPtr<IMMDevice> mmDevice;

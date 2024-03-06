@@ -50,6 +50,7 @@ AudioRendererWASAPI::AudioRendererWASAPI(std::function<void(Transport::OwnedRTPP
 	volume(static_cast<float>(wui::config::get_int("AudioRenderer", "Volume", 100)) / 100),
 	deviceName(),
     sampleFreq(wui::config::get_int("SoundSystem", "SampleFreq", 48000)),
+	resampler(),
 	enumerator(),
 	audioClient(),
 	audioRenderClient(),
@@ -143,7 +144,7 @@ void AudioRendererWASAPI::Start(int32_t sampleFreq_)
 	}
 
     sampleFreq = sampleFreq_;
-	packet.size = (sampleFreq / 100) * 2 * 4;
+	resampler.SetSampleFreq(48000, sampleFreq_);
 
 	HRESULT hr = CoCreateInstance(CLSID_MMDeviceEnumerator, 0, CLSCTX_ALL, IID_IMMDeviceEnumerator, (void**)&enumerator);
 	CHECK_HR(hr, "MMDeviceEnumerator creating instance")
@@ -340,6 +341,8 @@ void AudioRendererWASAPI::Play()
 
 	const uint32_t FRAMES_COUNT = sampleFreq / 100;
 
+	//Transport::RTPPacket snd48, sndResampled;
+
 	while (runned)
 	{
 		DWORD waitResult = WaitForMultipleObjects(2, waitArray, FALSE, INFINITE);
@@ -362,6 +365,11 @@ void AudioRendererWASAPI::Play()
 						rtp.payloadSize = packet.size;
 						aecReceiver->Send(rtp);
 					}
+
+					/*snd48.payload = packet.data;
+					snd48.payloadSize = packet.size;
+
+					resampler.Resample(snd48, sndResampled);*/
 				}
 
 				if (!mute) /// We have to keep picking up packets from the jitter buffers
@@ -378,6 +386,7 @@ void AudioRendererWASAPI::Play()
 					CHECK_HR(hr, "audioClient->GetBuffer")
 
 					memcpy(pData, packet.data + (subFrame * writeFrames * 2), writeFrames * 2);
+					//memcpy(pData, sndResampled.payload + (subFrame * writeFrames * 2), writeFrames * 2);
 
 					hr = audioRenderClient->ReleaseBuffer(writeFrames, 0);
 					CHECK_HR(hr, "audioRenderClient->ReleaseBuffer")

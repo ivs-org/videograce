@@ -8,8 +8,6 @@
 #include <Audio/AudioEncoder.h>
 #include <Audio/OpusEncoderImpl.h>
 
-#include <wui/config/config.hpp>
-
 namespace Audio
 {
 
@@ -17,7 +15,7 @@ Encoder::Encoder()
 	: impl(),
 	receiver(nullptr),
 	type(CodecType::Undefined),
-	sampleFreq(wui::config::get_int("SoundSystem", "SampleFreq", 48000)),
+	sampleFreq(48000),
 	quality(10),
 	bitrate(30),
 	packetLoss(0)

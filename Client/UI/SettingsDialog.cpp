@@ -806,11 +806,11 @@ void SettingsDialog::ShowLoudspeaker()
     pos.right = 380;
     window->add_control(loudspeakerCheckButton, pos);
     
-    pos.right = WND_WIDTH - 10;
+    /*pos.right = WND_WIDTH - 10;
     wui::line_up_top_bottom(pos, 20, 30);
     window->add_control(loudspeaker16SampleRateCheck, pos);
     wui::line_up_top_bottom(pos, 20, 10);
-    window->add_control(loudspeaker48SampleRateCheck, pos);
+    window->add_control(loudspeaker48SampleRateCheck, pos);*/
 
     window->set_focused(loudspeakerSelect);
 }
@@ -847,8 +847,7 @@ void SettingsDialog::ChangeLoudspeakerSampleRate(int32_t sampleRate)
     changeSampleRateCallback(sampleRate);
     
     audioRenderer.Start(sampleRate);
-    ringer.SetSampleFreq(sampleRate);
-    audioMixer.Start(sampleRate);
+    audioMixer.Start();
 
     wui::config::set_int("SoundSystem", "SampleFreq", sampleRate);
 }

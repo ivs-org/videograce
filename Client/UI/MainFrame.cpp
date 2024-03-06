@@ -2122,7 +2122,6 @@ void MainFrame::ProcessControllerEvent()
                         {
                             auto ras = std::make_shared<RendererSession::RendererAudioSession>(timeMeter, audioMixer);
                             ras->SetVolume(wui::config::get_int("Volumes", renderer.name, 100));
-                            ras->SetSampleFreq(wui::config::get_int("SoundSystem", "SampleFreq", 48000));
                             ras->SetDecoderType(Audio::CodecType::Opus);
                             ras->SetName(renderer.name);
                             ras->SetClientId(renderer.clientId);
@@ -2507,11 +2506,8 @@ void MainFrame::InitAudio()
     audioMixer.Stop();
     audioRenderer.Stop();
     audioRenderer.Start(wui::config::get_int("SoundSystem", "SampleFreq", 48000));
-    audioMixer.Start(wui::config::get_int("SoundSystem", "SampleFreq", 48000));
-
-    ringer.SetSampleFreq(wui::config::get_int("SoundSystem", "SampleFreq", 48000));
-
     audioRenderer.SetMute(wui::config::get_int("AudioRenderer", "Enabled", 1) == 0);
+    audioMixer.Start();
 }
 
 void MainFrame::ShowBusy(std::string_view title)
@@ -2879,11 +2875,6 @@ void MainFrame::ChangeSampleRateCallback(int32_t freq)
     if (captureAudioSession)
     {
         captureAudioSession->SetSampleFreq(freq);
-    }
-
-    for (auto& ras : renderersAudio)
-    {
-        ras.second->SetSampleFreq(freq);
     }
 }
 
