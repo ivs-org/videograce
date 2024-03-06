@@ -747,7 +747,7 @@ void SettingsDialog::ChangeMicrophone(int32_t nItem, int64_t id)
     microphone.Stop();
     microphone.SetDeviceName(device.name);
     microphone.SetGain(microphoneSensitivitySlider->get_value());
-    microphone.Start();
+    microphone.Start(0);
 }
 
 bool SettingsDialog::UpdateMicrophone()

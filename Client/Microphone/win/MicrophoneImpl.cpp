@@ -37,9 +37,9 @@ void MicrophoneImpl::SetDeviceId(uint32_t id)
     use_dmo ? dmo.SetDeviceId(id) : dshow.SetDeviceId(id);
 }
 
-void MicrophoneImpl::Start()
+void MicrophoneImpl::Start(ssrc_t ssrc)
 {
-    use_dmo ? dmo.Start() : dshow.Start();
+    use_dmo ? dmo.Start(ssrc) : dshow.Start(ssrc);
 }
 
 void MicrophoneImpl::Stop()

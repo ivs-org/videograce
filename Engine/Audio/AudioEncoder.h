@@ -27,7 +27,7 @@ public:
 	virtual void SetBitrate(int32_t bitrate);
 	virtual void SetSampleFreq(int32_t freq);
 	virtual int32_t GetBitrate() const;
-	virtual void Start(CodecType type, uint32_t ssrc);
+	virtual void Start(CodecType type);
 	virtual void Stop();
 	virtual bool IsStarted() const;
 	virtual void SetPacketLoss(int32_t val);

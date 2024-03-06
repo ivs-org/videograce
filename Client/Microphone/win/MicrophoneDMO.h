@@ -34,7 +34,7 @@ public:
     virtual void SetDeviceName(std::string_view name) final;
     virtual void SetDeviceId(uint32_t id) final;
 
-    virtual void Start() final;
+    virtual void Start(ssrc_t ssrc) final;
     virtual void Stop() final;
 
     virtual void SetGain(uint16_t gain) final;
@@ -57,13 +57,16 @@ private:
 	std::string deviceName;
 	uint32_t deviceId;
 
+    ssrc_t ssrc;
+    uint32_t seq;
+
     std::wstring dmoDeviceID;
 
     int32_t gain;
 	bool mute;
     				
-	std::atomic<bool> runned;
-	std::atomic<bool> restarting;
+	std::atomic_bool runned;
+	std::atomic_bool restarting;
 
 	std::thread thread;
 

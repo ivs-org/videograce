@@ -122,7 +122,7 @@ void CaptureAudioSession::SetSampleFreq(int32_t freq)
 
     if (runned)
     {
-        microphone.Start();
+        microphone.Start(ssrc);
     }
 }
 
@@ -220,9 +220,9 @@ void CaptureAudioSession::Start(uint32_t ssrc_, uint32_t deviceId_, std::string_
 	}
 
 	microphone.SetDeviceId(deviceId);
-	microphone.Start();
+	microphone.Start(ssrc);
 	
-	encoder.Start(encoderType, ssrc);
+	encoder.Start(encoderType);
 	/*if (!encoder.IsStarted())
 	{
 		errLog->info("Can't start microphone session because no memory, device id: {0:d}, ssrc: {1:d}", deviceId, ssrc);

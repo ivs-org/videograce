@@ -22,12 +22,10 @@ static const auto BUFFER_SIZE = 1024 * 10;
 OpusEncoderImpl::OpusEncoderImpl()
 	: receiver(nullptr),
 	runned(false),
-	ssrc(0),
 	sampleFreq(48000),
 	quality(10),
 	bitrate(30),
 	packetLoss(0),
-	frameCount(0),
 	produceBuffer(),
 	opusEncoder()
 {
@@ -67,7 +65,7 @@ void OpusEncoderImpl::SetSampleFreq(int32_t freq)
 	if (runned)
 	{
 		Stop();
-		Start(CodecType::Opus, ssrc);
+		Start(CodecType::Opus);
 	}
 }
 
@@ -76,16 +74,12 @@ int32_t OpusEncoderImpl::GetBitrate() const
 	return bitrate;
 }
 
-void OpusEncoderImpl::Start(CodecType, uint32_t ssrc_)
+void OpusEncoderImpl::Start(CodecType)
 {
 	if (runned)
 	{
 		return;
 	}
-
-	ssrc = ssrc_;
-
-	frameCount = 0;
 	
 	try
 	{
@@ -180,8 +174,6 @@ void OpusEncoderImpl::EncodeFrame(const uint8_t* data, int32_t len, const Transp
 
 		packet.rtpHeader = header;
 		packet.rtpHeader.pt = static_cast<uint8_t>(Transport::RTPPayloadType::ptOpus);
-		packet.rtpHeader.seq = ++frameCount;
-		packet.rtpHeader.ssrc = ssrc;
 		packet.rtpHeader.x = 1;
 		packet.rtpHeader.eXLength = 1;
 		packet.rtpHeader.eX[0] = Common::crc32(0, produceBuffer.get(), compressedSize);

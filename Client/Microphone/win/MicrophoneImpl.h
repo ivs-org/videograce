@@ -29,7 +29,7 @@ public:
     virtual void SetDeviceName(std::string_view name) final;
     virtual void SetDeviceId(uint32_t id) final;
 
-    virtual void Start() final;
+    virtual void Start(ssrc_t ssrc) final;
     virtual void Stop() final;
 
     virtual void SetGain(uint16_t gain) final;

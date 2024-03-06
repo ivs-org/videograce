@@ -155,7 +155,7 @@ void Recorder::Start(std::string_view name, bool mp3Mode_)
 		muxerSegment->CuesTrack(audTrack);
 
 		// Start the audio encoder and mixer
-		audioEncoder.Start(Audio::CodecType::Opus, 0);
+		audioEncoder.Start(Audio::CodecType::Opus);
 		audioMixer.Start();
 
 		// Start the fake video encoder

@@ -29,7 +29,7 @@ public:
 
 	virtual int32_t GetBitrate() const = 0;
 
-	virtual void Start(CodecType type, uint32_t ssrc) = 0;
+	virtual void Start(CodecType type) = 0;
 	virtual void Stop() = 0;
 	virtual bool IsStarted() const = 0;
 

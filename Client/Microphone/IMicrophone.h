@@ -10,6 +10,8 @@
 #include <cstdint>
 #include <string>
 
+#include <Common/Types.h>
+
 namespace MicrophoneNS
 {
 	class IMicrophone
@@ -18,7 +20,7 @@ namespace MicrophoneNS
 		virtual void SetDeviceName(std::string_view name) = 0;
 		virtual void SetDeviceId(uint32_t id) = 0;
 		
-		virtual void Start() = 0;
+		virtual void Start(ssrc_t ssrc) = 0;
 		virtual void Stop() = 0;
 
 		virtual void SetGain(uint16_t gain) = 0;

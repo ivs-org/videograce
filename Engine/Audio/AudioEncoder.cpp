@@ -68,7 +68,7 @@ int32_t Encoder::GetBitrate() const
 	return bitrate;
 }
 
-void Encoder::Start(CodecType type_, uint32_t ssrc)
+void Encoder::Start(CodecType type_)
 {
 	if (!impl)
 	{
@@ -91,7 +91,7 @@ void Encoder::Start(CodecType type_, uint32_t ssrc)
 			impl->SetQuality(quality);
 			impl->SetBitrate(bitrate);
 			impl->SetSampleFreq(sampleFreq);
-			impl->Start(type, ssrc);
+			impl->Start(type);
 		}
 	}
 }

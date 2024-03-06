@@ -28,6 +28,7 @@ MicrophoneDShow::MicrophoneDShow(Common::TimeMeter &timeMeter_, Transport::ISock
     deviceNotifyCallback(),
 	deviceName(),
 	deviceId(0),
+	ssrc(0), seq(0),
     frequency(wui::config::get_int("SoundSystem", "SampleFreq", 48000)),
 	gain(wui::config::get_int("CaptureDevices", "MicrophoneGain", 80)),
 	mute(false),
@@ -49,7 +50,7 @@ void MicrophoneDShow::SetDeviceName(std::string_view name)
 	if (runned)
 	{
 		Stop();
-		Start();
+		Start(ssrc);
 	}
 }
 
@@ -58,12 +59,14 @@ void MicrophoneDShow::SetDeviceId(uint32_t id)
 	deviceId = id;
 }
 
-void MicrophoneDShow::Start()
+void MicrophoneDShow::Start(ssrc_t ssrc_)
 {
     if (!runned)
 	{
-		runned = true;
+		ssrc = ssrc_;
+		seq = 0;
 
+		runned = true;
 		thread = std::thread(&MicrophoneDShow::Run, this);
 	}
 }
@@ -111,7 +114,7 @@ void MicrophoneDShow::SetSampleFreq(int32_t freq)
     if (runned)
     {
         Stop();
-        Start();
+        Start(ssrc);
     }
 }
 
@@ -218,6 +221,8 @@ void CALLBACK MicrophoneDShow::OutputCallback(unsigned char* data, int len, void
     Transport::RTPPacket packet;
     packet.rtpHeader.ts = static_cast<uint32_t>(instance.timeMeter.Measure() / 1000);
 	packet.rtpHeader.pt = static_cast<uint32_t>(Transport::RTPPayloadType::ptPCM);
+	packet.rtpHeader.ssrc = instance.ssrc;
+	packet.rtpHeader.seq = ++instance.seq;
     packet.payload = data;
     packet.payloadSize = len;
 

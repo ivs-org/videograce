@@ -30,7 +30,7 @@ namespace Audio
 		virtual void SetBitrate(int32_t bitrate);
 		virtual void SetSampleFreq(int32_t freq);
 		virtual int32_t GetBitrate() const;
-		virtual void Start(CodecType, uint32_t ssrc);
+		virtual void Start(CodecType);
 		virtual void Stop();
 		virtual bool IsStarted() const;
 		virtual void SetPacketLoss(int32_t val);
@@ -43,14 +43,10 @@ namespace Audio
 
 		bool runned;
 
-		uint32_t ssrc;
-
 		int32_t sampleFreq;
 		int32_t quality;
 		int32_t bitrate;
 		int32_t packetLoss;
-
-        int32_t frameCount;
 
 		std::unique_ptr<uint8_t[]> produceBuffer;
 

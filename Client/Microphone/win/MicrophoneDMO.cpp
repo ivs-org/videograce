@@ -69,6 +69,7 @@ MicrophoneDMO::MicrophoneDMO(Common::TimeMeter &timeMeter_, Transport::ISocket &
     deviceNotifyCallback(),
     deviceName(),
 	deviceId(0),
+    ssrc(0), seq(0),
     dmoDeviceID(),
     gain(wui::config::get_int("CaptureDevices", "MicrophoneGain", 80)),
 	mute(false),
@@ -90,7 +91,7 @@ void MicrophoneDMO::SetDeviceName(std::string_view name)
 	if (runned)
 	{
 		Stop();
-		Start();
+		Start(ssrc);
 	}
 }
 
@@ -99,12 +100,14 @@ void MicrophoneDMO::SetDeviceId(uint32_t id)
 	deviceId = id;
 }
 
-void MicrophoneDMO::Start()
+void MicrophoneDMO::Start(ssrc_t ssrc_)
 {
     if (!runned)
 	{
-		runned = true;
+        ssrc = ssrc_;
+        seq = 0;
 
+		runned = true;
 		thread = std::thread(&MicrophoneDMO::Run, this);
 	}
 }
@@ -337,6 +340,8 @@ HRESULT MicrophoneDMO::Run()
                 Transport::RTPPacket packet;
                 packet.rtpHeader.ts = static_cast<uint32_t>(timeMeter.Measure());
                 packet.rtpHeader.pt = static_cast<uint32_t>(Transport::RTPPayloadType::ptPCM);
+                packet.rtpHeader.ssrc = ssrc;
+                packet.rtpHeader.seq = ++seq;
                 packet.payload = pbOutputBuffer;
                 packet.payloadSize = cbProduced;
 

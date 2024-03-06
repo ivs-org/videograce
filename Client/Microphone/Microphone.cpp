@@ -35,9 +35,9 @@ void Microphone::SetDeviceId(uint32_t id)
     impl->SetDeviceId(id);
 }
 
-void Microphone::Start()
+void Microphone::Start(ssrc_t ssrc)
 {
-    impl->Start();
+    impl->Start(ssrc);
 }
 
 void Microphone::Stop()
