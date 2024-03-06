@@ -12,6 +12,7 @@
 #include <map>
 #include <mutex>
 #include <memory>
+#include <thread>
 #include <atomic>
 
 #include <mt/rw_lock.h>
@@ -64,9 +65,13 @@ namespace Recorder
 		~Recorder();
 
 	private:
-		std::atomic<bool> runned;
+		static constexpr int32_t FRAME_DURATION = 40000;
+
+		std::atomic_bool runned;
 
 		bool mp3Mode;
+
+		Common::TimeMeter timeMeter;
 
 		std::recursive_mutex writerMutex;
 				
@@ -97,14 +102,20 @@ namespace Recorder
 
 		Audio::Encoder audioEncoder;
 		Audio::AudioMixer audioMixer;
-		std::map<ssrc_t, JB::JB> jBufs;
+
+		mt::rw_lock audiosRWLock;
+		std::map<ssrc_t, std::shared_ptr<JB::JB>> jBufs;
 
 		std::unique_ptr<uint8_t[]> fakeVideoSource;
 		std::unique_ptr<uint8_t[]> buffer0, buffer1, buffer2;
 		Video::Encoder fakeVideoEncoder;
 
+		std::thread soundWriter;
+
 		std::shared_ptr<spdlog::logger> sysLog, errLog;
 
 		void GenerateFakeVideo();
+
+		void WriteSound();
 	};
 }

@@ -14,6 +14,7 @@
 #include <wui/config/config.hpp>
 
 #include <Common/Common.h>
+#include <Common/ShortSleep.h>
 
 #include <Transport/RTP/RTPPacket.h>
 #include <Transport/RTP/RTPPayloadType.h>
@@ -28,6 +29,7 @@ namespace Recorder
 Recorder::Recorder()
 	: runned(false),
 	mp3Mode(false),
+	timeMeter(),
 	writerMutex(),
 	writer(),
 	muxerSegment(),
@@ -38,12 +40,12 @@ Recorder::Recorder()
 	hasKeyFrame(false),
 	currentVideoChannel(fakeVideoChannel),
 	audioEncoder(), audioMixer(),
+	audiosRWLock(),
 	jBufs(),
 	fakeVideoSource(new uint8_t[static_cast<size_t>(1280 * 720 * 1.5)]),
 	fakeVideoEncoder(),
 	sysLog(spdlog::get("System")), errLog(spdlog::get("Error"))
 {
-	audioEncoder.SetReceiver(this);
 	fakeVideoEncoder.SetReceiver(this);
 	fakeVideoEncoder.SetResolution(fakeVideoChannel.resolution);
 	memset(fakeVideoSource.get(), 128, static_cast<size_t>(1280 * 720 * 1.5));
@@ -60,15 +62,17 @@ void Recorder::Start(std::string_view name, bool mp3Mode_)
 	{
 		std::lock_guard<std::recursive_mutex> lock(writerMutex);
 
+		timeMeter.Reset();
+
 		mp3Mode = mp3Mode_;
 
 		if (mp3Mode)
 		{
 			mp3Writer.Start(name);
-
 			audioMixer.Start();
 
 			runned = true;
+			soundWriter = std::thread(std::bind(&Recorder::WriteSound, this));
 
 			return sysLog->info("Recorder start in mp3 only mode, writing file: {0}", name);
 		}
@@ -162,6 +166,7 @@ void Recorder::Start(std::string_view name, bool mp3Mode_)
 		fakeVideoEncoder.Start(Video::CodecType::VP8);
 
 		runned = true;
+		soundWriter = std::thread(std::bind(&Recorder::WriteSound, this));
 
 		sysLog->info("Recorder started in normal mode, writing file: {0}", name);
 	}
@@ -172,6 +177,7 @@ void Recorder::Stop()
 	if (runned)
 	{
 		runned = false;
+		if (soundWriter.joinable()) soundWriter.join();
 
 		if (mp3Mode)
 		{
@@ -189,6 +195,9 @@ void Recorder::Stop()
 		muxerSegment.reset(nullptr);
 
 		writer.reset(nullptr);
+
+		videos.clear();
+		jBufs.clear();
 
 		sysLog->info("Recorder ended (normal mode)");
 	}
@@ -276,12 +285,30 @@ void Recorder::DeleteVideo(ssrc_t ssrc)
 
 void Recorder::AddAudio(ssrc_t ssrc, int64_t clientId)
 {
-	//audioMixer.AddInput(ssrc, clientId);
+	mt::scoped_rw_lock lock(&audiosRWLock, true);
+
+	auto jb = jBufs.find(ssrc);
+	if (jb == jBufs.end())
+	{
+		auto jb = std::make_shared<JB::JB>(timeMeter);
+		jb->Start(JB::Mode::Sound, std::to_string(clientId));
+
+		jBufs.insert(std::pair<ssrc_t, std::shared_ptr<JB::JB>>(ssrc, jb));
+
+		audioMixer.AddInput(ssrc, clientId, std::bind(&JB::JB::GetFrame, jb, std::placeholders::_1));
+	}
 }
 
 void Recorder::DeleteAudio(ssrc_t ssrc)
 {
-	audioMixer.DeleteInput(ssrc);
+	mt::scoped_rw_lock lock(&audiosRWLock, true);
+
+	auto jb = jBufs.find(ssrc);
+	if (jb != jBufs.end())
+	{
+		audioMixer.DeleteInput(ssrc);
+		jBufs.erase(jb);
+	}
 }
 
 bool IsKeyFrame(const uint8_t *data)
@@ -322,28 +349,13 @@ void Recorder::Send(const Transport::IPacket &packet_, const Transport::Address 
 	switch (static_cast<Transport::RTPPayloadType>(packet.rtpHeader.pt))
 	{
 		case Transport::RTPPayloadType::ptPCM: // Receiving audio from clients
-			//audioMixer->Send(packet_);
-		break;
-		case Transport::RTPPayloadType::ptOpus: // Mixed from mixer and encoded by local encoder
 		{
-			std::lock_guard<std::recursive_mutex> lock(writerMutex);
+			mt::scoped_rw_lock lock(&audiosRWLock, false);
 
-			if (currentVideoChannel.ssrc == fakeVideoChannel.ssrc)
+			auto jb = jBufs.find(packet.rtpHeader.ssrc);
+			if (jb != jBufs.end())
 			{
-				GenerateFakeVideo();
-			}
-
-			bool ok = muxerSegment->AddFrame(packet.payload,
-				packet.payloadSize,
-				audTrack,
-				ts,
-				false);
-
-			ts += 10000000;
-
-			if (!ok)
-			{
-				return errLog->error("Recorder::Send audio error in muxerSegment->AddFrame({0})", audTrack);
+				jb->second->Send(packet_);
 			}
 		}
 		break;
@@ -454,6 +466,51 @@ void Recorder::GenerateFakeVideo()
 	packet.payloadSize = static_cast<uint32_t>(1280 * 720 * 1.5);
 
 	fakeVideoEncoder.Send(packet);
+}
+
+void Recorder::WriteSound()
+{
+	while (runned)
+	{
+		auto start = timeMeter.Measure();
+		
+		Transport::OwnedRTPPacket packet(480 * 2 * 4);
+		audioMixer.GetSound(packet);
+
+		std::lock_guard<std::recursive_mutex> lock(writerMutex);
+
+		if (currentVideoChannel.ssrc == fakeVideoChannel.ssrc)
+		{
+			GenerateFakeVideo();
+		}
+
+		Transport::RTPPacket in, out;
+
+		in.rtpHeader = packet.header;
+		in.payload = packet.data;
+		in.payloadSize = packet.size;
+
+		audioEncoder.Encode(in, out);
+
+		bool ok = muxerSegment->AddFrame(out.payload,
+			out.payloadSize,
+			audTrack,
+			ts,
+			false);
+
+		ts += FRAME_DURATION * 1000;
+
+		if (!ok)
+		{
+			return errLog->error("Recorder::Send audio error in muxerSegment->AddFrame({0})", audTrack);
+		}
+
+		auto workDuration = timeMeter.Measure() - start;
+		if (workDuration < FRAME_DURATION)
+		{
+			Common::ShortSleep(FRAME_DURATION - workDuration);
+		}
+	}
 }
 
 }

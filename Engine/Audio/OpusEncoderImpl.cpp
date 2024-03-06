@@ -163,37 +163,38 @@ void OpusEncoderImpl::SetPacketLoss(int val)
 	}
 }
 
-void OpusEncoderImpl::EncodeFrame(const uint8_t* data, int32_t len, const Transport::RTPPacket::RTPHeader& header)
+void OpusEncoderImpl::Encode(const Transport::IPacket& in_, Transport::IPacket& out_)
 {
-	int32_t frameSize = len / (1 * sizeof(opus_int16));
-    int32_t compressedSize = opus_encode(opusEncoder, (const opus_int16*)data, frameSize, produceBuffer.get(), BUFFER_SIZE);
+	const auto& in = *static_cast<const Transport::RTPPacket*>(&in_);
 
-	if (compressedSize > 0)
-	{
-		Transport::RTPPacket packet;
+	int32_t frameSize = in.payloadSize / (1 * sizeof(opus_int16));
+	int32_t compressedSize = opus_encode(opusEncoder, (const opus_int16*)in.payload, frameSize, produceBuffer.get(), BUFFER_SIZE);
 
-		packet.rtpHeader = header;
-		packet.rtpHeader.pt = static_cast<uint8_t>(Transport::RTPPayloadType::ptOpus);
-		packet.rtpHeader.x = 1;
-		packet.rtpHeader.eXLength = 1;
-		packet.rtpHeader.eX[0] = Common::crc32(0, produceBuffer.get(), compressedSize);
-
-		packet.payload = produceBuffer.get();
-		packet.payloadSize = compressedSize;
-
-		receiver->Send(packet);
-	}
+	auto& out = *static_cast<Transport::RTPPacket*>(&out_);
+	out.rtpHeader = in.rtpHeader;
+	out.rtpHeader.pt = static_cast<uint8_t>(Transport::RTPPayloadType::ptOpus);
+	out.rtpHeader.x = 1;
+	out.rtpHeader.eXLength = 1;
+	out.rtpHeader.eX[0] = Common::crc32(0, produceBuffer.get(), compressedSize);
+	out.payload = produceBuffer.get();
+	out.payloadSize = compressedSize;
 }
 
-void OpusEncoderImpl::Send(const Transport::IPacket &packet_, const Transport::Address *)
+void OpusEncoderImpl::Send(const Transport::IPacket &in, const Transport::Address *)
 {
 	if (!runned)
 	{
 		return;
 	}
-	const Transport::RTPPacket &packet = *static_cast<const Transport::RTPPacket*>(&packet_);
+	
+	Transport::RTPPacket out;
 
-	EncodeFrame(packet.payload, packet.payloadSize, packet.rtpHeader);
+	Encode(in, out);
+
+	if (out.payloadSize > 0)
+	{
+		receiver->Send(out);
+	}
 }
 
 }

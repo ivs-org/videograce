@@ -36,6 +36,7 @@
 
 #include <Crypto/Decryptor.h>
 
+#include <CaptureSession/CaptureAudioSession.h>
 #include <CaptureSession/CaptureVideoSession.h>
 
 #include <spdlog/spdlog.h>

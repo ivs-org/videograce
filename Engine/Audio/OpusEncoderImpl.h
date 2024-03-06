@@ -34,6 +34,7 @@ namespace Audio
 		virtual void Stop();
 		virtual bool IsStarted() const;
 		virtual void SetPacketLoss(int32_t val);
+		virtual void Encode(const Transport::IPacket& in, Transport::IPacket& out);
 
 		/// Derived from Transport::ISocket (input method)
 		virtual void Send(const Transport::IPacket &packet, const Transport::Address *address = nullptr) final;
@@ -51,7 +52,5 @@ namespace Audio
 		std::unique_ptr<uint8_t[]> produceBuffer;
 
 		OpusEncoder *opusEncoder;
-
-		void EncodeFrame(const uint8_t* data, int32_t len, const Transport::RTPPacket::RTPHeader& header);
 	};
 }

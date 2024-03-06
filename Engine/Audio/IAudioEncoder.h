@@ -8,7 +8,10 @@
 #pragma once
 
 #include <cstdint>
+
 #include <Audio/CodecType.h>
+
+#include <Transport/IPacket.h>
 
 namespace Transport
 {
@@ -34,6 +37,9 @@ public:
 	virtual bool IsStarted() const = 0;
 
 	virtual void SetPacketLoss(int32_t val) = 0;
+
+	/// Change buffer here
+	virtual void Encode(const Transport::IPacket &in, Transport::IPacket& out) = 0;
 
 	virtual ~IEncoder() {}
 };

@@ -119,6 +119,14 @@ void Encoder::SetPacketLoss(int32_t val)
 	}
 }
 
+void Encoder::Encode(const Transport::IPacket& in, Transport::IPacket& out)
+{
+	if (impl)
+	{
+		impl->Encode(in, out);
+	}
+}
+
 void Encoder::Send(const Transport::IPacket &packet, const Transport::Address *)
 {
 	if (impl)
