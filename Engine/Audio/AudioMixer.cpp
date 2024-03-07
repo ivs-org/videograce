@@ -92,7 +92,7 @@ void AudioMixer::GetSound(Transport::OwnedRTPPacket& outputBuffer)
 
         if (inputPacket.size == 0) continue;
 
-        auto volume = input.volume != 0 ? (exp((double)input.volume / 100) / 2.718281828) : 0;
+        auto volume = input.volume != 0 ? (input.volume != -1 ? (exp((double)input.volume / 100) / 2.718281828) : 1) : 0;
         for (uint16_t i = 0; i != frameSize; i += 2)
         {
             const auto availableFrame = *reinterpret_cast<const int16_t*>(outputBuffer.data + i);

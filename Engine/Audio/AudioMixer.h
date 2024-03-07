@@ -27,7 +27,7 @@ public:
 	void AddInput(uint32_t ssrc,
 		int64_t clientId,
 		std::function<void(Transport::OwnedRTPPacket&)> pcmCallback,
-		int32_t volume = 0);
+		int32_t volume = -1); /// -1 - no change volume
 
 	void SetInputVolume(uint32_t ssrc, int32_t volume);
 	void DeleteInput(uint32_t ssrc);
