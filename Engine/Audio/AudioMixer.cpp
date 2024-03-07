@@ -26,7 +26,8 @@ namespace Audio
 using namespace std::chrono;
 
 AudioMixer::AudioMixer()
-    : frameSize(0),
+    : mutex(),
+    frameSize(0),
     inputs(),
     runned(false)
 {
@@ -42,6 +43,8 @@ void AudioMixer::AddInput(uint32_t ssrc,
     std::function<void(Transport::OwnedRTPPacket&)> pcmCallback,
     int32_t volume)
 {
+    std::lock_guard<std::mutex> lock(mutex);
+
     if (std::find_if(inputs.begin(), inputs.end(), [ssrc](const Input& p) { return p.ssrc == ssrc; }) == inputs.end())
     {
         inputs.emplace_back(Input{ ssrc, clientId, pcmCallback, volume });
@@ -50,6 +53,8 @@ void AudioMixer::AddInput(uint32_t ssrc,
 
 void AudioMixer::SetInputVolume(uint32_t ssrc, int32_t volume)
 {
+    std::lock_guard<std::mutex> lock(mutex);
+
     auto input = std::find_if(inputs.begin(), inputs.end(), [ssrc](const Input& p) { return p.ssrc == ssrc; });
     if (input != inputs.end())
     {
@@ -59,6 +64,8 @@ void AudioMixer::SetInputVolume(uint32_t ssrc, int32_t volume)
 
 void AudioMixer::DeleteInput(uint32_t ssrc)
 {
+    std::lock_guard<std::mutex> lock(mutex);
+
     auto input = std::find_if(inputs.begin(), inputs.end(), [ssrc](const Input& p) { return p.ssrc == ssrc; });
     if (input != inputs.end())
     {
@@ -85,6 +92,8 @@ void AudioMixer::Stop()
 
 void AudioMixer::GetSound(Transport::OwnedRTPPacket& outputBuffer)
 {
+    std::lock_guard<std::mutex> lock(mutex);
+
     for (auto& input : inputs)
     {
         Transport::OwnedRTPPacket inputPacket(frameSize);

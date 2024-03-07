@@ -10,6 +10,7 @@
 #include <atomic>
 #include <array>
 #include <functional>
+#include <mutex>
 
 #include <Transport/RTP/OwnedRTPPacket.h>
 #include <Audio/SoundBlock.h>
@@ -39,6 +40,8 @@ public:
 	void GetSound(Transport::OwnedRTPPacket& outputBuffer);
 
 private:
+	std::mutex mutex;
+
 	uint16_t frameSize; // 4 frames of 48 k mono
 
 	struct Input

@@ -16,7 +16,8 @@ namespace Video
 {
 
 Decoder::Decoder()
-	: impl(),
+	: mutex(),
+	impl(),
 	receiver(nullptr),
 	callback(nullptr),
 	type(CodecType::Undefined),
@@ -32,6 +33,8 @@ Decoder::~Decoder()
 
 void Decoder::SetReceiver(Transport::ISocket *receiver_)
 {
+	std::lock_guard<std::mutex> lock(mutex);
+
 	receiver = receiver_;
 	if (impl)
 	{
@@ -41,6 +44,8 @@ void Decoder::SetReceiver(Transport::ISocket *receiver_)
 
 void Decoder::SetCallback(IPacketLossCallback *callback_)
 {
+	std::lock_guard<std::mutex> lock(mutex);
+
 	callback = callback_;
 	if (impl)
 	{
@@ -50,6 +55,8 @@ void Decoder::SetCallback(IPacketLossCallback *callback_)
 
 bool Decoder::SetResolution(Resolution resolution_)
 {
+	std::lock_guard<std::mutex> lock(mutex);
+
 	resolution = resolution_;
 	if (impl)
 	{
@@ -60,6 +67,8 @@ bool Decoder::SetResolution(Resolution resolution_)
 
 void Decoder::Start(CodecType type_, Video::ColorSpace outputType_)
 {
+	std::lock_guard<std::mutex> lock(mutex);
+
 	if (!impl)
 	{
 		type = type_;
@@ -88,11 +97,15 @@ void Decoder::Start(CodecType type_, Video::ColorSpace outputType_)
 
 void Decoder::Stop()
 {
+	std::lock_guard<std::mutex> lock(mutex);
+
 	impl.reset(nullptr);
 }
 
 bool Decoder::IsStarted()
 {
+	std::lock_guard<std::mutex> lock(mutex);
+
 	if (impl)
 	{
 		return impl->IsStarted();
@@ -102,6 +115,8 @@ bool Decoder::IsStarted()
 
 void Decoder::Send(const Transport::IPacket &packet, const Transport::Address *)
 {
+	std::lock_guard<std::mutex> lock(mutex);
+
 	if (impl)
 	{
 		switch (type)

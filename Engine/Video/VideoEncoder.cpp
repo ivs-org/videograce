@@ -13,7 +13,8 @@ namespace Video
 {
 
 Encoder::Encoder()
-	: impl(),
+	: mutex(),
+	impl(),
 	receiver(nullptr),
 	type(CodecType::Undefined),
 	resolution(Video::rHD),
@@ -30,6 +31,8 @@ Encoder::~Encoder()
 
 void Encoder::SetReceiver(Transport::ISocket *receiver_)
 {
+	std::lock_guard<std::mutex> lock(mutex);
+
 	receiver = receiver_;
 	if (impl)
 	{
@@ -39,6 +42,8 @@ void Encoder::SetReceiver(Transport::ISocket *receiver_)
 
 void Encoder::SetResolution(Resolution resolution_)
 {
+	std::lock_guard<std::mutex> lock(mutex);
+
 	resolution = resolution_;
 	if (impl)
 	{
@@ -48,6 +53,8 @@ void Encoder::SetResolution(Resolution resolution_)
 
 void Encoder::SetBitrate(int bitrate_)
 {
+	std::lock_guard<std::mutex> lock(mutex);
+
 	bitrate = bitrate_;
 	if (impl)
 	{
@@ -57,6 +64,8 @@ void Encoder::SetBitrate(int bitrate_)
 
 void Encoder::SetScreenContent(bool yes)
 {
+	std::lock_guard<std::mutex> lock(mutex);
+
 	screenContent = yes;
 	if (impl)
 	{
@@ -71,6 +80,8 @@ int Encoder::GetBitrate()
 
 void Encoder::Start(CodecType type_)
 {
+	std::lock_guard<std::mutex> lock(mutex);
+
 	forceKFSeq = 0;
 
 	if (!impl)
@@ -111,11 +122,15 @@ void Encoder::Start(CodecType type_)
 
 void Encoder::Stop()
 {
+	std::lock_guard<std::mutex> lock(mutex);
+
 	impl.reset(nullptr);
 }
 
 bool Encoder::IsStarted()
 {
+	std::lock_guard<std::mutex> lock(mutex);
+
 	if (impl)
 	{
 		return impl->IsStarted();
@@ -125,6 +140,8 @@ bool Encoder::IsStarted()
 
 void Encoder::ForceKeyFrame(uint32_t lastRecvSeq)
 {
+	std::lock_guard<std::mutex> lock(mutex);
+
 	if (lastRecvSeq == 0 || forceKFSeq != lastRecvSeq)
 	{
 		forceKFSeq = lastRecvSeq;
@@ -138,6 +155,8 @@ void Encoder::ForceKeyFrame(uint32_t lastRecvSeq)
 
 void Encoder::Send(const Transport::IPacket &packet_, const Transport::Address *)
 {
+	std::lock_guard<std::mutex> lock(mutex);
+
 	if (impl)
 	{
 		switch (type)
