@@ -47,6 +47,5 @@ target_link_libraries(Client
 	ippcore
 	pulse-simple
 	pulse
-	asound
 	mp3lame
 )
