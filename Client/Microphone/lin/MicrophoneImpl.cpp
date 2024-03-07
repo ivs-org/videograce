@@ -183,7 +183,7 @@ void MicrophoneImpl::run()
 				packet.rtpHeader.seq = ++seq;
 				packet.rtpHeader.pt = static_cast<uint32_t>(Transport::RTPPayloadType::ptPCM);
 				packet.payload = buf;
-				packet.payloadSize = readCount;
+				packet.payloadSize = readCount * 4;
 				receiver.Send(packet);
 			}
 			subFrame = 0;
