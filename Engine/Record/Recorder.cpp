@@ -474,32 +474,36 @@ void Recorder::WriteSound()
 		Transport::OwnedRTPPacket packet(480 * 2 * 4);
 		audioMixer.GetSound(packet);
 
-		std::lock_guard<std::recursive_mutex> lock(writerMutex);
-
-		if (currentVideoChannel.ssrc == fakeVideoChannel.ssrc)
 		{
-			GenerateFakeVideo();
-		}
+			std::lock_guard<std::recursive_mutex> lock(writerMutex);
 
-		Transport::RTPPacket in, out;
+			if (currentVideoChannel.ssrc == fakeVideoChannel.ssrc)
+			{
+				GenerateFakeVideo();
+			}
 
-		in.rtpHeader = packet.header;
-		in.payload = packet.data;
-		in.payloadSize = packet.size;
+			Transport::RTPPacket in, out;
 
-		audioEncoder.Encode(in, out);
+			in.rtpHeader = packet.header;
+			in.payload = packet.data;
+			in.payloadSize = packet.size;
 
-		bool ok = muxerSegment->AddFrame(out.payload,
-			out.payloadSize,
-			audTrack,
-			ts,
-			false);
+			audioEncoder.Encode(in, out);
 
-		ts += FRAME_DURATION * 1000;
+			bool ok = muxerSegment->AddFrame(out.payload,
+				out.payloadSize,
+				audTrack,
+				ts,
+				false);
 
-		if (!ok)
-		{
-			return errLog->error("Recorder::Send audio error in muxerSegment->AddFrame({0})", audTrack);
+			ts += FRAME_DURATION * 1000;
+
+			sysLog->trace("ws: {0}", ts);
+
+			if (!ok)
+			{
+				return errLog->error("Recorder::Send audio error in muxerSegment->AddFrame({0})", audTrack);
+			}
 		}
 
 		auto workDuration = timeMeter.Measure() - start;
