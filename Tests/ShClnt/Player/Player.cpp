@@ -201,7 +201,7 @@ void Player::StartCamera(uint32_t ssrc, std::string_view secureKey)
 
 		if (playMode == PlayMode::rgb24_show)
 		{
-			videoEncoder.Start(Video::CodecType::VP8, ssrc);
+			videoEncoder.Start(Video::CodecType::VP8);
 		}
 
         if (!secureKey.empty())

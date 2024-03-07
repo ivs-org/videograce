@@ -68,6 +68,7 @@ void Ringer::Ring(RingType ringType_)
 	{
 	case RingType::CallIn:
 	{
+		mixer.SetInputVolume(OUT_SSRC, 100);
 		targetRingCount = !autoAnswer ? 10 : autoAnswerRingingCount;
 #ifdef _WIN32
 		Load(SND_CALLIN);
@@ -78,6 +79,7 @@ void Ringer::Ring(RingType ringType_)
 	break;
 	case RingType::CallOut:
 	{
+		mixer.SetInputVolume(OUT_SSRC, 50);
 		targetRingCount = 10;
 #ifdef _WIN32
 		Load(SND_CALLOUT);
@@ -88,6 +90,7 @@ void Ringer::Ring(RingType ringType_)
 	break;
 	case RingType::ScheduleConnectQuick: case RingType::ScheduleConnectLong:
 	{
+		mixer.SetInputVolume(OUT_SSRC, 70);
 		targetRingCount = (ringType == RingType::ScheduleConnectQuick ? 2 : 10);
 #ifdef _WIN32
 		Load(SND_SCHEDULECONNECT);
@@ -99,6 +102,7 @@ void Ringer::Ring(RingType ringType_)
 	case RingType::Dial:
 	{
 		targetRingCount = 1;
+		mixer.SetInputVolume(OUT_SSRC, 10);
 #ifdef _WIN32
 		Load(SND_DIAL);
 #else
@@ -109,6 +113,7 @@ void Ringer::Ring(RingType ringType_)
 	case RingType::Hangup:
 	{
 		targetRingCount = 1;
+		mixer.SetInputVolume(OUT_SSRC, 10);
 #ifdef _WIN32
 		Load(SND_HANGUP);
 #else
@@ -118,6 +123,7 @@ void Ringer::Ring(RingType ringType_)
 	break;
 	case RingType::NewMessage:
 	{
+		mixer.SetInputVolume(OUT_SSRC, 100);
 		targetRingCount = 1;
 #ifdef _WIN32
 		Load(SND_NEW_MESSAGE);
@@ -128,6 +134,7 @@ void Ringer::Ring(RingType ringType_)
 	break;
 	case RingType::SoundCheck:
 	{
+		mixer.SetInputVolume(OUT_SSRC, 100);
 		targetRingCount = 1;
 #ifdef _WIN32
 		Load(SND_SCHEDULECONNECT);

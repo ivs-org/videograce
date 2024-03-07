@@ -11,13 +11,7 @@
 
 #include "webrtc/common_audio/signal_processing/include/signal_processing_library.h"
 
-#ifdef _WIN32
-#include <windows.h>
-#include <avrt.h>
-#include <Common/WindowsVersion.h>
-#endif
-
-#include <Common/ShortSleep.h>
+#include <math.h>
 
 #include "AudioMixer.h"
 
@@ -98,10 +92,11 @@ void AudioMixer::GetSound(Transport::OwnedRTPPacket& outputBuffer)
 
         if (inputPacket.size == 0) continue;
 
+        auto volume = input.volume != 0 ? (exp((double)input.volume / 100) / 2.718281828) : 0;
         for (uint16_t i = 0; i != frameSize; i += 2)
         {
             const auto availableFrame = *reinterpret_cast<const int16_t*>(outputBuffer.data + i);
-            const auto addingFrame = *reinterpret_cast<const int16_t*>(inputPacket.data + i);
+            const auto addingFrame = static_cast<int16_t>(*reinterpret_cast<const int16_t*>(inputPacket.data + i) * volume);
 
             int32_t resultFrame = availableFrame + addingFrame;
 
