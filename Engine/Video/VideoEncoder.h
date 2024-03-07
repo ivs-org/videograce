@@ -36,7 +36,7 @@ namespace Video
 		virtual void Send(const Transport::IPacket &packet, const Transport::Address *address = nullptr) final;
 
 	private:
-		std::mutex mutex;
+		std::recursive_mutex mutex;
 
 		std::unique_ptr<IEncoder> impl;
 		Transport::ISocket *receiver;
