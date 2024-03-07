@@ -498,8 +498,6 @@ void Recorder::WriteSound()
 
 			ts += FRAME_DURATION * 1000;
 
-			sysLog->trace("ws: {0}", ts);
-
 			if (!ok)
 			{
 				return errLog->error("Recorder::Send audio error in muxerSegment->AddFrame({0})", audTrack);
