@@ -186,13 +186,10 @@ void AudioRendererImpl::Play()
 			{
 				return errLog->critical("AudioRendererImpl :: pa_simple_write() failed: {0}", pa_strerror(error));
 			}
-
-			//int64_t duration = duration_cast<microseconds>(high_resolution_clock::now() - start).count();
-			//sysLog->trace("pd: {0}", duration);
 		}
 		else
 		{
-			Common::ShortSleep(packetDuration - duration_cast<microseconds>(high_resolution_clock::now() - start).count());
+			Common::ShortSleep((packetDuration / 4) - duration_cast<microseconds>(high_resolution_clock::now() - start).count());
 		}
 
 		++subFrame;
