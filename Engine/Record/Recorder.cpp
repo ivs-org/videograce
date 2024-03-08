@@ -474,6 +474,7 @@ void Recorder::WriteSound()
 		Transport::OwnedRTPPacket packet(480 * 2 * 4);
 		audioMixer.GetSound(packet);
 
+		if (!mp3Mode)
 		{
 			std::lock_guard<std::recursive_mutex> lock(writerMutex);
 
@@ -502,6 +503,16 @@ void Recorder::WriteSound()
 			{
 				return errLog->error("Recorder::Send audio error in muxerSegment->AddFrame({0})", audTrack);
 			}
+		}
+		else
+		{
+			Transport::RTPPacket out;
+
+			out.rtpHeader = packet.header;
+			out.payload = packet.data;
+			out.payloadSize = packet.size;
+
+			mp3Writer.Send(out);
 		}
 
 		auto workDuration = timeMeter.Measure() - start;
