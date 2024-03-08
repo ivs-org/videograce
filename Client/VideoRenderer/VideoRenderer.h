@@ -64,6 +64,7 @@ public:
 	/// Impl of IVideoRenderer
 	virtual void SetName(std::string_view name);
 	virtual void SetId(uint32_t id, int64_t clientId);
+    virtual void SetAudioSession(std::weak_ptr<RendererSession::IRendererAudioSession>);
     virtual void SetDeviceType(Proto::DeviceType deviceType);
     virtual Proto::DeviceType GetDeviceType();
 	virtual void Start(std::function<void(Transport::OwnedRTPPacket&)> rgbSource);
@@ -83,6 +84,8 @@ private:
 	std::string name;
 	uint32_t id;
 	int64_t clientId;
+
+    std::weak_ptr<RendererSession::IRendererAudioSession> audioSession;
 
     Proto::DeviceType deviceType;
 

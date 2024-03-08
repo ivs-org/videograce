@@ -13,7 +13,13 @@
 
 #include <string>
 #include <cstdint>
+#include <memory>
 #include <functional>
+
+namespace RendererSession
+{
+class IRendererAudioSession;
+}
 
 namespace VideoRenderer
 {
@@ -23,6 +29,8 @@ class IVideoRenderer
 public:
 	virtual void SetName(std::string_view name) = 0;
 	virtual void SetId(uint32_t id, int64_t clientId) = 0;
+
+	virtual void SetAudioSession(std::weak_ptr<RendererSession::IRendererAudioSession>) = 0;
 
     virtual void SetDeviceType(Proto::DeviceType deviceType) = 0;
     virtual Proto::DeviceType GetDeviceType() = 0;

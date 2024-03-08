@@ -273,6 +273,7 @@ private:
     std::shared_ptr<CaptureSession::CaptureVideoSession> GetCaptureVideoSession(Proto::DeviceType deviceType);
     std::shared_ptr<RendererSession::RendererVideoSession> GetRendererVideoSession(uint32_t deviceId);
     std::shared_ptr<RendererSession::RendererAudioSession> GetRendererAudioSession(uint32_t deviceId);
+    std::shared_ptr<RendererSession::RendererAudioSession> GetRendererAudioSessionByClient(uint64_t clientId);
 
     void UpdateOutputBitrates();
 

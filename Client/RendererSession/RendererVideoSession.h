@@ -35,7 +35,6 @@
 
 #include <Crypto/Decryptor.h>
 
-#include <CaptureSession/CaptureAudioSession.h>
 #include <CaptureSession/CaptureVideoSession.h>
 
 #include <spdlog/spdlog.h>
@@ -56,6 +55,7 @@ public:
 
 	void SetLocalCVS(CaptureSession::CaptureVideoSessionPtr_t localCVS);
 	void SetDeviceNotifyCallback(Client::DeviceNotifyCallback deviceNotifyCallback);
+	void SetAudioSession(std::weak_ptr<RendererSession::IRendererAudioSession>);
 
 	/// derived from IRendererVideoSession
     virtual std::shared_ptr<wui::i_control> GetControl();

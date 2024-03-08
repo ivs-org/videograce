@@ -72,6 +72,11 @@ void RendererVideoSession::SetDeviceNotifyCallback(Client::DeviceNotifyCallback 
 	renderer->SetDeviceNotifyCallback(deviceNotifyCallback_);
 }
 
+void RendererVideoSession::SetAudioSession(std::weak_ptr<RendererSession::IRendererAudioSession> audioSession_)
+{
+	renderer->SetAudioSession(audioSession_);
+}
+
 std::shared_ptr<wui::i_control> RendererVideoSession::GetControl()
 {
     return renderer;

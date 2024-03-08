@@ -2108,6 +2108,8 @@ void MainFrame::ProcessControllerEvent()
                                 }
                             }
 
+                            rvs->SetAudioSession(GetRendererAudioSessionByClient(renderer.clientId));
+
                             rvs->Start(renderer.receiverSSRC, renderer.authorSSRC, renderer.deviceId, renderer.secureKey);
 
                             UpdateVideoRenderers();
@@ -2151,6 +2153,14 @@ void MainFrame::ProcessControllerEvent()
                             }
 
                             renderersAudio[renderer.deviceId] = ras;
+
+                            for (auto& rvs : renderersVideo)
+                            {
+                                if (rvs->GetClientId() == renderer.clientId)
+                                {
+                                    rvs->SetAudioSession(ras);
+                                }
+                            }
 
                             ras->Start(renderer.receiverSSRC, renderer.authorSSRC, renderer.deviceId, renderer.secureKey);
                         }
@@ -3058,6 +3068,18 @@ std::shared_ptr<RendererSession::RendererAudioSession> MainFrame::GetRendererAud
     return nullptr;
 }
 
+std::shared_ptr<RendererSession::RendererAudioSession> MainFrame::GetRendererAudioSessionByClient(uint64_t clientId)
+{
+    for (auto& ras : renderersAudio)
+    {
+        if (ras.second->GetClientId() == clientId)
+        {
+            return ras.second;
+        }
+    }
+    return nullptr;
+}
+
 void SetVideoCapturerBitrate(std::shared_ptr<CaptureSession::CaptureVideoSession> cvs, uint32_t maxCameraBitrate)
 {
     uint32_t cameraBitrate = maxCameraBitrate;
@@ -3679,6 +3701,14 @@ void MainFrame::DeleteAudioRenderer(uint32_t deviceId, int64_t clientId)
     auto ras = GetRendererAudioSession(deviceId);
     if (ras)
     {
+        for (auto& rvs : renderersVideo)
+        {
+            if (rvs->GetClientId() == clientId)
+            {
+                rvs->SetAudioSession(std::weak_ptr<RendererSession::IRendererAudioSession>());
+            }
+        }
+
         ras->Stop();
 
         renderersAudio.erase(deviceId);

@@ -18,6 +18,8 @@
 #include <wui/system/tools.hpp>
 #include <wui/theme/theme.hpp>
 
+#include <RendererSession/IRendererAudioSession.h>
+
 #include <resource.h>
 
 namespace VideoRenderer
@@ -31,6 +33,7 @@ VideoRenderer::VideoRenderer()
     showed_(true), runned(false),
 	name(),
 	id(0), clientId(0),
+    audioSession(),
     deviceType(Proto::DeviceType::Camera),
 	nowSpeak(false),
     flickerBuffer(),
@@ -196,6 +199,20 @@ void VideoRenderer::SetId(uint32_t id_, int64_t clientId_)
 {
 	id = id_;
 	clientId = clientId_;
+}
+
+void VideoRenderer::SetAudioSession(std::weak_ptr<RendererSession::IRendererAudioSession> audioSession_)
+{
+    audioSession = audioSession_;
+    if (audioSession.lock())
+    {
+        sysLog->trace("VideoRenderer :: SetAudioSession :: device_id: {0}, client_id: {1} set the audio renderer session, device_id: {2}, client_id: {3}",
+            id, clientId, audioSession.lock()->GetDeviceId(), audioSession.lock()->GetClientId());
+    }
+    else
+    {
+        sysLog->trace("VideoRenderer :: SetAudioSession :: device_id: {0}, client_id: {1} remove the audio renderer session", id, clientId);
+    }
 }
 
 void VideoRenderer::SetDeviceType(Proto::DeviceType deviceType_)
