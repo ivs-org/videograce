@@ -70,7 +70,7 @@ void RendererAudioSession::SetVolume(int vol)
 void RendererAudioSession::SetMute(bool yes)
 {
 	mute = yes;
-	recordSplitter.SetReceiver0(yes ? nullptr : &decoder);
+	audioMixer.SetInputVolume(receiverSSRC, mute ? 0 : -1);
 }
 
 bool RendererAudioSession::GetMute()
@@ -196,6 +196,9 @@ void RendererAudioSession::Start(uint32_t receiverSSRC_, uint32_t authorSSRC_, u
 		recorder->AddAudio(authorSSRC, clientId);
 	}
 
+	jitterBuffer.Start(JB::Mode::Sound, name);
+	audioMixer.AddInput(authorSSRC, clientId, std::bind(&JB::JB::GetFrame, &jitterBuffer, std::placeholders::_1), mute || my ? 0 : -1);
+
 	if (!my)
 	{
 		if (wsAddr.empty())
@@ -205,18 +208,7 @@ void RendererAudioSession::Start(uint32_t receiverSSRC_, uint32_t authorSSRC_, u
 		else
 		{
 			wsmSocket.Start(wsAddr, accessToken, wsDestAddr);
-		}
-	
-		jitterBuffer.Start(JB::Mode::Sound, name);
-		if (!jitterBuffer.IsStarted())
-		{
-			errLog->info("Can't start audio renderer session because no memory to jitter buffer, client id: {0:d}, device id: {0:1}, receiver ssrc: {2:d}, author ssrc: {3:d}", clientId, deviceId, receiverSSRC, authorSSRC);
-			if (deviceNotifyCallback)
-			{
-				deviceNotifyCallback(name, Client::DeviceNotifyType::MemoryError, Proto::DeviceType::VideoRenderer, deviceId, 0);
-			}
-			return;
-		}
+		}		
 
 		decoder.Start(decoderType);
 		if (!decoder.IsStarted())
@@ -230,8 +222,6 @@ void RendererAudioSession::Start(uint32_t receiverSSRC_, uint32_t authorSSRC_, u
 		}
 
 		Ping();
-
-		audioMixer.AddInput(authorSSRC, clientId, std::bind(&JB::JB::GetFrame, &jitterBuffer, std::placeholders::_1));
 	}
 	
 	sysLog->info("Started audio renderer session, client id: {0:d}, device id: {0:1}, receiver ssrc: {2:d}, author ssrc: {3:d}", clientId, deviceId, receiverSSRC, authorSSRC);
@@ -287,6 +277,11 @@ void RendererAudioSession::Resume()
 	{
 		decoder.Start(decoderType);
 	}
+}
+
+JB::JB& RendererAudioSession::GetJB()
+{
+	return jitterBuffer;
 }
 
 /*void RendererAudioSession::ReceiveStreamParams(uint32_t jitter, uint32_t packetLoss)

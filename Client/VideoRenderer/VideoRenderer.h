@@ -16,6 +16,7 @@
 #include <Transport/RTP/OwnedRTPPacket.h>
 
 #include <UI/DeviceNotifies.h>
+#include <UI/SoundIndicator.h>
 
 #include <spdlog/spdlog.h>
 
@@ -86,6 +87,7 @@ private:
 	int64_t clientId;
 
     std::weak_ptr<RendererSession::IRendererAudioSession> audioSession;
+    Client::SoundIndicator soundIndicator;
 
     Proto::DeviceType deviceType;
 

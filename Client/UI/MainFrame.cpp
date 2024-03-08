@@ -2144,8 +2144,6 @@ void MainFrame::ProcessControllerEvent()
 
                             if (renderer.mySource)
                             {
-                                ras->SetMute(true);
-
                                 if (captureAudioSession)
                                 {
                                     captureAudioSession->SetLocalReceiver(ras->GetDirectReceiver());

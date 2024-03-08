@@ -51,6 +51,9 @@ public:
 
     /// Get next frame to play in renderer (The data will be moved to the buffer provided by the argument)
     void GetFrame(Transport::OwnedRTPPacket&);
+
+    /// Get last frame without delete from buffer
+    void ReadFrame(Transport::OwnedRTPPacket&);
 private:
     Common::TimeMeter &timeMeter;
 

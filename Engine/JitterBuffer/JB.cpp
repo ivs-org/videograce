@@ -204,6 +204,15 @@ void JB::GetFrame(Transport::OwnedRTPPacket& output)
     }  
 }
 
+void JB::ReadFrame(Transport::OwnedRTPPacket &out)
+{
+    std::lock_guard<std::mutex> lock(mutex);
+    if (!buffer.empty())
+    {
+        out = *buffer.front();
+    }
+}
+
 void JB::CalcJitter(const Transport::RTPPacket::RTPHeader &header)
 {
     auto currentTime = static_cast<uint32_t>(timeMeter.Measure() / 1000);

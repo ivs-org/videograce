@@ -72,6 +72,8 @@ namespace RendererSession
 		virtual void Pause();
 		virtual void Resume();
 
+		virtual JB::JB& GetJB();
+
 		virtual void Ping();
 	private:
         Client::DeviceNotifyCallback deviceNotifyCallback;

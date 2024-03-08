@@ -35,7 +35,7 @@ void SoundIndicator::draw(wui::graphic &gr, const wui::rect &)
 
     auto pos = position();
 
-    gr.draw_rect(pos, wui::make_color(19, 21, 25));
+    //gr.draw_rect(pos, wui::make_color(19, 21, 25));
 
     auto left = pos.left;
     auto center = pos.top + (pos.height() / 2);
@@ -67,6 +67,10 @@ void SoundIndicator::draw(wui::graphic &gr, const wui::rect &)
 void SoundIndicator::set_position(const wui::rect &position__, bool redraw)
 {
     count = position__.width();
+    while (data.size() > count)
+    {
+        data.pop_front();
+    }
     update_control_position(position_, position__, redraw, parent_);
 }
 

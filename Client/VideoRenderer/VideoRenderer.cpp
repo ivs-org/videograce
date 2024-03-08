@@ -19,6 +19,7 @@
 #include <wui/theme/theme.hpp>
 
 #include <RendererSession/IRendererAudioSession.h>
+#include <JitterBuffer/JB.h>
 
 #include <resource.h>
 
@@ -101,6 +102,17 @@ void VideoRenderer::draw(wui::graphic &gr, const wui::rect &)
 			color,
 			wui::font{ "D050000L", static_cast<int32_t>(pos.height() * 0.8)	});
 #endif
+        auto ras = audioSession.lock();
+        if (ras)
+        {
+            Transport::OwnedRTPPacket ortp;
+            ras->GetJB().ReadFrame(ortp);
+            Transport::RTPPacket rtp;
+            rtp.payload = ortp.data;
+            rtp.payloadSize = ortp.size;
+            soundIndicator.Send(rtp, nullptr);
+            soundIndicator.draw(gr, {});
+        }
     }
 
     gr.draw_text({pos.left + 11, pos.bottom - 24}, name,
@@ -123,6 +135,12 @@ void VideoRenderer::draw(wui::graphic &gr, const wui::rect &)
 void VideoRenderer::set_position(const wui::rect &position__, bool redraw)
 {
     update_control_position(position_, position__, redraw, parent_);
+    
+    soundIndicator.set_position({ position_.left,
+        position_.bottom - (position_.height() / 5) - 30,
+        position_.right,
+        position_.bottom - 30 });
+    
     resizeCallback(position__.width(), position__.height());
 }
 

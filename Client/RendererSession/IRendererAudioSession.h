@@ -20,6 +20,11 @@ namespace Recorder
 	class Recorder;
 }
 
+namespace JB
+{
+	class JB;
+}
+
 namespace RendererSession
 {
 	class IRendererAudioSession
@@ -61,6 +66,8 @@ namespace RendererSession
 
 		virtual void Pause() = 0;
 		virtual void Resume() = 0;
+
+		virtual JB::JB& GetJB() = 0;
 
 		/// Need to ping source
 		virtual void Ping() = 0;
