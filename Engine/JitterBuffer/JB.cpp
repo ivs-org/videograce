@@ -33,6 +33,7 @@ JB::JB(Common::TimeMeter &timeMeter_)
 
     mutex(),
     buffer(),
+    statMeter(100),
 
 	frameDuration(40),
 
@@ -40,7 +41,6 @@ JB::JB(Common::TimeMeter &timeMeter_)
     reserveCount(4), // 160 ms delay
 
     prevRxTS(0), rxInterval(frameDuration),
-    rxIntervals(),
     stateRxTS(40.0), covarianceRxTS(0.1),
     checkTime(0),
 
@@ -151,7 +151,7 @@ void JB::GetFrame(Transport::OwnedRTPPacket& output)
 
     if (buffering)
     {
-        if (buffer.size() < reserveCount ||
+        if (//buffer.size() < reserveCount ||
             buffer.size() < (floor((double)rxInterval / frameDuration)))
         {
             return;
@@ -215,11 +215,10 @@ void JB::CalcJitter(const Transport::RTPPacket::RTPHeader &header)
     prevRxTS = currentTime;
 
     auto actualrxInterval = KalmanCorrectRxTS(interarrivalTime);
-    rxIntervals.push_front(actualrxInterval);
+    
+    statMeter.PushVal(actualrxInterval);
 
-    if (rxIntervals.size() > 100) rxIntervals.pop_back();
-
-    rxInterval = GetMaxRX();
+    rxInterval = static_cast<uint32_t>(statMeter.GetMax());
 }
 
 uint32_t JB::KalmanCorrectRxTS(uint32_t data)
@@ -236,21 +235,6 @@ uint32_t JB::KalmanCorrectRxTS(uint32_t data)
     covarianceRxTS = (1 - k * h) * p0;
 
     return static_cast<uint32_t>(stateRxTS);
-}
-
-uint32_t JB::GetMaxRX()
-{
-    uint32_t max_ = 0;
-
-    for (auto v : rxIntervals)
-    {
-        if (v > max_)
-        {
-            max_ = v;
-        }
-    }
-
-    return max_;
 }
 
 }

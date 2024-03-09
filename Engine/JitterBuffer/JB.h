@@ -11,6 +11,7 @@
 #include <Transport/RTP/OwnedRTPPacket.h>
 
 #include <Common/TimeMeter.h>
+#include <Common/StatMeter.h>
 
 #include <atomic>
 #include <mutex>
@@ -59,13 +60,14 @@ private:
     std::mutex mutex;
     std::deque<std::shared_ptr<Transport::OwnedRTPPacket>> buffer;
 
+    Common::StatMeter statMeter;
+
 	uint32_t frameDuration;
 
     bool buffering;
     uint32_t reserveCount;
 
     uint32_t prevRxTS, rxInterval;
-    std::deque<uint32_t> rxIntervals;
     double stateRxTS, covarianceRxTS;
     uint32_t checkTime;
 
@@ -74,7 +76,6 @@ private:
     std::shared_ptr<spdlog::logger> sysLog, errLog;
 
     uint32_t KalmanCorrectRxTS(uint32_t interarrivalTime);
-    uint32_t GetMaxRX();
 
     void CalcJitter(const Transport::RTPPacket::RTPHeader &header);
 };

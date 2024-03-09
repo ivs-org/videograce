@@ -37,7 +37,7 @@
 
 #include <CaptureSession/CaptureVideoSession.h>
 
-#include <RuntimeMeter/RuntimeMeter.h>
+#include <Common/RuntimeMeter.h>
 
 #include <spdlog/spdlog.h>
 

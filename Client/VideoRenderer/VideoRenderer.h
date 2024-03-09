@@ -15,6 +15,8 @@
 #include <Transport/ISocket.h>
 #include <Transport/RTP/OwnedRTPPacket.h>
 
+#include <Common/StatMeter.h>
+
 #include <UI/SoundIndicator.h>
 
 #include <spdlog/spdlog.h>
@@ -84,6 +86,8 @@ private:
 	std::string name;
 	uint32_t id;
 	int64_t clientId;
+
+    Common::StatMeter statMeter;
 
     std::weak_ptr<RendererSession::IRendererAudioSession> audioSession;
     Client::SoundIndicator soundIndicator;

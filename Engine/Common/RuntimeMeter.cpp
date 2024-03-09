@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include <RuntimeMeter/RuntimeMeter.h>
+#include <Common/RuntimeMeter.h>
 
 #include <chrono>
 
@@ -17,11 +17,7 @@ namespace Common
 RuntimeMeter::RuntimeMeter(int64_t triggerMS_,
 	std::function<void(int64_t)> callback_,
 	Transport::ISocket &receiver_)
-	: triggerMS(triggerMS_), callback(callback_), receiver(receiver_)
-{
-}
-
-RuntimeMeter::~RuntimeMeter()
+	: triggerMS(triggerMS_), callback(callback_), receiver(receiver_), statMeter(50)
 {
 }
 
@@ -33,8 +29,11 @@ void RuntimeMeter::Send(const Transport::IPacket& packet_, const Transport::Addr
 
 	auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - start).count();
 
-	if (duration > triggerMS)
+	statMeter.PushVal(duration);
+
+	if (statMeter.GetFill() == 50 && statMeter.GetAvg() > triggerMS)
 	{
+		statMeter.Clear();
 		callback(duration);
 	}
 }

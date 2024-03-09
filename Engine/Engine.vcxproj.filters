@@ -243,11 +243,8 @@
     <Filter Include="Source Files\Transport\WSM">
       <UniqueIdentifier>{32048e45-7788-478c-a7f6-c7280f139872}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\RuntimeMeter">
-      <UniqueIdentifier>{45587f41-4f36-4ef9-9620-eb0182e3e35f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\RuntimeMeter">
-      <UniqueIdentifier>{8e89b131-7194-460f-833d-7a920560a0ae}</UniqueIdentifier>
+    <Filter Include="Header Files\StatMeter">
+      <UniqueIdentifier>{550dc540-77d5-4235-8a9f-963d708fd08e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1211,8 +1208,11 @@
     <ClInclude Include="Common\Types.h">
       <Filter>Header Files\Common</Filter>
     </ClInclude>
-    <ClInclude Include="RuntimeMeter\RuntimeMeter.h">
-      <Filter>Header Files\RuntimeMeter</Filter>
+    <ClInclude Include="Common\RuntimeMeter.h">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\StatMeter.h">
+      <Filter>Header Files\Common</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1756,8 +1756,11 @@
     <ClCompile Include="Video\Resizer.cpp">
       <Filter>Source Files\Video</Filter>
     </ClCompile>
-    <ClCompile Include="RuntimeMeter\RuntimeMeter.cpp">
-      <Filter>Source Files\RuntimeMeter</Filter>
+    <ClCompile Include="Common\RuntimeMeter.cpp">
+      <Filter>Source Files\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\StatMeter.cpp">
+      <Filter>Source Files\Common</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

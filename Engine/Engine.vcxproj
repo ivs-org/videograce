@@ -229,7 +229,9 @@
     <ClInclude Include="Common\MACAddresses.h" />
     <ClInclude Include="Common\Process.h" />
     <ClInclude Include="Common\Quoter.h" />
+    <ClInclude Include="Common\RuntimeMeter.h" />
     <ClInclude Include="Common\ShortSleep.h" />
+    <ClInclude Include="Common\StatMeter.h" />
     <ClInclude Include="Common\TimeMeter.h" />
     <ClInclude Include="Common\ToDigit.h" />
     <ClInclude Include="Common\Types.h" />
@@ -313,7 +315,6 @@
     <ClInclude Include="Record\IRecorder.h" />
     <ClInclude Include="Record\MP3Writer.h" />
     <ClInclude Include="Record\Recorder.h" />
-    <ClInclude Include="RuntimeMeter\RuntimeMeter.h" />
     <ClInclude Include="spdlog\async.h" />
     <ClInclude Include="spdlog\async_logger-inl.h" />
     <ClInclude Include="spdlog\async_logger.h" />
@@ -543,7 +544,9 @@
     <ClCompile Include="Common\md5.cpp" />
     <ClCompile Include="Common\MACAddresses.cpp" />
     <ClCompile Include="Common\Process.cpp" />
+    <ClCompile Include="Common\RuntimeMeter.cpp" />
     <ClCompile Include="Common\ShortSleep.cpp" />
+    <ClCompile Include="Common\StatMeter.cpp" />
     <ClCompile Include="Common\ToDigit.cpp" />
     <ClCompile Include="Common\URLDecode.cpp" />
     <ClCompile Include="Common\URLEncode.cpp" />
@@ -607,7 +610,6 @@
     <ClCompile Include="Proto\Message.cpp" />
     <ClCompile Include="Record\MP3Writer.cpp" />
     <ClCompile Include="Record\Recorder.cpp" />
-    <ClCompile Include="RuntimeMeter\RuntimeMeter.cpp" />
     <ClCompile Include="Storage\Storage.cpp" />
     <ClCompile Include="Transport\Address.cpp" />
     <ClCompile Include="Transport\RTPSocket.cpp" />

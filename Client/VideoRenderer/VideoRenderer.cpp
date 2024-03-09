@@ -35,6 +35,7 @@ VideoRenderer::VideoRenderer()
     showed_(true), runned(false),
 	name(),
 	id(0), clientId(0),
+    statMeter(50),
     audioSession(),
     deviceType(Proto::DeviceType::Camera),
 	nowSpeak(false),
@@ -134,21 +135,15 @@ void VideoRenderer::draw(wui::graphic &gr, const wui::rect &)
         gr.draw_line({ pos.left, pos.top, pos.left, pos.bottom }, color, 1);
     }
 
-    static auto sendCnt = 50;
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - start).count();
-    if (duration > 30) /// 30 ms is a big
-    {
-        errLog->warn("VideoRenderer[{0}] :: Too slow rendering ({1} ms)", name, duration);
-        if (sendCnt == 0)
-        {
-            slowRenderingCallback(duration);
-        }
+    statMeter.PushVal(duration);
+    auto avg = statMeter.GetAvg();
 
-        ++sendCnt; // Prevent duplicates and flood
-        if (sendCnt > 100)
-        {
-            sendCnt = 0;
-        }
+    if (statMeter.GetFill() == 50 && avg > 30) /// 30 ms is a big
+    {
+        statMeter.Clear();
+        errLog->warn("VideoRenderer[{0}] :: Too slow rendering ({1} ms)", name, avg);
+        slowRenderingCallback(duration);
     }
 }
 
