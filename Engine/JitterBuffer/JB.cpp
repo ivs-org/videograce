@@ -26,7 +26,6 @@ const char* to_string(Mode mode)
 
 JB::JB(Common::TimeMeter &timeMeter_)
 	: timeMeter(timeMeter_),
-    slowRenderingCallback(),
 
     mode(Mode::Video),
     name(),
@@ -105,11 +104,6 @@ bool JB::IsStarted()
 	return runned;
 }
 
-void JB::SetSlowRenderingCallback(std::function<void(void)> callback)
-{
-    slowRenderingCallback = callback;
-}
-
 void JB::SetFrameDuration(uint32_t ms)
 {
 	Stop();
@@ -186,7 +180,7 @@ void JB::GetFrame(Transport::OwnedRTPPacket& output)
     if (!buffer.empty())
     {
         if (mode == Mode::Video ||
-            rxInterval <= (buffer.size() + 1) * frameDuration)
+            rxInterval < (buffer.size() + 1) * frameDuration)
         {
             output = std::move(*buffer.front());
             buffer.pop_front();

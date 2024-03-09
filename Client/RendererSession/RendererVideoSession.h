@@ -37,6 +37,8 @@
 
 #include <CaptureSession/CaptureVideoSession.h>
 
+#include <RuntimeMeter/RuntimeMeter.h>
+
 #include <spdlog/spdlog.h>
 
 namespace Client
@@ -94,8 +96,8 @@ public:
 	/// Derived from Video::IPacketLossCallback
 	virtual void ForceKeyFrame(uint32_t lastRecvSeq);
 
-	/// Receive from JitterBuffer
-	void SlowRenderingCallback();
+	/// Receive from encoding flow and renederer
+	void SlowRenderingCallback(int64_t);
 
 	/// Derived from IActionReceiver
 	virtual void MouseMove(int32_t x, int32_t y);
@@ -121,6 +123,7 @@ private:
 	Video::Decoder decoder;
 	Video::VP8RTPCollector vp8RTPCollector;
 	Crypto::Decryptor decryptor;
+	Common::RuntimeMeter runtimeMeter;
 	Transport::RTPSocket rtpSocket;
 	Transport::WSMSocket wsmSocket;
 	Transport::ISocket *outSocket;

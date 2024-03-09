@@ -4,10 +4,10 @@
  * Author: Anton (ud) Golovkov, udattsk@gmail.com
  * Copyright (C), Infinity Video Soft LLC, 2014 - 2024
  *
- *                                                                       ,-> [Decoder] -> [Resizer] -> [JitterBuffer] <-> [VideoRenderer]
- * [NetSocket] -> [Decryptor] -> [vp8RTPCollector] -> [RecordSplitter] -<
- *                                                            ^          `-> [Recorder]
- *                                                            '- <- [Local Capturer]
+ *                                                                                         ,-> [Decoder] -> [Resizer] -> [JitterBuffer] <-> [VideoRenderer]
+ * [NetSocket] -> [RuntimeMeter] -> [Decryptor] -> [vp8RTPCollector] -> [RecordSplitter] -<
+ *                                                                              ^          `-> [Recorder]
+ *                                                                              '- <- [Local Capturer]
  */
 
 #include <Common/Common.h>
@@ -26,9 +26,10 @@ RendererVideoSession::RendererVideoSession(Common::TimeMeter &timeMeter)
 	decoder(),
 	vp8RTPCollector(),
 	decryptor(),
+	runtimeMeter(30, std::bind(&RendererVideoSession::SlowRenderingCallback, this, std::placeholders::_1), decryptor),
 	rtpSocket(),
-	outSocket(&rtpSocket),
 	wsmSocket(),
+	outSocket(&rtpSocket),
 	localCVS(),
 	deviceNotifyCallback(),
 	runned(false), my(false),
@@ -44,6 +45,7 @@ RendererVideoSession::RendererVideoSession(Common::TimeMeter &timeMeter)
 	sysLog(spdlog::get("System")), errLog(spdlog::get("Error"))
 {
 	renderer->SetResizeCallback(std::bind(&Video::Resizer::SetSize, &resizer, std::placeholders::_1, std::placeholders::_2));
+	renderer->SetSlowRenderingCallback(std::bind(&RendererVideoSession::SlowRenderingCallback, this, std::placeholders::_1));
 	rtpSocket.SetReceiver(&decryptor, nullptr);
 	wsmSocket.SetReceiver(&decryptor, nullptr);
 	decryptor.SetReceiver(&vp8RTPCollector);
@@ -53,7 +55,6 @@ RendererVideoSession::RendererVideoSession(Common::TimeMeter &timeMeter)
     decoder.SetReceiver(&resizer);
 	resizer.SetReceiver(&jitterBuffer);
 	decoder.SetCallback(this);
-	jitterBuffer.SetSlowRenderingCallback(std::bind(&RendererVideoSession::SlowRenderingCallback, this));
 }
 
 RendererVideoSession::~RendererVideoSession()
@@ -69,7 +70,6 @@ void RendererVideoSession::SetLocalCVS(CaptureSession::CaptureVideoSessionPtr_t 
 void RendererVideoSession::SetDeviceNotifyCallback(Client::DeviceNotifyCallback deviceNotifyCallback_)
 {
     deviceNotifyCallback = deviceNotifyCallback_;
-	renderer->SetDeviceNotifyCallback(deviceNotifyCallback_);
 }
 
 void RendererVideoSession::SetAudioSession(std::weak_ptr<RendererSession::IRendererAudioSession> audioSession_)
@@ -425,15 +425,15 @@ void RendererVideoSession::SetRemoteFrameRate(uint32_t rate)
 {
 	if (!my)
 	{
-		Transport::RTCPPacket fkfPacket;
+		Transport::RTCPPacket sfrPacket;
 
-		fkfPacket.rtcp_common.pt = Transport::RTCPPacket::RTCP_APP;
-		fkfPacket.rtcp_common.length = 1;
-		fkfPacket.rtcps[0].r.app.ssrc = receiverSSRC;
-		fkfPacket.rtcps[0].r.app.messageType = Transport::RTCPPacket::amtSetFrameRate;
-		*reinterpret_cast<uint32_t*>(fkfPacket.rtcps[0].r.app.payload) = htonl(rate);
+		sfrPacket.rtcp_common.pt = Transport::RTCPPacket::RTCP_APP;
+		sfrPacket.rtcp_common.length = 1;
+		sfrPacket.rtcps[0].r.app.ssrc = receiverSSRC;
+		sfrPacket.rtcps[0].r.app.messageType = Transport::RTCPPacket::amtSetFrameRate;
+		*reinterpret_cast<uint32_t*>(sfrPacket.rtcps[0].r.app.payload) = htonl(rate);
 
-		outSocket->Send(fkfPacket);
+		outSocket->Send(sfrPacket);
 	}
 	else if (localCVS)
 	{
@@ -442,15 +442,9 @@ void RendererVideoSession::SetRemoteFrameRate(uint32_t rate)
 	jitterBuffer.SetFrameDuration(1000 / rate);
 }
 
-void RendererVideoSession::SlowRenderingCallback()
+void RendererVideoSession::SlowRenderingCallback(int64_t v)
 {
-	DBGTRACE("Video renderer[%d] too slow rendering\n", deviceId);
-
-	if (frameRate == 25)
-	{
-		SetRemoteFrameRate(5);
-		return;
-	}
+	sysLog->warn("RendererVideoSession[{0},{1}] :: Too slow rendering {2}", name, deviceId, v);
 
 	auto rv = Video::GetValues(resolution);
 
@@ -467,6 +461,12 @@ void RendererVideoSession::SlowRenderingCallback()
 	}
 	else
 	{
+		if (frameRate == 25)
+		{
+			SetRemoteFrameRate(5);
+			return;
+		}
+
 		if (deviceNotifyCallback)
 		{
             deviceNotifyCallback(name, Client::DeviceNotifyType::OvertimeRendering, Proto::DeviceType::VideoRenderer, deviceId, 0);

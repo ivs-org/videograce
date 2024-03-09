@@ -216,6 +216,8 @@ void CameraImpl::Start(Video::ColorSpace colorSpace_, ssrc_t ssrc_)
 		runned = true;
 		captureThread = std::thread(&CameraImpl::Capture, this);
 		sendThread = std::thread(&CameraImpl::send, this);
+
+		sysLog->info("Camera[{0}] :: Started(ssrc: {1}, frameDuration: {2})", name, ssrc, packetDuration);
 	}
 }
 
@@ -234,6 +236,8 @@ void CameraImpl::Stop()
 	tmpBuffer.reset(nullptr);
 	outputBuffer.reset(nullptr);
 	captureBuffer.reset(nullptr);
+
+	sysLog->info("Camera[{0}] :: Stopped");
 }
 
 HRESULT CameraImpl::SetCameraParams(const Video::ResolutionValues &rv)
@@ -327,6 +331,7 @@ bool CameraImpl::SetResolution(Video::Resolution resolution_)
 void CameraImpl::SetFrameRate(uint32_t rate)
 {
 	packetDuration = (1000 / rate) * 1000;
+	sysLog->info("Camera[{0}] :: SetFrameRate(rate: {1}, frameDuration: {2})", name, rate, packetDuration);
 }
 
 void CameraImpl::SetDeviceNotifyCallback(Client::DeviceNotifyCallback deviceNotifyCallback_)

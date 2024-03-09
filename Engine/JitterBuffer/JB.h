@@ -17,9 +17,6 @@
 #include <deque>
 #include <vector>
 #include <algorithm>
-#include <functional>
-
-#include <memory.h>
 
 #include <spdlog/spdlog.h>
 
@@ -42,9 +39,7 @@ public:
 
 	void Start(Mode mode, std::string_view name);
 	void Stop();
-	bool IsStarted();
-
-    void SetSlowRenderingCallback(std::function<void(void)> callback);
+    bool IsStarted();
     
     /// Receive PCM audio or RGB video frame
 	virtual void Send(const Transport::IPacket &packet_, const Transport::Address *address = nullptr) final;
@@ -56,8 +51,6 @@ public:
     void ReadFrame(Transport::OwnedRTPPacket&);
 private:
     Common::TimeMeter &timeMeter;
-
-    std::function<void(void)> slowRenderingCallback;
 
     Mode mode;
     std::string name;

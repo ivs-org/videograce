@@ -15,7 +15,6 @@
 #include <Transport/ISocket.h>
 #include <Transport/RTP/OwnedRTPPacket.h>
 
-#include <UI/DeviceNotifies.h>
 #include <UI/SoundIndicator.h>
 
 #include <spdlog/spdlog.h>
@@ -29,9 +28,8 @@ public:
 	VideoRenderer();
 	~VideoRenderer();
 
-    void SetDeviceNotifyCallback(Client::DeviceNotifyCallback deviceNotifyCallback);
-
     void SetResizeCallback(std::function<void(int32_t, int32_t)>);
+    void SetSlowRenderingCallback(std::function<void(int64_t)> callback);
 
     /// wui::i_control impl
     virtual void draw(wui::graphic &gr, const wui::rect &);
@@ -76,6 +74,7 @@ private:
     std::function<void(Transport::OwnedRTPPacket&)> rgbSource;
 
     std::function<void(int32_t, int32_t)> resizeCallback;
+    std::function<void(int64_t)> slowRenderingCallback;
 
     std::weak_ptr<wui::window> parent_;
     wui::rect position_;
@@ -94,8 +93,6 @@ private:
 	bool nowSpeak;
 
     std::unique_ptr<uint8_t[]> flickerBuffer;
-
-    Client::DeviceNotifyCallback deviceNotifyCallback;
 
     wui::error err;
 

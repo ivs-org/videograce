@@ -2091,6 +2091,7 @@ void MainFrame::ProcessControllerEvent()
                             rvs->SetDeviceNotifyCallback(std::bind(&MainFrame::ReceiveDeviceNotify, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4, std::placeholders::_5));
                             rvs->SetRecorder(&recorder);
                             rvs->SetFrameRate(renderer.type != Proto::DeviceType::Demonstration ? 25 : 5);
+                            rvs->SetAudioSession(GetRendererAudioSessionByClient(renderer.clientId));
 
                             renderersVideo.emplace_back(rvs);
 
@@ -2107,8 +2108,6 @@ void MainFrame::ProcessControllerEvent()
                                     }
                                 }
                             }
-
-                            rvs->SetAudioSession(GetRendererAudioSessionByClient(renderer.clientId));
 
                             rvs->Start(renderer.receiverSSRC, renderer.authorSSRC, renderer.deviceId, renderer.secureKey);
 
@@ -3636,6 +3635,7 @@ void MainFrame::ShowAvatar(int64_t clientId, std::string_view name)
     rvs->SetDeviceType(Proto::DeviceType::Avatar);
     rvs->SetResolution(Video::GetResolution(Video::ResolutionValues(910, 512)));
     rvs->SetMy(clientId == controller.GetMyClientId());
+    rvs->SetAudioSession(GetRendererAudioSessionByClient(clientId));
 
     renderersVideo.emplace_back(rvs);
 

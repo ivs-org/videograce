@@ -313,6 +313,7 @@
     <ClInclude Include="Record\IRecorder.h" />
     <ClInclude Include="Record\MP3Writer.h" />
     <ClInclude Include="Record\Recorder.h" />
+    <ClInclude Include="RuntimeMeter\RuntimeMeter.h" />
     <ClInclude Include="spdlog\async.h" />
     <ClInclude Include="spdlog\async_logger-inl.h" />
     <ClInclude Include="spdlog\async_logger.h" />
@@ -606,6 +607,7 @@
     <ClCompile Include="Proto\Message.cpp" />
     <ClCompile Include="Record\MP3Writer.cpp" />
     <ClCompile Include="Record\Recorder.cpp" />
+    <ClCompile Include="RuntimeMeter\RuntimeMeter.cpp" />
     <ClCompile Include="Storage\Storage.cpp" />
     <ClCompile Include="Transport\Address.cpp" />
     <ClCompile Include="Transport\RTPSocket.cpp" />

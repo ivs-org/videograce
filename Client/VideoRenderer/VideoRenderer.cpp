@@ -30,6 +30,7 @@ namespace VideoRenderer
 VideoRenderer::VideoRenderer()
 	: rgbSource(),
 	resizeCallback(),
+    slowRenderingCallback(),
 	parent_(), position_(),
     showed_(true), runned(false),
 	name(),
@@ -38,7 +39,6 @@ VideoRenderer::VideoRenderer()
     deviceType(Proto::DeviceType::Camera),
 	nowSpeak(false),
     flickerBuffer(),
-	deviceNotifyCallback(),
 	err{},
 	sysLog(spdlog::get("System")), errLog(spdlog::get("Error"))
 {
@@ -49,14 +49,15 @@ VideoRenderer::~VideoRenderer()
 	Stop();
 }
 
-void VideoRenderer::SetDeviceNotifyCallback(Client::DeviceNotifyCallback deviceNotifyCallback_)
-{
-    deviceNotifyCallback = deviceNotifyCallback_;
-}
-
 void VideoRenderer::SetResizeCallback(std::function<void(int32_t, int32_t)> resizeCallback_)
 {
 	resizeCallback = resizeCallback_;
+}
+
+
+void VideoRenderer::SetSlowRenderingCallback(std::function<void(int64_t)> callback)
+{
+    slowRenderingCallback = callback;
 }
 
 void VideoRenderer::draw(wui::graphic &gr, const wui::rect &)
@@ -65,6 +66,8 @@ void VideoRenderer::draw(wui::graphic &gr, const wui::rect &)
     {
         return;
     }
+
+    auto start = std::chrono::high_resolution_clock::now();
 	
 	auto pos = position();
 
@@ -94,7 +97,7 @@ void VideoRenderer::draw(wui::graphic &gr, const wui::rect &)
 			color,
 			wui::font {
 					Common::IsWindows10OrGreater() ? "Segoe UI Emoji" : "Segoe UI Symbol",
-					static_cast<int32_t>(pos.height() * 0.4)
+					static_cast<int32_t>(pos.height() * 0.3)
 				});
 #else
 		gr.draw_text(pos,
@@ -129,6 +132,23 @@ void VideoRenderer::draw(wui::graphic &gr, const wui::rect &)
         gr.draw_line({ pos.right - 1, pos.top, pos.right - 1, pos.bottom }, color, 1);
         gr.draw_line({ pos.right, pos.bottom - 1, pos.left, pos.bottom - 1 }, color, 1);
         gr.draw_line({ pos.left, pos.top, pos.left, pos.bottom }, color, 1);
+    }
+
+    static auto sendCnt = 50;
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - start).count();
+    if (duration > 30) /// 30 ms is a big
+    {
+        errLog->warn("VideoRenderer[{0}] :: Too slow rendering ({1} ms)", name, duration);
+        if (sendCnt == 0)
+        {
+            slowRenderingCallback(duration);
+        }
+
+        ++sendCnt; // Prevent duplicates and flood
+        if (sendCnt > 100)
+        {
+            sendCnt = 0;
+        }
     }
 }
 
