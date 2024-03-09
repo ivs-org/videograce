@@ -46,14 +46,14 @@ int64_t StatMeter::GetMax() const
 
 int64_t StatMeter::GetAvg() const
 {
-    double summ_ = 0;
+    int64_t summ_ = 0;
 
     for (auto v : vals)
     {
         summ_ += v;
     }
 
-    return summ_ / std::min(vals.size(), size);
+    return vals.size() != 0 ? static_cast<int64_t>((double)summ_ / vals.size()) : 0;
 }
 
 size_t StatMeter::GetFill() const

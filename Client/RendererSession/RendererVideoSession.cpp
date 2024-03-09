@@ -461,12 +461,6 @@ void RendererVideoSession::SlowRenderingCallback(int64_t v)
 	}
 	else
 	{
-		if (frameRate == 25)
-		{
-			SetRemoteFrameRate(5);
-			return;
-		}
-
 		if (deviceNotifyCallback)
 		{
             deviceNotifyCallback(name, Client::DeviceNotifyType::OvertimeRendering, Proto::DeviceType::VideoRenderer, deviceId, 0);

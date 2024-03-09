@@ -10,6 +10,7 @@
 #include <Camera/ICamera.h>
 #include <Transport/ISocket.h>
 #include <Common/TimeMeter.h>
+#include <Common/StatMeter.h>
 
 #include <Camera/win/CameraDSG.h>
 
@@ -56,14 +57,13 @@ private:
 
 	uint32_t dataLength;
 
-	uint64_t processTime;
-	uint32_t overTimeCount;
-	
 	StreamConfigPtr streamConfig;
 	KsPropertySetPtr ksPropertySet;
 	AMCameraControlPtr cameraControl;
 
 	CComQIPtr<IMediaControl, &IID_IMediaControl> mediaControl;
+
+	Common::StatMeter statMeter;
 
 	std::string name;
 	uint32_t deviceId;

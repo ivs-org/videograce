@@ -32,12 +32,11 @@ CameraImpl::CameraImpl(Common::TimeMeter &timeMeter_, Transport::ISocket &receiv
 	captureBuffer(), outputBuffer(), tmpBuffer(),
 	packetDuration(40000),
 	dataLength(0),
-	processTime(0),
-	overTimeCount(0),
 	streamConfig(),
 	ksPropertySet(),
 	cameraControl(),
 	mediaControl(),
+	statMeter(30),
 	name(),
 	deviceId(0),
 	resolution(Video::rVGA),
@@ -208,11 +207,7 @@ void CameraImpl::Start(Video::ColorSpace colorSpace_, ssrc_t ssrc_)
 		}
 
 		dataLength = 0;
-
-		overTimeCount = 0;
-
-		processTime = 0;
-		
+				
 		runned = true;
 		captureThread = std::thread(&CameraImpl::Capture, this);
 		sendThread = std::thread(&CameraImpl::send, this);
@@ -536,26 +531,24 @@ void CameraImpl::send()
 
 		receiver.Send(packet);
 
-		processTime = timeMeter.Measure() - start;
+		auto processTime = timeMeter.Measure() - start;
 
-		if (processTime > packetDuration + 5000)
+		if (processTime != 0)
 		{
-			++overTimeCount;
+			statMeter.PushVal(processTime);
 		}
-		else if (overTimeCount > 0)
+
+		if (statMeter.GetFill() == 25 && (uint64_t)statMeter.GetAvg() > packetDuration / 2)
 		{
-			--overTimeCount;
-		}
-		if (overTimeCount == 100)
-		{
-			overTimeCount = 10000; // prevent duplicates
 			if (deviceNotifyCallback && runned)
 			{
-                deviceNotifyCallback(name, Client::DeviceNotifyType::OvertimeCoding, Proto::DeviceType::Camera, deviceId, 0);
+				sysLog->warn("Camera {0} :: Too slow encoding {1} ms", name, statMeter.GetAvg());
+				deviceNotifyCallback(name, Client::DeviceNotifyType::OvertimeCoding, Proto::DeviceType::Camera, deviceId, 0);
 			}
+			statMeter.Clear();
 		}
 
-		if (packetDuration > processTime) Common::ShortSleep(packetDuration - processTime - 500);
+		if (packetDuration > processTime) Common::ShortSleep(packetDuration - processTime);
 	}
 }
 
