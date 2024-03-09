@@ -39,7 +39,7 @@ void RuntimeMeter::Send(const Transport::IPacket& packet_, const Transport::Addr
 
 	statMeter.PushVal(duration);
 
-	subtle_trace("statmeter duration: ", duration);
+	//subtle_trace("statmeter duration: ", duration);
 
 	if (statMeter.GetFill() == 40 && statMeter.GetAvg() > triggerMS)
 	{
