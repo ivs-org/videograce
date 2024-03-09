@@ -315,15 +315,20 @@ void CaptureVideoSession::Send(const Transport::IPacket &packet_, const Transpor
 			case Transport::RTCPPacket::amtForceKeyFrame:
 			{
 				auto lastRecvSeq = ntohl(*reinterpret_cast<const uint32_t*>(packet.rtcps[0].r.app.payload));
-				sysLog->trace("Camera {0} received force key frame (last_recv_seq: {1})", name, lastRecvSeq);
+				sysLog->trace("Camera[{0}] :: Received force key frame (last_recv_seq: {1})", name, lastRecvSeq);
 				encoder.ForceKeyFrame(lastRecvSeq);
 			}
 			break;
 			case Transport::RTCPPacket::amtReduceComplexity:
 				ReduceComplexity();
+				sysLog->trace("Camera[{0}] :: Received ReduceComplexity", name);
 			break;
 			case Transport::RTCPPacket::amtSetFrameRate:
-				SetFrameRate(ntohl(*reinterpret_cast<const uint32_t*>(packet.rtcps[0].r.app.payload)));
+			{
+				auto fr = ntohl(*reinterpret_cast<const uint32_t*>(packet.rtcps[0].r.app.payload));
+				SetFrameRate(fr);
+				sysLog->trace("Camera[{0}] :: Received SetFrameRate", name, fr);
+			}
 			break;
 			case Transport::RTCPPacket::amtRemoteControl:
 				if (rcActionsEnabled)

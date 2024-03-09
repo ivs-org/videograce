@@ -15,7 +15,6 @@ namespace Common
 StatMeter::StatMeter(size_t size_)
     : vals(), size(size_)
 {
-    vals.resize(size + 1);
 }
 
 void StatMeter::PushVal(int64_t val)
@@ -54,7 +53,7 @@ int64_t StatMeter::GetAvg() const
         summ_ += v;
     }
 
-    return static_cast<int64_t>(summ_ / size);
+    return summ_ / std::min(vals.size(), size);
 }
 
 size_t StatMeter::GetFill() const

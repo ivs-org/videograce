@@ -1581,6 +1581,8 @@ void MainFrame::ProcessControllerEvent()
                         controller.ChangeResolution(captureVideoSession->GetDeviceId(), resolution);
                         captureVideoSession->SetResolution(resolution);
                         UpdateOutputBitrates();
+
+                        sysLog->info("Changed camera resolution to: {0}x{1}");
                     }
                 }
             }

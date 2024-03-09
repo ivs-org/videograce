@@ -136,10 +136,14 @@ void VideoRenderer::draw(wui::graphic &gr, const wui::rect &)
     }
 
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - start).count();
+    if (duration == 0)
+    {
+        return;
+    }
     statMeter.PushVal(duration);
     auto avg = statMeter.GetAvg();
 
-    if (statMeter.GetFill() == 50 && avg > 30) /// 30 ms is a big
+    if (statMeter.GetFill() == 40 && avg > 5) /// 5 ms deadline
     {
         statMeter.Clear();
         errLog->warn("VideoRenderer[{0}] :: Too slow rendering ({1} ms)", name, avg);

@@ -26,7 +26,7 @@ RendererVideoSession::RendererVideoSession(Common::TimeMeter &timeMeter)
 	decoder(),
 	vp8RTPCollector(),
 	decryptor(),
-	runtimeMeter(30, std::bind(&RendererVideoSession::SlowRenderingCallback, this, std::placeholders::_1), decryptor),
+	runtimeMeter(5, std::bind(&RendererVideoSession::SlowRenderingCallback, this, std::placeholders::_1), decryptor),
 	rtpSocket(),
 	wsmSocket(),
 	outSocket(&rtpSocket),
@@ -46,8 +46,8 @@ RendererVideoSession::RendererVideoSession(Common::TimeMeter &timeMeter)
 {
 	renderer->SetResizeCallback(std::bind(&Video::Resizer::SetSize, &resizer, std::placeholders::_1, std::placeholders::_2));
 	renderer->SetSlowRenderingCallback(std::bind(&RendererVideoSession::SlowRenderingCallback, this, std::placeholders::_1));
-	rtpSocket.SetReceiver(&decryptor, nullptr);
-	wsmSocket.SetReceiver(&decryptor, nullptr);
+	rtpSocket.SetReceiver(&runtimeMeter, nullptr);
+	wsmSocket.SetReceiver(&runtimeMeter, nullptr);
 	decryptor.SetReceiver(&vp8RTPCollector);
 	vp8RTPCollector.SetReceiver(&recordSplitter);
 	recordSplitter.SetReceiver0(&decoder);

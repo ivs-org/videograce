@@ -151,7 +151,7 @@ void JB::GetFrame(Transport::OwnedRTPPacket& output)
 
     if (buffering)
     {
-        if (//buffer.size() < reserveCount ||
+        if (buffer.size() < reserveCount ||
             buffer.size() < (floor((double)rxInterval / frameDuration)))
         {
             return;
@@ -218,7 +218,7 @@ void JB::CalcJitter(const Transport::RTPPacket::RTPHeader &header)
     
     statMeter.PushVal(actualrxInterval);
 
-    rxInterval = static_cast<uint32_t>(statMeter.GetMax());
+    rxInterval = static_cast<uint32_t>(statMeter.GetAvg());
 }
 
 uint32_t JB::KalmanCorrectRxTS(uint32_t data)
