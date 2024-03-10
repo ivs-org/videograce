@@ -58,7 +58,7 @@ void SoundIndicator::draw(wui::graphic &gr, const wui::rect &)
 void SoundIndicator::set_position(const wui::rect &position__, bool redraw)
 {
     count = position__.width();
-    scale = (double)position__.height() / 30000000;
+    scale = (double)position__.height() / 15000000;
     while (data.size() > count)
     {
         data.pop_front();
