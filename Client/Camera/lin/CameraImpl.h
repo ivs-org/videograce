@@ -10,6 +10,7 @@
 #include <Camera/ICamera.h>
 #include <Transport/ISocket.h>
 #include <Common/TimeMeter.h>
+#include <Common/StatMeter.h>
 
 #include <thread>
 #include <atomic>
@@ -47,6 +48,8 @@ private:
 	
     Client::DeviceNotifyCallback deviceNotifyCallback;
 
+	Common::StatMeter statMeter;
+
 	std::string name;
 	uint32_t deviceId;
 	Video::Resolution resolution;
@@ -56,9 +59,6 @@ private:
 
 	std::atomic<bool> runned;
 	std::thread thread;
-
-	uint32_t processTime;
-	uint32_t overTimeCount;
 
 	int fd;
 

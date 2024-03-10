@@ -8,6 +8,7 @@
 #pragma once
 
 #include <deque>
+#include <cstdint>
 
 namespace Common
 {

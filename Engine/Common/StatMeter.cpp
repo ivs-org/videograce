@@ -5,8 +5,6 @@
  * Copyright (C), Infinity Video Soft LLC, 2024
  */
 
-#pragma once
-
 #include <Common/StatMeter.h>
 
 namespace Common

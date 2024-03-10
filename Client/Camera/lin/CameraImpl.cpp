@@ -40,14 +40,13 @@ CameraImpl::CameraImpl(Common::TimeMeter &timeMeter_, Transport::ISocket &receiv
     buffer(), tmpBuffer(),
     packetDuration(40000),
 	deviceNotifyCallback(),
+	statMeter(30),
 	name(),
 	deviceId(0),
 	resolution(Video::rVGA),
 	ssrc(0), seq(0),
 	runned(false),
 	thread(),
-	processTime(0),
-	overTimeCount(0),
 	fd(0),
 	buffers(),
 	n_buffers(0),
@@ -169,16 +168,10 @@ void CameraImpl::run()
 		return;
 	}
 
-	const uint64_t APPROACH = 200;
-
 	while (runned)
 	{
-		uint32_t startTime = timeMeter.Measure();
-        while (runned && processTime + APPROACH < packetDuration && timeMeter.Measure() - startTime < packetDuration - processTime - APPROACH)
-        {
-            Common::ShortSleep();
-        }
-
+		auto start = timeMeter.Measure();
+        
 		fd_set fds;
 		int r = 0;
 
@@ -204,8 +197,6 @@ void CameraImpl::run()
 			continue;
 		}
 
-		uint32_t sendTime = timeMeter.Measure();
-
 		int idx = read_frame();
 		if (idx != -1)
 		{
@@ -219,24 +210,24 @@ void CameraImpl::run()
             receiver.Send(packet);
         }
 
-		processTime = timeMeter.Measure() - sendTime;
+		auto processTime = timeMeter.Measure() - start;
 
-        if (processTime > packetDuration + 5000)
-        {
-            ++overTimeCount;
-        }
-		else if (overTimeCount > 0)
+        if (processTime != 0)
 		{
-			--overTimeCount;
+			statMeter.PushVal(processTime);
 		}
-		if (overTimeCount == 100)
+
+		if (statMeter.GetFill() == 25 && (uint64_t)statMeter.GetAvg() > packetDuration / 2)
 		{
-			overTimeCount = 10000; // prevent duplicates
-			if (deviceNotifyCallback)
+			if (deviceNotifyCallback && runned)
 			{
-				deviceNotifyCallback(name, Client::DeviceNotifyType::OvertimeCoding, Proto::DeviceType::Camera, 0, 0);
+				sysLog->warn("Camera {0} :: Too slow encoding {1} ms", name, statMeter.GetAvg());
+				deviceNotifyCallback(name, Client::DeviceNotifyType::OvertimeCoding, Proto::DeviceType::Camera, deviceId, 0);
 			}
+			statMeter.Clear();
 		}
+
+		if (packetDuration > processTime) Common::ShortSleep(packetDuration - processTime);
 	}
 
 	stop_capturing();

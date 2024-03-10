@@ -5,11 +5,9 @@
  * Copyright (C), Infinity Video Soft LLC, 2024
  */
 
-#pragma once
-
 #include <Common/RuntimeMeter.h>
 
-#define SUBTLE_TRACE 1
+//#define SUBTLE_TRACE 1
 #include <Common/Common.h>
 
 #include <chrono>
@@ -43,7 +41,7 @@ void RuntimeMeter::Send(const Transport::IPacket& packet_, const Transport::Addr
 
 	if (statMeter.GetFill() == 40 && statMeter.GetAvg() > triggerMS)
 	{
-		subtle_trace("statmeter triggered, avg: ", statMeter.GetAvg());
+		//subtle_trace("statmeter triggered, avg: ", statMeter.GetAvg());
 
 		statMeter.Clear();
 		
