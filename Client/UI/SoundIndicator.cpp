@@ -11,6 +11,8 @@
 #include <wui/window/window.hpp>
 #include <wui/theme/theme.hpp>
 
+#include <cmath>
+
 #include <Transport/RTP/RTPPacket.h>
 
 namespace Client
@@ -43,22 +45,14 @@ void SoundIndicator::draw(wui::graphic &gr, const wui::rect &)
 
     for (int i = 0; i != data.size(); ++i)
     {
-        wui::color color;
-        if (i != data.size() - 1)
+        wui::color color = (i != data.size() - 1 ? wui::make_color(54, 183, 41) : wui::make_color(255, 226, 8));
+        
+        int32_t val = data[i];
+        /*if (val + center > pos.top)
         {
-            color = wui::make_color(54, 183, 41);
-        }
-        else
-        {
-            color = wui::make_color(255, 226, 8);
-        }
-
-        int32_t val = static_cast<int32_t>((data[i] / 100000));
-        if (center + val > pos.bottom - 2)
-        {
-            val = pos.bottom - center;
-        }
-
+            val = pos.top - center;
+        }*/
+        
         gr.draw_line({ left + i, center, left + i, center + val }, color, 1);
         gr.draw_line({ left + i, center, left + i, center - val }, color, 1);
         gr.draw_pixel({ left + i, center, left + i, center }, color);
@@ -68,7 +62,7 @@ void SoundIndicator::draw(wui::graphic &gr, const wui::rect &)
 void SoundIndicator::set_position(const wui::rect &position__, bool redraw)
 {
     count = position__.width();
-    scale = position__.width() / 100;
+    scale = (double)position__.height() / 5000000;
     while (data.size() > count)
     {
         data.pop_front();
@@ -140,11 +134,14 @@ void SoundIndicator::Send(const Transport::IPacket &packet_, const Transport::Ad
 
     for (uint16_t i = 0; i != packet.payloadSize; i += 2)
     {
-        auto sample = static_cast<double>(*reinterpret_cast<const int16_t*>(packet.payload + i)) * scale;
-        value += sample;
+        auto sample = *reinterpret_cast<const int16_t*>(packet.payload + i);
+        if (sample > 500)
+        {
+            value += sample;
+        }
     }
 
-    data.push_back(value);
+    data.push_back((uint64_t)std::round((double)value * scale));
 
     if (data.size() > count)
     {
