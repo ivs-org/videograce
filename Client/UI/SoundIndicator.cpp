@@ -47,12 +47,8 @@ void SoundIndicator::draw(wui::graphic &gr, const wui::rect &)
     {
         wui::color color = (i != data.size() - 1 ? wui::make_color(54, 183, 41) : wui::make_color(255, 226, 8));
         
-        int32_t val = data[i];
-        /*if (val + center > pos.top)
-        {
-            val = pos.top - center;
-        }*/
-        
+        auto val = static_cast<int32_t>(std::round(static_cast<double>(data[i]) * scale));
+                
         gr.draw_line({ left + i, center, left + i, center + val }, color, 1);
         gr.draw_line({ left + i, center, left + i, center - val }, color, 1);
         gr.draw_pixel({ left + i, center, left + i, center }, color);
@@ -62,7 +58,7 @@ void SoundIndicator::draw(wui::graphic &gr, const wui::rect &)
 void SoundIndicator::set_position(const wui::rect &position__, bool redraw)
 {
     count = position__.width();
-    scale = (double)position__.height() / 5000000;
+    scale = (double)position__.height() / 30000000;
     while (data.size() > count)
     {
         data.pop_front();
@@ -141,7 +137,7 @@ void SoundIndicator::Send(const Transport::IPacket &packet_, const Transport::Ad
         }
     }
 
-    data.push_back((uint64_t)std::round((double)value * scale));
+    data.push_back(value);
 
     if (data.size() > count)
     {
