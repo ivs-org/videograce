@@ -20,6 +20,7 @@ SoundIndicator::SoundIndicator()
     : parent_(),
     position_(),
     count(256),
+    scale(1.0),
     mutex(),
     data()
 {
@@ -67,6 +68,7 @@ void SoundIndicator::draw(wui::graphic &gr, const wui::rect &)
 void SoundIndicator::set_position(const wui::rect &position__, bool redraw)
 {
     count = position__.width();
+    scale = position__.width() / 100;
     while (data.size() > count)
     {
         data.pop_front();
@@ -138,11 +140,8 @@ void SoundIndicator::Send(const Transport::IPacket &packet_, const Transport::Ad
 
     for (uint16_t i = 0; i != packet.payloadSize; i += 2)
     {
-        auto sample = *reinterpret_cast<const int16_t*>(packet.payload + i);
-        if (sample > 500)
-        {
-            value += sample;
-        }
+        auto sample = static_cast<double>(*reinterpret_cast<const int16_t*>(packet.payload + i)) * scale;
+        value += sample;
     }
 
     data.push_back(value);

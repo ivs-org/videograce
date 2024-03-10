@@ -61,6 +61,7 @@ private:
     wui::rect position_;
 
     uint16_t count;
+    double scale;
 
     std::mutex mutex;
     std::deque<uint64_t> data;
