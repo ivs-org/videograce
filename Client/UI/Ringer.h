@@ -56,7 +56,7 @@ private:
 
 	std::atomic_bool runned;
 
-	int32_t currentRingCount, targetRingCount,
+	uint32_t currentRingCount, targetRingCount,
 		playPosition;
 	
     std::string snd;
