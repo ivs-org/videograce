@@ -10,6 +10,7 @@
 #include <memory>
 #include <string_view>
 #include <functional>
+#include <mutex>
 
 namespace Transport
 {
@@ -41,6 +42,7 @@ public:
     static constexpr bool WITH_TRACES = false;
         
 private:
+    std::recursive_mutex mutex;
     std::unique_ptr<WebSocketImpl> impl;
     ws_callback callback;
 };

@@ -183,28 +183,28 @@ public:
 private:
     void OnWebSocket(WSMethod method, std::string_view message)
     {
-		switch (method)
-		{
-			case Transport::WSMethod::Open:
-				sysLog->info("WSMSocket :: Connection to server established");
+        switch (method)
+        {
+            case Transport::WSMethod::Open:
+                sysLog->info("WSMSocket :: Connection to server established");
 
-				Logon();
-			break;
-			case Transport::WSMethod::Message:
-			{
-				auto commandType = Proto::GetCommandType(message);
-				switch (commandType)
-				{
-				    case Proto::CommandType::ConnectResponse:
-				    {
-					    Proto::CONNECT_RESPONSE::Command cmd;
-					    cmd.Parse(message);
+                Logon();
+            break;
+            case Transport::WSMethod::Message:
+            {
+                auto commandType = Proto::GetCommandType(message);
+                switch (commandType)
+                {
+                    case Proto::CommandType::ConnectResponse:
+                    {
+                        Proto::CONNECT_RESPONSE::Command cmd;
+                        cmd.Parse(message);
 
                         connectionId = cmd.connection_id;
 
-					    if (cmd.result == Proto::CONNECT_RESPONSE::Result::OK)
-					    {
-						    sysLog->trace("WSMSocket :: Logon success, connection id: {0}", cmd.connection_id);
+                        if (cmd.result == Proto::CONNECT_RESPONSE::Result::OK)
+                        {
+                            sysLog->trace("WSMSocket :: Logon success, connection id: {0}", cmd.connection_id);
 
                             std::lock_guard<std::mutex> lock(queueMutex);
                             while (!offlineQueue.empty())
@@ -212,12 +212,12 @@ private:
                                 webSocket.Send(offlineQueue.front());
                                 offlineQueue.pop();
                             }
-					    }
+                        }
                         else
                         {
                             errLog->error("WSMSocket :: can't make the ws media session, [MEDIA FAIL]");
                         }
-				    }
+                    }
                     break;
                     case Proto::CommandType::Media:
                     {
@@ -261,19 +261,19 @@ private:
                         }
                     }
                     break;
-			        case Proto::CommandType::Ping:
-				        webSocket.Send(Proto::PING::Command().Serialize());
-				    break;
+                    case Proto::CommandType::Ping:
+                        webSocket.Send(Proto::PING::Command().Serialize());
+                    break;
                 }
-			}
-			break;
-		    case Transport::WSMethod::Close:
-			    sysLog->info("WSMSocket :: WebSocket closed (message: \"{0}\")", message);
-			break;
-		    case Transport::WSMethod::Error:
-			    errLog->error("WSMSocket :: WebSocket error (message: \"{0}\")", message);
-			break;
-		}
+            }
+            break;
+            case Transport::WSMethod::Close:
+                sysLog->info("WSMSocket :: WebSocket closed (message: \"{0}\")", message);
+            break;
+            case Transport::WSMethod::Error:
+                errLog->error("WSMSocket :: WebSocket error (message: \"{0}\")", message);
+            break;
+        }
     }
 };
 
