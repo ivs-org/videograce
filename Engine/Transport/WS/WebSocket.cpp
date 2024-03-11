@@ -450,6 +450,7 @@ public:
         }
         else
         {
+            ioc.stop();
             callback(WSMethod::Close, "session not established");
         }
 
