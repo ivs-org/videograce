@@ -130,8 +130,8 @@ void VideoRenderer::draw(wui::graphic &gr, const wui::rect &)
     if (nowSpeak)
     {
         gr.draw_line({ pos.left, pos.top, pos.right, pos.top }, color, 1);
-        gr.draw_line({ pos.right - 1, pos.top, pos.right - 1, pos.bottom }, color, 1);
-        gr.draw_line({ pos.right, pos.bottom - 1, pos.left, pos.bottom - 1 }, color, 1);
+        gr.draw_line({ pos.right, pos.top, pos.right, pos.bottom }, color, 1);
+        gr.draw_line({ pos.right, pos.bottom, pos.left, pos.bottom }, color, 1);
         gr.draw_line({ pos.left, pos.top, pos.left, pos.bottom }, color, 1);
     }
 
