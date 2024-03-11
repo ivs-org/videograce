@@ -1424,7 +1424,7 @@ void MainFrame::ProcessControllerEvent()
                 else if (device.type == Proto::DeviceType::Demonstration)
                 {
                     demonstrationSession = cvs;
-                    cvs->SetFrameRate(5);
+                    //cvs->SetFrameRate(5);
                 }
 
                 if (wui::config::get_int("User", "DontUpdateBitrates", 0) == 0)
@@ -2092,8 +2092,7 @@ void MainFrame::ProcessControllerEvent()
                             rvs->SetMirrorVideo(wui::config::get_int("VideoRendererMirrors", renderer.name, -1) == 1);
                             rvs->SetDeviceNotifyCallback(std::bind(&MainFrame::ReceiveDeviceNotify, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4, std::placeholders::_5));
                             rvs->SetRecorder(&recorder);
-                            rvs->SetFrameRate(renderer.type != Proto::DeviceType::Demonstration ? 25 : 5);
-                            rvs->SetAudioSession(GetRendererAudioSessionByClient(renderer.clientId));
+                            //rvs->SetFrameRate(renderer.type != Proto::DeviceType::Demonstration ? 25 : 5);
 
                             renderersVideo.emplace_back(rvs);
 
@@ -2155,9 +2154,11 @@ void MainFrame::ProcessControllerEvent()
 
                             for (auto& rvs : renderersVideo)
                             {
-                                if (rvs->GetClientId() == renderer.clientId)
+                                if (rvs->GetDeviceType() == Proto::DeviceType::Avatar &&
+                                    rvs->GetClientId() == renderer.clientId)
                                 {
                                     rvs->SetAudioSession(ras);
+                                    break;
                                 }
                             }
 
