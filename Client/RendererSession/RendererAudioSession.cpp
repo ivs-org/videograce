@@ -307,11 +307,19 @@ JB::JB& RendererAudioSession::GetJB()
 
 void RendererAudioSession::Ping()
 {
-	if (runned && !my && wsAddr.empty())
+	if (runned && !my)
 	{
 		Transport::RTPPacket packet;
 		packet.rtpHeader.ssrc = receiverSSRC;
-		rtpSocket.Send(packet);
+
+		if (wsAddr.empty())
+		{
+			rtpSocket.Send(packet);
+		}
+		else
+		{
+			wsmSocket.Send(packet);
+		}
 	}
 }
 
