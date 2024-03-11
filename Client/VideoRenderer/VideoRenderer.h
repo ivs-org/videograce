@@ -9,6 +9,8 @@
 
 #include "IVideoRenderer.h"
 
+#include <mutex>
+
 #include <wui/control/i_control.hpp>
 #include <wui/control/image.hpp>
 
@@ -89,6 +91,7 @@ private:
 
     Common::StatMeter statMeter;
 
+    std::mutex audioSessionMutex;
     std::weak_ptr<RendererSession::IRendererAudioSession> audioSession;
     Client::SoundIndicator soundIndicator;
 

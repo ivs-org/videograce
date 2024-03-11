@@ -36,6 +36,7 @@ VideoRenderer::VideoRenderer()
 	name(),
 	id(0), clientId(0),
     statMeter(50),
+    audioSessionMutex(),
     audioSession(),
     deviceType(Proto::DeviceType::Camera),
 	nowSpeak(false),
@@ -106,16 +107,19 @@ void VideoRenderer::draw(wui::graphic &gr, const wui::rect &)
 			color,
 			wui::font{ "D050000L", static_cast<int32_t>(pos.height() * 0.8)	});
 #endif
-        auto ras = audioSession.lock();
-        if (ras)
         {
-            Transport::OwnedRTPPacket ortp;
-            ras->GetJB().ReadFrame(ortp);
-            Transport::RTPPacket rtp;
-            rtp.payload = ortp.data;
-            rtp.payloadSize = ortp.size;
-            soundIndicator.Send(rtp, nullptr);
-            soundIndicator.draw(gr, {});
+            std::lock_guard<std::mutex> lock(audioSessionMutex);
+            auto ras = audioSession.lock();
+            if (ras)
+            {
+                Transport::OwnedRTPPacket ortp;
+                ras->GetJB().ReadFrame(ortp);
+                Transport::RTPPacket rtp;
+                rtp.payload = ortp.data;
+                rtp.payloadSize = ortp.size;
+                soundIndicator.Send(rtp, nullptr);
+                soundIndicator.draw(gr, {});
+            }
         }
     }
 
@@ -240,6 +244,8 @@ void VideoRenderer::SetId(uint32_t id_, int64_t clientId_)
 
 void VideoRenderer::SetAudioSession(std::weak_ptr<RendererSession::IRendererAudioSession> audioSession_)
 {
+    std::lock_guard<std::mutex> lock(audioSessionMutex);
+    
     audioSession = audioSession_;
     if (audioSession.lock())
     {
