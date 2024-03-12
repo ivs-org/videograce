@@ -16,6 +16,17 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+ICO_ACTIVE           ICON                    "res\\Active.ico"
+
+ICO_INACTIVE         ICON                    "res\\Inactive.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
 // Jsons
 //
 
@@ -42,18 +53,6 @@ SND_DIAL           WAVE                    "res\\sounds\\Dial.wav"
 SND_HANGUP         WAVE                    "res\\sounds\\Hangup.wav"
 
 SND_NEW_MESSAGE    WAVE                    "res\\sounds\\NewMessage.wav"
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Icon
-//
-
-// Icon with lowest ID value placed first to ensure application icon
-// remains consistent on all systems.
-ICO_ACTIVE           ICON                    "res\\Active.ico"
-
-ICO_INACTIVE         ICON                    "res\\Inactive.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
