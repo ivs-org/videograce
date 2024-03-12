@@ -147,7 +147,7 @@ void VideoRenderer::draw(wui::graphic &gr, const wui::rect &)
     statMeter.PushVal(duration);
     auto avg = statMeter.GetAvg();
 
-    if (statMeter.GetFill() == 40 && avg > 5) /// 5 ms deadline
+    if (statMeter.GetFill() == 40 && avg > 10) /// 10 ms deadline
     {
         statMeter.Clear();
         errLog->warn("VideoRenderer[{0}] :: Too slow rendering ({1} ms)", name, avg);

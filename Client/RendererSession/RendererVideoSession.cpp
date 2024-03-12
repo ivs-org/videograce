@@ -26,7 +26,7 @@ RendererVideoSession::RendererVideoSession(Common::TimeMeter &timeMeter)
 	decoder(),
 	vp8RTPCollector(),
 	decryptor(),
-	runtimeMeter(5, std::bind(&RendererVideoSession::SlowRenderingCallback, this, std::placeholders::_1), decryptor),
+	runtimeMeter(10, std::bind(&RendererVideoSession::SlowRenderingCallback, this, std::placeholders::_1), decryptor), // 10 ms deadline
 	rtpSocket(),
 	wsmSocket(),
 	outSocket(&rtpSocket),
