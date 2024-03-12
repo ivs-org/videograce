@@ -121,14 +121,13 @@ void RendererVideoSession::SetResolution(Video::Resolution resolution_)
 {
 	resolution = resolution_;
 
+	decoder.SetResolution(resolution);
 	resizer.SetResolution(resolution);
 
 	if (recorder)
 	{
 		recorder->ChangeVideoResolution(authorSSRC, resolution);
 	}
-
-	decoder.SetResolution(resolution);
 
 	if (runned)
 	{

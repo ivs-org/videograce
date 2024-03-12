@@ -69,7 +69,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <LibraryPath>..\Debug;..\Lib\db\lib\win32\debug;..\Lib\boost_1_83_0\lib\win;..\Lib\libVPX\x86\debug;..\Lib\libOpus\x86\debug;..\Lib\libWebM\lib\win\Win32\Debug;..\Lib\OpenSSL\lib\win32;..\Lib\ipp\lib\ia32_win;..\Lib\Filters\BaseClasses\Debug;..\Lib\lame\lib\i386\Debug;$(LibraryPath)</LibraryPath>
+    <LibraryPath>..\Debug;..\Lib\wui\Debug;..\Lib\db\lib\win32\debug;..\Lib\boost_1_83_0\lib\win;..\Lib\libVPX\x86\debug;..\Lib\libOpus\x86\debug;..\Lib\libWebM\lib\win\Win32\Debug;..\Lib\OpenSSL\lib\win32;..\Lib\ipp\lib\ia32_win;..\Lib\Filters\BaseClasses\Debug;..\Lib\lame\lib\i386\Debug;$(LibraryPath)</LibraryPath>
     <IncludePath>.;..\Engine;..\Lib\wui\include;..\Lib\boost_1_83_0\include;..\Lib\libWebM;..\Lib\ipp\include;..\Lib\Filters\BaseClasses;..\Lib\lame\include;$(VC_IncludePath);$(WindowsSdk_71A_IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -104,7 +104,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>atls.lib;engine.lib;db.lib;strmiids.lib;quartz.lib;Htmlhelp.lib;uuid.lib;amstrmid.lib;wmcodecdspuuid.lib;dsound.lib;Winmm.lib;Avrt.lib;ippcoremt.lib;ippvmmt.lib;ippsmt.lib;ippimt.lib;ippccmt.lib;ippdcmt.lib;ws2_32.lib;Crypt32.lib;libcrypto.lib;libssl.lib;strmbasd.lib;opus.lib;libwebm.lib;vpxmtd.lib;vpxrcmtd.lib;Iphlpapi.lib;libmp3lame-static.lib;libmpghip-static.lib;Gdiplus.lib;msdmo.lib;dmoguids.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>atls.lib;wui.lib;engine.lib;db.lib;strmiids.lib;quartz.lib;Htmlhelp.lib;uuid.lib;amstrmid.lib;wmcodecdspuuid.lib;dsound.lib;Winmm.lib;Avrt.lib;ippcoremt.lib;ippvmmt.lib;ippsmt.lib;ippimt.lib;ippccmt.lib;ippdcmt.lib;ws2_32.lib;Crypt32.lib;libcrypto.lib;libssl.lib;strmbasd.lib;opus.lib;libwebm.lib;vpxmtd.lib;vpxrcmtd.lib;Iphlpapi.lib;libmp3lame-static.lib;libmpghip-static.lib;Gdiplus.lib;msdmo.lib;dmoguids.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>libcmt.lib</IgnoreSpecificDefaultLibraries>
     </Link>
