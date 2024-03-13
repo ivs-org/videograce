@@ -468,8 +468,7 @@ public:
 };
 
 WebSocket::WebSocket(ws_callback callback_)
-    : mutex(),
-      impl(),
+    : impl(),
       callback(callback_)
 {
 }
@@ -481,7 +480,6 @@ WebSocket::~WebSocket()
 
 void WebSocket::Connect(std::string_view url)
 {
-    std::lock_guard<std::recursive_mutex> lock(mutex);
     if (impl)
     {
         impl.reset(nullptr);
@@ -491,7 +489,6 @@ void WebSocket::Connect(std::string_view url)
 
 void WebSocket::Send(std::string_view message)
 {
-    std::lock_guard<std::recursive_mutex> lock(mutex);
     if (impl)
     {
         impl->Send(message);
@@ -500,13 +497,11 @@ void WebSocket::Send(std::string_view message)
 
 void WebSocket::Disconnect()
 {
-    std::lock_guard<std::recursive_mutex> lock(mutex);
     impl.reset(nullptr);
 }
 
 bool WebSocket::IsConnected()
 {
-    std::lock_guard<std::recursive_mutex> lock(mutex);
     if (impl)
     {
         return impl->IsConnected();
