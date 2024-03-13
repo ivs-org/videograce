@@ -23,7 +23,7 @@ OpusEncoderImpl::OpusEncoderImpl()
 	: receiver(nullptr),
 	runned(false),
 	sampleFreq(48000),
-	quality(10),
+	quality(0),
 	bitrate(30),
 	packetLoss(0),
 	produceBuffer(),
@@ -83,7 +83,7 @@ void OpusEncoderImpl::Start(CodecType)
 	
 	try
 	{
-		produceBuffer = std::unique_ptr<uint8_t[]>(new uint8_t[BUFFER_SIZE]);
+		produceBuffer = std::make_unique<uint8_t[]>(BUFFER_SIZE);
 	}
 	catch (std::bad_alloc &e)
 	{

@@ -1466,7 +1466,7 @@ void MainFrame::ProcessControllerEvent()
                 bool ns = wui::config::get_int("CaptureDevices", "MicrophoneNS", 1) != 0;
                 bool agc = wui::config::get_int("CaptureDevices", "MicrophoneAGC", 1) != 0;
 
-                int quality = 10;
+                /*int quality = 10;
                 auto flops = wui::config::get_int("User", "Flops", 0);
                 if (flops < 99000000)
                 {
@@ -1475,7 +1475,7 @@ void MainFrame::ProcessControllerEvent()
                 else if (flops > 99000000)
                 {
                     quality = 5;
-                }
+                }*/
 
                 captureAudioSession = std::make_shared<CaptureSession::CaptureAudioSession>(timeMeter);
                 captureAudioSession->SetDeviceName(device.name);
@@ -1483,7 +1483,7 @@ void MainFrame::ProcessControllerEvent()
                 captureAudioSession->EnableAEC(aec);
                 captureAudioSession->EnableNS(ns);
                 captureAudioSession->EnableAGC(agc);
-                captureAudioSession->SetQuality(quality);
+                //captureAudioSession->SetQuality(quality);
                 captureAudioSession->SetBitrate(bitrate);
                 captureAudioSession->SetGain(sensitivity);
                 captureAudioSession->SetRenderLatency(audioRenderer.GetLatency());
