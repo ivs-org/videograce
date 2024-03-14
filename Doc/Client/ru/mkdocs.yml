@@ -28,6 +28,7 @@ nav:
     - Настройки сети: 'settings/network.md'
     - Настройки приложения: 'settings/app.md'
     - Настройки записи: 'settings/record.md'
+    - Настройки антивируса: 'settings/antivir.md'
   - Проведение конференций:
     - Старт конференции: 'conferencing/start.md'
     - Демонстрация экрана / удаленное управление: 'conferencing/demonstration.md'
