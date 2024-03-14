@@ -7,15 +7,15 @@
 
 Скачайте дистрибутив VideoGrace Server для Linux
 
-    wget https://videograce.ru/download/VideoGraceServer-2.0.240220-x64.tar.bz2
+    wget https://videograce.ru/download/VideoGraceServer-2.1.24313-x64.tar.bz2
 
 Распакуйте полученный с сайта архив:
     
-    tar vxf VideoGraceServer-2.0.240220-x64.tar.bz2
+    tar vxf VideoGraceServer-2.1.24313-x64.tar.bz2
     
 Перейдите в папку с файлами и выполните установку с правами root
 
-    cd VideoGraceServer-2.0.240220-x64
+    cd VideoGraceServer-2.1.24313-x64
     sudo ./install.sh
 
 Установка производится в:
@@ -53,7 +53,7 @@
 ## Удаление
 Перейдите в папку инсталлятора сервера и выполните
     
-    cd VideoGraceServer-2.0.240220-x64
+    cd VideoGraceServer-2.1.24313-x64
     sudo ./uninstall.sh
 
 ---

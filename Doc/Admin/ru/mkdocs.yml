@@ -6,7 +6,7 @@ theme:
 
 plugins:
   - with-pdf:
-      author: v 1.0.240218
+      author: v 1.0.24313
       copyright: (C) ООО "ИВС", 2024
     
       cover: true
