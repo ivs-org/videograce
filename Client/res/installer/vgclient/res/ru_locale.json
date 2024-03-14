@@ -330,6 +330,7 @@
       "camera_busy_error": "Камера занята",
       "camera_busy_another_app_error": "Камера занята другим приложением",
       "camera_start_error_no_memory": "Камера не может включиться по причине нехватки памяти",
+      "camera_slow_warn": "Недостаточно мощности процессора",
       "screen_capture_start_error_no_memory": "Захват экрана не может включиться по причине нехватки памяти",
       "microphone_start_error_no_memory": "Микрофон не может включиться по причине нехватки памяти",
       "microphone_start_error": "Ошибка включения микрофона",

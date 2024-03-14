@@ -650,10 +650,15 @@ void SettingsDialog::RedrawVideo()
 
 void SettingsDialog::ReceiveDeviceNotify(std::string_view name, DeviceNotifyType notifyType, Proto::DeviceType deviceType, uint32_t deviceId, int32_t iData)
 {
-    if (notifyType == DeviceNotifyType::CameraError)
+    switch (notifyType)
     {
-        rendererVideoSession.GetControl()->hide();
-        cameraErrorText->set_text(wui::locale("message", "camera_busy_error"));
+        case DeviceNotifyType::CameraError:
+            rendererVideoSession.GetControl()->hide();
+            cameraErrorText->set_text(wui::locale("message", "camera_busy_error"));
+        break;
+        case DeviceNotifyType::OvertimeCoding:
+            cameraErrorText->set_text(wui::locale("message", "camera_slow_warn"));
+        break;
     }
 }
 
