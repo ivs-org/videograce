@@ -36,7 +36,7 @@ ScreenCapturerImpl::ScreenCapturerImpl(Common::TimeMeter &timeMeter_, Transport:
 	rv(0, 0),
 	left(0), top(0),
 	buffer(nullptr),
-	packetDuration(40000),
+	frameDuration(40000),
 	deviceId(0),
 	ssrc(0), seq(0),
 	curMonNo(0),
@@ -134,7 +134,7 @@ bool ScreenCapturerImpl::SetResolution(Video::Resolution resolution)
 
 void ScreenCapturerImpl::SetFrameRate(uint32_t rate)
 {
-	packetDuration = (1000 / rate) * 1000;
+	frameDuration = (1000 / rate) * 1000;
 }
 
 void ScreenCapturerImpl::SetDeviceNotifyCallback(Client::DeviceNotifyCallback deviceNotifyCallback_)
@@ -156,7 +156,7 @@ void ScreenCapturerImpl::run()
 
 		int64_t playDuration = duration_cast<microseconds>(high_resolution_clock::now() - start).count();
 
-		if (packetDuration > playDuration) Common::ShortSleep(packetDuration - playDuration - 500);
+		if (frameDuration > playDuration) Common::ShortSleep(frameDuration - playDuration - 500);
 	}
 
 	sysLog->info("ScreenCapturer ended");

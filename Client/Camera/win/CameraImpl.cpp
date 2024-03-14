@@ -30,7 +30,7 @@ CameraImpl::CameraImpl(Common::TimeMeter &timeMeter_, Transport::ISocket &receiv
     deviceNotifyCallback(),
 	bufferMutex(),
 	captureBuffer(), outputBuffer(), tmpBuffer(),
-	packetDuration(40000),
+	frameDuration(40000),
 	dataLength(0),
 	streamConfig(),
 	ksPropertySet(),
@@ -212,7 +212,7 @@ void CameraImpl::Start(Video::ColorSpace colorSpace_, ssrc_t ssrc_)
 		captureThread = std::thread(&CameraImpl::Capture, this);
 		sendThread = std::thread(&CameraImpl::send, this);
 
-		sysLog->info("Camera[{0}] :: Started(ssrc: {1}, frameDuration: {2})", name, ssrc, packetDuration);
+		sysLog->info("Camera[{0}] :: Started(ssrc: {1}, frameDuration: {2})", name, ssrc, frameDuration);
 	}
 }
 
@@ -325,8 +325,8 @@ bool CameraImpl::SetResolution(Video::Resolution resolution_)
 
 void CameraImpl::SetFrameRate(uint32_t rate)
 {
-	packetDuration = (1000 / rate) * 1000;
-	sysLog->info("Camera[{0}] :: SetFrameRate(rate: {1}, frameDuration: {2})", name, rate, packetDuration);
+	frameDuration = (1000 / rate) * 1000;
+	sysLog->info("Camera[{0}] :: SetFrameRate(rate: {1}, frameDuration: {2})", name, rate, frameDuration);
 }
 
 void CameraImpl::SetDeviceNotifyCallback(Client::DeviceNotifyCallback deviceNotifyCallback_)
@@ -538,7 +538,7 @@ void CameraImpl::send()
 			statMeter.PushVal(processTime);
 		}
 
-		if (statMeter.GetFill() == 25 && (uint64_t)statMeter.GetAvg() > packetDuration / 2)
+		if (statMeter.GetFill() == 25 && (uint64_t)statMeter.GetAvg() > frameDuration / 2)
 		{
 			if (deviceNotifyCallback && runned)
 			{
@@ -548,7 +548,7 @@ void CameraImpl::send()
 			statMeter.Clear();
 		}
 
-		if (packetDuration > processTime) Common::ShortSleep(packetDuration - processTime);
+		if (frameDuration > processTime) Common::ShortSleep(frameDuration - processTime);
 	}
 }
 

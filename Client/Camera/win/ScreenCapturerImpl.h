@@ -53,7 +53,7 @@ private:
 	int16_t left, top;
 	std::unique_ptr<uint8_t[]> buffer;
 
-	int64_t packetDuration;
+	int64_t frameDuration;
 
 	uint32_t deviceId;
 

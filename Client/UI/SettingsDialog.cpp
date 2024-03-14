@@ -600,6 +600,8 @@ void SettingsDialog::ChangeResouliton(int32_t nItem, int64_t id)
         return;
     }
 
+    cameraErrorText->set_text("");
+
     currentCameraResolutionId = id;
 
     auto &camera = cameraDevices[static_cast<uint32_t>(cameraSelect->selected_item().id)];

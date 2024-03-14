@@ -53,7 +53,7 @@ private:
 
 	std::unique_ptr<uint8_t[]> captureBuffer, outputBuffer, tmpBuffer;
 
-	uint64_t packetDuration;
+	uint64_t frameDuration;
 
 	uint32_t dataLength;
 
