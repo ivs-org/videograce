@@ -54,7 +54,7 @@ void AudioRendererImpl::Start(int32_t sampleFreq_)
 		return;
 	}
 
-	setenv("PULSE_PROP_media.role", "phone", 1);
+	//setenv("PULSE_PROP_media.role", "phone", 1);
 
 	sampleFreq = sampleFreq_;
 
