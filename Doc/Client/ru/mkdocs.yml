@@ -4,7 +4,7 @@ theme:
   name: material
   custom_dir: overrides
 
-plugins:
+ plugins:
   - with-pdf:
       author: v 1.0.24313
       copyright: (C) ООО "ИВС", 2024
@@ -22,6 +22,11 @@ nav:
     - Подключение к серверу: 'setup/connect.md'
     - Добавление контактов: 'setup/contacts.md'
     - Создание конференций: 'setup/conference.md'
+  - Проведение конференций:
+    - Старт конференции: 'conferencing/start.md'
+    - Демонстрация экрана / удаленное управление: 'conferencing/demonstration.md'
+    - Управление участниками: 'conferencing/moderation.md'
+    - Завершение конференции: 'conferencing/end.md' 
   - Настройки:
     - Настройка камеры: 'settings/camera.md'
     - Настройка звука: 'settings/sound.md'
@@ -29,11 +34,6 @@ nav:
     - Настройки приложения: 'settings/app.md'
     - Настройки записи: 'settings/record.md'
     - Настройки антивируса: 'settings/antivir.md'
-  - Проведение конференций:
-    - Старт конференции: 'conferencing/start.md'
-    - Демонстрация экрана / удаленное управление: 'conferencing/demonstration.md'
-    - Управление участниками: 'conferencing/moderation.md'
-    - Завершение конференции: 'conferencing/end.md' 
   - О системе:
     - Версия: 'about/version.md'
     - Лицензия: 'about/license.md'
