@@ -146,7 +146,11 @@
       "asymmetric_sym_sound": "Asymmetrical with symmetrical sound",
       "owner": "Leader",
       "moderator": "Moderator",
-      "readonly": "Viewer"
+      "readonly": "Viewer",
+      "invite_header": "Invitation to a videoconference",
+      "invite_1": "Greetings!\n\nYou are invited to join our video conference at this link:\n",
+      "invite_2": "\n\nThe conference is called ",
+      "invite_3": "\n\nIt's being held on the VideoGrace\nGet on board!"
     },
     {
       "type": "toolbar",
