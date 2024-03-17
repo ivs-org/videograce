@@ -517,8 +517,8 @@ void ConferenceDialog::InviteEmail()
 
     auto msg = boost::nowide::widen(wui::locale("conference", "invite_1") + linkInput->text() +
         wui::locale("conference", "invite_2") + nameInput->text() + 
-        wui::locale("conference", "invite_3") + descriptionInput->text() +
-        wui::locale("conference", "invite_4"));
+        "\n" + descriptionInput->text() +
+        wui::locale("conference", "invite_3"));
 
     MapiMessageW message;
     ZeroMemory(&message, sizeof(message));
