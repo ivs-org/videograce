@@ -91,11 +91,14 @@
 #define IMG_ML_CAMERA_ENABLED          4286
 #define IMG_ML_MICROPHONE_ENABLED      4287
 #define IMG_ML_SPEAK_ENABLED           4288
-#define IMG_MC_ADD_TO_MEMBERS          4320
-#define IMG_MC_UP_MEMBER               4321
-#define IMG_MC_DOWN_MEMBER             4322
-#define IMG_MC_DEL_MEMBER              4323
-#define IMG_MC_CLEAR_MEMBERS           4324
+#define IMG_MC_SEND_EMAIL              4320
+#define IMG_MC_SEND_TG                 4321
+#define IMG_MC_BROWSER                 4322
+#define IMG_MC_ADD_TO_MEMBERS          4323
+#define IMG_MC_UP_MEMBER               4324
+#define IMG_MC_DOWN_MEMBER             4325
+#define IMG_MC_DEL_MEMBER              4326
+#define IMG_MC_CLEAR_MEMBERS           4327
 #define IMG_MW_CAMERA_ON               4330
 #define IMG_MW_CAMERA_OFF              4331
 #define IMG_MW_MICROPHONE_ON           4332
@@ -201,6 +204,9 @@ static constexpr const char* IMG_ML_CAMERA_MICROPHONE_ENABLED = "MemberList/ml_c
 static constexpr const char* IMG_ML_CAMERA_ENABLED           = "MemberList/ml_camera_enabled.png";
 static constexpr const char* IMG_ML_MICROPHONE_ENABLED       = "MemberList/ml_microphone_enabled.png";
 static constexpr const char* IMG_ML_SPEAK_ENABLED            = "MemberList/ml_speak_enabled.png";
+static constexpr const char* IMG_MC_SEND_EMAIL               = "ModifyConference/send_email.png";
+static constexpr const char* IMG_MC_SEND_TG                  = "ModifyConference/send_tg.png";
+static constexpr const char* IMG_MC_BROWSER                  = "ModifyConference/browser.png";
 static constexpr const char* IMG_MC_ADD_TO_MEMBERS           = "ModifyConference/add_to_members.png";
 static constexpr const char* IMG_MC_UP_MEMBER                = "ModifyConference/up_member.png";
 static constexpr const char* IMG_MC_DOWN_MEMBER              = "ModifyConference/down_member.png";

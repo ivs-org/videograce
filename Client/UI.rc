@@ -275,6 +275,15 @@ IMG_ML_MICROPHONE_ENABLED IMAGES_LIGHT               "res\\light\\MemberList\\ml
 IMG_ML_SPEAK_ENABLED    IMAGES_DARK                  "res\\dark\\MemberList\\ml_speak_enabled.png"
 IMG_ML_SPEAK_ENABLED    IMAGES_LIGHT                 "res\\light\\MemberList\\ml_speak_enabled.png"
 
+IMG_MC_SEND_EMAIL       IMAGES_DARK                  "res\\dark\\ModifyConference\\send_email.png"
+IMG_MC_SEND_EMAIL       IMAGES_LIGHT                 "res\\light\\ModifyConference\\send_email.png"
+
+IMG_MC_SEND_TG          IMAGES_DARK                  "res\\dark\\ModifyConference\\send_tg.png"
+IMG_MC_SEND_TG          IMAGES_LIGHT                 "res\\light\\ModifyConference\\send_tg.png"
+
+IMG_MC_BROWSER          IMAGES_DARK                  "res\\dark\\ModifyConference\\browser.png"
+IMG_MC_BROWSER          IMAGES_LIGHT                 "res\\light\\ModifyConference\\browser.png"
+
 IMG_MC_ADD_TO_MEMBERS   IMAGES_DARK                  "res\\dark\\ModifyConference\\add_to_members.png"
 IMG_MC_ADD_TO_MEMBERS   IMAGES_LIGHT                 "res\\light\\ModifyConference\\add_to_members.png"
 

@@ -108,6 +108,8 @@
       "description": "Description",
       "conference_type": "Conference type",
       "link": "Link",
+      "send_link_email": "Send invitation to email",
+      "send_link_telegram": "Send invitation to Telegram",
       "open_conf_link": "Open in a browser",
       "avail_list": "Available users",
       "deactivate_conference": "Deactivate the conference",

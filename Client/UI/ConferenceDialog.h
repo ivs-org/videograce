@@ -57,7 +57,11 @@ private:
     std::shared_ptr<wui::input> descriptionInput;
     std::shared_ptr<wui::text> linkText;
     std::shared_ptr<wui::input> linkInput;
+
+    std::shared_ptr<wui::button> sendConfEmail;
+    std::shared_ptr<wui::button> sendConfTelegram;
     std::shared_ptr<wui::button> openConfLinkButton;
+
     std::shared_ptr<wui::button> deactiveConfCheck;
 
     std::shared_ptr<wui::button> addMemberButton;
@@ -106,6 +110,10 @@ private:
     void ShowOptions();
 
     void MakeURL(std::string_view tag);
+
+    void InviteEmail();
+    void InviteTelegram();
+    void ShowInBrowser();
 
     void AddMember();
     void DeleteMember();

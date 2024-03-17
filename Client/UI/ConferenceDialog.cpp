@@ -18,8 +18,13 @@
 #include <Proto/CmdConferenceUpdateResponse.h>
 
 #include <boost/algorithm/string.hpp>
+#include <boost/nowide/convert.hpp>
 
 #include <random>
+
+#ifdef _WIN32
+#include <mapi.h>
+#endif
 
 #include <resource.h>
 
@@ -49,7 +54,11 @@ ConferenceDialog::ConferenceDialog(std::weak_ptr<wui::window> parentWindow__, Co
     typeText(), typeSelect(),
     descriptionText(), descriptionInput(),
     linkText(), linkInput(),
+    
+    sendConfEmail(),
+    sendConfTelegram(),
     openConfLinkButton(),
+
     deactiveConfCheck(),
 
     addMemberButton(),
@@ -116,7 +125,11 @@ void ConferenceDialog::Run(const Proto::Conference &editedConf_, std::function<v
     descriptionInput = std::make_shared<wui::input>();
     linkText = std::make_shared<wui::text>(wui::locale("conference_dialog", "link"));
     linkInput = std::make_shared<wui::input>("", wui::input_view::readonly);
-    openConfLinkButton = std::make_shared<wui::button>(wui::locale("conference_dialog", "open_conf_link"), [this]() { wui::open_uri(linkInput->text()); });
+    
+    sendConfEmail = std::make_shared<wui::button>(wui::locale("conference_dialog", "send_link_email"), std::bind(&ConferenceDialog::InviteEmail, this), wui::button_view::image, IMG_MC_SEND_EMAIL, BTN_SIZE, wui::button::tc_tool);
+    sendConfTelegram = std::make_shared<wui::button>(wui::locale("conference_dialog", "send_link_telegram"), std::bind(&ConferenceDialog::InviteTelegram, this), wui::button_view::image, IMG_MC_SEND_TG, BTN_SIZE, wui::button::tc_tool);
+    openConfLinkButton = std::make_shared<wui::button>(wui::locale("conference_dialog", "open_conf_link"), std::bind(&ConferenceDialog::ShowInBrowser, this), wui::button_view::image, IMG_MC_BROWSER, BTN_SIZE, wui::button::tc_tool);
+    
     deactiveConfCheck = std::make_shared<wui::button>(wui::locale("conference_dialog", "deactivate_conference"), std::bind(&ConferenceDialog::DeactivateChange, this), wui::button_view::switcher);
 
     membersList = std::make_shared<wui::list>();
@@ -259,6 +272,8 @@ void ConferenceDialog::Run(const Proto::Conference &editedConf_, std::function<v
         
         deactiveConfCheck.reset();
         openConfLinkButton.reset();
+        sendConfTelegram.reset();
+        sendConfEmail.reset();
         linkInput.reset();
         linkText.reset();
         descriptionInput.reset();
@@ -326,9 +341,11 @@ void ConferenceDialog::ShowBase()
     wui::line_up_top_bottom(pos, 15, 15);
     window->add_control(linkText, pos);
     wui::line_up_top_bottom(pos, 25, 5);
-    window->add_control(linkInput, { pos.left, pos.top, pos.right - 150, pos.bottom });
-    window->add_control(openConfLinkButton, { pos.right - 140, pos.top, pos.right, pos.bottom });
-    wui::line_up_top_bottom(pos, 35, 5);
+    window->add_control(linkInput, { pos.left, pos.top, pos.right - ((BTN_SIZE + 5) * 3) - 5, pos.bottom });
+    window->add_control(sendConfEmail,      { pos.right - ((BTN_SIZE + 5) * 3), pos.top - 3, pos.right - ((BTN_SIZE + 5) * 3) + BTN_SIZE, pos.top + BTN_SIZE - 3 });
+    window->add_control(sendConfTelegram,   { pos.right - ((BTN_SIZE + 5) * 3) + BTN_SIZE + 5, pos.top - 3, pos.right - ((BTN_SIZE + 5) * 3) + BTN_SIZE + 5 + BTN_SIZE, pos.top + BTN_SIZE - 3 });
+    window->add_control(openConfLinkButton, { pos.right - ((BTN_SIZE + 5) * 3) + ((BTN_SIZE + 5) * 2), pos.top - 3, pos.right - ((BTN_SIZE + 5) * 3) + ((BTN_SIZE + 5) * 2) + BTN_SIZE, pos.top + BTN_SIZE - 3 });
+    wui::line_up_top_bottom(pos, 45, 5);
     window->add_control(deactiveConfCheck, pos);
 
     //window->set_focused(nameInput);
@@ -357,6 +374,8 @@ void ConferenceDialog::ShowMembers()
     window->remove_control(descriptionInput);
     window->remove_control(linkText);
     window->remove_control(linkInput);
+    window->remove_control(sendConfEmail);
+    window->remove_control(sendConfTelegram);
     window->remove_control(openConfLinkButton);
     window->remove_control(deactiveConfCheck);
 
@@ -407,6 +426,8 @@ void ConferenceDialog::ShowOptions()
     window->remove_control(descriptionInput);
     window->remove_control(linkText);
     window->remove_control(linkInput);
+    window->remove_control(sendConfEmail);
+    window->remove_control(sendConfTelegram);
     window->remove_control(openConfLinkButton);
     window->remove_control(deactiveConfCheck);
 
@@ -471,6 +492,58 @@ void ConferenceDialog::MakeURL(std::string_view tag)
     {
         linkInput->set_text("");
     }
+}
+
+void ConferenceDialog::InviteEmail()
+{
+#ifdef _WIN32
+    auto hLib = LoadLibrary(L"MAPI32.DLL");
+    if (!hLib)
+    {
+        //errLog
+        return;
+    }
+
+    auto SendMail = (LPMAPISENDMAILW)GetProcAddress(hLib, "MAPISendMailW");
+
+    if (!SendMail)
+    {
+        //errLog
+        FreeLibrary(hLib);
+        return;
+    }
+
+    auto subj = boost::nowide::widen(wui::locale("conference", "invite_header"));
+
+    auto msg = boost::nowide::widen(wui::locale("conference", "invite_1") + linkInput->text() +
+        wui::locale("conference", "invite_2") + nameInput->text() + 
+        wui::locale("conference", "invite_3") + descriptionInput->text() +
+        wui::locale("conference", "invite_4"));
+
+    MapiMessageW message;
+    ZeroMemory(&message, sizeof(message));
+    message.lpszSubject = (PWSTR)subj.data();
+    message.lpszNoteText = (PWSTR)msg.data();
+
+    int err = SendMail(0, (ULONG_PTR)window->context().hwnd, &message, MAPI_LOGON_UI | MAPI_DIALOG, 0);
+
+    if (err != SUCCESS_SUCCESS && err != MAPI_USER_ABORT && err != MAPI_E_LOGIN_FAILURE)
+    {
+        FreeLibrary(hLib);
+        return;
+    }
+
+    FreeLibrary(hLib);
+#endif
+}
+
+void ConferenceDialog::InviteTelegram()
+{
+}
+
+void ConferenceDialog::ShowInBrowser()
+{
+    wui::open_uri(linkInput->text());
 }
 
 void ConferenceDialog::AddMember()
