@@ -140,8 +140,8 @@ uint32_t AudioRendererImpl::GetLatency() const
     int error = 0;
     uint32_t latency = pa_simple_get_latency(s, &error) / 1000;
 
-	return wui::config::get_int("AudioRenderer", "ManualLatency", 0) == 0 && latency != 0 ?
-        latency : wui::config::get_int("AudioRenderer", "Latency", 100);
+	auto minLatency = wui::config::get_int("AudioRenderer", "Latency", 100);
+	return latency < minLatency ? minLatency : latency;
 }
 
 void AudioRendererImpl::SetAECReceiver(Transport::ISocket *socket)

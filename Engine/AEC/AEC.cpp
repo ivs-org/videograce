@@ -223,7 +223,7 @@ void AEC::SpeakerReceiver::Stop()
 AEC::AEC()
 	: runned(false), aecEnabled(true), nsEnabled(true), agcEnabled(true),
 	micLevel(100),
-	renderLatency(10),
+	renderLatency(100),
 	microphoneSource(*this), speakerSource(*this),
 	aecInst(nullptr),
 	nsInst(nullptr),

@@ -264,7 +264,7 @@ void AudioRendererWASAPI::Start(int32_t sampleFreq_)
 
 	mt::set_thread_priority(thread, mt::priority_type::real_time);
 
-	sysLog->info("AudioRendererWASAPI :: Success started, sample freq: {0}", sampleFreq);
+	sysLog->info("AudioRendererWASAPI :: Success started, sample freq: {0}, latency: {1}", sampleFreq, latency);
 }
 
 void AudioRendererWASAPI::Stop()
@@ -485,8 +485,8 @@ std::vector<std::string> AudioRendererWASAPI::GetSoundRenderers()
 
 uint32_t AudioRendererWASAPI::GetLatency() const
 {
-	return wui::config::get_int("AudioRenderer", "ManualLatency", 0) == 0 && latency != 0 ?
-        latency : wui::config::get_int("AudioRenderer", "Latency", 100);
+	auto minLatency = wui::config::get_int("AudioRenderer", "Latency", 100);
+	return latency < minLatency ? minLatency : latency;
 }
 
 void AudioRendererWASAPI::SetAECReceiver(Transport::ISocket *socket)
