@@ -24,7 +24,10 @@
 
 #ifdef _WIN32
 #include <mapi.h>
+#include <Shlobj.h>
 #endif
+
+#include <fstream>
 
 #include <resource.h>
 
@@ -539,6 +542,41 @@ void ConferenceDialog::InviteEmail()
 
 void ConferenceDialog::InviteTelegram()
 {
+#ifdef _WIN32
+    wchar_t appDataPath_[MAX_PATH] = { 0 };
+    SHGetFolderPath(NULL, CSIDL_LOCAL_APPDATA, NULL, 0, appDataPath_);
+
+    std::wstring lnk_path(appDataPath_);
+    lnk_path += L"\\Temp\\Подключение к видеоконференции VideoGrace.url";
+
+    {
+        std::ofstream lnk;
+        lnk.open(lnk_path, std::ios_base::out | std::ios_base::trunc);
+        lnk << "[InternetShortcut]\nURL = " + linkInput->text();
+        lnk.close();
+    }
+        
+    std::wstring tg_path(appDataPath_);
+    std::wstring local = L"local\\";
+    tg_path = tg_path.substr(0, tg_path.size() - local.size()) + 
+        L"\\Roaming\\Telegram Desktop\\Telegram.exe -sendpath \"" + lnk_path + L"\"";
+
+    STARTUPINFO si = { 0 };
+    PROCESS_INFORMATION pi = { 0 };
+
+    si.cb = sizeof(si);
+
+    CreateProcessW(NULL,
+        (LPWSTR)tg_path.c_str(),
+        NULL,
+        NULL,
+        FALSE,
+        0,
+        NULL,
+        NULL,
+        &si,
+        &pi);
+#endif
 }
 
 void ConferenceDialog::ShowInBrowser()
