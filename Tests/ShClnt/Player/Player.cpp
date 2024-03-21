@@ -421,7 +421,7 @@ void Player::PlayMKV()
 					packet.header.eX[0] = Common::crc32(0, packet.data, size);
 
                     SendAudio(packet);
-					std::this_thread::sleep_for(std::chrono::milliseconds(20));
+					std::this_thread::sleep_for(std::chrono::milliseconds(40));
 				}
 			}
 
