@@ -83,7 +83,7 @@ void UDPTester::Stop()
 
 bool UDPTester::TestPassed() const
 {
-	return availAddresses.size() == inputAddresses.size();
+	return !availAddresses.empty();
 }
 
 std::string UDPTester::GetErrorMessage() const
