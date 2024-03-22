@@ -318,7 +318,7 @@ int32_t ContentPanel::Left() const
 
 void ContentPanel::SetUser(const int64_t id, std::string_view name)
 {
-    if (window && window->context().valid() && id == 0 || userId == id)
+    if (!window || !window->context().valid() || !id == 0 || userId == id)
     {
         return;
     }
@@ -349,7 +349,7 @@ void ContentPanel::SetUser(const int64_t id, std::string_view name)
 
 void ContentPanel::SetConference(std::string_view tag, std::string_view name)
 {
-    if (window && window->context().valid() && tag.empty() || conferenceTag == tag)
+    if (!window || !window->context().valid() || tag.empty() || conferenceTag == tag)
     {
         return;
     }

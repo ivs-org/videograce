@@ -538,7 +538,9 @@ void CameraImpl::send()
 			statMeter.PushVal(processTime);
 		}
 
-		if (statMeter.GetFill() == 25 && (uint64_t)statMeter.GetAvg() > frameDuration / 2)
+		//sysLog->trace("Camera {0} :: AVG encoding time: {1}", name, statMeter.GetAvg());
+
+		if (statMeter.GetFill() == 25 && (uint64_t)statMeter.GetAvg() > frameDuration)
 		{
 			if (deviceNotifyCallback && runned)
 			{

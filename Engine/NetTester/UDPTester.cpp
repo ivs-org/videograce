@@ -65,7 +65,7 @@ void UDPTester::DoTheTest()
 			iteration = 0;
 		}
 
-		sysLog->trace("UDPTester :: DoTheTest :: runned");
+		sysLog->trace("UDPTester :: DoTheTest :: Started");
 
 		timer.start(250);
 	}
@@ -73,12 +73,14 @@ void UDPTester::DoTheTest()
 
 void UDPTester::Stop()
 {
-	timer.stop();
+	{
+		std::lock_guard<std::mutex> lock(mutex);
+		rtpSockets.clear();
+	}
 
-	std::lock_guard<std::mutex> lock(mutex);
-	rtpSockets.clear();
+	timer.stop();
 	
-	sysLog->trace("UDPTester :: Stoped");
+	sysLog->trace("UDPTester :: Stopped");
 }
 
 bool UDPTester::TestPassed() const
