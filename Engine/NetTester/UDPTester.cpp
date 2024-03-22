@@ -41,6 +41,12 @@ void UDPTester::AddAddress(std::string_view address, uint16_t port)
 	if (std::find(inputAddresses.begin(), inputAddresses.end(), Transport::Address(address.data(), port)) == inputAddresses.end())
 	{
 		inputAddresses.emplace_back(Transport::Address(address.data(), port));
+
+		auto rtpSocket = std::make_shared<Transport::RTPSocket>();
+		rtpSocket->SetReceiver(nullptr, this);
+		
+		std::lock_guard<std::mutex> lock(mutex);
+		rtpSockets.emplace_back(rtpSocket);
 	}
 }
 
@@ -50,6 +56,8 @@ void UDPTester::ClearAddresses()
 
 	inputAddresses.clear();
 	availAddresses.clear();
+
+	rtpSockets.clear();
 }
 
 void UDPTester::DoTheTest()
@@ -58,12 +66,8 @@ void UDPTester::DoTheTest()
 	{
 		timer.stop();
 
-		{
-			std::lock_guard<std::mutex> lock(mutex);
-			availAddresses.clear();
-			rtpSockets.clear();
-			iteration = 0;
-		}
+		availAddresses.clear();
+		iteration = 0;
 
 		sysLog->trace("UDPTester :: DoTheTest :: Started");
 
@@ -73,11 +77,6 @@ void UDPTester::DoTheTest()
 
 void UDPTester::Stop()
 {
-	{
-		std::lock_guard<std::mutex> lock(mutex);
-		rtpSockets.clear();
-	}
-
 	timer.stop();
 	
 	sysLog->trace("UDPTester :: Stopped");
@@ -128,13 +127,10 @@ void UDPTester::onTimer()
 			packet.rtcp_common.length = 1;
 			packet.rtcps[0].r.app.messageType = Transport::RTCPPacket::amtUDPTest;
 
-			auto rtpSocket = std::make_shared<Transport::RTPSocket>();
+			auto rtpSocket = rtpSockets[iteration];
 
-			rtpSocket->SetReceiver(nullptr, this);
 			rtpSocket->Start(a.type);
 			rtpSocket->Send(packet, &a);
-
-			rtpSockets.emplace_back(rtpSocket);
 
 			sysLog->trace("UDPTester :: DoTheTest :: Send test to address: {0}", a.toString());
 		}
@@ -142,7 +138,6 @@ void UDPTester::onTimer()
 	else if (iteration == inputAddresses.size() * 2) /// Double time to wait responses
 	{
 		readyCallback();
-		rtpSockets.clear();
 	}
 	++iteration;
 }

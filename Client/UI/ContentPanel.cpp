@@ -318,7 +318,7 @@ int32_t ContentPanel::Left() const
 
 void ContentPanel::SetUser(const int64_t id, std::string_view name)
 {
-    if (!window || !window->context().valid() || !id == 0 || userId == id)
+    if (!window || !window->context().valid() || id == 0 || userId == id)
     {
         return;
     }
