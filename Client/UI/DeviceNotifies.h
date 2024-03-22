@@ -32,6 +32,9 @@ enum class DeviceNotifyType
 	OvertimeCoding,
 	OvertimeRendering,
 
+	NormalizeCoding,
+	NormalizeRendering,
+
 	ResolutionChanged,
 
 	MicrophoneSpeak,

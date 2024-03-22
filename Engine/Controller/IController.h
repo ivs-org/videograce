@@ -126,6 +126,8 @@ namespace Controller
 			MemoryError,
 			OvertimeCoding,
 			OvertimeRendering,
+			NormalizeCoding,
+			NormalizeRendering,
 			DeviceResolutionChanged,
 			Disconnected,
             NetworkError,

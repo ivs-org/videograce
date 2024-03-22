@@ -661,6 +661,9 @@ void SettingsDialog::ReceiveDeviceNotify(std::string_view name, DeviceNotifyType
         case DeviceNotifyType::OvertimeCoding:
             cameraErrorText->set_text(wui::locale("message", "camera_slow_warn"));
         break;
+        case DeviceNotifyType::NormalizeCoding:
+            cameraErrorText->set_text("");
+        break;
     }
 }
 

@@ -538,14 +538,31 @@ void CameraImpl::send()
 			statMeter.PushVal(processTime);
 		}
 
-		//sysLog->trace("Camera {0} :: AVG encoding time: {1}", name, statMeter.GetAvg());
+		static bool prevOvertime = false;
 
-		if (statMeter.GetFill() == 25 && (uint64_t)statMeter.GetAvg() > frameDuration)
+		if (statMeter.GetFill() == 25)
 		{
-			if (deviceNotifyCallback && runned)
+			uint64_t avg = statMeter.GetAvg();
+			if (avg > frameDuration * 0.75)
 			{
-				sysLog->warn("Camera {0} :: Too slow encoding {1} ms", name, statMeter.GetAvg());
-				deviceNotifyCallback(name, Client::DeviceNotifyType::OvertimeCoding, Proto::DeviceType::Camera, deviceId, 0);
+				prevOvertime = true;
+				if (deviceNotifyCallback && runned)
+				{
+					sysLog->warn("Camera {0} :: Too slow encoding {1} ms", name, avg);
+					
+					deviceNotifyCallback(name, Client::DeviceNotifyType::OvertimeCoding, Proto::DeviceType::Camera, deviceId, 0);
+				}
+			}
+			else
+			{
+				if (prevOvertime && deviceNotifyCallback && runned)
+				{
+					prevOvertime = false;
+					sysLog->info("Camera {0} :: Too normalize encoding {1} ms", name, avg);
+					
+					deviceNotifyCallback(name, Client::DeviceNotifyType::NormalizeCoding, Proto::DeviceType::Camera, deviceId, 0);
+				}
+				sysLog->trace("Camera {0} :: AVG encoding time: {1}", name, avg);
 			}
 			statMeter.Clear();
 		}

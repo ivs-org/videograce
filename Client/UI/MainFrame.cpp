@@ -2683,6 +2683,12 @@ void MainFrame::ReceiveDeviceNotify(std::string_view name, DeviceNotifyType noti
         case DeviceNotifyType::OvertimeRendering:
             event_.type = Controller::Event::Type::OvertimeRendering;
         break;
+        case DeviceNotifyType::NormalizeCoding:
+            event_.type = Controller::Event::Type::NormalizeCoding;
+        break;
+        case DeviceNotifyType::NormalizeRendering:
+            event_.type = Controller::Event::Type::NormalizeRendering;
+        break;
         case DeviceNotifyType::ResolutionChanged:
             event_.type = Controller::Event::Type::DeviceResolutionChanged;
         break;
