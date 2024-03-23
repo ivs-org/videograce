@@ -44,7 +44,7 @@ private:
 
 	std::unique_ptr<uint8_t[]> buffer, tmpBuffer;
 
-    uint64_t packetDuration;
+    uint64_t frameDuration;
 	
     Client::DeviceNotifyCallback deviceNotifyCallback;
 

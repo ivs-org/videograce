@@ -38,7 +38,7 @@ namespace Camera
 CameraImpl::CameraImpl(Common::TimeMeter &timeMeter_, Transport::ISocket &receiver_)
 	: timeMeter(timeMeter_), receiver(receiver_),
     buffer(), tmpBuffer(),
-    packetDuration(40000),
+	frameDuration(40000),
 	deviceNotifyCallback(),
 	statMeter(30),
 	name(),
@@ -144,7 +144,7 @@ bool CameraImpl::SetResolution(Video::Resolution resolution_)
 
 void CameraImpl::SetFrameRate(uint32_t rate)
 {
-    packetDuration = (1000 / rate) * 1000;
+	frameDuration = (1000 / rate) * 1000;
 }
 
 void CameraImpl::run()
@@ -246,7 +246,7 @@ void CameraImpl::run()
 			statMeter.Clear();
 		}
 
-		if (packetDuration > processTime) Common::ShortSleep(packetDuration - processTime);
+		if (frameDuration > processTime) Common::ShortSleep(frameDuration - processTime);
 	}
 
 	stop_capturing();
