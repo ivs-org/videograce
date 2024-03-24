@@ -111,50 +111,47 @@ bool OpusDecoderImpl::IsStarted()
 	return runned;
 }
 
-void OpusDecoderImpl::DecodeFrame(const uint8_t *data, int32_t length, const Transport::RTPPacket::RTPHeader& header)
+void OpusDecoderImpl::Decode(const Transport::IPacket& in_, Transport::IPacket& out_)
 {
+	const Transport::RTPPacket& in = *static_cast<const Transport::RTPPacket*>(&in_);
+
+	if (lastSeq == in.rtpHeader.seq) // Drop duplicate
+	{
+		return;
+	}
+
 	int32_t frameSize = (sample_freq / 100) * channels * 2 * 4;
-	int outframeSize = opus_decode(opusDecoder, data, length, reinterpret_cast<opus_int16*>(produceBuffer.get()), frameSize, 0);
+	int outframeSize = opus_decode(opusDecoder, in.payload, in.payloadSize, reinterpret_cast<opus_int16*>(produceBuffer.get()), frameSize, 0);
 
 	if (outframeSize > 0)
 	{
 		int32_t outSize = outframeSize * channels * sizeof(opus_int16);
 
-		Transport::RTPPacket packet;
-
-		packet.rtpHeader = header;
-		packet.rtpHeader.pt = static_cast<uint32_t>(Transport::RTPPayloadType::ptPCM);
-		packet.payload = produceBuffer.get();
-		packet.payloadSize = frameSize;
-
-		receiver->Send(packet);
-		
+		auto& out = *static_cast<Transport::RTPPacket*>(&out_);
+		out.rtpHeader = in.rtpHeader;
+		out.rtpHeader.pt = static_cast<uint8_t>(Transport::RTPPayloadType::ptPCM);
+		out.payload = produceBuffer.get();
+		out.payloadSize = frameSize;
 	}
+
+	lastSeq = in.rtpHeader.seq;
 }
 
-void OpusDecoderImpl::Send(const Transport::IPacket &packet_, const Transport::Address *)
+void OpusDecoderImpl::Send(const Transport::IPacket &in, const Transport::Address *)
 {
 	if (!runned)
 	{
 		return;
 	}
-	const Transport::RTPPacket &packet = *static_cast<const Transport::RTPPacket*>(&packet_);
+	
+	Transport::RTPPacket out;
 
-	if (lastSeq == packet.rtpHeader.seq) // Drop duplicate
+	Decode(in, out);
+
+	if (out.payloadSize > 0)
 	{
-		return;
+		receiver->Send(out);
 	}
-
-	/*while (lastSeq != 0 && packet.rtpHeader.seq > lastSeq + 1) // we have a packet loss
-	{
-		DecodeFrame(nullptr, 0, packet.rtpHeader);
-
-		++lastSeq;
-	}*/
-
-	DecodeFrame(packet.payload, packet.payloadSize, packet.rtpHeader);
-
-	lastSeq = packet.rtpHeader.seq;
 }
 
 }

@@ -27,6 +27,7 @@ namespace Audio
 		virtual void Start(CodecType type);
 		virtual void Stop();
 		virtual bool IsStarted();
+		virtual void Decode(const Transport::IPacket& in, Transport::IPacket& out);
 		
 		// Derived from Transport::ISocket (input method)
 		virtual void Send(const Transport::IPacket &packet, const Transport::Address *address = nullptr) final;

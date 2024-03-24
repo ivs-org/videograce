@@ -8,6 +8,7 @@
 #pragma once
 
 #include <cstdint>
+#include <Transport/IPacket.h>
 #include <Audio/CodecType.h>
 
 namespace Transport
@@ -28,6 +29,8 @@ namespace Audio
 		virtual void Start(CodecType type) = 0;
 		virtual void Stop() = 0;
 		virtual bool IsStarted() = 0;
+
+		virtual void Decode(const Transport::IPacket& in, Transport::IPacket& out) = 0;
 
 		virtual ~IDecoder() {}
 	};

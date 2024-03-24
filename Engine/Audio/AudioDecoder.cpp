@@ -95,6 +95,14 @@ bool Decoder::IsStarted()
 	return false;
 }
 
+void Decoder::Decode(const Transport::IPacket& in, Transport::IPacket& out)
+{
+	if (impl)
+	{
+		impl->Decode(in, out);
+	}
+}
+
 void Decoder::Send(const Transport::IPacket &packet, const Transport::Address *)
 {
 	if (impl)

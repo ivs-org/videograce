@@ -31,6 +31,7 @@ namespace Audio
 		virtual void Start(CodecType);
 		virtual void Stop();
 		virtual bool IsStarted();
+		virtual void Decode(const Transport::IPacket& in, Transport::IPacket& out);
 		
 		/// Derived from Transport::ISocket (input method)
 		virtual void Send(const Transport::IPacket &packet, const Transport::Address *address = nullptr) final;
@@ -47,7 +48,5 @@ namespace Audio
 		std::unique_ptr<uint8_t[]> produceBuffer;
 
 		OpusDecoder *opusDecoder;
-		
-		void DecodeFrame(const uint8_t *data, int32_t length, const Transport::RTPPacket::RTPHeader &);
 	};
 }

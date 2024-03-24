@@ -11,6 +11,9 @@
 #include <Transport/RTP/RTCPPacket.h>
 #include <Transport/RTP/RTPPayloadType.h>
 
+#include <Audio/AudioEncoder.h>
+#include <Audio/AudioDecoder.h>
+
 #include <Common/CRC32.h>
 
 #include <Common/ShortSleep.h>
