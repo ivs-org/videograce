@@ -25,7 +25,6 @@
 
 int main(int argc, char* argv[])
 {
-#ifndef _DEBUG
 	if (argc < 5)
 	{
 		std::cout << "Usage: ShClnt server address login password conference file name" << std::endl;
@@ -37,14 +36,6 @@ int main(int argc, char* argv[])
 	std::string password = argv[3];
 	std::string conference = argv[4];
 	std::string fileName = argv[5];
-#else
-	std::string address = "::1:8778",
-		login = "test1",
-		password = "1",
-		conference = "default",
-		fileName = "d:\\play.mkv";
-
-#endif
 
 	Common::CreateLogger(Common::GetLogFileName("ShClnt-" + login));
 

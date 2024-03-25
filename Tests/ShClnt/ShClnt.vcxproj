@@ -82,7 +82,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>.;..\..\Engine;..\..\Lib\libWebM;..\..\Lib\boost_1_83_0\include;..\..\Lib\ipp\include;..\..\Lib\Filters\BaseClasses;..\..\Lib\wui\include;$(VC_IncludePath);$(WindowsSdk_71A_IncludePath)</IncludePath>
-    <LibraryPath>..\..\x64\Debug;..\..\Lib\libVPX\x64\debug;..\..\Lib\libOpus\x64\debug;..\..\Lib\libWebM\lib\win\x64\Debug;..\..\Lib\boost_1_83_0\lib\win;..\..\Lib\OpenSSL\lib\x64;..\..\Lib\ipp\lib\intel64_win;..\..\Lib\Filters\BaseClasses\x64\Debug;$(LibraryPath)</LibraryPath>
+    <LibraryPath>..\..\x64\Debug;..\..\Lib\boost_1_83_0\lib\win;..\..\Lib\libVPX\x64\debug;..\..\Lib\libOpus\x64\Debug;..\..\Lib\libWebM\lib\win\x64\Debug;..\..\Lib\OpenSSL\lib\x64;..\..\Lib\ipp\lib\intel64_win;..\..\Lib\wui\x64\Debug;..\..\Lib\db\lib\win64\debug;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -134,7 +134,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;WIN32;_WINDOWS;_WINSOCKAPI_;BOOST_CONFIG_SUPPRESS_OUTDATED_MESSAGE;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_WINDOWS;_WINSOCKAPI_;_SILENCE_ALL_MS_EXT_DEPRECATION_WARNINGS;BOOST_CONFIG_SUPPRESS_OUTDATED_MESSAGE;BOOST_SYSTEM_DISABLE_THREADS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <DisableSpecificWarnings>4101;4307;4005</DisableSpecificWarnings>
@@ -143,7 +143,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>atls.lib;engine.lib;strmiids.lib;quartz.lib;Htmlhelp.lib;uuid.lib;amstrmid.lib;wmcodecdspuuid.lib;dsound.lib;Winmm.lib;Avrt.lib;ippcoremt.lib;ippvmmt.lib;ippsmt.lib;ippimt.lib;ippccmt.lib;ippdcmt.lib;ws2_32.lib;Crypt32.lib;libcrypto.lib;libssl.lib;strmbasd.lib;opus.lib;libwebm.lib;vpxmtd.lib;vpxrcmtd.lib;Iphlpapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>engine.lib;uuid.lib;amstrmid.lib;wmcodecdspuuid.lib;dsound.lib;Winmm.lib;Avrt.lib;ippcoremt.lib;ippvmmt.lib;ippsmt.lib;ippimt.lib;ippccmt.lib;ippdcmt.lib;ws2_32.lib;Crypt32.lib;libcrypto.lib;libssl.lib;opus.lib;libwebm.lib;vpxmtd.lib;vpxrcmtd.lib;Iphlpapi.lib;wui.lib;db.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
