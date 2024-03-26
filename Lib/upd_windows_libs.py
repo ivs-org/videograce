@@ -22,7 +22,7 @@ web_m = "1Roe3DWRoR5jg1GqTsvpFSU_t3KsUabH9"
 
 open_ssl = "1U5Pm4iiJumWcDC03bLd6NY_ifdhCYB2m"
 
-wui = "1M0XXtbu_pZYppD9FhyBV3hQWoizjQvBE"
+wui = "1mRClHA1M9oTzxOfNSDsv8-uJNksve9wT"
 
 libs = { "boost":    boost,
          "db":       db,
