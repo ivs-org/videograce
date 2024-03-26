@@ -67,7 +67,7 @@ ContactList::ContactList(Storage::Storage &storage_, Controller::IController &co
     list->set_draw_callback(std::bind(&ContactList::DrawItem, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4));
     list->set_item_change_callback(std::bind(&ContactList::ChangeItem, this, std::placeholders::_1));
     list->set_item_activate_callback(std::bind(&ContactList::ActivateItem, this, std::placeholders::_1));
-    list->set_item_click_callback([this](wui::list::click_button btn, int32_t nItem, int32_t x, int32_t y) { if (btn == wui::list::click_button::left) ClickItem(nItem); else RightClickItem(nItem, x, y); });
+    list->set_item_click_callback([this](wui::list::click_button btn, int32_t nItem, int32_t x, int32_t y) { if (btn == wui::list::click_button::left) ClickItem(nItem, x); else RightClickItem(nItem, x, y); });
 }
 
 ContactList::~ContactList()
@@ -800,7 +800,7 @@ void ContactList::DrawItem(wui::graphic &gr, int32_t nItem, const wui::rect &ite
     }
 }
 
-void ContactList::ClickItem(int32_t nItem)
+void ContactList::ClickItem(int32_t nItem, int32_t xPos)
 {
     if (nItem == -1)
     {
@@ -826,8 +826,11 @@ void ContactList::ClickItem(int32_t nItem)
                     UpdateItems();
                 break;
                 case ItemType::Conference:
-                    wui::config::set_int("User", "ConferenceUsersRolled", wui::config::get_int("User", "ConferenceUsersRolled", 0) != 0 ? 0 : 1);
-                    UpdateItems();
+                    if (xPos > (item->level * XBITMAP) + XBITMAP && xPos < (item->level * XBITMAP) + (XBITMAP * 2))
+                    {
+                        wui::config::set_int("User", "ConferenceUsersRolled", wui::config::get_int("User", "ConferenceUsersRolled", 0) != 0 ? 0 : 1);
+                        UpdateItems();
+                    }
                 break;
             }
         }

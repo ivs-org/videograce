@@ -141,7 +141,7 @@ private:
     void SearchChange(std::string_view text);
 
     void DrawItem(wui::graphic &gr, int32_t nItem, const wui::rect &pos, wui::list::item_state state);
-    void ClickItem(int32_t nItem);
+    void ClickItem(int32_t nItem, int32_t xPos);
     void ChangeItem(int32_t nItem);
     void ActivateItem(int32_t nItem);
     void RightClickItem(int32_t nItem, int32_t x, int32_t y);
