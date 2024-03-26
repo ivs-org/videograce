@@ -18,6 +18,8 @@
 #include <UI/ContactDialog.h>
 #include <UI/ConferenceDialog.h>
 
+#include <spdlog/spdlog.h>
+
 namespace Client
 {
 
@@ -129,6 +131,8 @@ private:
 
     std::mutex itemsMutex;
     std::vector<Item> items;
+
+    std::shared_ptr<spdlog::logger> sysLog, errLog;
 
     void UpdateItems();
     void MakeGroups();

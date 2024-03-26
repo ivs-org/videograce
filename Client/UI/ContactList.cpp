@@ -53,7 +53,8 @@ ContactList::ContactList(Storage::Storage &storage_, Controller::IController &co
     messageBox(),
     contactDialog(storage, controller, std::bind(&ContactList::ContactDialogCallback, this, std::placeholders::_1, std::placeholders::_2)),
     itemsMutex(),
-    items()
+    items(),
+    sysLog(spdlog::get("System")), errLog(spdlog::get("Error"))
 {
     storage.SubscribeMessagesReceiver([this](Storage::MessageAction, const Storage::Messages&) { UpdateItems(); });
     storage.SubscribeContactsReceiver([this](const Storage::Contacts&) { UpdateItems(); });
@@ -806,6 +807,8 @@ void ContactList::ClickItem(int32_t nItem)
         return callback.ContactUnselected();
     }
 
+    sysLog->trace("ContactList::ClickItem :: nItem: {0}", nItem);
+
     auto *item = GetItem(nItem);
     if (item != nullptr)
     {
@@ -888,6 +891,8 @@ void ContactList::ActivateItem(int32_t nItem)
     if (nItem != -1)
     {
         auto *item = GetItem(nItem);
+
+        sysLog->trace("ContactList::ActivateItem :: nItem: {0}", nItem);
 
         if (item != nullptr)
         {
