@@ -826,7 +826,7 @@ void ContactList::ClickItem(int32_t nItem, int32_t xPos)
                     UpdateItems();
                 break;
                 case ItemType::Conference:
-                    if (xPos > (item->level * XBITMAP) + XBITMAP && xPos < (item->level * XBITMAP) + (XBITMAP * 2))
+                    if (xPos >= XBITMAP && xPos < (XBITMAP * 2))
                     {
                         wui::config::set_int("User", "ConferenceUsersRolled", wui::config::get_int("User", "ConferenceUsersRolled", 0) != 0 ? 0 : 1);
                         UpdateItems();
