@@ -543,7 +543,7 @@ void CameraImpl::send()
 		if (statMeter.GetFill() == 25)
 		{
 			uint64_t avg = statMeter.GetAvg();
-			if (avg > frameDuration * 0.75)
+			if (avg > frameDuration * 0.85)
 			{
 				prevOvertime = true;
 				if (deviceNotifyCallback && runned)

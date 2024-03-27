@@ -118,15 +118,15 @@ void VP8EncoderImpl::Start(CodecType)
 	
 	if (rv.height >= 720)
 	{
-		cfg.g_threads = 3; // 3 threads for 1080p.
+		cfg.g_threads = 6; // 6 threads for 1080p.
 	}
 	else if (rv.height >= 480)
 	{
-		cfg.g_threads = 2; // 2 threads for qHD/HD.
+		cfg.g_threads = 4; // 4 threads for qHD/HD.
 	}
 	else
 	{
-		cfg.g_threads = 1; // 1 thread for less than VGA
+		cfg.g_threads = 2; // 2 thread for less than VGA
 	}
 
 	cfg.rc_dropframe_thresh = 0;
